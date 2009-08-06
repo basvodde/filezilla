@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr_FR\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-04 12:17+0200\n"
+"POT-Creation-Date: 2009-08-06 18:23+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Frédéric DUARTE <pgase.filezilla@free.fr>\n"
 "Language-Team: Frédéric DUARTE, Arnaud DAVID, Kud Gray <pgase.filezilla@free."
@@ -1031,15 +1031,15 @@ msgstr "-"
 
 #: resources.h:242
 msgid "- Broken router and/or firewall"
-msgstr ""
+msgstr "- Routeur et/ou pare-feu déficient(s)"
 
 #: resources.h:243
 msgid "- File corrupted on mirror"
-msgstr ""
+msgstr "- Fichier corrompu sur le miroir"
 
 #: resources.h:241
 msgid "- Malware on your system"
-msgstr ""
+msgstr "- Logiciel malveillant sur votre système"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:182
 #: ../../locales/../src/interface/statuslinectrl.cpp:187
@@ -1506,7 +1506,7 @@ msgstr "En cours d'édition"
 
 #: ../../locales/../src/engine/tlssocket.cpp:844
 msgid "Beware! Certificate has been revoked"
-msgstr ""
+msgstr "Attention ! Le certificat a été révoqué"
 
 #: resources.h:406
 msgid "Binary"
@@ -1802,7 +1802,7 @@ msgstr "Vérification des mises à jour"
 
 #: ../../locales/../src/interface/updatewizard.cpp:1176
 msgid "Checksum mismatch of downloaded file."
-msgstr ""
+msgstr "Contrôle de l'intégrité du fichier téléchargé négatif."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1509
 msgid "Choose the default local directory"
@@ -2230,12 +2230,15 @@ msgid ""
 "Could not get distinguished name of certificate issuer, "
 "gnutls_x509_get_issuer_dn failed"
 msgstr ""
+"Impossible d'obtenir le nom de l'émetteur du certificat, "
+"gnutls_x509_get_issuer_dn failed"
 
 #: ../../locales/../src/engine/tlssocket.cpp:949
 msgid ""
 "Could not get distinguished name of certificate subject, gnutls_x509_get_dn "
 "failed"
 msgstr ""
+"Impossible d'obtenir le nom du sujet du certificat, gnutls_x509_get_dn failed"
 
 #: ../../locales/../src/interface/state.cpp:901
 msgid "Could not get full remote path."
@@ -2254,6 +2257,16 @@ msgstr ""
 #: ../../locales/../src/engine/tlssocket.cpp:902
 msgid "Could not import peer certificates, gnutls_x509_crt_import failed"
 msgstr ""
+"Impossible d'importer les certificats clients, gnutls_x509_crt_import failed"
+
+#: ../../locales/../src/engine/tlssocket.cpp:895
+#, fuzzy
+msgid ""
+"Could not initialize structure for peer certificates, gnutls_x509_crt_init "
+"failed"
+msgstr ""
+"Impossible d'initialiser la structure pour les certificats clients, "
+"gnutls_x509_crt_init failed"
 
 #: ../../locales/../src/interface/import.cpp:120
 #: ../../locales/../src/interface/import.cpp:311
@@ -2433,12 +2446,6 @@ msgstr "Impossible d'écrire vers le fichier de sauvegarde : %s"
 #, c-format
 msgid "Could not write to socket: %s"
 msgstr "Impossible d'écrire vers le socket : %s"
-
-#: ../../locales/../src/engine/tlssocket.cpp:895
-msgid ""
-"Coult not initialize structure for peer certificates, gnutls_x509_crt_init "
-"failed"
-msgstr ""
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:165
 msgid "Country:"
@@ -3136,9 +3143,8 @@ msgid "Error writing xml file"
 msgstr "Erreur lors de l'écriture du fichier xml"
 
 #: ../../locales/../src/interface/updatewizard.cpp:332
-#, fuzzy
 msgid "Error, local file exists but cannot be removed"
-msgstr "Ce jeu de filtres ne peut pas être retiré."
+msgstr "Erreur, le fichier local existe mais ne peut pas être supprimé"
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
@@ -3328,7 +3334,7 @@ msgstr "Échec lors de l'ouverture de \"%s\" pour écriture"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:314
 msgid "Failed to parse trusted root cert."
-msgstr ""
+msgstr "Échec lors de l'analyse du certificat racine de confiance."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:1014
 msgid "Failed to receive data"
@@ -3413,9 +3419,8 @@ msgid "Failed to validate settings"
 msgstr "Échec lors de la validation des paramètres"
 
 #: ../../locales/../src/engine/tlssocket.cpp:837
-#, fuzzy
 msgid "Failed to verify peer certificate"
-msgstr "Échec lors de la réception des données"
+msgstr "Échec lors de la vérification du certificat client"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:562
 #, c-format
@@ -3744,9 +3749,8 @@ msgid "H&igh"
 msgstr "Éle&vée"
 
 #: ../../locales/../src/engine/server.cpp:16
-#, fuzzy
 msgid "HTTPS - HTTP over TLS"
-msgstr "FTPS - FTP plus implicite (TLS/SSL)"
+msgstr "HTTPS - HTTP sur TLS"
 
 #: resources.h:356
 msgid "Hash:"
@@ -4062,6 +4066,8 @@ msgid ""
 "Incomplete chain, top certificate is not self-signed certificate authority "
 "certificate"
 msgstr ""
+"Chaîne incomplète, le certificat n'est pas un certificat auto-signé par une "
+"autorité compétente"
 
 #: ../../locales/../src/interface/QueueView.cpp:1007
 msgid "Incorrect password"
@@ -4320,9 +4326,8 @@ msgid "Log file"
 msgstr "Fichier de sauvegarde"
 
 #: resources.h:245
-#, fuzzy
 msgid "Log of update check:"
-msgstr "Vérification automatique des mises à jour"
+msgstr "Journal de la vérification des mises à jour :"
 
 #: resources.h:887
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:140
@@ -5157,6 +5162,8 @@ msgid ""
 "Please retry downloading the update. Possible reasons if the problem "
 "persists (listed in order of decreasing probability):"
 msgstr ""
+"Veuillez réessayer de télécharger la mise à jour. Les raisons possibles, "
+"dans le cas où le problème persiste (par ordre décroissant de probabilité) :"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:570
 msgid ""
@@ -5594,7 +5601,7 @@ msgstr "Re&prendre"
 #: resources.h:596 resources.h:599
 msgid "Reset and requeue selected files"
 msgstr ""
-"Réinitialiser et replacer dans la file d'attente les fichiers sélectionnés"
+"Réinitialiser et replacer les fichiers sélectionnés dans la file d'attente"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1144
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:492
@@ -5639,9 +5646,8 @@ msgid "Retrieving external IP address from %s"
 msgstr "Récupération de l'adresse IP externe depuis %s"
 
 #: ../../locales/../src/engine/tlssocket.cpp:858
-#, fuzzy
 msgid "Root certificate is not trusted"
-msgstr "Certificat distant sans confiance."
+msgstr "Certificat racine sans confiance"
 
 #: resources.h:484
 msgid "S&how files currently being edited..."
@@ -6279,9 +6285,8 @@ msgid "System"
 msgstr "Système"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:325
-#, fuzzy
 msgid "TLS/SSL connection established, sending HTTP request"
-msgstr "Connexion établie, envoi d'une requête HTTP"
+msgstr "Connexion TLS/SSL établie, envoi d'une requête HTTP"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:403
 msgid "TLS/SSL connection established, waiting for welcome message..."
@@ -6993,9 +6998,8 @@ msgstr ""
 "fonctionnera pas et le mode passif devra être utilisé."
 
 #: ../../locales/../src/engine/tlssocket.cpp:829
-#, fuzzy
 msgid "Unsupported certificate type"
-msgstr "Redirection non supportée"
+msgstr "Type de certificat non supporté"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:646
 msgid "Unsupported redirect"
@@ -7501,7 +7505,7 @@ msgstr "fzsftp n'a pas pu être démarré"
 
 #: ../../locales/../src/engine/tlssocket.cpp:867
 msgid "gnutls_certificate_get_peers returned no certificates"
-msgstr ""
+msgstr "gnutls_certificate_get_peers n'a retourné aucuns certificats"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:72
 msgid "greater than"
@@ -7570,6 +7574,3 @@ msgstr "écriture par tous"
 #: resources.h:164
 msgid "wxWidgets:"
 msgstr "wxWidgets :"
-
-#~ msgid "Connecting to %s:%d..."
-#~ msgstr "Connexion à %s : %d..."

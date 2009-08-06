@@ -1,12 +1,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Milen A. Radev <milen@radev.net>, 2005
 # Асен Генов, 07.2008
-# Стоян Димитров <stoyanster от гмаил>, Last updated: 27.07.2009
+# Стоян Димитров <stoyanster от гмаил>, Last updated: 05.08.2009
 msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-04 12:17+0200\n"
+"POT-Creation-Date: 2009-08-06 18:23+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Stoyan Dimtirov\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -1026,15 +1026,15 @@ msgstr "-"
 
 #: resources.h:242
 msgid "- Broken router and/or firewall"
-msgstr ""
+msgstr "- Повреден маршрутизатор и/или защитна стена"
 
 #: resources.h:243
 msgid "- File corrupted on mirror"
-msgstr ""
+msgstr "- Файлът на огледалото е повреден"
 
 #: resources.h:241
 msgid "- Malware on your system"
-msgstr ""
+msgstr "- Злонамерен софтуер на вашата система"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:182
 #: ../../locales/../src/interface/statuslinectrl.cpp:187
@@ -1271,7 +1271,8 @@ msgid ""
 "address."
 msgstr ""
 "Проверката на активния FTP режим се провали. FileZilla знае правилния външен "
-"IP адрес, но вашият маршрутизатор подвеждащо е променил изпратения адрес."
+"IP адрес, но вашият маршрутизатор или защитна стена подвеждащо е променил "
+"изпратения адрес."
 
 #: resources.h:723
 msgid "Active mode IP"
@@ -1491,7 +1492,7 @@ msgstr "Редактиран"
 
 #: ../../locales/../src/engine/tlssocket.cpp:844
 msgid "Beware! Certificate has been revoked"
-msgstr ""
+msgstr "Пазете се! Сертификатът е анулиран"
 
 #: resources.h:406
 msgid "Binary"
@@ -1779,7 +1780,7 @@ msgstr "Проверяване за актуализации"
 
 #: ../../locales/../src/interface/updatewizard.cpp:1176
 msgid "Checksum mismatch of downloaded file."
-msgstr ""
+msgstr "Различна хеш сума на изтегления файл."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1509
 msgid "Choose the default local directory"
@@ -2206,12 +2207,16 @@ msgid ""
 "Could not get distinguished name of certificate issuer, "
 "gnutls_x509_get_issuer_dn failed"
 msgstr ""
+"Не може да бъде взето името на издателя на сертификата, "
+"gnutls_x509_get_issuer_dn се провали"
 
 #: ../../locales/../src/engine/tlssocket.cpp:949
 msgid ""
 "Could not get distinguished name of certificate subject, gnutls_x509_get_dn "
 "failed"
 msgstr ""
+"Не може да бъде взето името на обекта на сертификата, gnutls_x509_get_dn се "
+"провали"
 
 #: ../../locales/../src/interface/state.cpp:901
 msgid "Could not get full remote path."
@@ -2231,6 +2236,17 @@ msgstr ""
 #: ../../locales/../src/engine/tlssocket.cpp:902
 msgid "Could not import peer certificates, gnutls_x509_crt_import failed"
 msgstr ""
+"Не могат да бъдат импортирани партньорски сертификати, "
+"gnutls_x509_crt_import се провали"
+
+#: ../../locales/../src/engine/tlssocket.cpp:895
+#, fuzzy
+msgid ""
+"Could not initialize structure for peer certificates, gnutls_x509_crt_init "
+"failed"
+msgstr ""
+"Не може да бъди инициализарана структурата на партньорски сертификати, "
+"gnutls_x509_crt_init се провали"
 
 #: ../../locales/../src/interface/import.cpp:120
 #: ../../locales/../src/interface/import.cpp:311
@@ -2409,12 +2425,6 @@ msgstr "Невъзможно писането във файл-дневник: %s
 #, c-format
 msgid "Could not write to socket: %s"
 msgstr "Неуспешен запис в сокет: %s"
-
-#: ../../locales/../src/engine/tlssocket.cpp:895
-msgid ""
-"Coult not initialize structure for peer certificates, gnutls_x509_crt_init "
-"failed"
-msgstr ""
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:165
 msgid "Country:"
@@ -3100,9 +3110,8 @@ msgid "Error writing xml file"
 msgstr "Грешка при запис на XML файл"
 
 #: ../../locales/../src/interface/updatewizard.cpp:332
-#, fuzzy
 msgid "Error, local file exists but cannot be removed"
-msgstr "Този набор филтри не може да бъде изтрит."
+msgstr "Грешка, местния файл съществува, но не може да бъде изтрит"
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
@@ -3287,7 +3296,7 @@ msgstr "Неуспешно отваряне \"%s\" за запис"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:314
 msgid "Failed to parse trusted root cert."
-msgstr ""
+msgstr "Неуспех при разбора на доверен коренов сертификат."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:1014
 msgid "Failed to receive data"
@@ -3369,9 +3378,8 @@ msgid "Failed to validate settings"
 msgstr "Неуспешна проверка настройки"
 
 #: ../../locales/../src/engine/tlssocket.cpp:837
-#, fuzzy
 msgid "Failed to verify peer certificate"
-msgstr "Неуспешно получаване данни"
+msgstr "Неуспешна проверка на партньорски сертификат"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:562
 #, c-format
@@ -3690,9 +3698,8 @@ msgid "H&igh"
 msgstr "&Висок"
 
 #: ../../locales/../src/engine/server.cpp:16
-#, fuzzy
 msgid "HTTPS - HTTP over TLS"
-msgstr "FTPES - FTP върху скрит TLS/SSL"
+msgstr "HTTPS - HTTP върху TLS"
 
 #: resources.h:356
 msgid "Hash:"
@@ -3796,7 +3803,7 @@ msgid ""
 "If the problem persists, some router and/or firewall keeps blocking "
 "FileZilla."
 msgstr ""
-"Ако проблемът остане значи някой маршрутизатор и/или защитна стена "
+"Ако проблемът продължава значи някой маршрутизатор и/или защитна стена "
 "продължават да блокират FileZilla."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:563
@@ -4001,6 +4008,8 @@ msgid ""
 "Incomplete chain, top certificate is not self-signed certificate authority "
 "certificate"
 msgstr ""
+"Не пълна верига, главният сертификат не е самоподписан сертификат от издател "
+"на сертификати."
 
 #: ../../locales/../src/interface/QueueView.cpp:1007
 msgid "Incorrect password"
@@ -4259,9 +4268,8 @@ msgid "Log file"
 msgstr "Файл-дневник"
 
 #: resources.h:245
-#, fuzzy
 msgid "Log of update check:"
-msgstr "Автоматична проверка"
+msgstr "Дневник на проверките за актуализации:"
 
 #: resources.h:887
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:140
@@ -5079,6 +5087,8 @@ msgid ""
 "Please retry downloading the update. Possible reasons if the problem "
 "persists (listed in order of decreasing probability):"
 msgstr ""
+"Моля опитайте да изтеглите актуализация отново. Вероятни причини, ако "
+"проблемът продължава (изброени в низходящ ред на вероятността):"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:570
 msgid ""
@@ -5547,9 +5557,8 @@ msgid "Retrieving external IP address from %s"
 msgstr "Получаване на външен IP адрес от %s"
 
 #: ../../locales/../src/engine/tlssocket.cpp:858
-#, fuzzy
 msgid "Root certificate is not trusted"
-msgstr "Отдалечения сертификат не е доверен."
+msgstr "Кореновият сертификат е не доверен"
 
 #: resources.h:484
 msgid "S&how files currently being edited..."
@@ -6184,9 +6193,8 @@ msgid "System"
 msgstr "Системни"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:325
-#, fuzzy
 msgid "TLS/SSL connection established, sending HTTP request"
-msgstr "Установена е връзка, изпраща се заявка тип HTTP"
+msgstr "Установена е TLS/SSL връзка, изпраща се HTTP заявка"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:403
 msgid "TLS/SSL connection established, waiting for welcome message..."
@@ -6887,9 +6895,8 @@ msgstr ""
 "трябва да се използва пасивен режим."
 
 #: ../../locales/../src/engine/tlssocket.cpp:829
-#, fuzzy
 msgid "Unsupported certificate type"
-msgstr "Неподдържано препращане"
+msgstr "Неподдържан тип сертификат"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:646
 msgid "Unsupported redirect"
@@ -7382,7 +7389,7 @@ msgstr "fzsftp не можа да бъде старитран"
 
 #: ../../locales/../src/engine/tlssocket.cpp:867
 msgid "gnutls_certificate_get_peers returned no certificates"
-msgstr ""
+msgstr "gnutls_certificate_get_peers не върна сертификати"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:72
 msgid "greater than"
@@ -7451,6 +7458,3 @@ msgstr "писане от всички"
 #: resources.h:164
 msgid "wxWidgets:"
 msgstr "wxWidgets:"
-
-#~ msgid "Connecting to %s:%d..."
-#~ msgstr "Свързване с %s:%d..."
