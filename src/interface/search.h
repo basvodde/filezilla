@@ -47,6 +47,7 @@ protected:
 	void OnContextMenu(wxContextMenuEvent& event);
 	void OnDownload(wxCommandEvent& event);
 	void OnDelete(wxCommandEvent& event);
+	void OnCharHook(wxKeyEvent& event);
 
 	std::set<CServerPath> m_visited;
 

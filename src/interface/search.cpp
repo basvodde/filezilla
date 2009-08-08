@@ -532,6 +532,7 @@ EVT_BUTTON(XRCID("ID_STOP"), CSearchDialog::OnStop)
 EVT_CONTEXT_MENU(CSearchDialog::OnContextMenu)
 EVT_MENU(XRCID("ID_MENU_SEARCH_DOWNLOAD"), CSearchDialog::OnDownload)
 EVT_MENU(XRCID("ID_MENU_SEARCH_DELETE"), CSearchDialog::OnDelete)
+EVT_CHAR_HOOK(CSearchDialog::OnCharHook)
 END_EVENT_TABLE()
 
 CSearchDialog::CSearchDialog(wxWindow* parent, CState* pState, CQueueView* pQueue)
@@ -624,7 +625,6 @@ void CSearchDialog::Run()
 		if (m_pState->IsRemoteIdle() && !m_original_dir.IsEmpty())
 			m_pState->ChangeRemoteDir(m_original_dir);
 	}
-
 }
 
 void CSearchDialog::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
@@ -1073,4 +1073,15 @@ void CSearchDialog::OnDelete(wxCommandEvent& event)
 		std::list<CFilter> filters; // Empty, recurse into everything
 		m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(CRecursiveOperation::recursive_delete, path, filters, !path.HasParent(), m_original_dir);
 	}
+}
+
+void CSearchDialog::OnCharHook(wxKeyEvent& event)
+{
+	if (IsEscapeKey(event))
+	{
+		EndDialog(wxID_CANCEL);
+		return;
+	}
+
+	event.Skip();
 }
