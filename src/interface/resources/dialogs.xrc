@@ -4448,45 +4448,22 @@
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
           <object class="sizeritem">
-            <object class="wxBoxSizer">
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>Search &amp;directory:</label>
-                </object>
-                <flag>wxALIGN_CENTRE_VERTICAL|wxRIGHT</flag>
-                <border>5</border>
-              </object>
-              <object class="sizeritem">
-                <object class="wxTextCtrl" name="ID_PATH"/>
-                <option>1</option>
-                <flag>wxALIGN_CENTRE_VERTICAL|wxGROW</flag>
-              </object>
-              <orient>wxHORIZONTAL</orient>
+            <object class="wxStaticText">
+              <label>Search &amp;directory:</label>
             </object>
-            <flag>wxGROW</flag>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTextCtrl" name="ID_PATH"/>
+            <flag>wxGROW|wxALIGN_CENTRE_VERTICAL</flag>
           </object>
           <object class="sizeritem">
             <object class="wxButton" name="ID_START">
               <label>&amp;Search</label>
               <default>1</default>
             </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
-          <object class="spacer"/>
-          <object class="sizeritem">
-            <object class="wxButton" name="ID_STOP">
-              <label>S&amp;top</label>
-            </object>
-          </object>
-          <cols>2</cols>
-          <vgap>5</vgap>
-          <hgap>5</hgap>
-          <growablecols>0</growablecols>
-        </object>
-        <flag>wxALL|wxGROW</flag>
-        <border>5</border>
-      </object>
-      <object class="sizeritem">
-        <object class="wxFlexGridSizer">
           <object class="sizeritem">
             <object class="wxStaticText">
               <label>Search &amp;conditions:</label>
@@ -4504,13 +4481,21 @@
             </object>
             <flag>wxALIGN_CENTRE_VERTICAL</flag>
           </object>
-          <cols>2</cols>
-          <rows>1</rows>
+          <object class="sizeritem">
+            <object class="wxButton" name="ID_STOP">
+              <label>S&amp;top</label>
+            </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <cols>3</cols>
+          <vgap>5</vgap>
           <hgap>5</hgap>
+          <growablecols>1</growablecols>
         </object>
-        <flag>wxLEFT|wxRIGHT|wxTOP</flag>
+        <flag>wxALL|wxGROW</flag>
         <border>5</border>
       </object>
+      
       <object class="sizeritem">
         <object class="wxFlexGridSizer">
           <object class="sizeritem">
