@@ -3,7 +3,9 @@
 
 bool VerifySetDate(wxDateTime& date, int year, wxDateTime::Month month, int day, int hour = 0, int minute = 0, int second = 0);
 
+// Also verifies that it is a correct IPv6 address
 wxString GetIPV6LongForm(wxString short_address);
+
 bool IsRoutableAddress(const wxString& address, int family);
 
 bool IsIpAddress(const wxString& address);

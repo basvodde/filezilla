@@ -1,8 +1,15 @@
+#include <wx/defs.h>
+#ifdef __WXMSW__
+// For AF_INET6
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#endif
 #include "FileZilla.h"
 #include "externalipresolver.h"
 #include "wx/regex.h"
 #include "socket.h"
 #include <errno.h>
+#include "misc.h"
 
 const wxEventType fzEVT_EXTERNALIPRESOLVE = wxNewEventType();
 
@@ -43,7 +50,7 @@ CExternalIPResolver::~CExternalIPResolver()
 	m_pSocket = 0;
 }
 
-void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, bool force /*=false*/)
+void CExternalIPResolver::GetExternalIP(const wxString& address, int protocol, bool force /*=false*/)
 {
 	if (m_checked)
 	{
@@ -57,6 +64,7 @@ void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, boo
 	}
 
 	m_address = address;
+	m_protocol = protocol;
 
 	wxString host;
 	int pos;
@@ -88,7 +96,7 @@ void CExternalIPResolver::GetExternalIP(const wxString& address /*=_T("")*/, boo
 
 	m_pSocket = new CSocket(this);
 
-	int res = m_pSocket->Connect(host, m_port);
+	int res = m_pSocket->Connect(host, m_port, protocol);
 	if (res && res != EINPROGRESS)
 	{
 		Close(false);
@@ -338,7 +346,7 @@ void CExternalIPResolver::OnHeader()
 
 					ResetHttpData(false);
 
-					GetExternalIP(location);
+					GetExternalIP(location, m_protocol);
 					return;
 				}
 
@@ -387,6 +395,11 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 		{
 			if (buffer[i] == '\r' || buffer[i] == '\n')
 				break;
+			if (buffer[i] > 127)
+			{
+				Close(false);
+				return;
+			}
 		}
 
 		if (i)
@@ -396,20 +409,46 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 			return;
 	}
 
-	// Validate ip address
-	wxString digit = _T("0*[0-9]{1,3}");
-	const wxChar* dot = _T("\\.");
-	wxString exp = _T("(^|[^\\.[:digit:]])(") + digit + dot + digit + dot + digit + dot + digit + _T(")([^\\.[:digit:]]|$)");
-	wxRegEx regex;
-	regex.Compile(exp);
-
-	if (!regex.Matches(m_data))
+	if (m_protocol == AF_INET6)
 	{
-		Close(false);
-		return;
+		if (m_data[0] == '[')
+		{
+			if (m_data.Last() != ']')
+			{
+				Close(false);
+				return;
+			}
+			m_data.RemoveLast();
+			m_data = m_data.Mid(1);
+		}
+
+		if (GetIPV6LongForm(m_data).IsEmpty())
+		{
+			Close(false);
+			return;
+		}
+
+		m_ip = m_data;
+	}
+	else
+	{
+
+		// Validate ip address
+		wxString digit = _T("0*[0-9]{1,3}");
+		const wxChar* dot = _T("\\.");
+		wxString exp = _T("(^|[^\\.[:digit:]])(") + digit + dot + digit + dot + digit + dot + digit + _T(")([^\\.[:digit:]]|$)");
+		wxRegEx regex;
+		regex.Compile(exp);
+
+		if (!regex.Matches(m_data))
+		{
+			Close(false);
+			return;
+		}
+
+		m_ip = regex.GetMatch(m_data, 2);
 	}
 
-	m_ip = regex.GetMatch(m_data, 2);
 	Close(true);
 }
 

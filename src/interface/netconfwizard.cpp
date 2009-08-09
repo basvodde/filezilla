@@ -707,7 +707,7 @@ wxString CNetConfWizard::GetExternalIPAddress()
 			PrintMessage(wxString::Format(_("Retrieving external IP address from %s"), address.c_str()), 0);
 
 			m_pIPResolver = new CExternalIPResolver(this);
-			m_pIPResolver->GetExternalIP(address, true);
+			m_pIPResolver->GetExternalIP(address, AF_INET, true);
 			if (!m_pIPResolver->Done())
 				return _T("");
 		}

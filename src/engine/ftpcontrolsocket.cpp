@@ -3865,7 +3865,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 				LogMessage(::Debug_Info, _("Retrieving external IP address from %s"), resolverAddress.c_str());
 
 				m_pIPResolver = new CExternalIPResolver(this);
-				m_pIPResolver->GetExternalIP(resolverAddress);
+				m_pIPResolver->GetExternalIP(resolverAddress, AF_INET);
 				if (!m_pIPResolver->Done())
 				{
 					LogMessage(::Debug_Verbose, _T("Waiting for resolver thread"));
