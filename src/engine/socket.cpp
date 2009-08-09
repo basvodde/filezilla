@@ -604,7 +604,7 @@ protected:
 
 		struct addrinfo *addressList = 0;
 		struct addrinfo hints = {0};
-		hints.ai_family = AF_UNSPEC;
+		hints.ai_family = m_pSocket->m_family;
 		hints.ai_socktype = SOCK_STREAM;
 
 #ifdef __WXMSW__
@@ -1069,6 +1069,7 @@ CSocket::CSocket(CSocketEventHandler* pEvtHandler)
 	m_flags = 0;
 
 	m_port = 0;
+	m_family = AF_UNSPEC;
 
 	m_buffer_sizes[0] = -1;
 	m_buffer_sizes[1] = -1;
@@ -1116,12 +1117,15 @@ void CSocket::DetachThread()
 	Cleanup(false);
 }
 
-int CSocket::Connect(wxString host, unsigned int port)
+int CSocket::Connect(wxString host, unsigned int port, int family /*=AF_UNSPEC*/)
 {
 	if (m_state != none)
 		return EISCONN;
 
 	if (port < 1 || port > 65535)
+		return EINVAL;
+
+	if (family != AF_UNSPEC && family != AF_INET && family != AF_INET6)
 		return EINVAL;
 
 	if (m_pSocketThread && m_pSocketThread->m_started)
@@ -1155,6 +1159,7 @@ int CSocket::Connect(wxString host, unsigned int port)
 
 	m_state = connecting;
 
+	m_family = family;
 	m_host = host;
 	m_port = port;
 	int res = m_pSocketThread->Connect();

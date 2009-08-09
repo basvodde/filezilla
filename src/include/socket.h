@@ -118,7 +118,7 @@ public:
 	// If host is a name that can be resolved, a hostaddress socket event gets sent.
 	// Once connections got established, a connection event gets sent. If
 	// connection could not be established, a close event gets sent.
-	int Connect(wxString host, unsigned int port);
+	int Connect(wxString host, unsigned int port, int family = AF_UNSPEC);
 
 	// After receiving a send or receive event, you can call these functions
 	// as long as their return value is positive.
@@ -140,9 +140,6 @@ public:
 	// AF_UNSPEC otherwise
 	int GetAddressFamily() const;
 
-	// Returns either AF_INET or AF_INET6 on success, AF_UNSPEC on error
-	int GetConnectionType() const;
-	
 	static wxString GetErrorString(int error);
 	static wxString GetErrorDescription(int error);
 
@@ -186,6 +183,7 @@ protected:
 
 	wxString m_host;
 	unsigned int m_port;
+	int m_family;
 
 	int m_flags;
 
