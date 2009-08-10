@@ -111,6 +111,13 @@ public:
 	};
 	enum SocketState GetState();
 
+	enum address_family
+	{
+		unspec, // AF_UNSPEC
+		ipv4,   // AF_INET
+		ipv6    // AF_INET6
+	};		
+		
 	// Connects to the given host, given as name, IPv4 or IPv6 address.
 	// Returns 0 on success, else an error code. Note: EINPROGRESS is
 	// not really an error. On success, you should still wait for the
@@ -118,7 +125,7 @@ public:
 	// If host is a name that can be resolved, a hostaddress socket event gets sent.
 	// Once connections got established, a connection event gets sent. If
 	// connection could not be established, a close event gets sent.
-	int Connect(wxString host, unsigned int port, int family = AF_UNSPEC);
+	int Connect(wxString host, unsigned int port, enum address_family family = unspec);
 
 	// After receiving a send or receive event, you can call these functions
 	// as long as their return value is positive.
@@ -136,9 +143,8 @@ public:
 	int GetLocalPort(int& error);
 	int GetRemotePort(int& error);
 
-	// If connected, either AF_INET or AF_INET6
-	// AF_UNSPEC otherwise
-	int GetAddressFamily() const;
+	// If connected, either ipv4 or ipv6, unspec otherwise
+	enum address_family GetAddressFamily() const;
 
 	static wxString GetErrorString(int error);
 	static wxString GetErrorDescription(int error);
@@ -151,7 +157,7 @@ public:
 
 	static wxString AddressToString(const struct sockaddr* addr, int addr_len, bool with_port = true);
 
-	int Listen(int family, int port = 0);
+	int Listen(enum address_family family, int port = 0);
 	CSocket* Accept(int& error);
 
 	enum Flags
