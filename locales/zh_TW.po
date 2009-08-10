@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-06 18:23+0200\n"
-"PO-Revision-Date: 2009-08-05 15:49+0800\n"
+"POT-Creation-Date: 2009-08-10 16:51+0200\n"
+"PO-Revision-Date: 2009-08-09 16:08+0800\n"
 "Last-Translator: Kene Lin <kenelin@gmail.com>\n"
 "Language-Team: milo <milo.tw@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -165,7 +165,7 @@ msgid ""
 "- Make sure %s is in a directory listed in your PATH environment variable.\n"
 "- Set the full path to %s in the FZ_FZSFTP environment variable."
 msgstr ""
-"無法找到 %s. 沒有這個 FileZilla 的元件 SFTP 將不會運作. \n"
+"無法找到 %s. 沒有這個 FileZilla 的元件, SFTP 就不會運作.\n"
 "\n"
 "可能的解法:\n"
 "- 確認 %s 在 PATH 環境變數內所列的目錄內.\n"
@@ -1521,22 +1521,22 @@ msgstr "自訂(&U)"
 msgid "C&ustom filetype associations:"
 msgstr "自訂檔案型態關聯(&U):"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1608
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1599
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1266
 msgid "Calculating timezone offset of server..."
 msgstr "計算伺服器的時區偏移量..."
 
-#: ../../locales/../src/engine/transfersocket.cpp:740
+#: ../../locales/../src/engine/transfersocket.cpp:731
 msgid "Can't read from file"
 msgstr "無法讀取檔案"
 
-#: ../../locales/../src/engine/transfersocket.cpp:719
-#: ../../locales/../src/engine/transfersocket.cpp:793
+#: ../../locales/../src/engine/transfersocket.cpp:710
+#: ../../locales/../src/engine/transfersocket.cpp:784
 msgid "Can't write data to file."
 msgstr "無法寫入檔案."
 
-#: ../../locales/../src/engine/transfersocket.cpp:717
-#: ../../locales/../src/engine/transfersocket.cpp:791
+#: ../../locales/../src/engine/transfersocket.cpp:708
+#: ../../locales/../src/engine/transfersocket.cpp:782
 #, c-format
 msgid "Can't write data to file: %s"
 msgstr "無法寫入檔案: %s"
@@ -1595,7 +1595,7 @@ msgstr "無法編輯檔案, 未連線到任何伺服器."
 msgid "Cannot edit file, remote path unknown."
 msgstr "無法編輯檔案, 未知的遠端路徑."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:331
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:322
 msgid ""
 "Cannot establish FTP connection to an SFTP server. Please select proper "
 "protocol."
@@ -1945,7 +1945,7 @@ msgstr "連線略過 Proxy 設定"
 msgid "Connect to specified Site Manager site"
 msgstr "連線到指定的站台管理員站台"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:919
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:910
 msgid "Connected"
 msgstr "已連線"
 
@@ -2005,11 +2005,11 @@ msgid "Connection closed"
 msgstr "關閉連線"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1077
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:233
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:224
 msgid "Connection closed by server"
 msgstr "由伺服器關閉連線"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:382
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:373
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:298
 msgid "Connection established, initializing TLS..."
 msgstr "連線已建立, 初始 TLS 加密..."
@@ -2018,7 +2018,7 @@ msgstr "連線已建立, 初始 TLS 加密..."
 msgid "Connection established, sending HTTP request"
 msgstr "連線已建立, 正在傳送 HTTP 請求..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:411
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:402
 msgid "Connection established, waiting for welcome message..."
 msgstr "連線已建立, 正等候歡迎訊息..."
 
@@ -2082,7 +2082,7 @@ msgstr "複製 - %s"
 msgid "Copy the URLs of the selected items to clipboard."
 msgstr "複製所選項目的網址到剪貼簿"
 
-#: ../../locales/../src/engine/transfersocket.cpp:216
+#: ../../locales/../src/engine/transfersocket.cpp:207
 #, c-format
 msgid "Could not accept connection: %s"
 msgstr "無法允許連線: %s"
@@ -2129,7 +2129,7 @@ msgstr ""
 "無法確認拖曳動作的目標.\n"
 "不是 Shell Extension 沒有正確安裝好就是您沒有拖曳檔案到 Explorer 視窗."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4206
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4197
 msgid "Could not establish connection to server"
 msgstr "無法建立與伺服器的連線"
 
@@ -2144,7 +2144,7 @@ msgstr ""
 "您可以使用指令選項 '--datadir <custompath>' 或是設定 FZ_DATADIR 環境變數來指"
 "定 FileZilla 的資料目錄."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:692
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:683
 msgid "Could not generate custom login sequence."
 msgstr "無法產生自訂的登入程序."
 
@@ -2178,7 +2178,6 @@ msgid "Could not import peer certificates, gnutls_x509_crt_import failed"
 msgstr "無法匯入同儕憑證, gnutls_x509_crt_import 失敗"
 
 #: ../../locales/../src/engine/tlssocket.cpp:895
-#, fuzzy
 msgid ""
 "Could not initialize structure for peer certificates, gnutls_x509_crt_init "
 "failed"
@@ -2254,7 +2253,7 @@ msgstr "無法解析遠端路徑."
 msgid "Could not parse server address:"
 msgstr "無法解析伺服器位址:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:223
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:214
 #, c-format
 msgid "Could not read from socket: %s"
 msgstr "無法從 Socket 讀取: %s"
@@ -2263,12 +2262,12 @@ msgstr "無法從 Socket 讀取: %s"
 msgid "Could not read server item."
 msgstr "無法讀取伺服器項目."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2679
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2670
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "無法在檔案中尋找到偏移量 %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2603
 msgid "Could not seek to the end of the file"
 msgstr "無法找尋到檔案結尾"
 
@@ -2276,7 +2275,7 @@ msgstr "無法找尋到檔案結尾"
 msgid "Could not send command to fzputtygen."
 msgstr "無法傳送指令給 fzputtygen."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2699
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2690
 msgid "Could not spawn IO thread"
 msgstr "無法產生 I/O 執行緒"
 
@@ -2374,7 +2373,7 @@ msgstr "新增目錄"
 msgid "Creating directory"
 msgstr "新增目錄中"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3255
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3246
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Creating directory '%s'..."
@@ -2641,7 +2640,7 @@ msgstr "從伺服器離線"
 #: ../../locales/../src/engine/ControlSocket.cpp:75
 #: ../../locales/../src/engine/ControlSocket.cpp:945
 #: ../../locales/../src/engine/ControlSocket.cpp:1044
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:225
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:216
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:932
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:934
 #: ../../locales/../src/interface/QueueView.cpp:1011
@@ -3131,8 +3130,8 @@ msgstr "無法建立 XML 檔案副本"
 msgid "Failed to create listen socket, aborting"
 msgstr "無法建立 Listen Socket, 正在中止."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4182
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4186
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4173
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4177
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "無法以主動傳輸模式建立 socket"
 
@@ -3150,7 +3149,7 @@ msgstr "無法取得桌面路徑"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:950
 msgid "Failed to get peer address of control connection, connection closed."
-msgstr "無法取得 peer address 的控制用連線, 連線關閉."
+msgstr "無法取得 peer address 的控制連線, 連線關閉."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:958
 msgid "Failed to get peer address of data connection, connection closed."
@@ -3160,8 +3159,8 @@ msgstr "無法取得 peer address 的資料連線, 連線關閉."
 msgid "Failed to initialize FTP engine"
 msgstr "無法初始 FTP 引擎"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:391
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:761
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:382
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:752
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:306
 msgid "Failed to initialize TLS."
 msgstr "無法初始 TLS 加密."
@@ -3175,17 +3174,17 @@ msgstr "無法載入面板選單, 是資源檔無效?"
 msgid "Failed to load private key: %s"
 msgstr "無法載入私鑰: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2601
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2592
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
 msgstr "無法接續/寫入 \"%s\""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2663
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2654
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "無法讀取 \"%s\""
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2642
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2633
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:386
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:443
 #, c-format
@@ -3208,11 +3207,11 @@ msgstr "無法取得目錄列表"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "無法取得外部 IP Address. 正在中止."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3880
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3871
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "無法取得外部 IP Address, 使用本地 IP Address"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3902
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3893
 msgid "Failed to retrieve local ip address."
 msgstr "無法取得本地 IP Address."
 
@@ -3395,7 +3394,7 @@ msgstr "檔案名稱"
 msgid "Filename &filters..."
 msgstr "檔名篩選器(&F)..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3053
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3044
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2309
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
@@ -3852,7 +3851,7 @@ msgstr ""
 msgid "Incorrect password"
 msgstr "密碼不正確"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:751
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:742
 msgid "Initializing TLS..."
 msgstr "初始 TLS 加密中..."
 
@@ -4109,7 +4108,7 @@ msgstr "更新檢查日誌:"
 msgid "Logging"
 msgstr "記錄"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:804
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:795
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Cannot fall back to local charset since using proxy."
@@ -4117,13 +4116,13 @@ msgstr ""
 "登入資料包含非 ASCII 字元且伺服器可能不認得 UTF-8. 因為使用 Proxy, 所以無法回"
 "復成本地字集."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:811
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:802
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Trying local charset."
 msgstr "登入資料包含非 ASCII 字元且伺服器可能不認得 UTF-8. 嘗試使用本地字集."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:840
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:831
 msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr "登入程序已完全執行, 但仍未登入. 正在中止."
 
@@ -4187,15 +4186,15 @@ msgstr "格式有誤的回應, 伺服器未傳送正確的換行格式"
 msgid "Manual transfer"
 msgstr "手動傳輸"
 
-#: resources.h:451
+#: resources.h:450
 msgid "Match all of the following"
 msgstr "比對以下所有項目"
 
-#: resources.h:452
+#: resources.h:451
 msgid "Match any of the following"
 msgstr "符合以下任何項目"
 
-#: resources.h:453
+#: resources.h:452
 msgid "Match none of the following"
 msgstr "不符合以下任何項目"
 
@@ -4343,7 +4342,7 @@ msgstr "沒有選定要匯出的分類目錄"
 msgid "No command given, aborting."
 msgstr "沒有給定指令, 正在中止."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3847
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3838
 msgid "No external IP address set, trying default."
 msgstr "沒有外部 IP Address, 嘗試使用預設值."
 
@@ -4383,7 +4382,7 @@ msgstr "沒有程式關聯到檔案型態"
 msgid "No program has been associated to edit files with the extension '%s'."
 msgstr "沒有程式關聯到編輯副檔名為 '%s' 的檔案."
 
-#: ../../locales/../src/interface/search.cpp:562
+#: ../../locales/../src/interface/search.cpp:563
 msgid "No search results"
 msgstr "沒有搜尋結果"
 
@@ -4621,7 +4620,7 @@ msgstr "需要密碼"
 msgid "Path"
 msgstr "檔案路徑"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3140
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3131
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2354
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
@@ -5007,8 +5006,8 @@ msgstr "Proxy 使用者 (&U):"
 msgid "Proxy authentication failed"
 msgstr "Proxy 認證失敗"
 
-#: ../../locales/../src/engine/transfersocket.cpp:141
-#: ../../locales/../src/engine/transfersocket.cpp:155
+#: ../../locales/../src/engine/transfersocket.cpp:132
+#: ../../locales/../src/engine/transfersocket.cpp:146
 #, c-format
 msgid "Proxy handshake failed: %s"
 msgstr "Proxy 交握失敗: %s"
@@ -5027,7 +5026,7 @@ msgstr "Proxy 請求失敗: %s"
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "Proxy 請求失敗: CONNECT 的回應裡有未知的位址型態"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4331
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4322
 msgid "Proxy set but proxy host or port invalid"
 msgstr "已設定 Proxy, 但 Proxy 主機或是連接埠的設定無效"
 
@@ -5272,7 +5271,7 @@ msgstr "更改所選的目錄名稱"
 msgid "Rename selected files and directories"
 msgstr "更改所選的檔案和目錄名稱"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3486
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3477
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2556
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -5314,12 +5313,12 @@ msgid ""
 "ending format than the client."
 msgstr "如果伺服器使用和客戶端不同的換行格式時, 續傳文字檔案可能會造成問題."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1277
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1268
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:951
 msgid "Retrieving directory listing..."
 msgstr "正在取得目錄列表..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3865
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3856
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -5341,7 +5340,7 @@ msgstr "系統關機(&H)"
 msgid "S&kip"
 msgstr "略過(&K)"
 
-#: resources.h:449
+#: resources.h:453
 msgid "S&top"
 msgstr "停止(&T)"
 
@@ -5365,7 +5364,7 @@ msgstr "正在掃描欲加入佇列的檔案"
 msgid "Scanning for files to upload"
 msgstr "正在掃描欲上傳的檔案"
 
-#: resources.h:450
+#: resources.h:449
 msgid "Search &conditions:"
 msgstr "搜尋條件(&C):"
 
@@ -5573,7 +5572,7 @@ msgstr "送出 FTP 維持連線指令(&K)"
 msgid "Send custom command to the server otherwise not available"
 msgstr "送出自訂的命令到伺服器否則就不可用"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4413
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4404
 msgid "Sending keep-alive command"
 msgstr "送出維持連線指令"
 
@@ -5585,34 +5584,34 @@ msgstr "憑證序號:"
 msgid "Server did not properly shut down TLS connection"
 msgstr "伺服器未正確結束 TLS 連線"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4264
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4255
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "伺服器不支援大於 %d GB 的檔案續傳."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4260
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4251
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
 "sizes match."
 msgstr "伺服器不支援大於 %d GB 的檔案續傳. 自從檔案大小吻合後即停止傳輸."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2530
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2521
 msgid "Server does not support resume of files > 2GB."
 msgstr "伺服器不支援大於 2GB 的檔案續傳."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2525
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2516
 msgid "Server does not support resume of files > 4GB."
 msgstr "伺服器不支援大於 4GB 的檔案續傳."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4275
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4266
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
 "sizes match."
 msgstr "伺服器可能不支援大於 %d GB 的檔案續傳. 自從檔案大小吻合後即停止傳輸."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:842
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:833
 msgid ""
 "Server might require an account. Try specifying an account using the Site "
 "Manager"
@@ -5624,11 +5623,11 @@ msgid ""
 "login type."
 msgstr "伺服器傳送了額外的登入提示. 您需要使用交談式登入型態."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3813
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3804
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr "伺服器以無法路由的 IP Address 送出了被動式回應. 被動模式失敗."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3807
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3798
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5675,13 +5674,13 @@ msgstr "連線細節"
 msgid "Set &Priority"
 msgstr "設定優先權(&P)"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3638
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3629
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2434
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "修改 '%s' 權限為 '%s'"
 
-#: ../../locales/../src/engine/transfersocket.cpp:867
+#: ../../locales/../src/engine/transfersocket.cpp:858
 msgid "SetSocketBufferSize called without socket"
 msgstr "呼叫 SetSocketBufferSize 時未有 socket"
 
@@ -5839,13 +5838,13 @@ msgstr "立即啟動傳輸"
 msgid "Start with opened Site Manager"
 msgstr "啟動時開啟站台管理員"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2210
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2201
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1629
 #, c-format
 msgid "Starting download of %s"
 msgstr "開始 %s 的下載"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2214
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2205
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
 #, c-format
 msgid "Starting upload of %s"
@@ -5934,11 +5933,11 @@ msgstr "系統"
 msgid "TLS/SSL connection established, sending HTTP request"
 msgstr "TLS/SSL 連線已建立, 正在傳送 HTTP 請求..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:403
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:394
 msgid "TLS/SSL connection established, waiting for welcome message..."
 msgstr "TLS/SSL 連線已建立, 正等候歡迎訊息..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:407
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:398
 msgid "TLS/SSL connection established."
 msgstr "TLS/SSL 連線已建立."
 
@@ -5962,7 +5961,7 @@ msgstr "目標檔名已經存在, 確定要繼續?"
 msgid "Test results"
 msgstr "測試結果"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4281
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4272
 msgid "Testing resume capabilities of server"
 msgstr "測試伺服器的續傳相容性"
 
@@ -6336,7 +6335,7 @@ msgstr "多少秒內逾時:"
 msgid "Timeout"
 msgstr "逾時時間"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1669
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1660
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1075
 #, c-format
 msgid ""
@@ -6441,8 +6440,8 @@ msgstr "傳輸模式"
 msgid "Transfer aborted by user"
 msgstr "傳輸被使用者中止"
 
-#: ../../locales/../src/engine/transfersocket.cpp:502
-#: ../../locales/../src/engine/transfersocket.cpp:526
+#: ../../locales/../src/engine/transfersocket.cpp:493
+#: ../../locales/../src/engine/transfersocket.cpp:517
 #, c-format
 msgid "Transfer connection interrupted: %s"
 msgstr "傳輸連線中斷: %s"
@@ -6538,7 +6537,7 @@ msgstr "單位:"
 msgid "Unknown"
 msgstr "未知"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:698
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:689
 msgid "Unknown FTP proxy type, cannot generate login sequence."
 msgstr "未知的 FTP Proxy 型態, 無法產生登入程序."
 
@@ -6727,7 +6726,7 @@ msgstr "使用者:"
 msgid "Username cannot be a series of spaces"
 msgstr "使用者名稱不能是一串空白"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4336
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4327
 #, c-format
 msgid "Using proxy %s"
 msgstr "使用 Proxy %s"
@@ -6761,7 +6760,7 @@ msgstr "驗證憑證中..."
 msgid "Very high"
 msgstr "非常高"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1405
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1396
 msgid "View hidden option set, but unsupported by server"
 msgstr "已經設定了顯示隱藏的選項, 但是伺服器端並未支援"
 

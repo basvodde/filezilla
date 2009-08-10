@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Filezilla 3 Turkish PO\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-06 18:23+0200\n"
-"PO-Revision-Date: 2009-08-04 15:06+0200\n"
+"POT-Creation-Date: 2009-08-10 16:51+0200\n"
+"PO-Revision-Date: 2009-08-09 02:24+0200\n"
 "Last-Translator: Kaya Zeren <kaya.zeren@zeron.net>\n"
 "Language-Team: Zeron <kaya.zeren@zeron.net>\n"
 "MIME-Version: 1.0\n"
@@ -1016,15 +1016,15 @@ msgstr "-"
 
 #: resources.h:242
 msgid "- Broken router and/or firewall"
-msgstr ""
+msgstr "- Bozuk yöneltici ve/veya güvenlik duvarı"
 
 #: resources.h:243
 msgid "- File corrupted on mirror"
-msgstr ""
+msgstr "- Yansı üzerindeki dosya bozuk"
 
 #: resources.h:241
 msgid "- Malware on your system"
-msgstr ""
+msgstr "- Sisteminizde zararlı yazılım var"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:182
 #: ../../locales/../src/interface/statuslinectrl.cpp:187
@@ -1257,7 +1257,7 @@ msgid ""
 "address."
 msgstr ""
 "Aktif mod FTP sınaması başarısız. FileZilla doğru dış IP adresini biliyor, "
-"ama yönelticiniz giden adresi değiştirdi."
+"ama yönelticiniz veya güvenlik duvarınız giden adresi değiştirdi."
 
 #: resources.h:723
 msgid "Active mode IP"
@@ -1472,7 +1472,7 @@ msgstr "Düzenlendi"
 
 #: ../../locales/../src/engine/tlssocket.cpp:844
 msgid "Beware! Certificate has been revoked"
-msgstr ""
+msgstr "Dikkat! Sertifika geçersiz kılınmış"
 
 #: resources.h:406
 msgid "Binary"
@@ -1546,22 +1546,22 @@ msgstr "İsteğe &Bağlı"
 msgid "C&ustom filetype associations:"
 msgstr "Ö&zel dosya türü ilişkileri:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1608
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1599
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1266
 msgid "Calculating timezone offset of server..."
 msgstr "Sunucunun zaman dilimi kayması hesaplanıyor..."
 
-#: ../../locales/../src/engine/transfersocket.cpp:740
+#: ../../locales/../src/engine/transfersocket.cpp:731
 msgid "Can't read from file"
 msgstr "Dosya okunamıyor"
 
-#: ../../locales/../src/engine/transfersocket.cpp:719
-#: ../../locales/../src/engine/transfersocket.cpp:793
+#: ../../locales/../src/engine/transfersocket.cpp:710
+#: ../../locales/../src/engine/transfersocket.cpp:784
 msgid "Can't write data to file."
 msgstr "Veri dosyaya yazılamıyor."
 
-#: ../../locales/../src/engine/transfersocket.cpp:717
-#: ../../locales/../src/engine/transfersocket.cpp:791
+#: ../../locales/../src/engine/transfersocket.cpp:708
+#: ../../locales/../src/engine/transfersocket.cpp:782
 #, c-format
 msgid "Can't write data to file: %s"
 msgstr "Veri %s dosyasına yazılamıyor "
@@ -1622,7 +1622,7 @@ msgstr "Dosya düzenlenemiyor, hiç bir sunucuya bağlı değilsiniz."
 msgid "Cannot edit file, remote path unknown."
 msgstr "Uzaktaki yol bilinmediğinden dosya düzenlenemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:331
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:322
 msgid ""
 "Cannot establish FTP connection to an SFTP server. Please select proper "
 "protocol."
@@ -1758,7 +1758,7 @@ msgstr "Güncellemeler denetleniyor"
 
 #: ../../locales/../src/interface/updatewizard.cpp:1176
 msgid "Checksum mismatch of downloaded file."
-msgstr ""
+msgstr "İndirilen dosyanın sağlaması tutmuyor."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1509
 msgid "Choose the default local directory"
@@ -1974,7 +1974,7 @@ msgstr "Proxy ayarlarını atlayarak bağlan"
 msgid "Connect to specified Site Manager site"
 msgstr "Site Yöneticisinde belirtilen siteye bağlan"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:919
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:910
 msgid "Connected"
 msgstr "Bağlandı"
 
@@ -2034,11 +2034,11 @@ msgid "Connection closed"
 msgstr "Bağlantı kapandı"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1077
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:233
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:224
 msgid "Connection closed by server"
 msgstr "Bağlantı sunucu tarafından kapatıldı"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:382
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:373
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:298
 msgid "Connection established, initializing TLS..."
 msgstr "Bağlandı, TLS yükleniyor..."
@@ -2047,7 +2047,7 @@ msgstr "Bağlandı, TLS yükleniyor..."
 msgid "Connection established, sending HTTP request"
 msgstr "Bağlandı, HTTP isteği gönderiliyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:411
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:402
 msgid "Connection established, waiting for welcome message..."
 msgstr "Bağlandı, hoşgeldin iletisi bekleniyor..."
 
@@ -2111,7 +2111,7 @@ msgstr "%s kopyası"
 msgid "Copy the URLs of the selected items to clipboard."
 msgstr "Seçili ögelerin web adreslerini panoya kopyala."
 
-#: ../../locales/../src/engine/transfersocket.cpp:216
+#: ../../locales/../src/engine/transfersocket.cpp:207
 #, c-format
 msgid "Could not accept connection: %s"
 msgstr "%s bağlantısı kabul edilemedi"
@@ -2159,7 +2159,7 @@ msgstr ""
 "Ya kabuk eklentileri yüklü değil ya da dosyaları bir Gezgin penceresine "
 "sürüklemediniz."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4206
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4197
 msgid "Could not establish connection to server"
 msgstr "Sunucu ile bağlantı kurulamadı"
 
@@ -2174,7 +2174,7 @@ msgstr ""
 "FileZilla'nın veri dizinini '--datadir <custompath>' komut satırı seçeneğini "
 "ya da FZ_DATADIR ortam değişkenini değiştirerek ayarlayabilirsiniz."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:692
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:683
 msgid "Could not generate custom login sequence."
 msgstr "Özel giriş yapma sıralaması üretilemedi."
 
@@ -2183,12 +2183,13 @@ msgid ""
 "Could not get distinguished name of certificate issuer, "
 "gnutls_x509_get_issuer_dn failed"
 msgstr ""
+"Sertifika yayıncısının adı alınamadı, gnutls_x509_get_issuer_dn başarısız"
 
 #: ../../locales/../src/engine/tlssocket.cpp:949
 msgid ""
 "Could not get distinguished name of certificate subject, gnutls_x509_get_dn "
 "failed"
-msgstr ""
+msgstr "Sertifika konusunun adı alınamadı, gnutls_x509_get_dn başarısız"
 
 #: ../../locales/../src/interface/state.cpp:901
 msgid "Could not get full remote path."
@@ -2205,13 +2206,15 @@ msgstr "Dosyanın kayıt edileceği geçici dizine erişilemedi."
 
 #: ../../locales/../src/engine/tlssocket.cpp:902
 msgid "Could not import peer certificates, gnutls_x509_crt_import failed"
-msgstr ""
+msgstr "Denklik sertifikaları alınamadı, gnutls_x509_crt_import başarısız"
 
 #: ../../locales/../src/engine/tlssocket.cpp:895
 msgid ""
 "Could not initialize structure for peer certificates, gnutls_x509_crt_init "
 "failed"
 msgstr ""
+"Denklik sertifikaları için yapı oluşturulamadı, gnutls_x509_crt_init "
+"başarısız"
 
 #: ../../locales/../src/interface/import.cpp:120
 #: ../../locales/../src/interface/import.cpp:311
@@ -2284,7 +2287,7 @@ msgstr "Uzaktaki yola gidilemedi."
 msgid "Could not parse server address:"
 msgstr "Sunucu adresi çözülemedi:"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:223
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:214
 #, c-format
 msgid "Could not read from socket: %s"
 msgstr "Soketten okuyamadı: %s"
@@ -2293,12 +2296,12 @@ msgstr "Soketten okuyamadı: %s"
 msgid "Could not read server item."
 msgstr "Sunucu nesnesi okunamıyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2679
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2670
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Dosya içinde %s satırına ulaşılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2603
 msgid "Could not seek to the end of the file"
 msgstr "Dosyanın sonuna erişilemiyor"
 
@@ -2306,7 +2309,7 @@ msgstr "Dosyanın sonuna erişilemiyor"
 msgid "Could not send command to fzputtygen."
 msgstr "fzputtygen e komut gönderilemedi."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2699
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2690
 msgid "Could not spawn IO thread"
 msgstr "IO işlemi başlatılamamakta:"
 
@@ -2409,7 +2412,7 @@ msgstr "Dizin oluştur"
 msgid "Creating directory"
 msgstr "Dizin oluşturuluyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3255
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3246
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Creating directory '%s'..."
@@ -2685,7 +2688,7 @@ msgstr "Sunucu ile bağlantıyı kes"
 #: ../../locales/../src/engine/ControlSocket.cpp:75
 #: ../../locales/../src/engine/ControlSocket.cpp:945
 #: ../../locales/../src/engine/ControlSocket.cpp:1044
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:225
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:216
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:932
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:934
 #: ../../locales/../src/interface/QueueView.cpp:1011
@@ -3065,9 +3068,8 @@ msgid "Error writing xml file"
 msgstr "XML dosyasının yazılmasında hata"
 
 #: ../../locales/../src/interface/updatewizard.cpp:332
-#, fuzzy
 msgid "Error, local file exists but cannot be removed"
-msgstr "Bu süzme seti silinemiyor."
+msgstr "Hata, yerel dosya var fakat silinemiyor"
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
@@ -3187,8 +3189,8 @@ msgstr "Xml dosyasının yedeği alınamadı"
 msgid "Failed to create listen socket, aborting"
 msgstr "Dinleme soketi oluşturulamadı, iptal ediliyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4182
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4186
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4173
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4177
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Aktif mod aktarımı için dinleme soketi oluşturulamadı"
 
@@ -3206,18 +3208,18 @@ msgstr "Masaüstü'nün veri yolu alınmadı"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:950
 msgid "Failed to get peer address of control connection, connection closed."
-msgstr "Denetim bağlantısı adres alamadı, bağlantı kapatıldı."
+msgstr "Denetim bağlantısının denklik adresi alınamadı, bağlantı kapatıldı."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:958
 msgid "Failed to get peer address of data connection, connection closed."
-msgstr "Veri bağlantısı adres alamadı, bağlantı kapandı."
+msgstr "Veri bağlantısının denklik adresi alınamadı, bağlantı kapandı."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:292
 msgid "Failed to initialize FTP engine"
 msgstr "FTP motoru başlatılamadı"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:391
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:761
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:382
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:752
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:306
 msgid "Failed to initialize TLS."
 msgstr "TLS başlatılamadı"
@@ -3231,17 +3233,17 @@ msgstr "Paneller yüklenemedi, hatalı kaynak dosyalar?"
 msgid "Failed to load private key: %s"
 msgstr "Kişisel anahtar yükleme başarısız: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2601
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2592
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
 msgstr "\"%s\" ekleme/yazma için açılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2663
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2654
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "\"%s\" okuma için açılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2642
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2633
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:386
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:443
 #, c-format
@@ -3250,7 +3252,7 @@ msgstr "\"%s\" yazma için açılamıyor"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:314
 msgid "Failed to parse trusted root cert."
-msgstr ""
+msgstr "Kök güvenlik sertifikası işlenemedi."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:1014
 msgid "Failed to receive data"
@@ -3264,11 +3266,11 @@ msgstr "Dizin listesi alınamadı"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Dış IP adresi alımı başarısız, iptal ediliyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3880
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3871
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "Dış IP adresi okunamadı, yerel IP deneniyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3902
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3893
 msgid "Failed to retrieve local ip address."
 msgstr "Yerel IP adresi okunamadı."
 
@@ -3326,9 +3328,8 @@ msgid "Failed to validate settings"
 msgstr "Ayarların geçerliliği sağlanamadı"
 
 #: ../../locales/../src/engine/tlssocket.cpp:837
-#, fuzzy
 msgid "Failed to verify peer certificate"
-msgstr "Veri alımı başarısız"
+msgstr "Denklik sertifikası doğrulanamadı"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:562
 #, c-format
@@ -3460,7 +3461,7 @@ msgstr "Dosya Adı"
 msgid "Filename &filters..."
 msgstr "&Dosya adı süzgeçleri..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3053
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3044
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2309
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
@@ -3646,9 +3647,8 @@ msgid "H&igh"
 msgstr "Y&üksek"
 
 #: ../../locales/../src/engine/server.cpp:16
-#, fuzzy
 msgid "HTTPS - HTTP over TLS"
-msgstr "FTPS - FTP üzerinden kapalı TLS/SSL"
+msgstr "HTTPS - HTTP üzerinden TLS"
 
 #: resources.h:356
 msgid "Hash:"
@@ -3956,12 +3956,14 @@ msgid ""
 "Incomplete chain, top certificate is not self-signed certificate authority "
 "certificate"
 msgstr ""
+"Kopuk zincir, üst sertifika kendiliğinden imzalanmış bir yetki sertifikası "
+"değil"
 
 #: ../../locales/../src/interface/QueueView.cpp:1007
 msgid "Incorrect password"
 msgstr "Yanlış parola"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:751
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:742
 msgid "Initializing TLS..."
 msgstr "TLS başlatılıyor..."
 
@@ -4214,16 +4216,15 @@ msgid "Log file"
 msgstr "Günlük dosyası"
 
 #: resources.h:245
-#, fuzzy
 msgid "Log of update check:"
-msgstr "Otomatik güncelleme denetimi"
+msgstr "Güncelleme denetimi günlüğü:"
 
 #: resources.h:887
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:140
 msgid "Logging"
 msgstr "Günlük"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:804
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:795
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Cannot fall back to local charset since using proxy."
@@ -4231,7 +4232,7 @@ msgstr ""
 "Giriş verisi ASCII olmayan karakterler içeriyor ve sunucu UTF-8 anlamıyor "
 "olabilir. Proxy kullanıldığı için yerel karakter setine başvurulamıyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:811
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:802
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Trying local charset."
@@ -4239,7 +4240,7 @@ msgstr ""
 "Giriş verisi ASCII olmayan karakterler içeriyor ve sunucu UTF-8 anlamıyor "
 "olabilir. Yerel karakter seti deneniyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:840
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:831
 msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
 "Oturum açma işlemleri eksiksiz yapıldı ama hala oturum açılamadı. "
@@ -4308,15 +4309,15 @@ msgstr "Uygunsuz yanıt, sunucu uygun satır sonu karakterleri göndermiyor"
 msgid "Manual transfer"
 msgstr "El ile aktarım"
 
-#: resources.h:451
+#: resources.h:450
 msgid "Match all of the following"
 msgstr "Şunların hepsini eşle"
 
-#: resources.h:452
+#: resources.h:451
 msgid "Match any of the following"
 msgstr "Şunların herhangi birine uyan"
 
-#: resources.h:453
+#: resources.h:452
 msgid "Match none of the following"
 msgstr "Şunların hiçbirine uymayan"
 
@@ -4464,7 +4465,7 @@ msgstr "Vermek içi seçili bir kategori yok"
 msgid "No command given, aborting."
 msgstr "Komut verilmedi, yarıda kesiliyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3847
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3838
 msgid "No external IP address set, trying default."
 msgstr "Dış IP adresi belirtilmemiş, varsayılan deneniyor."
 
@@ -4505,7 +4506,7 @@ msgid "No program has been associated to edit files with the extension '%s'."
 msgstr ""
 "'%s' uzantılı dosyaları düzenlemek için bir program ilişkilendirilmemiş."
 
-#: ../../locales/../src/interface/search.cpp:562
+#: ../../locales/../src/interface/search.cpp:563
 msgid "No search results"
 msgstr "Arama sonuç vermedi"
 
@@ -4751,7 +4752,7 @@ msgstr "Parola gerekli"
 msgid "Path"
 msgstr "Yol"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3140
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3131
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2354
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
@@ -5027,6 +5028,8 @@ msgid ""
 "Please retry downloading the update. Possible reasons if the problem "
 "persists (listed in order of decreasing probability):"
 msgstr ""
+"Güncellemeyi indirmek için tekrar deneyin. Sorun devam ediyorsa olası "
+"nedenleri şunlardır (azalan olasılığa göre sıralıdır):"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:570
 msgid ""
@@ -5165,8 +5168,8 @@ msgstr "Proxy &kullanıcısı:"
 msgid "Proxy authentication failed"
 msgstr "Proxy kimlik doğrulaması başarısız oldu"
 
-#: ../../locales/../src/engine/transfersocket.cpp:141
-#: ../../locales/../src/engine/transfersocket.cpp:155
+#: ../../locales/../src/engine/transfersocket.cpp:132
+#: ../../locales/../src/engine/transfersocket.cpp:146
 #, c-format
 msgid "Proxy handshake failed: %s"
 msgstr "Proxy anlaşması başarısız oldu: %s"
@@ -5185,7 +5188,7 @@ msgstr "Proxy isteği başarısız oldu: %s"
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "Proxy isteği başarısız: CONNECT yanıtında bilinmeyen adres tipi"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4331
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4322
 msgid "Proxy set but proxy host or port invalid"
 msgstr "Proxy ayarlandı ama proxy sunucusu veya port geçersiz"
 
@@ -5432,7 +5435,7 @@ msgstr "Seçilen dizini yeniden adlandır"
 msgid "Rename selected files and directories"
 msgstr "Seçilen dosya ve dizinleri yeniden adlandır"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3486
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3477
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2556
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -5476,21 +5479,20 @@ msgstr ""
 "Eğer sunucu istemciden farklı bir satır sonu karakteri kullanıyorsa ASCII "
 "dosyalarını devam ettirmek sorunlara yol açabilir."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1277
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1268
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:951
 msgid "Retrieving directory listing..."
 msgstr "Dizin listesi alınıyor..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3865
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3856
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
 msgstr "%s üzerinden dış IP adresi okunuyor"
 
 #: ../../locales/../src/engine/tlssocket.cpp:858
-#, fuzzy
 msgid "Root certificate is not trusted"
-msgstr "Uzaktaki sertifikaya güvenilmiyor."
+msgstr "Kök sertifikaya güvenilmiyor."
 
 #: resources.h:484
 msgid "S&how files currently being edited..."
@@ -5504,7 +5506,7 @@ msgstr "Sistemi kapat"
 msgid "S&kip"
 msgstr "Atla"
 
-#: resources.h:449
+#: resources.h:453
 msgid "S&top"
 msgstr "&Dur"
 
@@ -5528,7 +5530,7 @@ msgstr "Aktarım Kuyruğuna eklenecek dosyalar taranıyor"
 msgid "Scanning for files to upload"
 msgstr "Karşıya yüklenecek dosyalar taranıyor"
 
-#: resources.h:450
+#: resources.h:449
 msgid "Search &conditions:"
 msgstr "Arama &kısıtları:"
 
@@ -5742,7 +5744,7 @@ msgstr "FTP &canlı-kal komutları gönder"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Sunucuya özel komut gönderin yoksa bir şey yapılamıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4413
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4404
 msgid "Sending keep-alive command"
 msgstr "Canlı-kal komutu gönderiliyor"
 
@@ -5754,12 +5756,12 @@ msgstr "Seri No:"
 msgid "Server did not properly shut down TLS connection"
 msgstr "Sunucu TLS bağlantısını düzgün bir şekilde kapatmadı"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4264
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4255
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Sunucu %d GB'tan büyük dosyaların devam edebilmesini desteklemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4260
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4251
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
@@ -5768,15 +5770,15 @@ msgstr ""
 "Sunucu %d GB'tan büyük dosyaların devam edebilmesini desteklemiyor. Aktarımı "
 "dosya boyut eşleşmesi ile bitir."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2530
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2521
 msgid "Server does not support resume of files > 2GB."
 msgstr "Sunucu 2GB'tan büyük dosyaların devam edebilmesini desteklemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2525
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2516
 msgid "Server does not support resume of files > 4GB."
 msgstr "Sunucu 4GB'tan büyük dosyaların devam edebilmesini desteklemiyor."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4275
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4266
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -5785,7 +5787,7 @@ msgstr ""
 "Sunucu %d GB'tan büyük dosyaların devam edebilmesini desteklemiyor olabilir. "
 "Aktarımı dosya boyut eşleşmesi ile bitir."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:842
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:833
 msgid ""
 "Server might require an account. Try specifying an account using the Site "
 "Manager"
@@ -5800,13 +5802,13 @@ msgid ""
 msgstr ""
 "Sunucu ek giriş soruları soruyor. Etkileşimli giriş tipini kullanmalısınız."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3813
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3804
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "Sunucu yöneltilemeyen bir adresle pasif bir yanıt verdi. Pasif mod "
 "kullanılamadı."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3807
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3798
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5854,13 +5856,13 @@ msgstr "Oturum detayları"
 msgid "Set &Priority"
 msgstr "Öncelik &Belirle"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3638
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3629
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2434
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "'%s' izinlerini '%s' e ata"
 
-#: ../../locales/../src/engine/transfersocket.cpp:867
+#: ../../locales/../src/engine/transfersocket.cpp:858
 msgid "SetSocketBufferSize called without socket"
 msgstr "Soket olmadan SetSocketBufferSize çağrıldı"
 
@@ -6019,13 +6021,13 @@ msgstr "Aktarıma &hemen başla"
 msgid "Start with opened Site Manager"
 msgstr "Açılmış Site Yöneticisi ile başla"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2210
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2201
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1629
 #, c-format
 msgid "Starting download of %s"
 msgstr "%s indirilmesine başlanıyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2214
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2205
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
 #, c-format
 msgid "Starting upload of %s"
@@ -6113,15 +6115,14 @@ msgid "System"
 msgstr "Sistem"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:325
-#, fuzzy
 msgid "TLS/SSL connection established, sending HTTP request"
-msgstr "Bağlandı, HTTP isteği gönderiliyor"
+msgstr "TLS/SSL bağlantısı kuruldu, HTTP isteği gönderiliyor"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:403
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:394
 msgid "TLS/SSL connection established, waiting for welcome message..."
 msgstr "TSL/SSL bağlantısı sağlandı, hoşgeldin iletisi bekleniyor..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:407
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:398
 msgid "TLS/SSL connection established."
 msgstr "TLS/SSL bağlantısı sağlandı."
 
@@ -6145,7 +6146,7 @@ msgstr "Hedef dosya adı zaten var, devam edilsin mi?"
 msgid "Test results"
 msgstr "Sınama sonuçları"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4281
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4272
 msgid "Testing resume capabilities of server"
 msgstr "Sunucunun devam edebilme yeteneği sınanıyor."
 
@@ -6545,7 +6546,7 @@ msgstr "Zaman aşımı (sn):"
 msgid "Timeout"
 msgstr "Zaman aşımı"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1669
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1660
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1075
 #, c-format
 msgid ""
@@ -6657,8 +6658,8 @@ msgstr "Aktarım modu"
 msgid "Transfer aborted by user"
 msgstr "Kullanıcı aktarımı durdurdu"
 
-#: ../../locales/../src/engine/transfersocket.cpp:502
-#: ../../locales/../src/engine/transfersocket.cpp:526
+#: ../../locales/../src/engine/transfersocket.cpp:493
+#: ../../locales/../src/engine/transfersocket.cpp:517
 #, c-format
 msgid "Transfer connection interrupted: %s"
 msgstr "Aktarım bağlantısı kesildi: %s"
@@ -6754,7 +6755,7 @@ msgstr "Birim:"
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:698
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:689
 msgid "Unknown FTP proxy type, cannot generate login sequence."
 msgstr "Bilinmeyen FTP proxy tipi yüzünden giriş işlemi sıralaması yapılamadı."
 
@@ -6809,9 +6810,8 @@ msgstr ""
 "Bu sorun çözülmeden aktif mod çalışmaz, sadece pasif mod kullanılabilir."
 
 #: ../../locales/../src/engine/tlssocket.cpp:829
-#, fuzzy
 msgid "Unsupported certificate type"
-msgstr "Desteklenmeyen yönlendirme"
+msgstr "Desteklenmeyen sertifika tipi"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:646
 msgid "Unsupported redirect"
@@ -6955,7 +6955,7 @@ msgstr "Kullanıcı:"
 msgid "Username cannot be a series of spaces"
 msgstr "Kullanıcı adı bir dizi boşluk olamaz"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4336
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4327
 #, c-format
 msgid "Using proxy %s"
 msgstr "Proxy %s kullanılıyor"
@@ -6992,7 +6992,7 @@ msgstr "Sertifika onaylanıyor..."
 msgid "Very high"
 msgstr "Çok yüksek"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1405
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1396
 msgid "View hidden option set, but unsupported by server"
 msgstr "Gizli dosyaları göster seçili, ama sunucu desteklemiyor"
 
@@ -7304,7 +7304,7 @@ msgstr "fzsftp başlatılamıyor"
 
 #: ../../locales/../src/engine/tlssocket.cpp:867
 msgid "gnutls_certificate_get_peers returned no certificates"
-msgstr ""
+msgstr "gnutls_certificate_get_peers hiç bir sertifika bulamadı"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:72
 msgid "greater than"
