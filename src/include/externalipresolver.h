@@ -30,14 +30,14 @@ public:
 	bool Successful() const { return m_ip != _T(""); }
 	wxString GetIP() const { return m_ip; }
 
-	void GetExternalIP(const wxString& address, int protocol, bool force = false);
+	void GetExternalIP(const wxString& address, enum CSocket::address_family protocol, bool force = false);
 
 protected:
 
 	void Close(bool successful);
 
 	wxString m_address;
-	int m_protocol;
+	enum CSocket::address_family m_protocol;
 	unsigned long m_port;
 	wxEvtHandler* m_handler;
 	int m_id;

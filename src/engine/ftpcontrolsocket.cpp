@@ -1,9 +1,3 @@
-#include <wx/defs.h>
-#ifdef __WXMSW__
-// For AF_INET6
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#endif
 #include "FileZilla.h"
 #include "ftpcontrolsocket.h"
 #include "transfersocket.h"
@@ -19,9 +13,6 @@
 #include <wx/tokenzr.h>
 #include "local_filesys.h"
 #include <errno.h>
-#ifndef __WXMSW__
-#include <sys/socket.h>
-#endif
 #include "proxy.h"
 
 #define LOGON_WELCOME	0
@@ -3823,7 +3814,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 {
 	// Local IP should work. Only a complete moron would use IPv6
 	// and NAT at the same time.
-	if (m_pSocket->GetAddressFamily() != AF_INET6)
+	if (m_pSocket->GetAddressFamily() != CSocket::ipv6)
 	{
 		int mode = m_pEngine->GetOptions()->GetOptionVal(OPTION_EXTERNALIPMODE);
 
@@ -3865,7 +3856,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 				LogMessage(::Debug_Info, _("Retrieving external IP address from %s"), resolverAddress.c_str());
 
 				m_pIPResolver = new CExternalIPResolver(this);
-				m_pIPResolver->GetExternalIP(resolverAddress, AF_INET);
+				m_pIPResolver->GetExternalIP(resolverAddress, CSocket::ipv4);
 				if (!m_pIPResolver->Done())
 				{
 					LogMessage(::Debug_Verbose, _T("Waiting for resolver thread"));
@@ -4019,7 +4010,7 @@ int CFtpControlSocket::TransferParseResponse()
 		if (pData->bPasv)
 		{
 			bool parsed;
-			if (m_pSocket->GetAddressFamily() == AF_INET6)
+			if (m_pSocket->GetAddressFamily() == CSocket::ipv6)
 				parsed = ParseEpsvResponse(pData);
 			else
 				parsed = ParsePasvResponse(pData);
@@ -4152,7 +4143,7 @@ int CFtpControlSocket::TransferSend()
 		if (pData->bPasv)
 		{
 			pData->bTriedPasv = true;
-			if (m_pSocket->GetAddressFamily() == AF_INET6)
+			if (m_pSocket->GetAddressFamily() == CSocket::ipv6)
 				cmd = _T("EPSV");
 			else
 				cmd = _T("PASV");
@@ -4169,7 +4160,7 @@ int CFtpControlSocket::TransferSend()
 				if (portArgument != _T(""))
 				{
 					pData->bTriedActive = true;
-					if (m_pSocket->GetAddressFamily() == AF_INET6)
+					if (m_pSocket->GetAddressFamily() == CSocket::ipv6)
 						cmd = _T("EPRT " + portArgument);
 					else
 						cmd = _T("PORT " + portArgument);
@@ -4187,7 +4178,7 @@ int CFtpControlSocket::TransferSend()
 			pData->bTriedActive = true;
 			pData->bTriedPasv = true;
 			pData->bPasv = true;
-			if (m_pSocket->GetAddressFamily() == AF_INET6)
+			if (m_pSocket->GetAddressFamily() == CSocket::ipv6)
 				cmd = _T("EPSV");
 			else
 				cmd = _T("PASV");

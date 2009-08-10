@@ -1,9 +1,3 @@
-#include <wx/defs.h>
-#ifdef __WXMSW__
-// For AF_INET6
-#include <winsock2.h>
-#include <ws2tcpip.h>
-#endif
 #include "FileZilla.h"
 #include "externalipresolver.h"
 #include "wx/regex.h"
@@ -50,7 +44,7 @@ CExternalIPResolver::~CExternalIPResolver()
 	m_pSocket = 0;
 }
 
-void CExternalIPResolver::GetExternalIP(const wxString& address, int protocol, bool force /*=false*/)
+void CExternalIPResolver::GetExternalIP(const wxString& address, enum CSocket::address_family protocol, bool force /*=false*/)
 {
 	if (m_checked)
 	{
@@ -409,7 +403,7 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 			return;
 	}
 
-	if (m_protocol == AF_INET6)
+	if (m_protocol == CSocket::ipv6)
 	{
 		if (m_data[0] == '[')
 		{

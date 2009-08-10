@@ -1117,7 +1117,7 @@ void CSocket::DetachThread()
 	Cleanup(false);
 }
 
-int CSocket::Connect(wxString host, unsigned int port, int family /*=AF_UNSPEC*/)
+int CSocket::Connect(wxString host, unsigned int port, enum address_family family /*=unsped*/)
 {
 	if (m_state != none)
 		return EISCONN;
@@ -1125,8 +1125,20 @@ int CSocket::Connect(wxString host, unsigned int port, int family /*=AF_UNSPEC*/
 	if (port < 1 || port > 65535)
 		return EINVAL;
 
-	if (family != AF_UNSPEC && family != AF_INET && family != AF_INET6)
+	switch (family)
+	{
+	case unspec:
+		m_family = AF_UNSPEC;
+		break;
+	case ipv4:
+		m_family = AF_INET;
+		break;
+	case ipv6:
+		m_family = AF_INET6;
+		break;
+	default:
 		return EINVAL;
+	}
 
 	if (m_pSocketThread && m_pSocketThread->m_started)
 	{
@@ -1159,7 +1171,6 @@ int CSocket::Connect(wxString host, unsigned int port, int family /*=AF_UNSPEC*/
 
 	m_state = connecting;
 
-	m_family = family;
 	m_host = host;
 	m_port = port;
 	int res = m_pSocketThread->Connect();
@@ -1580,24 +1591,47 @@ wxString CSocket::GetPeerIP() const
 	return AddressToString((sockaddr *)&addr, addr_len, false);
 }
 
-int CSocket::GetAddressFamily() const
+enum CSocket::address_family CSocket::GetAddressFamily() const
 {
 	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
 	int res = getsockname(m_fd, (sockaddr*)&addr, &addr_len);
 	if (res)
-		return AF_UNSPEC;
+		return unspec;
 
-	return ((sockaddr*)&addr)->sa_family;
+	switch (((sockaddr*)&addr)->sa_family)
+	{
+	case AF_INET:
+		return ipv4;
+	case AF_INET6:
+		return ipv6;
+	default:
+		return unspec;
+	}
 }
 
-int CSocket::Listen(int family, int port /*=0*/)
+int CSocket::Listen(enum address_family family, int port /*=0*/)
 {
 	if (m_state != none)
 		return EALREADY;
 
 	if (port < 0 || port > 65535)
 		return EINVAL;
+
+	switch (family)
+	{
+	case unspec:
+		m_family = AF_UNSPEC;
+		break;
+	case ipv4:
+		m_family = AF_INET;
+		break;
+	case ipv6:
+		m_family = AF_INET6;
+		break;
+	default:
+		return EINVAL;
+	}
 
 #ifdef __WXMSW__
 	if (!getaddrinfo)
@@ -1626,7 +1660,7 @@ int CSocket::Listen(int family, int port /*=0*/)
 #endif
 	{
 		struct addrinfo hints = {0};
-		hints.ai_family = family;
+		hints.ai_family = m_family;
 		hints.ai_socktype = SOCK_STREAM;
 		hints.ai_flags = AI_PASSIVE;
 #ifdef AI_NUMERICSERV
