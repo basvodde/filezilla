@@ -3112,5 +3112,6 @@ void CRemoteListView::OnMenuGeturl(wxCommandEvent& event)
 		wxTheClipboard->SetData(new wxTextDataObject(urls));
 	}
 
+	wxTheClipboard->Flush();
 	wxTheClipboard->Close();
 }

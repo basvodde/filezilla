@@ -1457,5 +1457,6 @@ void CRemoteTreeView::OnMenuGeturl(wxCommandEvent& event)
 
 	wxTheClipboard->SetData(new wxURLDataObject(url));
 
+	wxTheClipboard->Flush();
 	wxTheClipboard->Close();
 }

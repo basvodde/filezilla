@@ -145,5 +145,6 @@ void CAboutDialog::OnCopy(wxCommandEvent& event)
 	}
 
 	wxTheClipboard->SetData(new wxTextDataObject(text));
+	wxTheClipboard->Flush();
 	wxTheClipboard->Close();
 }
