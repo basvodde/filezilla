@@ -16,7 +16,7 @@ wxString CBuildInfo::GetBuildDateString()
 	const wxChar months[][4] = { _T("Jan"), _T("Feb"), _T("Mar"),
 								_T("Apr"), _T("May"), _T("Jun"), 
 								_T("Jul"), _T("Aug"), _T("Sep"),
-								_T("Oct"), _T("Nov"), _T("Dev") };
+								_T("Oct"), _T("Nov"), _T("Dec") };
 
 	int pos = date.Find(_T(" "));
 	if (pos == -1)
