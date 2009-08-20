@@ -2,9 +2,6 @@
 #include "directorylistingparser.h"
 #include <cppunit/extensions/HelperMacros.h>
 #include <list>
-#ifndef __WXMSW__
-#include <sys/socket.h>
-#endif
 
 /*
  * This testsuite asserts the correctness of the
@@ -73,84 +70,84 @@ void CIPAddressTest::testIPV6LongForm()
 void CIPAddressTest::testIsRoutableAddress4()
 {
 	// 127.0.0.0/8
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("126.255.255.255"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("127.0.0.0"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("127.255.255.255"), AF_INET));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("128.0.0.0"), AF_INET));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("126.255.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("127.0.0.0"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("127.255.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("128.0.0.0"), CSocket::ipv4));
 
 	// 10.0.0.0/8
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("9.255.255.255"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("10.0.0.0"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("10.255.255.255"), AF_INET));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("11.0.0.0"), AF_INET));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("9.255.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("10.0.0.0"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("10.255.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("11.0.0.0"), CSocket::ipv4));
 
 	// 169.254.0.0/16
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("169.253.255.255"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("169.254.0.0"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("169.254.255.255"), AF_INET));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("169.255.0.0"), AF_INET));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("169.253.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("169.254.0.0"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("169.254.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("169.255.0.0"), CSocket::ipv4));
 
 	// 192.168.0.0/16
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("192.167.255.255"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("192.168.0.0"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("192.168.255.255"), AF_INET));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("102.169.0.0"), AF_INET));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("192.167.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("192.168.0.0"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("192.168.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("102.169.0.0"), CSocket::ipv4));
 
 	// 172.16.0.0/20
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("172.15.255.255"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("172.16.0.0"), AF_INET));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("172.31.255.255"), AF_INET));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("172.32.0.0"), AF_INET));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("172.15.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("172.16.0.0"), CSocket::ipv4));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("172.31.255.255"), CSocket::ipv4));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("172.32.0.0"), CSocket::ipv4));
 }
 
 void CIPAddressTest::testIsRoutableAddress6()
 {
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::1"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::0"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::2"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("1234:ABCD::1234:ef01"), AF_INET6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::1"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::0"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::2"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("1234:ABCD::1234:ef01"), CSocket::ipv6));
 
 	// fe80::/10 (link local)
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("fe7f:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("fe80:0000:0000:0000:0000:0000:0000:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("fec0:0000:0000:0000:0000:0000:0000:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("fe7f:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("fe80:0000:0000:0000:0000:0000:0000:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("fec0:0000:0000:0000:0000:0000:0000:0000"), CSocket::ipv6));
 
 	// fc00::/7 (site local)
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("fbff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("fc00:0000:0000:0000:0000:0000:0000:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("fe00:0000:0000:0000:0000:0000:0000:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("fbff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("fc00:0000:0000:0000:0000:0000:0000:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("fe00:0000:0000:0000:0000:0000:0000:0000"), CSocket::ipv6));
 
 	// IPv4 mapped
 
 	// 127.0.0.0/8
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:7eff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:7f00:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:7fff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:8000:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:7eff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:7f00:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:7fff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:8000:0000"), CSocket::ipv6));
 
 	// 10.0.0.0/8
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:9ff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:0a00:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:0aff:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:0b00:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:9ff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:0a00:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:0aff:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:0b00:0000"), CSocket::ipv6));
 
 	// 169.254.0.0/16
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:a9fd:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:a9fe:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:a9fe:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:a9ff:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:a9fd:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:a9fe:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:a9fe:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:a9ff:0000"), CSocket::ipv6));
 
 	// 192.168.0.0/16
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:c0a7:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:c0a8:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:c0a8:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:c0a9:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:c0a7:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:c0a8:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:c0a8:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:c0a9:0000"), CSocket::ipv6));
 
 	// 172.16.0.0/20
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:ac0f:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:ac10:0000"), AF_INET6));
-	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:ac1f:ffff"), AF_INET6));
-	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:ac20:0000"), AF_INET6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:ac0f:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:ac10:0000"), CSocket::ipv6));
+	CPPUNIT_ASSERT(!IsRoutableAddress(_T("::ffff:ac1f:ffff"), CSocket::ipv6));
+	CPPUNIT_ASSERT(IsRoutableAddress(_T("::ffff:ac20:0000"), CSocket::ipv6));
 }
