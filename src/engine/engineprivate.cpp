@@ -353,6 +353,8 @@ int CFileZillaEnginePrivate::List(const CListCommand &command)
 		if (pServer)
 		{
 			CServerPath path(CPathCache::Lookup(*pServer, command.GetPath(), command.GetSubDir()));
+			if (path.IsEmpty() && command.GetSubDir().IsEmpty())
+				path = command.GetPath();
 			if (!path.IsEmpty())
 			{
 				CDirectoryListing *pListing = new CDirectoryListing;
