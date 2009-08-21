@@ -470,9 +470,9 @@ void CFilterConditionsDialog::EditFilter(const CFilter& filter)
 	if (!m_currentFilter.filters.size())
 		m_currentFilter.filters.push_back(CFilterCondition());
 
-	for (unsigned int i = 0; i < filter.filters.size(); i++)
+	for (unsigned int i = 0; i < m_currentFilter.filters.size(); i++)
 	{
-		const CFilterCondition& cond = filter.filters[i];
+		const CFilterCondition& cond = m_currentFilter.filters[i];
 
 		MakeControls(cond);
 	}
