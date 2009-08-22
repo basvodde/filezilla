@@ -202,6 +202,9 @@ IMPLEMENT_CLASS(CLocalTreeView, wxTreeCtrl)
 
 BEGIN_EVENT_TABLE(CLocalTreeView, wxTreeCtrl)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CLocalTreeView::OnItemExpanding)
+#ifdef __WXMSW__
+EVT_TREE_SEL_CHANGING(wxID_ANY, CLocalTreeView::OnSelectionChanging)
+#endif
 EVT_TREE_SEL_CHANGED(wxID_ANY, CLocalTreeView::OnSelectionChanged)
 EVT_TREE_BEGIN_DRAG(wxID_ANY, CLocalTreeView::OnBeginDrag)
 #ifndef __WXMSW__
@@ -300,8 +303,10 @@ void CLocalTreeView::SetDir(wxString localDir)
 	{
 		wxTreeItemIdValue value;
 		wxTreeItemId child = GetFirstChild(parent, value);
-		if (child && GetItemText(child) == _T(""))
-			DisplayDir(parent, localDir);
+
+		//Not needed, item stays unexpanded
+		//if (child && GetItemText(child) == _T(""))
+		//	DisplayDir(parent, localDir);
 
 		m_setSelection = true;
 		SelectItem(parent);
@@ -479,7 +484,13 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 					return;
 
 				const wxString fullName = dirname + knownSubdir;
-				item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
+				item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName),
+#ifdef __WXMSW__
+						-1
+#else
+						GetIconIndex(opened_dir, fullName)
+#endif
+					);
 				CheckSubdirStatus(item, fullName);
 			}
 			else
@@ -528,14 +539,28 @@ void CLocalTreeView::DisplayDir(wxTreeItemId parent, const wxString& dirname, co
 		else
 			matchedKnown = true;
 
-		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
+		wxTreeItemId item = AppendItem(parent, file, GetIconIndex(::dir, fullName),
+#ifdef __WXMSW__
+				-1
+#else
+				GetIconIndex(opened_dir, fullName)
+#endif
+			);
+
 		CheckSubdirStatus(item, fullName);
 	}
 
 	if (!matchedKnown && knownSubdir != _T(""))
 	{
 		const wxString fullName = dirname + knownSubdir;
-		wxTreeItemId item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName), GetIconIndex(opened_dir, fullName));
+		wxTreeItemId item = AppendItem(parent, knownSubdir, GetIconIndex(::dir, fullName),
+#ifdef __WXMSW__
+				-1
+#else
+				GetIconIndex(opened_dir, fullName)
+#endif
+			);
+
 		CheckSubdirStatus(item, fullName);
 	}
 
@@ -604,7 +629,8 @@ wxTreeItemId CLocalTreeView::MakeSubdirs(wxTreeItemId parent, wxString dirname, 
 		dirname += segment + separator;
 	}
 
-	DisplayDir(parent, dirname);
+	// Not needed, stays unexpanded by default
+	// DisplayDir(parent, dirname);
 	return parent;
 }
 
@@ -826,7 +852,14 @@ void CLocalTreeView::Refresh()
 			else if (cmp < 0)
 			{
 				wxString fullname = dir.dir + *iter + separator;
-				wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
+				wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname),
+#ifdef __WXMSW__
+						-1
+#else
+						GetIconIndex(opened_dir, fullName)
+#endif
+					);
+
 				CheckSubdirStatus(newItem, fullname);
 				iter++;
 				inserted = true;
@@ -845,7 +878,14 @@ void CLocalTreeView::Refresh()
 		while (iter != dirs.rend())
 		{
 			wxString fullname = dir.dir + *iter + separator;
-			wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname), GetIconIndex(opened_dir, fullname));
+			wxTreeItemId newItem = AppendItem(dir.item, *iter, GetIconIndex(::dir, fullname),
+#ifdef __WXMSW__
+					-1
+#else
+					GetIconIndex(opened_dir, fullName)
+#endif
+				);
+
 			CheckSubdirStatus(newItem, fullname);
 			iter++;
 			inserted = true;
@@ -1565,6 +1605,18 @@ void CLocalTreeView::RemoveDrive(wxChar drive)
 		return;
 
 	Delete(driveItem);
+}
+
+void CLocalTreeView::OnSelectionChanging(wxTreeEvent& event)
+{
+	// On-demand open icon for selected items
+	wxTreeItemId item = event.GetItem();
+	if (GetItemImage(item, wxTreeItemIcon_Selected) == -1)
+	{
+		int icon = GetIconIndex(opened_dir, GetDirFromItem(item));
+		SetItemImage(item, icon, wxTreeItemIcon_Selected);
+		SetItemImage(item, icon, wxTreeItemIcon_SelectedExpanded);
+	}
 }
 
 #endif

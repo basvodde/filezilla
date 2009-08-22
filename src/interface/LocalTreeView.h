@@ -54,6 +54,9 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnItemExpanding(wxTreeEvent& event);
+#ifdef __WXMSW__
+	void OnSelectionChanging(wxTreeEvent& event);
+#endif
 	void OnSelectionChanged(wxTreeEvent& event);
 	void OnBeginDrag(wxTreeEvent& event);
 #ifndef __WXMSW__
