@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-10 16:51+0200\n"
-"PO-Revision-Date: 2009-08-07 08:25+0200\n"
+"POT-Creation-Date: 2009-08-23 11:02+0200\n"
+"PO-Revision-Date: 2009-08-17 09:23+0200\n"
 "Last-Translator: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "Language-Team: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -1048,19 +1048,19 @@ msgstr "- Κακόβουλο λογισμικό στο σύστημά σας"
 msgid "--:--:-- left"
 msgstr "--:--:-- απομένουν"
 
-#: ../../locales/../src/interface/cmdline.cpp:77
+#: ../../locales/../src/interface/cmdline.cpp:80
 msgid "-c cannot be used together with an FTP URL."
 msgstr "-c δε μπορεί να χρησιμοποιηθεί συγχρόνως με μία διεύθυνση FTP."
 
-#: ../../locales/../src/interface/cmdline.cpp:86
+#: ../../locales/../src/interface/cmdline.cpp:89
 msgid "-l can only be used together with an FTP URL."
 msgstr "-το l μπορεί να χρησιμοποιηθεί συγχρόνως με μόνο μία διεύθυνση FTP."
 
-#: ../../locales/../src/interface/cmdline.cpp:65
+#: ../../locales/../src/interface/cmdline.cpp:68
 msgid "-s and -c cannot be present at the same time."
 msgstr "-s και -c δε μπορούν να είναι συγχρόνως παρών."
 
-#: ../../locales/../src/interface/cmdline.cpp:71
+#: ../../locales/../src/interface/cmdline.cpp:74
 msgid "-s cannot be used together with an FTP URL."
 msgstr "-s δε μπορεί να χρησιμοποιηθεί συγχρόνως με μία διεύθυνση FTP."
 
@@ -1877,7 +1877,7 @@ msgstr "Πελάτης προς αποτύπωμα εξυπηρετητή:"
 msgid "Close FileZilla"
 msgstr "Κλείσιμο του FileZilla"
 
-#: ../../locales/../src/interface/cmdline.cpp:11
+#: ../../locales/../src/interface/cmdline.cpp:14
 msgid "Close all running instances of FileZilla"
 msgstr "Κλείσιμο όλων των ενεργών διεργασιών του FileZilla"
 
@@ -2259,7 +2259,7 @@ msgid ""
 "Could not initialize structure for peer certificates, gnutls_x509_crt_init "
 "failed"
 msgstr ""
-"Αδυναμία αρχικοποίησης δομής για τα ομότιμα πιστοποιητικά, απέτυχε "
+"Αδυναμία ρύθμισης δομής για τα ομότιμα πιστοποιητικά, απέτυχε "
 "gnutls_x509_crt_init"
 
 #: ../../locales/../src/interface/import.cpp:120
@@ -2455,7 +2455,7 @@ msgid "Create a new subdirectory in the current directory"
 msgstr "Δημιουργία υποφακέλου στον τρέχον φάκελο"
 
 #: ../../locales/../src/interface/LocalListView.cpp:1393
-#: ../../locales/../src/interface/LocalTreeView.cpp:1158
+#: ../../locales/../src/interface/LocalTreeView.cpp:1198
 #: ../../locales/../src/interface/RemoteListView.cpp:1553
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Create directory"
@@ -2627,7 +2627,7 @@ msgstr ""
 "Η καθυστέρηση μεταξύ των προσπαθειών σύνδεσης πρέπει να είναι ανάμεσα σε 1 "
 "και 999 δευτερόλεπτα."
 
-#: ../../locales/../src/engine/engineprivate.cpp:631
+#: ../../locales/../src/engine/engineprivate.cpp:633
 #, c-format
 msgid ""
 "Delaying connection for %d second due to previously failed connection "
@@ -2667,7 +2667,7 @@ msgstr ""
 msgid "Deleting symbolic link"
 msgstr "Διαγραφή συμβολικής σύνδεσης"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1022
+#: ../../locales/../src/interface/LocalTreeView.cpp:1062
 msgid "Desktop"
 msgstr "Επιφάνεια Εργασίας"
 
@@ -3206,7 +3206,7 @@ msgstr "Διατήρηση ενεργού FTP"
 msgid "FTP Proxy"
 msgstr "Διαμεσολαβητής FTP"
 
-#: ../../locales/../src/interface/cmdline.cpp:16
+#: ../../locales/../src/interface/cmdline.cpp:19
 msgid "FTP URL"
 msgstr "Διεύθυνση FTP"
 
@@ -3230,7 +3230,7 @@ msgstr "FTPS - FTP over implicit TLS/SSL"
 #: ../../locales/../src/interface/LocalListView.cpp:739
 #: ../../locales/../src/interface/LocalListView.cpp:821
 #: ../../locales/../src/interface/LocalListView.cpp:1505
-#: ../../locales/../src/interface/LocalTreeView.cpp:880
+#: ../../locales/../src/interface/LocalTreeView.cpp:920
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
 msgstr "Απέτυχε η αλλαγή φακέλου"
@@ -3268,11 +3268,11 @@ msgstr ""
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Αποτυχία λήψης της νεώτερης έκδοσης του FileZilla."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:649
+#: ../../locales/../src/interface/LocalTreeView.cpp:675
 msgid "Failed to get 'My Documents' path"
 msgstr "Αποτυχία πρόσβασης στην διαδρομή 'Τα Εγγραφά Μου'"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:635
+#: ../../locales/../src/interface/LocalTreeView.cpp:661
 msgid "Failed to get desktop path"
 msgstr "Αποτυχία πρόσβασης στην διαδρομή της επιφάνειας εργασίας"
 
@@ -4317,7 +4317,7 @@ msgstr "Αρχείο Συμβάντων"
 
 #: resources.h:245
 msgid "Log of update check:"
-msgstr "Συμβάντα κατά τον έλεγχο αναβαθμίσεων:"
+msgstr "Συμβάντα έλεγχου αναβαθμίσεων:"
 
 #: resources.h:887
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:140
@@ -4347,19 +4347,20 @@ msgstr ""
 "Η ακολουθία σύνδεσης που εκτελείται δε διεκπεραιώθηκε ακόμα, δε συνδέθηκε. "
 "Απόρριψη."
 
-#: ../../locales/../src/interface/cmdline.cpp:92
+#: ../../locales/../src/interface/cmdline.cpp:95
 msgid "Logontype has to be either 'ask' or 'interactive' (without the quotes)."
 msgstr ""
 "Ο τύπος σύνδεσης πρέπει να είναι είτε 'ask' είτε 'interactive' (χωρίς τα "
 "εισαγωγικά)."
 
-#: ../../locales/../src/interface/cmdline.cpp:9
+#: ../../locales/../src/interface/cmdline.cpp:10
+#, c-format
 msgid ""
 "Logontype, can only be used together with FTP URL. Argument has to be either "
-"'ask' or 'interactive'"
+"'%s' or '%s'"
 msgstr ""
 "Ο τύπος σύνδεσης, μπορεί να χρησιμοποιείτε συγχρόνως με μόνο μία διεύθυνση "
-"FTP. Τα ορίσματα πρέπει να είναι είτε 'ask' είτε 'interactive'"
+"FTP. Τα ορίσματα πρέπει να είναι είτε'%s' είτε '%s'"
 
 #: ../../locales/../src/interface/queue.cpp:889
 #: ../../locales/../src/interface/queue.cpp:970
@@ -4457,11 +4458,11 @@ msgstr "Μετακίνηση &κάτω"
 msgid "Move &up"
 msgstr "Μετακίνηση &πάνω"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1041
+#: ../../locales/../src/interface/LocalTreeView.cpp:1081
 msgid "My Computer"
 msgstr "Ο Υπολογιστής Μου"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1031
+#: ../../locales/../src/interface/LocalTreeView.cpp:1071
 msgid "My Documents"
 msgstr "Τα Εγγραφά Μου"
 
@@ -4536,7 +4537,7 @@ msgstr "Νέος σελιδο&δείκτης"
 msgid "New bookmark"
 msgstr "Νέος σελιδοδείκτης"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1161
+#: ../../locales/../src/interface/LocalTreeView.cpp:1201
 #: ../../locales/../src/interface/RemoteListView.cpp:1567
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1284
 msgid "New directory"
@@ -5056,7 +5057,7 @@ msgstr ""
 "Η χρήση ακατέργαστων εντολών FTP θα καθαρίσουν την προσωρινή μνήμη φακέλων."
 
 #: ../../locales/../src/interface/LocalListView.cpp:1393
-#: ../../locales/../src/interface/LocalTreeView.cpp:1158
+#: ../../locales/../src/interface/LocalTreeView.cpp:1198
 #: ../../locales/../src/interface/RemoteListView.cpp:1553
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Please enter the name of the directory which should be created:"
@@ -5266,7 +5267,7 @@ msgid "Primary connection and data connection certificates don't match."
 msgstr ""
 "Η κύρια σύνδεση και τα πιστοποιητικά σύνδεσης δεδομένων δεν ταιριάζουν."
 
-#: ../../locales/../src/interface/cmdline.cpp:14
+#: ../../locales/../src/interface/cmdline.cpp:17
 msgid "Print version information to stdout and exit"
 msgstr "Εκτύπωση πληροφοριών έκδοσης και έξοδος"
 
@@ -6264,11 +6265,11 @@ msgstr "Ο Συγχρονισμός περιήγησης έχει απενεργ
 msgid "Syntax error"
 msgstr "Συντακτικό λάθος"
 
-#: ../../locales/../src/interface/cmdline.cpp:65
-#: ../../locales/../src/interface/cmdline.cpp:71
-#: ../../locales/../src/interface/cmdline.cpp:77
-#: ../../locales/../src/interface/cmdline.cpp:86
-#: ../../locales/../src/interface/cmdline.cpp:92
+#: ../../locales/../src/interface/cmdline.cpp:68
+#: ../../locales/../src/interface/cmdline.cpp:74
+#: ../../locales/../src/interface/cmdline.cpp:80
+#: ../../locales/../src/interface/cmdline.cpp:89
+#: ../../locales/../src/interface/cmdline.cpp:95
 #: ../../locales/../src/interface/Mainfrm.cpp:2776
 msgid "Syntax error in command line"
 msgstr "Συντακτικό σφάλμα στην γραμμή εντολών"
@@ -7172,7 +7173,7 @@ msgstr "Έγκυρο από:"
 msgid "Valid to:"
 msgstr "Έγκυρο προς:"
 
-#: ../../locales/../src/interface/cmdline.cpp:13
+#: ../../locales/../src/interface/cmdline.cpp:16
 msgid "Verbose log messages from wxWidgets"
 msgstr ""
 "Περιφραστικά μηνύματα καταγραφής από τα wxWidgets (γραφικά συστατικά μορφής "

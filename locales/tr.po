@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Filezilla 3 Turkish PO\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-10 16:51+0200\n"
-"PO-Revision-Date: 2009-08-09 02:24+0200\n"
+"POT-Creation-Date: 2009-08-23 11:02+0200\n"
+"PO-Revision-Date: 2009-08-19 03:04+0200\n"
 "Last-Translator: Kaya Zeren <kaya.zeren@zeron.net>\n"
 "Language-Team: Zeron <kaya.zeren@zeron.net>\n"
 "MIME-Version: 1.0\n"
@@ -1031,19 +1031,19 @@ msgstr "- Sisteminizde zararlı yazılım var"
 msgid "--:--:-- left"
 msgstr "--:--:-- kaldı"
 
-#: ../../locales/../src/interface/cmdline.cpp:77
+#: ../../locales/../src/interface/cmdline.cpp:80
 msgid "-c cannot be used together with an FTP URL."
 msgstr "-c ile FTP URL si beraber kullanılamaz."
 
-#: ../../locales/../src/interface/cmdline.cpp:86
+#: ../../locales/../src/interface/cmdline.cpp:89
 msgid "-l can only be used together with an FTP URL."
 msgstr "-l sadece bir FTP adresi ile birlikte kullanılabilir."
 
-#: ../../locales/../src/interface/cmdline.cpp:65
+#: ../../locales/../src/interface/cmdline.cpp:68
 msgid "-s and -c cannot be present at the same time."
 msgstr "-s ve -c aynı anda kullanılamaz."
 
-#: ../../locales/../src/interface/cmdline.cpp:71
+#: ../../locales/../src/interface/cmdline.cpp:74
 msgid "-s cannot be used together with an FTP URL."
 msgstr "-s ile FTP URL si beraber kullanılamaz."
 
@@ -1839,7 +1839,7 @@ msgstr "İstemciden sunucuya şifre:"
 msgid "Close FileZilla"
 msgstr "FileZilla'yı kapat"
 
-#: ../../locales/../src/interface/cmdline.cpp:11
+#: ../../locales/../src/interface/cmdline.cpp:14
 msgid "Close all running instances of FileZilla"
 msgstr "FileZilla'nın çalışan bütün öğelerini kapat"
 
@@ -2402,7 +2402,7 @@ msgid "Create a new subdirectory in the current directory"
 msgstr "Geçerli dizinde yeni bir alt dizin oluştur"
 
 #: ../../locales/../src/interface/LocalListView.cpp:1393
-#: ../../locales/../src/interface/LocalTreeView.cpp:1158
+#: ../../locales/../src/interface/LocalTreeView.cpp:1198
 #: ../../locales/../src/interface/RemoteListView.cpp:1553
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Create directory"
@@ -2571,7 +2571,7 @@ msgstr ""
 "Başarısız bağlantı denemeleri arasındaki süre 1-999 saniye arasında "
 "olmalıdır."
 
-#: ../../locales/../src/engine/engineprivate.cpp:631
+#: ../../locales/../src/engine/engineprivate.cpp:633
 #, c-format
 msgid ""
 "Delaying connection for %d second due to previously failed connection "
@@ -2607,7 +2607,7 @@ msgstr "Bİrden fazla bağlantısız dizinleri silme işlemi henüz desteklenmiy
 msgid "Deleting symbolic link"
 msgstr "Sembolik bağlantı siliniyor"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1022
+#: ../../locales/../src/interface/LocalTreeView.cpp:1062
 msgid "Desktop"
 msgstr "Masaüstü"
 
@@ -3138,7 +3138,7 @@ msgstr "FTP Canlı-kal"
 msgid "FTP Proxy"
 msgstr "FTP Proxy"
 
-#: ../../locales/../src/interface/cmdline.cpp:16
+#: ../../locales/../src/interface/cmdline.cpp:19
 msgid "FTP URL"
 msgstr "FTP URL"
 
@@ -3161,7 +3161,7 @@ msgstr "FTPS - FTP üzerinden kapalı TLS/SSL"
 #: ../../locales/../src/interface/LocalListView.cpp:739
 #: ../../locales/../src/interface/LocalListView.cpp:821
 #: ../../locales/../src/interface/LocalListView.cpp:1505
-#: ../../locales/../src/interface/LocalTreeView.cpp:880
+#: ../../locales/../src/interface/LocalTreeView.cpp:920
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
 msgstr "Dizin değiştirilemedi"
@@ -3198,11 +3198,11 @@ msgstr "Aktif mod aktarımı için dinleme soketi oluşturulamadı"
 msgid "Failed to download the latest version of FileZilla."
 msgstr "FileZilla'nın son sürümü indirilemedi."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:649
+#: ../../locales/../src/interface/LocalTreeView.cpp:675
 msgid "Failed to get 'My Documents' path"
 msgstr "'Belgelerim' dizinine erişilemedi"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:635
+#: ../../locales/../src/interface/LocalTreeView.cpp:661
 msgid "Failed to get desktop path"
 msgstr "Masaüstü'nün veri yolu alınmadı"
 
@@ -4246,17 +4246,18 @@ msgstr ""
 "Oturum açma işlemleri eksiksiz yapıldı ama hala oturum açılamadı. "
 "Vazgeçiliyor."
 
-#: ../../locales/../src/interface/cmdline.cpp:92
+#: ../../locales/../src/interface/cmdline.cpp:95
 msgid "Logontype has to be either 'ask' or 'interactive' (without the quotes)."
 msgstr "Giriş tipi \"sor\" veya \"etkileşimli\" olmalıdır (tırnaklar olmadan)."
 
-#: ../../locales/../src/interface/cmdline.cpp:9
+#: ../../locales/../src/interface/cmdline.cpp:10
+#, c-format
 msgid ""
 "Logontype, can only be used together with FTP URL. Argument has to be either "
-"'ask' or 'interactive'"
+"'%s' or '%s'"
 msgstr ""
-"Giriş tipi sadece FTP adresi ile birlikte kullanılabilir. Komut \"sor\" veya "
-"\"etkileşimli\" olmalıdır."
+"Giriş tipi sadece FTP adresi ile birlikte kullanılabilir. Seçenek '%s' veya "
+"'%s' olmalıdır."
 
 #: ../../locales/../src/interface/queue.cpp:889
 #: ../../locales/../src/interface/queue.cpp:970
@@ -4350,11 +4351,11 @@ msgstr "&Aşağı taşı"
 msgid "Move &up"
 msgstr "&Yukarı taşı"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1041
+#: ../../locales/../src/interface/LocalTreeView.cpp:1081
 msgid "My Computer"
 msgstr "Bilgisayarım"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1031
+#: ../../locales/../src/interface/LocalTreeView.cpp:1071
 msgid "My Documents"
 msgstr "Belgelerim"
 
@@ -4429,7 +4430,7 @@ msgstr "    &Yeni yer imi    "
 msgid "New bookmark"
 msgstr "Yeni yer imi"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1161
+#: ../../locales/../src/interface/LocalTreeView.cpp:1201
 #: ../../locales/../src/interface/RemoteListView.cpp:1567
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1284
 msgid "New directory"
@@ -4928,7 +4929,7 @@ msgstr ""
 "Standart ftp komutları kullanmak dizin önbelleğini siler."
 
 #: ../../locales/../src/interface/LocalListView.cpp:1393
-#: ../../locales/../src/interface/LocalTreeView.cpp:1158
+#: ../../locales/../src/interface/LocalTreeView.cpp:1198
 #: ../../locales/../src/interface/RemoteListView.cpp:1553
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Please enter the name of the directory which should be created:"
@@ -5128,7 +5129,7 @@ msgstr "Önizleme:"
 msgid "Primary connection and data connection certificates don't match."
 msgstr "Birincil bağlantı ve veri bağlantı sertifikaları uyuşmuyor."
 
-#: ../../locales/../src/interface/cmdline.cpp:14
+#: ../../locales/../src/interface/cmdline.cpp:17
 msgid "Print version information to stdout and exit"
 msgstr "Sürüm bilgisini konsola gönder ve çık"
 
@@ -6101,11 +6102,11 @@ msgstr "Eşzamanlı tarama devre dışı."
 msgid "Syntax error"
 msgstr "Sözdizimi hatası"
 
-#: ../../locales/../src/interface/cmdline.cpp:65
-#: ../../locales/../src/interface/cmdline.cpp:71
-#: ../../locales/../src/interface/cmdline.cpp:77
-#: ../../locales/../src/interface/cmdline.cpp:86
-#: ../../locales/../src/interface/cmdline.cpp:92
+#: ../../locales/../src/interface/cmdline.cpp:68
+#: ../../locales/../src/interface/cmdline.cpp:74
+#: ../../locales/../src/interface/cmdline.cpp:80
+#: ../../locales/../src/interface/cmdline.cpp:89
+#: ../../locales/../src/interface/cmdline.cpp:95
 #: ../../locales/../src/interface/Mainfrm.cpp:2776
 msgid "Syntax error in command line"
 msgstr "Komut satırında sözdizimi hatası"
@@ -6980,7 +6981,7 @@ msgstr "Geçerlilik Başlangıcı:"
 msgid "Valid to:"
 msgstr "Geçerlilik Sonu:"
 
-#: ../../locales/../src/interface/cmdline.cpp:13
+#: ../../locales/../src/interface/cmdline.cpp:16
 msgid "Verbose log messages from wxWidgets"
 msgstr "wxWidgets'den Verbose günlük iletileri"
 

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-10 16:51+0200\n"
+"POT-Creation-Date: 2009-08-23 11:02+0200\n"
 "PO-Revision-Date: 2009-02-06 21:17+0100\n"
 "Last-Translator: Tim Kosse <tim.kosse@filezilla-project.org>\n"
 "Language-Team: Kay Urbach <Kay.Urbach@gmx.de>\n"
@@ -1042,19 +1042,19 @@ msgstr "- Malware auf Ihrem System"
 msgid "--:--:-- left"
 msgstr "--:--:-- verbleibend"
 
-#: ../../locales/../src/interface/cmdline.cpp:77
+#: ../../locales/../src/interface/cmdline.cpp:80
 msgid "-c cannot be used together with an FTP URL."
 msgstr "-c kann nicht zusammen mit einer FTP-URL verwendet werden."
 
-#: ../../locales/../src/interface/cmdline.cpp:86
+#: ../../locales/../src/interface/cmdline.cpp:89
 msgid "-l can only be used together with an FTP URL."
 msgstr "-l kann nur zusammen mit einer FTP-URL verwendet werden."
 
-#: ../../locales/../src/interface/cmdline.cpp:65
+#: ../../locales/../src/interface/cmdline.cpp:68
 msgid "-s and -c cannot be present at the same time."
 msgstr "-s und -c können nicht gleichzeitig verwendet werden."
 
-#: ../../locales/../src/interface/cmdline.cpp:71
+#: ../../locales/../src/interface/cmdline.cpp:74
 msgid "-s cannot be used together with an FTP URL."
 msgstr "-s kann nicht zusammen mit einer FTP-URL verwendet werden."
 
@@ -1875,7 +1875,7 @@ msgstr "Client-zu-Server-Chiffre:"
 msgid "Close FileZilla"
 msgstr "FileZilla beenden"
 
-#: ../../locales/../src/interface/cmdline.cpp:11
+#: ../../locales/../src/interface/cmdline.cpp:14
 msgid "Close all running instances of FileZilla"
 msgstr "Alle offenen Instanzen von FileZilla schließen"
 
@@ -2458,7 +2458,7 @@ msgid "Create a new subdirectory in the current directory"
 msgstr "Neues Unterverzeichnis im aktuellen Verzeichnis erstellen"
 
 #: ../../locales/../src/interface/LocalListView.cpp:1393
-#: ../../locales/../src/interface/LocalTreeView.cpp:1158
+#: ../../locales/../src/interface/LocalTreeView.cpp:1198
 #: ../../locales/../src/interface/RemoteListView.cpp:1553
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Create directory"
@@ -2628,7 +2628,7 @@ msgstr ""
 "Die Verzögerung nach fehlerhaften Verbindungsversuchen muss zwischen 1 und "
 "999 Sekunden liegen."
 
-#: ../../locales/../src/engine/engineprivate.cpp:631
+#: ../../locales/../src/engine/engineprivate.cpp:633
 #, c-format
 msgid ""
 "Delaying connection for %d second due to previously failed connection "
@@ -2669,7 +2669,7 @@ msgstr ""
 msgid "Deleting symbolic link"
 msgstr "Symbolische Verknüpfung löschen"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1022
+#: ../../locales/../src/interface/LocalTreeView.cpp:1062
 msgid "Desktop"
 msgstr "Desktop"
 
@@ -3210,7 +3210,7 @@ msgstr "FTP-Verbindungserhaltung"
 msgid "FTP Proxy"
 msgstr "FTP-Proxy"
 
-#: ../../locales/../src/interface/cmdline.cpp:16
+#: ../../locales/../src/interface/cmdline.cpp:19
 msgid "FTP URL"
 msgstr "FTP-URL"
 
@@ -3233,7 +3233,7 @@ msgstr "FTPS - FTP über implizites TLS/SSL"
 #: ../../locales/../src/interface/LocalListView.cpp:739
 #: ../../locales/../src/interface/LocalListView.cpp:821
 #: ../../locales/../src/interface/LocalListView.cpp:1505
-#: ../../locales/../src/interface/LocalTreeView.cpp:880
+#: ../../locales/../src/interface/LocalTreeView.cpp:920
 #: ../../locales/../src/interface/viewheader.cpp:515
 msgid "Failed to change directory"
 msgstr "Verzeichnis konnte nicht gewechselt werden"
@@ -3273,11 +3273,11 @@ msgstr ""
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Die aktuelle FileZilla-Version konnte nicht heruntergeladen werden."
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:649
+#: ../../locales/../src/interface/LocalTreeView.cpp:675
 msgid "Failed to get 'My Documents' path"
 msgstr "Pfad für 'Eigene Dateien' konnte nicht gefunden werden"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:635
+#: ../../locales/../src/interface/LocalTreeView.cpp:661
 msgid "Failed to get desktop path"
 msgstr "Desktop-Pfad konnte nicht gefunden werden"
 
@@ -4352,19 +4352,20 @@ msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
 "Anmeldevorgang vollständig ausgeführt, jedoch nicht angemeldet. Abbruch."
 
-#: ../../locales/../src/interface/cmdline.cpp:92
+#: ../../locales/../src/interface/cmdline.cpp:95
 msgid "Logontype has to be either 'ask' or 'interactive' (without the quotes)."
 msgstr ""
 "Kontozugangstyp muss entweder 'ask' oder 'interactive' (ohne die Apostrophe) "
 "sein."
 
-#: ../../locales/../src/interface/cmdline.cpp:9
+#: ../../locales/../src/interface/cmdline.cpp:10
+#, c-format
 msgid ""
 "Logontype, can only be used together with FTP URL. Argument has to be either "
-"'ask' or 'interactive'"
+"'%s' or '%s'"
 msgstr ""
 "Kontozugangstyp; kann nur in Verbindung mit einer FTP-URL verwendet werden. "
-"Argument muss entweder 'ask' oder 'interactive' sein."
+"Argument muss entweder '%s' oder '%s' sein."
 
 #: ../../locales/../src/interface/queue.cpp:889
 #: ../../locales/../src/interface/queue.cpp:970
@@ -4458,11 +4459,11 @@ msgstr "Nach &unten"
 msgid "Move &up"
 msgstr "Nach &oben"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1041
+#: ../../locales/../src/interface/LocalTreeView.cpp:1081
 msgid "My Computer"
 msgstr "Arbeitsplatz"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1031
+#: ../../locales/../src/interface/LocalTreeView.cpp:1071
 msgid "My Documents"
 msgstr "Eigene Dateien"
 
@@ -4537,7 +4538,7 @@ msgstr "Neue&s Lesezeichen"
 msgid "New bookmark"
 msgstr "Neues Lesezeichen"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1161
+#: ../../locales/../src/interface/LocalTreeView.cpp:1201
 #: ../../locales/../src/interface/RemoteListView.cpp:1567
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1284
 msgid "New directory"
@@ -5058,7 +5059,7 @@ msgstr ""
 "Die Benutzung eigener FTP-Befehle leert den Verzeichniscache."
 
 #: ../../locales/../src/interface/LocalListView.cpp:1393
-#: ../../locales/../src/interface/LocalTreeView.cpp:1158
+#: ../../locales/../src/interface/LocalTreeView.cpp:1198
 #: ../../locales/../src/interface/RemoteListView.cpp:1553
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1270
 msgid "Please enter the name of the directory which should be created:"
@@ -5273,7 +5274,7 @@ msgstr ""
 "Das Zertifikat der Datenverbindung stimmt nicht mit dem der Hauptverbindung "
 "überein."
 
-#: ../../locales/../src/interface/cmdline.cpp:14
+#: ../../locales/../src/interface/cmdline.cpp:17
 msgid "Print version information to stdout and exit"
 msgstr "Versionsinformationen auf stdout ausgeben und verlassen"
 
@@ -6279,11 +6280,11 @@ msgstr "Synchronisierter Verzeichniswechsel wurde deaktiviert."
 msgid "Syntax error"
 msgstr "Syntaxfehler"
 
-#: ../../locales/../src/interface/cmdline.cpp:65
-#: ../../locales/../src/interface/cmdline.cpp:71
-#: ../../locales/../src/interface/cmdline.cpp:77
-#: ../../locales/../src/interface/cmdline.cpp:86
-#: ../../locales/../src/interface/cmdline.cpp:92
+#: ../../locales/../src/interface/cmdline.cpp:68
+#: ../../locales/../src/interface/cmdline.cpp:74
+#: ../../locales/../src/interface/cmdline.cpp:80
+#: ../../locales/../src/interface/cmdline.cpp:89
+#: ../../locales/../src/interface/cmdline.cpp:95
 #: ../../locales/../src/interface/Mainfrm.cpp:2776
 msgid "Syntax error in command line"
 msgstr "Syntaxfehler in der Kommandozeile"
@@ -7186,7 +7187,7 @@ msgstr "Gültig ab:"
 msgid "Valid to:"
 msgstr "Gültig bis:"
 
-#: ../../locales/../src/interface/cmdline.cpp:13
+#: ../../locales/../src/interface/cmdline.cpp:16
 msgid "Verbose log messages from wxWidgets"
 msgstr "Ausführliche wxWidgets-Logmeldungen"
 
