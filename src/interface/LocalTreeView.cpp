@@ -856,7 +856,7 @@ void CLocalTreeView::Refresh()
 #ifdef __WXMSW__
 						-1
 #else
-						GetIconIndex(opened_dir, fullName)
+						GetIconIndex(opened_dir, fullname)
 #endif
 					);
 
@@ -882,7 +882,7 @@ void CLocalTreeView::Refresh()
 #ifdef __WXMSW__
 					-1
 #else
-					GetIconIndex(opened_dir, fullName)
+					GetIconIndex(opened_dir, fullname)
 #endif
 				);
 
