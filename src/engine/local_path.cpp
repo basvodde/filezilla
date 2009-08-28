@@ -413,12 +413,15 @@ bool CLocalPath::Exists(wxString *error /*=0*/) const
 	{
 		// UNC path
 
-		// \\x\y\ shortest complete share
-		//      ^ earliest possible position of backslash indicating complete share
+		// \\server\share\ 
+
 		size_t pos;
-		for (pos = 5; pos < m_path.Len(); pos++)
+
+		// Search for backslash separating server from share
+		for (pos = 3; pos < m_path.Len(); pos++)
 			if (m_path[pos] == '\\')
 				break;
+		pos++;
 		if (pos >= m_path.Len())
 		{
 			// Partial UNC path
