@@ -1611,6 +1611,10 @@ void CLocalTreeView::OnSelectionChanging(wxTreeEvent& event)
 {
 	// On-demand open icon for selected items
 	wxTreeItemId item = event.GetItem();
+
+	if (!item)
+		return;
+
 	if (GetItemImage(item, wxTreeItemIcon_Selected) == -1)
 	{
 		int icon = GetIconIndex(opened_dir, GetDirFromItem(item));

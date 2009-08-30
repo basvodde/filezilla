@@ -123,6 +123,8 @@ public:
 
 	void RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString& newName, bool local);
 
+	static wxString ReplaceInvalidCharacters(const wxString& filename);
+
 protected:
 
 	void AdvanceQueue(bool refresh = true);

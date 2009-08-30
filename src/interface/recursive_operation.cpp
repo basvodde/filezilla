@@ -268,7 +268,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				
 				if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
 				{
-					dirToVisit.localDir += entry.name + CLocalFileSystem::path_separator;
+					dirToVisit.localDir += CQueueView::ReplaceInvalidCharacters(entry.name) + CLocalFileSystem::path_separator;
 				}
 				if (entry.link)
 				{
@@ -288,7 +288,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			case recursive_download_flatten:
 				{
 					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true,
-						dir.localDir + entry.name,
+						dir.localDir + CQueueView::ReplaceInvalidCharacters(entry.name),
 						entry.name, pDirectoryListing->path, *pServer, entry.size);
 					added = true;
 				}

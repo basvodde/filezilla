@@ -1515,7 +1515,7 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 			if (!idle)
 				continue;
 			CLocalPath local_path(local_parent);
-			local_path.AddSegment(name);
+			local_path.AddSegment(CQueueView::ReplaceInvalidCharacters(name));
 			CServerPath remotePath = m_pDirectoryListing->path;
 			if (remotePath.AddSegment(name))
 			{
@@ -1525,7 +1525,7 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 		}
 		else
 		{
-			m_pQueue->QueueFile(queueOnly, true, local_parent.GetPath() + name, name, m_pDirectoryListing->path, *pServer, entry.size);
+			m_pQueue->QueueFile(queueOnly, true, local_parent.GetPath() + CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
 			added = true;
 		}
 	}

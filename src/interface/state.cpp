@@ -783,7 +783,7 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, co
 		if (!iter->dir)
 			continue;
 
-		m_pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + iter->name, iter->link);
+		m_pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + CQueueView::ReplaceInvalidCharacters(iter->name), iter->link);
 	}
 
 	if (m_pComparisonManager->IsComparing())

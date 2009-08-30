@@ -14,6 +14,7 @@ bool COptionsPageConnection::LoadPage()
 	bool failure = false;
 	SetTextFromOption(XRCID("ID_RETRIES"), OPTION_RECONNECTCOUNT, failure);
 	SetTextFromOption(XRCID("ID_RETRYDELAY"), OPTION_RECONNECTDELAY, failure);
+	SetTextFromOption(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT, failure);
 	return !failure;
 }
 
@@ -22,6 +23,7 @@ bool COptionsPageConnection::SavePage()
 	long tmp;
 	GetText(XRCID("ID_RETRIES")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTCOUNT, tmp);
 	GetText(XRCID("ID_RETRYDELAY")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTDELAY, tmp);
+	SetOptionFromText(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT);
 	return true;
 }
 
@@ -38,6 +40,11 @@ bool COptionsPageConnection::Validate()
 	long delay;
 	if (!pDelay->GetValue().ToLong(&delay) || delay < 0 || delay > 999)
 		return DisplayError(pDelay, _("Delay between failed connection attempts has to be between 1 and 999 seconds."));
+
+	long timeout;
+	wxTextCtrl *pTimeout = XRCCTRL(*this, "ID_TIMEOUT", wxTextCtrl);
+	if (!pTimeout->GetValue().ToLong(&timeout) || ((timeout < 5 || timeout > 9999) && timeout != 0))
+		return DisplayError(pTimeout, _("Please enter a timeout between 5 and 9999 seconds or 0 to disable timeouts."));
 
 	return true;
 }

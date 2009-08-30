@@ -141,7 +141,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Search sort order", string, _T(""), false },
 	{ "Edit track local", number, _T("1"), false },
 	{ "Prevent idle sleep", number, _T("1"), false },
-	{ "Filteredit window size", string, _T(""), false }
+	{ "Filteredit window size", string, _T(""), false },
+	{ "Enable invalid char filter", number, _T("1"), false },
+	{ "Invalid char replace", string, _T("_"), false },
 };
 
 struct t_default_option
@@ -512,6 +514,11 @@ int COptions::Validate(unsigned int nID, int value)
 
 wxString COptions::Validate(unsigned int nID, wxString value)
 {
+	if (nID == OPTION_INVALID_CHAR_REPLACE)
+	{
+		if (value.Len() > 1)
+			value = _T("_");
+	}
 	return value;
 }
 

@@ -83,10 +83,53 @@
         </object>
         <flag>wxGROW</flag>
       </object>
+      
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
-          <label>Reconnection settings</label>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>1</cols>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>3</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Time&amp;out in seconds:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_TIMEOUT">
+                      <size>40,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <hgap>4</hgap>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>(5-9999, 0 to disable)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>If no data is sent or received during an operating for longer than the specified time, the connection will be closed and FileZilla will try to reconnect.</label>
+                </object>
+              </object>
+              <vgap>4</vgap>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+          <label>Timeout</label>
           <orient>wxVERTICAL</orient>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
           <object class="sizeritem">
             <object class="wxFlexGridSizer">
               <cols>3</cols>
@@ -139,6 +182,8 @@
             <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
             <border>4</border>
           </object>
+          <label>Reconnection settings</label>
+          <orient>wxVERTICAL</orient>
         </object>
         <flag>wxGROW</flag>
       </object>
@@ -809,50 +854,7 @@
         </object>
         <flag>wxGROW</flag>
       </object>
-      <object class="sizeritem">
-        <object class="wxStaticBoxSizer">
-          <label>Timeout</label>
-          <orient>wxVERTICAL</orient>
-          <object class="sizeritem">
-            <object class="wxFlexGridSizer">
-              <cols>1</cols>
-              <object class="sizeritem">
-                <object class="wxFlexGridSizer">
-                  <cols>3</cols>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>Time&amp;out in seconds:</label>
-                    </object>
-                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                  </object>
-                  <object class="sizeritem">
-                    <object class="wxTextCtrl" name="ID_TIMEOUT">
-                      <size>40,-1</size>
-                    </object>
-                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                  </object>
-                  <hgap>4</hgap>
-                  <object class="sizeritem">
-                    <object class="wxStaticText">
-                      <label>(5-9999, 0 to disable)</label>
-                    </object>
-                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
-                  </object>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticText">
-                  <label>If no data can be sent or received during this time, the connection will be closed and FileZilla will try to reconnect.</label>
-                </object>
-              </object>
-              <vgap>4</vgap>
-            </object>
-            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
-            <border>4</border>
-          </object>
-        </object>
-        <flag>wxGROW</flag>
-      </object>
+      
       <object class="sizeritem">
         <object class="wxStaticBoxSizer">
           <label>Speed limits</label>
@@ -916,6 +918,53 @@
                 </object>
               </object>
               <cols>3</cols>
+            </object>
+            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <border>4</border>
+          </object>
+        </object>
+        <flag>wxGROW</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <label>Filter invalid characters in filenames</label>
+          <orient>wxVERTICAL</orient>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxCheckBox" name="ID_ENABLE_REPLACE">
+                  <label>Enable invalid character filtering</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>When enabled, characters that are not supported by the local operating system in filenames are replaced if downloading such a file.</label>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <orient>wxHORIZONTAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>Replace invalid characters with:</label>
+                    </object>
+                    <flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+                    <border>5</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_REPLACE"/>
+                    <flag>wxALIGN_CENTER_VERTICAL</flag>
+                    <minsize>15,-1</minsize>
+                  </object>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_REPLACED">
+                  <label>&lt;replaced&gt;</label>
+                </object>
+              </object>
+              <cols>1</cols>
+              <vgap>5</vgap>
             </object>
             <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
             <border>4</border>

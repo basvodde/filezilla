@@ -572,7 +572,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 			continue;
 
 		CFileItem* fileItem;
-		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + iter->name, iter->name, dataObject.GetServerPath(), iter->size);
+		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + ReplaceInvalidCharacters(iter->name), iter->name, dataObject.GetServerPath(), iter->size);
 		fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(iter->name, dataObject.GetServerPath().GetType());
 
 		InsertItem(pServerItem, fileItem);
@@ -3186,4 +3186,46 @@ void CQueueView::RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString&
 		pFile->SetRemoteFile(newName);
 
 	RefreshItem(pFile);
+}
+
+wxString CQueueView::ReplaceInvalidCharacters(const wxString& filename)
+{
+	if (!COptions::Get()->GetOptionVal(OPTION_INVALID_CHAR_REPLACE_ENABLE))
+		return filename;
+
+	const wxChar replace = COptions::Get()->GetOption(OPTION_INVALID_CHAR_REPLACE)[0];
+
+	wxString result;
+
+	wxChar* buf = result.GetWriteBuf(filename.Len() + 1);
+
+	const wxChar* p = filename.c_str();
+	while (*p)
+	{
+		switch (*p)
+		{
+		case '/':
+#ifdef __WXMSW__
+		case '\\':
+		case ':':
+		case '*':
+		case '?':
+		case '"':
+		case '<':
+		case '>':
+		case '|':
+#endif
+			if (replace)
+				*buf++ = replace;
+			break;
+		default:
+			*buf++ = *p;
+		}
+		p++;
+	}
+	*buf = 0;
+
+	result.UngetWriteBuf();
+
+	return result;
 }

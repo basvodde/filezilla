@@ -8,6 +8,8 @@
 #include "inputdialog.h"
 #include "dragdropmanager.h"
 #include <wx/clipbrd.h>
+#include "queue.h"
+#include "QueueView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -1089,7 +1091,7 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 
 	const wxString& name = GetItemText(m_contextMenuItem);
 
-	localDir.AddSegment(name);
+	localDir.AddSegment(CQueueView::ReplaceInvalidCharacters(name));
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
 	pRecursiveOperation->AddDirectoryToVisit(path, _T(""), localDir.GetPath());
