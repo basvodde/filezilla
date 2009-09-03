@@ -69,6 +69,7 @@
   Var ALL_USERS_BUTTON
   Var IS_ADMIN
   Var USERNAME
+  Var PERFORM_UPDATE
 
 ;--------------------------------
 ;Interface Settings
@@ -87,7 +88,9 @@
 ;--------------------------------
 ;Pages
 
+  !define MUI_PAGE_CUSTOMFUNCTION_PRE PageLicensePre
   !insertmacro MUI_PAGE_LICENSE "${top_srcdir}\COPYING"
+
   Page custom PageReinstall PageLeaveReinstall
   Page custom PageAllUsers PageLeaveAllUsers
 
@@ -260,6 +263,20 @@ Function LoadPreviousSettings
 
 FunctionEnd
 
+Function ReadUpdateCommandline
+
+  ${GetParameters} $R0
+
+  ${GetOptions} $R0 "/update" $R1
+
+  ${If} ${Errors}
+    StrCpy $PERFORM_UPDATE 0
+  ${Else}
+    StrCpy $PERFORM_UPDATE 1
+  ${EndIf}
+
+FunctionEnd
+
 Function .onInit
 
   ${Unless} ${AtLeastWin2000}
@@ -277,6 +294,9 @@ UAC_Err:
   MessageBox mb_iconstop "Could not elevate process (errorcode $0), continuing with normal user privileges." /SD IDOK
 UAC_ElevationAborted:
 UAC_Success:
+
+  ; /update argument
+  Call ReadUpdateCommandline
 
   Call GetUserInfo
 
@@ -313,13 +333,21 @@ UAC_Success:
     ${EndIf}
   ${EndIf}
         
-  ${Unless} $PREVIOUS_VERSION == ""
+  ${If} $PREVIOUS_VERSION == ""
+
+    StrCpy $PERFORM_UPDATE 0
+
+  ${Else}
 
     Push "${VERSION}"
     Push $PREVIOUS_VERSION
     Call FZVersionCompare
 
-  ${EndUnless}
+    ${If} $PREVIOUS_VERSION_STATE != "newer"
+      StrCpy $PERFORM_UPDATE 0
+    ${EndIf}
+
+  ${EndIf}
 
   StrCpy $ALL_USERS_DEFAULT $ALL_USERS
 
@@ -413,9 +441,22 @@ versioncomparedone:
 
 FunctionEnd
 
+Function PageLicensePre
+
+  ${If} $PERFORM_UPDATE == 1
+    Abort
+  ${EndIf}
+
+FunctionEnd
+
 Function PageReinstall
 
   ${If} $PREVIOUS_VERSION == ""
+    Abort
+  ${EndIf}
+
+  ${If} $PERFORM_UPDATE == 1
+    StrCpy $REINSTALL_UNINSTALL 1
     Abort
   ${EndIf}
 
@@ -476,7 +517,7 @@ Function PageReinstall
   ${Else}
     SendMessage $R0 ${BM_SETCHECK} 1 0
   ${EndIf}
-  
+
   nsDialogs::Show
 
 FunctionEnd
