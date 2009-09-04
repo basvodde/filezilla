@@ -876,7 +876,7 @@ void CUpdateWizard::OnFinish(wxWizardEvent& event)
 #ifdef __WXMSW__
 	if (m_currentPage == 2)
 	{
-		wxExecute(m_localFile);
+		wxExecute(_T("\"") + m_localFile +  _T("\" /update"));
 		CMainFrame* pFrame = (CMainFrame*)m_parent;
 		pFrame->Close();
 	}
