@@ -45,6 +45,7 @@
   !include "WinVer.nsh"
   !include "FileFunc.nsh"
   !include "Memento.nsh"
+  !include "@srcdir@\process_running.nsh"
 
 ;--------------------------------
 ;Required functions
@@ -691,7 +692,61 @@ Function PageStartmenuPre
 
 FunctionEnd
 
+Function CheckFileZillaRunning
+
+  Push "filezilla.exe"
+  Call IsProcessRunning
+  Pop $R1
+
+  ${If} $PERFORM_UPDATE == 1
+    StrCpy $R0 10
+  ${Else}
+    StrCpy $R0 2
+  ${EndIf}
+
+  ${While} $R1 == 1
+ 
+    ${If} $R0 == 0
+
+      ${ExitWhile}
+
+    ${EndIf}
+
+    Sleep 500
+
+    Push "filezilla.exe"
+    Call IsProcessRunning
+    Pop $R1
+
+    IntOp $R0 $R0 - 1
+
+  ${EndWhile}
+
+  Push "filezilla.exe"
+  Call IsProcessRunning
+  Pop $R1
+
+  ${While} $R1 == 1
+
+    MessageBox MB_ABORTRETRYIGNORE|MB_DEFBUTTON2 "FileZilla appears to be running.$\nPlease close all running instances of FileZilla before continuing the installation." /SD IDIGNORE IDABORT CheckFileZillaRunning_abort IDIGNORE CheckFileZillaRunning_ignore
+
+    Push "filezilla.exe"
+    Call IsProcessRunning
+    Pop $R1
+    
+  ${EndWhile}
+
+ CheckFileZillaRunning_ignore:
+  Return
+
+ CheckFileZillaRunning_abort:
+  Quit
+
+FunctionEnd
+
 Function PageInstfilesShow
+
+  Call CheckFileZillaRunning
 
   ${If} $REINSTALL_UNINSTALL != ""
 

@@ -1,6 +1,7 @@
 dist_noinst_DATA = install.nsi.in \
 		makezip.sh.in \
 		mingwm10.dll \
+		process_running.nsh \
 		UAC_unicode.dll \
 		UAC_unicode.dll.txt \
 		uninstall.ico
