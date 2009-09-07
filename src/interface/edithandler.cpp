@@ -1163,7 +1163,11 @@ bool CEditHandler::FilenameExists(const wxString& file)
 {
 	for (std::list<t_fileData>::const_iterator iter = m_fileDataList[remote].begin(); iter != m_fileDataList[remote].end(); iter++)
 	{
+#ifdef __WXMSW__
+		if (!iter->file.CmpNoCase(file))
+#else
 		if (iter->file == file)
+#endif
 			return true;
 	}
 
