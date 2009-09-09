@@ -9,7 +9,7 @@ or on possible data inconsistencies.
 For example since some servers are case sensitive and others aren't, a
 directory is removed from cache once an operation effects a file wich matches
 multiple entries in a cache directory using a case insensitive search
-On other operations, the directory ist markes as unsure. It may still be valid,
+On other operations, the directory is marked as unsure. It may still be valid,
 but for some operations the engine/interface prefers to retrieve a clean
 version.
 */
