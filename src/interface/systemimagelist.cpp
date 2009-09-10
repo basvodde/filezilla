@@ -17,6 +17,9 @@
     #endif
   #endif
 #endif
+#ifndef __WXMSW__
+#include <wx/rawbmp.h>
+#endif
 
 wxImageListEx::wxImageListEx()
 	: wxImageList()
@@ -34,6 +37,56 @@ HIMAGELIST wxImageListEx::Detach()
 	 HIMAGELIST hImageList = (HIMAGELIST)m_hImageList;
 	 m_hImageList = 0;
 	 return hImageList;
+}
+#endif
+
+#ifndef __WXMSW__
+void OverlaySymlink(wxBitmap& bmp)
+{
+	// This is ugly, but appareantly needed so that the data is _realla_ in the right internal format
+	bmp = bmp.ConvertToImage();
+	wxBitmap symlink = wxArtProvider::GetBitmap(_T("ART_SYMLINK"),  wxART_OTHER, wxSize(bmp.GetWidth(), bmp.GetHeight())).ConvertToImage();
+
+	wxAlphaPixelData target(bmp);
+	wxAlphaPixelData source(symlink);
+
+	int sx = bmp.GetWidth();
+	if (symlink.GetWidth() < sx)
+		sx = symlink.GetWidth();		
+	int sy = bmp.GetHeight();
+	if (symlink.GetHeight() < sy)
+		sy = symlink.GetHeight();		
+
+	// Do some rudimentary alpha copying
+	wxAlphaPixelData::Iterator t(target);
+	wxAlphaPixelData::Iterator s(source);
+	for (int y = 0; y < sy; y++)
+	{
+		s.MoveTo(source, 0, y);
+		t.MoveTo(target, 0, y);
+		for (int x = 0; x < sx; x++, s++, t++)
+		{
+			int a = s.Alpha();
+			if (!a) // Nothing to do for this pixel
+				continue;
+			if (t.Alpha())
+			{
+				// FIXME: This will look ugly if both source and target have alpha in between opaque and
+				// transparent, my formulas don't seem to be right.
+				t.Red() = ((int)t.Red() * (255 - a) * t.Alpha() / 255 + (int)s.Red() * a) / 255;
+				t.Green() = ((int)t.Green() * (255 - a) * t.Alpha() / 255 + (int)s.Green() * a) / 255;
+				t.Blue() = ((int)t.Blue() * (255 - a) * t.Alpha() / 255 + (int)s.Blue() * a) / 255;
+				t.Alpha() = a + (255 - a) * t.Alpha() / 255;
+			}
+			else
+			{
+				t.Red() = s.Red();
+				t.Green() = s.Green();
+				t.Blue() = s.Blue();
+				t.Alpha() = a;
+			}
+		}
+	}
 }
 #endif
 
@@ -58,9 +111,18 @@ CSystemImageList::CSystemImageList(int size)
 #else
 	m_pImageList = new wxImageListEx(size, size);
 
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(size, size)));
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(size, size)));
-	m_pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(size, size)));
+	wxBitmap file = wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(size, size));
+	wxBitmap folderclosed = wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(size, size));
+	wxBitmap folder = wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(size, size));
+	m_pImageList->Add(file);
+	m_pImageList->Add(folderclosed);
+	m_pImageList->Add(folder);
+	OverlaySymlink(file);
+	OverlaySymlink(folderclosed);
+	OverlaySymlink(folder);
+	m_pImageList->Add(file);
+	m_pImageList->Add(folderclosed);
+	m_pImageList->Add(folder);
 #endif
 }
 
@@ -90,7 +152,7 @@ wxBitmap PrepareIcon(wxIcon icon, wxSize size)
 }
 #endif
 
-int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName /*=_T("")*/, bool physical /*=true*/)
+int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName /*=_T("")*/, bool physical /*=true*/, bool symlink /*=false*/)
 {
 #ifdef __WXMSW__
 	if (fileName == _T(""))
@@ -115,12 +177,12 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 	{
 	case file:
 	default:
-		icon = 0;
+		icon = symlink ? 3 : 0;
 		break;
 	case dir:
-		return 1;
+		return symlink ? 4 : 1;
 	case opened_dir:
-		return 2;
+		return symlink ? 5 : 2;
 	}
 
 	wxFileName fn(fileName);
@@ -128,9 +190,18 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 	if (ext == _T(""))
 		return icon;
 
-	std::map<wxString, int>::iterator cacheIter = m_iconCache.find(ext);
-	if (cacheIter != m_iconCache.end())
-		return cacheIter->second;
+	if (symlink)
+	{
+		std::map<wxString, int>::iterator cacheIter = m_iconCache.find(ext);
+		if (cacheIter != m_iconCache.end())
+			return cacheIter->second;
+	}
+	else
+	{
+		std::map<wxString, int>::iterator cacheIter = m_iconSymlinkCache.find(ext);
+		if (cacheIter != m_iconSymlinkCache.end())
+			return cacheIter->second;
+	}
 
 	wxFileType *pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
 	if (!pType)
@@ -148,6 +219,8 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 		if (newIcon.Ok())
 		{
 			wxBitmap bmp = PrepareIcon(newIcon, wxSize(16, 16));
+			if (symlink)
+				OverlaySymlink(bmp);
 			int index = m_pImageList->Add(bmp);
 			if (index > 0)
 				icon = index;
@@ -155,7 +228,10 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 	}
 	delete pType;
 
-	m_iconCache[ext] = icon;
+	if (symlink)
+		m_iconCache[ext] = icon;
+	else
+		m_iconSymlinkCache[ext] = icon;
 	return icon;
 #endif
 	return -1;

@@ -15,6 +15,7 @@ dist_resources_DATA = ascii.png \
 		lock.png \
 		logview.png processqueue.png queueview.png reconnect.png \
 		refresh.png remotetreeview.png server.png sitemanager.png \
+		symlink.png \
 		synchronize.png \
 		unknown.png upload.png uploadadd.png
 
