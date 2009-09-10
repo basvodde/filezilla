@@ -1,5 +1,8 @@
 #include "FileZilla.h"
 #include "systemimagelist.h"
+#ifdef __WXMSW__
+#include "shlobj.h"
+#endif
 
 wxImageListEx::wxImageListEx()
 	: wxImageList()
@@ -143,3 +146,18 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 #endif
 	return -1;
 }
+
+#ifdef __WXMSW__
+int CSystemImageList::GetLinkOverlayIndex()
+{
+	static int overlay = -1;
+	if (overlay == -1)
+	{
+		overlay = SHGetIconOverlayIndex(0, IDO_SHGIOI_LINK);
+		if (overlay < 0)
+			overlay = 0;
+	}
+
+	return overlay;
+}
+#endif

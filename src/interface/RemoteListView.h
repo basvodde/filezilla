@@ -80,6 +80,10 @@ protected:
 	void RepositionInfoText();
 	void SetInfoText();
 
+#ifdef __WXMSW__
+	virtual int GetOverlayIndex(int item);
+#endif
+
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;
 

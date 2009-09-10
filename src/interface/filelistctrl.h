@@ -126,6 +126,10 @@ protected:
 	void SetItemCount(int count);
 #endif
 
+#ifdef __WXMSW__
+	virtual int GetOverlayIndex(int item) { return 0; }
+#endif
+
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
 

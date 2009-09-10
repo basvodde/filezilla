@@ -116,6 +116,35 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 	{
 		pFileListCtrl->SetFocus();
 	}
+	else if (pNmhdr->code == LVN_GETDISPINFO)
+	{
+		// Handle this manually instead of using wx for it
+		// so that we can set the overlay image
+		LV_DISPINFO *info = (LV_DISPINFO *)lParam;
+
+		LV_ITEM& lvi = info->item;
+		long item = lvi.iItem;
+
+		if (lvi.mask & LVIF_TEXT)
+		{
+			wxString text = pFileListCtrl->GetItemText(item, lvi.iSubItem);
+			wxStrncpy(lvi.pszText, text, lvi.cchTextMax - 1);
+			lvi.pszText[lvi.cchTextMax - 1] = 0;
+		}
+
+		if (lvi.mask & LVIF_IMAGE)
+		{
+			if (!lvi.iSubItem)
+				lvi.iImage = pFileListCtrl->OnGetItemImage(item);
+			else
+				lvi.iImage = -1;
+		}
+
+		if (!lvi.iSubItem)
+			lvi.state = INDEXTOOVERLAYMASK(pFileListCtrl->GetOverlayIndex(lvi.iItem));
+
+		return 0;
+	}
 
 	return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
 }
@@ -148,6 +177,10 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 	// Subclass window
 	m_hwnd_map[(HWND)pParent->GetHandle()] = (char*)this;
 	m_prevWndproc = (WNDPROC)SetWindowLongPtr((HWND)pParent->GetHandle(), GWLP_WNDPROC, (LONG_PTR)WindowProc);
+
+	// Enable use of overlay images
+	DWORD mask = ListView_GetCallbackMask((HWND)GetHandle()) | LVIS_OVERLAYMASK;
+	ListView_SetCallbackMask((HWND)GetHandle(), mask);
 #else
 	m_pending_focus_processing = 0;
 	m_focusItem = -1;

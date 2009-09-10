@@ -3115,3 +3115,19 @@ void CRemoteListView::OnMenuGeturl(wxCommandEvent& event)
 	wxTheClipboard->Flush();
 	wxTheClipboard->Close();
 }
+
+#ifdef __WXMSW__
+int CRemoteListView::GetOverlayIndex(int item)
+{
+	int index = GetItemIndex(item);
+	if (index == -1)
+		return 0;
+	if ((unsigned int)index >= m_pDirectoryListing->GetCount())
+		return 0;
+
+	if ((*m_pDirectoryListing)[index].link)
+		return GetLinkOverlayIndex();
+
+	return 0;
+}
+#endif

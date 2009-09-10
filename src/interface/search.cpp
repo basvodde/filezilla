@@ -38,6 +38,10 @@ protected:
 
 	void InitDateFormat();
 
+#ifdef __WXMSW__
+	virtual int GetOverlayIndex(int item);
+#endif
+
 private:
 	virtual bool CanStartComparison(wxString* pError) { return false; }
 	virtual void StartComparison() {}
@@ -1085,3 +1089,17 @@ void CSearchDialog::OnCharHook(wxKeyEvent& event)
 
 	event.Skip();
 }
+
+#ifdef __WXMSW__
+int CSearchDialogFileList::GetOverlayIndex(int item)
+{
+	if (item < 0 || item >= (int)m_indexMapping.size())
+		return -1;
+	int index = m_indexMapping[item];
+
+	if (m_fileData[index].entry.link)
+		return GetLinkOverlayIndex();
+
+	return 0;
+}
+#endif

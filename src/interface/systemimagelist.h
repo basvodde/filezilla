@@ -38,6 +38,10 @@ public:
 
 	int GetIconIndex(enum filetype type, const wxString& fileName = _T(""), bool physical = true);
 
+#ifdef __WXMSW__
+	int GetLinkOverlayIndex();
+#endif
+
 protected:
 	wxImageListEx *m_pImageList;
 
