@@ -41,7 +41,28 @@ HIMAGELIST wxImageListEx::Detach()
 #endif
 
 #ifndef __WXMSW__
-void OverlaySymlink(wxBitmap& bmp)
+static inline void AlphaComposite_Over_Inplace(wxAlphaPixelData::Iterator &a, wxAlphaPixelData::Iterator &b)
+{
+	// Alpha compositing of a single pixel, b gets composited over a
+	// (well-known over operator), result stored in a.
+	// All RGB and A values have range from 0 to 255, RGB values aren't
+	// premultiplied ba A.
+	// Safe for multiple compositions.
+
+	if (!b.Alpha())
+	{
+		// Nothing to do
+		return;
+	}
+
+	int new_alpha = a.Alpha() + b.Alpha() - a.Alpha() * b.Alpha() / 255; // Could only get 0 if both alphas were 0, cathced that already.
+	a.Red() = ((int)a.Red() * (255 - b.Alpha()) * a.Alpha() / 255 + (int)b.Red() * b.Alpha()) / new_alpha;
+	a.Green() = ((int)a.Green() * (255 - b.Alpha()) * a.Alpha() / 255 + (int)b.Green() * b.Alpha()) / new_alpha;
+	a.Blue() = ((int)a.Blue() * (255 - b.Alpha()) * a.Alpha() / 255 + (int)b.Blue() * b.Alpha()) / new_alpha;
+	a.Alpha() = new_alpha;
+}
+
+static void OverlaySymlink(wxBitmap& bmp)
 {
 	// This is ugly, but appareantly needed so that the data is _realla_ in the right internal format
 	bmp = bmp.ConvertToImage();
@@ -65,27 +86,7 @@ void OverlaySymlink(wxBitmap& bmp)
 		s.MoveTo(source, 0, y);
 		t.MoveTo(target, 0, y);
 		for (int x = 0; x < sx; x++, s++, t++)
-		{
-			int a = s.Alpha();
-			if (!a) // Nothing to do for this pixel
-				continue;
-			if (t.Alpha())
-			{
-				// FIXME: This will look ugly if both source and target have alpha in between opaque and
-				// transparent, my formulas don't seem to be right.
-				t.Red() = ((int)t.Red() * (255 - a) * t.Alpha() / 255 + (int)s.Red() * a) / 255;
-				t.Green() = ((int)t.Green() * (255 - a) * t.Alpha() / 255 + (int)s.Green() * a) / 255;
-				t.Blue() = ((int)t.Blue() * (255 - a) * t.Alpha() / 255 + (int)s.Blue() * a) / 255;
-				t.Alpha() = a + (255 - a) * t.Alpha() / 255;
-			}
-			else
-			{
-				t.Red() = s.Red();
-				t.Green() = s.Green();
-				t.Blue() = s.Blue();
-				t.Alpha() = a;
-			}
-		}
+			AlphaComposite_Over_Inplace(t, s);
 	}
 }
 #endif
