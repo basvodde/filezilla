@@ -2,6 +2,20 @@
 #include "systemimagelist.h"
 #ifdef __WXMSW__
 #include "shlobj.h"
+
+  // Once again lots of the shell stuff is missing in MinGW's headers
+  #ifndef IDO_SHGIOI_LINK
+    #define IDO_SHGIOI_LINK 0x0FFFFFFE
+  #endif
+  #ifndef SHGetIconOverlayIndex
+    extern "C" int WINAPI SHGetIconOverlayIndexW(LPCWSTR pszIconPath, int iIconIndex);
+    extern "C" int WINAPI SHGetIconOverlayIndexA(LPCSTR pszIconPath, int iIconIndex);
+    #if wxUSE_UNICODE
+      #define SHGetIconOverlayIndex SHGetIconOverlayIndexW
+    #else
+      #define SHGetIconOverlayIndex SHGetIconOverlayIndexA
+    #endif
+  #endif
 #endif
 
 wxImageListEx::wxImageListEx()
