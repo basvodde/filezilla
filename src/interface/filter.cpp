@@ -139,6 +139,48 @@ void CFilterDialog::OnEdit(wxCommandEvent& event)
 	DisplayFilters();
 }
 
+void CFilterDialog::SaveFilter(TiXmlElement* pElement, const CFilter& filter)
+{
+	AddTextElement(pElement, "Name", filter.name);
+	AddTextElement(pElement, "ApplyToFiles", filter.filterFiles ? _T("1") : _T("0"));
+	AddTextElement(pElement, "ApplyToDirs", filter.filterDirs ? _T("1") : _T("0"));
+	AddTextElement(pElement, "MatchType", (filter.matchType == CFilter::any) ? _T("Any") : ((filter.matchType == CFilter::none) ? _T("None") : _T("All")));
+	AddTextElement(pElement, "MatchCase", filter.matchCase ? _T("1") : _T("0"));
+
+	TiXmlElement* pConditions = pElement->InsertEndChild(TiXmlElement("Conditions"))->ToElement();
+	for (std::vector<CFilterCondition>::const_iterator conditionIter = filter.filters.begin(); conditionIter != filter.filters.end(); conditionIter++)
+	{
+		const CFilterCondition& condition = *conditionIter;
+		TiXmlElement* pCondition = pConditions->InsertEndChild(TiXmlElement("Condition"))->ToElement();
+
+		int type;
+		switch (condition.type)
+		{
+		case filter_name:
+			type = 0;
+			break;
+		case filter_size:
+			type = 1;
+			break;
+		case filter_attributes:
+			type = 2;
+			break;
+		case filter_permissions:
+			type = 3;
+			break;
+		case filter_path:
+			type = 4;
+			break;
+		default:
+			wxFAIL_MSG(_T("Unhandled filter type"));
+			break;
+		}
+		AddTextElement(pCondition, "Type", type);
+		AddTextElement(pCondition, "Condition", condition.condition);
+		AddTextElement(pCondition, "Value", condition.strValue);
+	}
+}
+
 void CFilterDialog::SaveFilters()
 {
 	CInterProcessMutex mutex(MUTEX_FILTERS);
@@ -166,46 +208,10 @@ void CFilterDialog::SaveFilters()
 	for (std::vector<CFilter>::const_iterator iter = m_globalFilters.begin(); iter != m_globalFilters.end(); iter++)
 	{
 		const CFilter& filter = *iter;
-		TiXmlElement* pFilter = pFilters->InsertEndChild(TiXmlElement("Filter"))->ToElement();
 
-		AddTextElement(pFilter, "Name", filter.name);
-		AddTextElement(pFilter, "ApplyToFiles", filter.filterFiles ? _T("1") : _T("0"));
-		AddTextElement(pFilter, "ApplyToDirs", filter.filterDirs ? _T("1") : _T("0"));
-		AddTextElement(pFilter, "MatchType", (filter.matchType == CFilter::any) ? _T("Any") : ((filter.matchType == CFilter::none) ? _T("None") : _T("All")));
-		AddTextElement(pFilter, "MatchCase", filter.matchCase ? _T("1") : _T("0"));
-
-		TiXmlElement* pConditions = pFilter->InsertEndChild(TiXmlElement("Conditions"))->ToElement();
-		for (std::vector<CFilterCondition>::const_iterator conditionIter = filter.filters.begin(); conditionIter != filter.filters.end(); conditionIter++)
-		{
-			const CFilterCondition& condition = *conditionIter;
-			TiXmlElement* pCondition = pConditions->InsertEndChild(TiXmlElement("Condition"))->ToElement();
-
-			int type;
-			switch (condition.type)
-			{
-			case filter_name:
-				type = 0;
-				break;
-			case filter_size:
-				type = 1;
-				break;
-			case filter_attributes:
-				type = 2;
-				break;
-			case filter_permissions:
-				type = 3;
-				break;
-			case filter_path:
-				type = 4;
-				break;
-			default:
-				wxFAIL_MSG(_T("Unhandled filter type"));
-				break;
-			}
-			AddTextElement(pCondition, "Type", type);
-			AddTextElement(pCondition, "Condition", condition.condition);
-			AddTextElement(pCondition, "Value", condition.strValue);
-		}
+		TiXmlElement* pElement = new TiXmlElement("Filter");
+		SaveFilter(pElement, filter);
+		pFilters->LinkEndChild(pElement);
 	}
 
 	TiXmlElement *pSets = pDocument->FirstChildElement("Sets");
@@ -916,6 +922,83 @@ bool CFilterManager::CompileRegexes()
 	return true;
 }
 
+bool CFilterManager::LoadFilter(TiXmlElement* pElement, CFilter& filter)
+{
+	filter.name = GetTextElement(pElement, "Name");
+	filter.filterFiles = GetTextElement(pElement, "ApplyToFiles") == _T("1");
+	filter.filterDirs = GetTextElement(pElement, "ApplyToDirs") == _T("1");
+
+	wxString type = GetTextElement(pElement, "MatchType");
+	if (type == _T("Any"))
+		filter.matchType = CFilter::any;
+	else if (type == _T("None"))
+		filter.matchType = CFilter::none;
+	else
+		filter.matchType = CFilter::all;
+	filter.matchCase = GetTextElement(pElement, "MatchCase") == _T("1");
+
+	TiXmlElement *pConditions = pElement->FirstChildElement("Conditions");
+	if (!pConditions)
+		return false;
+
+	TiXmlElement *pCondition = pConditions->FirstChildElement("Condition");
+	while (pCondition)
+	{
+		CFilterCondition condition;
+		int type = GetTextElementInt(pCondition, "Type", 0);
+		switch (type)
+		{
+		case 0:
+			condition.type = filter_name;
+			break;
+		case 1:
+			condition.type = filter_size;
+			break;
+		case 2:
+			condition.type = filter_attributes;
+			break;
+		case 3:
+			condition.type = filter_permissions;
+			break;
+		case 4:
+			condition.type = filter_path;
+			break;
+		default:
+			pCondition = pCondition->NextSiblingElement("Condition");
+			continue;
+		}
+		condition.condition = GetTextElementInt(pCondition, "Condition", 0);
+		condition.strValue = GetTextElement(pCondition, "Value");
+		condition.matchCase = filter.matchCase;
+		if (condition.strValue == _T(""))
+		{
+			pCondition = pCondition->NextSiblingElement("Condition");
+			continue;
+		}
+
+		// TODO: 64bit filesize
+		if (condition.type == filter_size)
+		{
+			unsigned long tmp;
+			condition.strValue.ToULong(&tmp);
+			condition.value = tmp;
+		}
+		else if (condition.type == filter_attributes || condition.type == filter_permissions)
+		{
+			if (condition.strValue == _T("0"))
+				condition.value = 0;
+			else
+				condition.value = 1;
+		}
+
+		filter.filters.push_back(condition);
+
+		pCondition = pCondition->NextSiblingElement("Condition");
+	}
+
+	return true;
+}
+
 void CFilterManager::LoadFilters()
 {
 	if (m_loaded)
@@ -959,88 +1042,10 @@ void CFilterManager::LoadFilters()
 	while (pFilter)
 	{
 		CFilter filter;
-		filter.name = GetTextElement(pFilter, "Name");
-		if (filter.name == _T(""))
-		{
-			pFilter = pFilter->NextSiblingElement("Filter");
-			continue;
-		}
 
-		filter.filterFiles = GetTextElement(pFilter, "ApplyToFiles") == _T("1");
-		filter.filterDirs = GetTextElement(pFilter, "ApplyToDirs") == _T("1");
+		bool loaded = LoadFilter(pFilter, filter);
 
-		wxString type = GetTextElement(pFilter, "MatchType");
-		if (type == _T("Any"))
-			filter.matchType = CFilter::any;
-		else if (type == _T("None"))
-			filter.matchType = CFilter::none;
-		else
-			filter.matchType = CFilter::all;
-		filter.matchCase = GetTextElement(pFilter, "MatchCase") == _T("1");
-
-		TiXmlElement *pConditions = pFilter->FirstChildElement("Conditions");
-		if (!pConditions)
-		{
-			pFilter = pFilter->NextSiblingElement("Filter");
-			continue;
-		}
-
-		TiXmlElement *pCondition = pConditions->FirstChildElement("Condition");
-		while (pCondition)
-		{
-			CFilterCondition condition;
-			int type = GetTextElementInt(pCondition, "Type", 0);
-			switch (type)
-			{
-			case 0:
-				condition.type = filter_name;
-				break;
-			case 1:
-				condition.type = filter_size;
-				break;
-			case 2:
-				condition.type = filter_attributes;
-				break;
-			case 3:
-				condition.type = filter_permissions;
-				break;
-			case 4:
-				condition.type = filter_path;
-				break;
-			default:
-				pCondition = pCondition->NextSiblingElement("Condition");
-				continue;
-			}
-			condition.condition = GetTextElementInt(pCondition, "Condition", 0);
-			condition.strValue = GetTextElement(pCondition, "Value");
-			condition.matchCase = filter.matchCase;
-			if (condition.strValue == _T(""))
-			{
-				pCondition = pCondition->NextSiblingElement("Condition");
-				continue;
-			}
-
-			// TODO: 64bit filesize
-			if (condition.type == filter_size)
-			{
-				unsigned long tmp;
-				condition.strValue.ToULong(&tmp);
-				condition.value = tmp;
-			}
-			else if (condition.type == filter_attributes || condition.type == filter_permissions)
-			{
-				if (condition.strValue == _T("0"))
-					condition.value = 0;
-				else
-					condition.value = 1;
-			}
-
-			filter.filters.push_back(condition);
-
-			pCondition = pCondition->NextSiblingElement("Condition");
-		}
-
-		if (!filter.filters.empty())
+		if (loaded && filter.name != _T("") && !filter.filters.empty())
 			m_globalFilters.push_back(filter);
 
 		pFilter = pFilter->NextSiblingElement("Filter");
