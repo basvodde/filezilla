@@ -77,7 +77,7 @@ CSessionManagerImpl::CSessionManagerImpl()
 	}
 	else
 	{
-		wxDBusMethodCall* call = new wxDBusMethodCall(
+		wxDBusMethodCall call(
 			"org.gnome.SessionManager",
 			"/org/gnome/SessionManager",
 			"org.gnome.SessionManager",
@@ -87,10 +87,10 @@ CSessionManagerImpl::CSessionManagerImpl()
 
 		char pid[sizeof(unsigned long) * 8 + 10];
 		sprintf(pid, "FileZilla %lu", wxGetProcessId()); 
-		call->AddString(pid);
-		call->AddString(pid); // What's this "startup identifier"?
+		call.AddString(pid);
+		call.AddString(pid); // What's this "startup identifier"?
 
-		if (!call->CallAsync(m_pConnection, 1000))
+		if (!call.CallAsync(m_pConnection, 1000))
 			m_state = error;
 	}
 
@@ -174,14 +174,14 @@ void CSessionManagerImpl::OnSignal(wxDBusConnectionEvent& event)
 
 			bool res = SendEvent(true, &veto);
 
-			wxDBusMethodCall* call = new wxDBusMethodCall(
+			wxDBusMethodCall call(
 				"org.gnome.SessionManager",
 				m_client_object_path,
 				0,//"org.gnome.SessionManager.ClientPrivate",
 				"EndSessionResponse");
-			call->AddBool(!res || !veto);
-			call->AddString("No reason given");
-			call->CallAsync(m_pConnection, 1000);
+			call.AddBool(!res || !veto);
+			call.AddString("No reason given");
+			call.CallAsync(m_pConnection, 1000);
 		}
 		else if (!strcmp(member, "EndSession"))
 		{
@@ -237,14 +237,14 @@ void CSessionManagerImpl::OnAsyncReply(wxDBusConnectionEvent& event)
 			printf("wxD-Bus: Session is over\n");
 		m_state = unregister;
 
-		wxDBusMethodCall* call = new wxDBusMethodCall(
+		wxDBusMethodCall call(
 			"org.gnome.SessionManager",
 			"/org/gnome/SessionManager",
 			"org.gnome.SessionManager",
 			"UnregisterClient");
-		call->AddObjectPath(m_client_object_path);
+		call.AddObjectPath(m_client_object_path);
 
-		call->CallAsync(m_pConnection, 1000);
+		call.CallAsync(m_pConnection, 1000);
 
 	}
 	else if (m_state == unregister)
@@ -271,14 +271,14 @@ bool CSessionManagerImpl::ConfirmEndSession()
 		printf("wxD-Bus: Confirm session end\n");
 
 	m_state = ended_session;
-	wxDBusMethodCall* call = new wxDBusMethodCall(
+	wxDBusMethodCall call(
 		"org.gnome.SessionManager",
 		m_client_object_path,
 		"org.gnome.SessionManager.ClientPrivate",
 		"EndSessionResponse");
-	call->AddBool(true);
-	call->AddString("");
-	call->CallAsync(m_pConnection, 1000);
+	call.AddBool(true);
+	call.AddString("");
+	call.CallAsync(m_pConnection, 1000);
 
 	return true;
 }

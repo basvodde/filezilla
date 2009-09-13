@@ -94,13 +94,13 @@ CPowerManagementInhibitorImpl::~CPowerManagementInhibitorImpl()
 void CPowerManagementInhibitorImpl::RequestIdle()
 {
 	m_intended_state = idle;
-	if (m_state == error || m_state == idle || m_state == request_idle)
+	if (m_state == error || m_state == idle || m_state == request_idle || m_state == request_busy)
 		return;
 
 	if (m_debug)
 		printf("wxD-Bus: CPowerManagementInhibitor: Requesting idle\n");
 
-	wxDBusMethodCall* call = new wxDBusMethodCall(
+	wxDBusMethodCall call(
 			"org.freedesktop.PowerManagement",
 			"/org/freedesktop/PowerManagement/Inhibit",
 			"org.freedesktop.PowerManagement.Inhibit",
@@ -108,9 +108,9 @@ void CPowerManagementInhibitorImpl::RequestIdle()
 
 	m_state = request_idle;
 
-	call->AddUnsignedInt(m_cookie);
+	call.AddUnsignedInt(m_cookie);
 
-	if (!call->CallAsync(m_pConnection, 1000))
+	if (!call.CallAsync(m_pConnection, 1000))
 	{
 		m_state = error;
 		if (m_debug)
@@ -122,13 +122,13 @@ void CPowerManagementInhibitorImpl::RequestIdle()
 void CPowerManagementInhibitorImpl::RequestBusy()
 {
 	m_intended_state = busy;
-	if (m_state == error || m_state == busy || m_state == request_busy)
+	if (m_state == error || m_state == busy || m_state == request_busy || m_state == request_idle)
 		return;
 
 	if (m_debug)
 		printf("wxD-Bus: CPowerManagementInhibitor: Requesting busy\n");
 
-	wxDBusMethodCall* call = new wxDBusMethodCall(
+	wxDBusMethodCall call(
 			"org.freedesktop.PowerManagement",
 			"/org/freedesktop/PowerManagement/Inhibit",
 			"org.freedesktop.PowerManagement.Inhibit",
@@ -136,10 +136,10 @@ void CPowerManagementInhibitorImpl::RequestBusy()
 
 	m_state = request_busy;
 
-	call->AddString("FileZilla");
-	call->AddString("File transfer or remote operation in progress");
+	call.AddString("FileZilla");
+	call.AddString("File transfer or remote operation in progress");
 
-	if (!call->CallAsync(m_pConnection, 1000))
+	if (!call.CallAsync(m_pConnection, 1000))
 	{
 		m_state = error;
 		if (m_debug)
@@ -171,7 +171,7 @@ void CPowerManagementInhibitorImpl::OnAsyncReply(wxDBusConnectionEvent& event)
 	{
 		m_state = idle;
 		if (m_debug)
-			printf("wxD-Bus: CPowerManagementInhibitor: Reqeust successful\n");
+			printf("wxD-Bus: CPowerManagementInhibitor: Request successful\n");
 		if (m_intended_state == busy)
 			RequestBusy();
 		return;
@@ -181,7 +181,7 @@ void CPowerManagementInhibitorImpl::OnAsyncReply(wxDBusConnectionEvent& event)
 		m_state = busy;
 		msg->GetUInt(m_cookie);
 		if (m_debug)
-		printf("wxD-Bus: CPowerManagementInhibitor: Reqeust successful\n");
+			printf("wxD-Bus: CPowerManagementInhibitor: Request successful, cookie is %d\n", m_cookie);
 		if (m_intended_state == idle)
 			RequestIdle();
 		return;
