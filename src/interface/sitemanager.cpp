@@ -534,12 +534,13 @@ public:
 class CSiteManagerXmlHandler_Tree : public CSiteManagerXmlHandler
 {
 public:
-	CSiteManagerXmlHandler_Tree(wxTreeCtrl* pTree, wxTreeItemId root, const wxString& lastSelection)
-		: m_pTree(pTree), m_item(root)
+	CSiteManagerXmlHandler_Tree(wxTreeCtrl* pTree, wxTreeItemId root, const wxString& lastSelection, bool predefined)
+		: m_pTree(pTree), m_item(root), m_predefined(predefined)
 	{
 		if (!CSiteManager::UnescapeSitePath(lastSelection, m_lastSelection))
 			m_lastSelection.clear();
 		m_wrong_sel_depth = 0;
+		m_kiosk = COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE);
 	}
 
 	virtual ~CSiteManagerXmlHandler_Tree()
@@ -577,6 +578,14 @@ public:
 
 	virtual bool AddSite(CSiteManagerItemData_Site* data)
 	{
+		if (m_kiosk && !m_predefined &&
+			data->m_server.GetLogonType() == NORMAL)
+		{
+			// Clear saved password
+			data->m_server.SetLogonType(ASK);
+			data->m_server.SetUser(data->m_server.GetUser());
+		}
+
 		const wxString name(data->m_server.GetName());
 
 		wxTreeItemId newItem = m_pTree->AppendItem(m_item, name, 2, 2, data);
@@ -649,6 +658,9 @@ protected:
 	int m_wrong_sel_depth;
 
 	std::list<bool> m_expand;
+
+	bool m_predefined;
+	int m_kiosk;
 };
 
 bool CSiteManager::Load()
@@ -698,7 +710,7 @@ bool CSiteManager::Load()
 	}
 	else
 		lastSelection = _T("");
-	CSiteManagerXmlHandler_Tree handler(pTree, treeId, lastSelection);
+	CSiteManagerXmlHandler_Tree handler(pTree, treeId, lastSelection, false);
 
 	bool res = Load(pElement, &handler);
 
@@ -1005,6 +1017,7 @@ bool CSiteManager::Verify()
 		}
 
 		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) != 0 &&
+			!IsPredefinedItem(item) &&
 			(logon_type == ACCOUNT || logon_type == NORMAL))
 		{
 			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
@@ -1875,7 +1888,7 @@ bool CSiteManager::LoadDefaultSites()
 	}
 	else
 		lastSelection = _T("");
-	CSiteManagerXmlHandler_Tree handler(pTree, m_predefinedSites, lastSelection);
+	CSiteManagerXmlHandler_Tree handler(pTree, m_predefinedSites, lastSelection, true);
 
 	Load(pElement, &handler);
 
