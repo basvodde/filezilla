@@ -15,7 +15,7 @@ public:
 	void SetTransferStatus(const CTransferStatus* pStatus);
 	wxLongLong GetLastOffset() const { return m_pStatus ? m_pStatus->currentOffset : m_lastOffset; }
 	wxLongLong GetTotalSize() const { return m_pStatus ? m_pStatus->totalSize : -1; }
-	wxLongLong GetSpeed() const;
+	wxFileOffset GetSpeed(int elapsedSeconds);
 
 	virtual bool Show(bool show = true);
 
@@ -37,6 +37,15 @@ protected:
 	bool m_madeProgress;
 
 	wxLongLong m_lastOffset; // Stores the last transfer offset so that the total queue size can be accurately calculated.
+
+	// This is used by GetSpeed to forget about the first 10 seconds on longer transfers
+	// since at the very start the speed is hardly accurate (e.g. due to TCP slow start)
+	struct _past_data
+	{
+		int elapsed;
+		wxFileOffset offset;
+	} m_past_data[10];
+	int m_past_data_index;
 
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent& event);
