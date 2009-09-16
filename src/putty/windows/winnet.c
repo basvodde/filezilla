@@ -878,6 +878,12 @@ static DWORD try_connect(Actual_Socket sock)
 	p_setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, (void *) &b, sizeof(b));
     }
 
+    /* Enable window scaling */
+    {
+	int size_read = 4194304;
+	p_setsockopt(s, SOL_SOCKET, SO_RCVBUF, (const char*)&size_read, sizeof(size_read));
+    }
+
     /*
      * Bind to local address.
      */
