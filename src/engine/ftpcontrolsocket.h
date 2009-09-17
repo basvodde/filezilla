@@ -158,6 +158,7 @@ class CFtpTransferOpData
 {
 public:
 	CFtpTransferOpData();
+	virtual ~CFtpTransferOpData() {}
 
 	enum TransferEndReason transferEndReason;
 	bool tranferCommandSent;

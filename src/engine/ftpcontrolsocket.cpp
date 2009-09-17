@@ -195,6 +195,8 @@ CFtpControlSocket::CFtpControlSocket(CFileZillaEnginePrivate *pEngine) : CRealCo
 
 CFtpControlSocket::~CFtpControlSocket()
 {
+	DoClose();
+
 	m_idleTimer.Stop();
 }
 

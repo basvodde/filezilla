@@ -44,6 +44,8 @@ public:
 		m_receivedData = 0;
 	}
 
+	virtual ~CHttpOpData() {}
+
 	bool m_gotHeader;
 	int m_responseCode;
 	wxString m_responseString;
@@ -98,6 +100,7 @@ CHttpControlSocket::CHttpControlSocket(CFileZillaEnginePrivate *pEngine)
 
 CHttpControlSocket::~CHttpControlSocket()
 {
+	DoClose();
 	delete [] m_pRecvBuffer;
 }
 
