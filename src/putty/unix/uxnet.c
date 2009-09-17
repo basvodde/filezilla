@@ -570,7 +570,7 @@ static int try_connect(Actual_Socket sock)
 
     {
 	int size_read = 4194304;
-	p_setsockopt(s, SOL_SOCKET, SO_RCVBUF, (const char*)&size_read, sizeof(size_read));
+	setsockopt(s, SOL_SOCKET, SO_RCVBUF, (const char*)&size_read, sizeof(size_read));
     }
 
     /*
