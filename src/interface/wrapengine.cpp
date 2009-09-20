@@ -9,7 +9,7 @@
 
 bool CWrapEngine::m_use_cache = true;
 
-#define WRAPDEBUG 1
+#define WRAPDEBUG 0
 #if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
 static const wxChar noWrapChars_Chinese[] = { '.', ',', ':', 0x3002, 0xFF0C, 0xFF1A, 0};
