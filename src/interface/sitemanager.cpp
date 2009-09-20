@@ -347,7 +347,7 @@ bool CSiteManager::Create(wxWindow* parent, const wxString& connected_site_path,
 	}
 	int margin = m_pNotebook_Site->GetSize().x - m_pNotebook_Site->GetPage(0)->GetSize().x;
 	m_pNotebook_Site->GetPage(0)->GetSizer()->SetMinSize(wxSize(width - margin, 0));
-#elif defined(__WXMAC__)
+#else
 	// Make pages at least wide enough to fit all tabs
 	int width = 10; // Guessed
 	wxClientDC dc(m_pNotebook_Site);
@@ -356,7 +356,12 @@ bool CSiteManager::Create(wxWindow* parent, const wxString& connected_site_path,
 		wxCoord w, h;
 		dc.GetTextExtent(m_pNotebook_Site->GetPageText(i), &w, &h);
 		
-		width += w + 20; // Guessed
+		width += w;
+#ifdef __WXMAC__
+		width += 20; // Guessed
+#else
+		width += 10;
+#endif
 	}
 	
 	wxSize page_min_size = m_pNotebook_Site->GetPage(0)->GetSizer()->GetMinSize();
