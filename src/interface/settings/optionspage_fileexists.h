@@ -4,7 +4,7 @@
 class COptionsPageFileExists : public COptionsPage
 {
 public:
-	virtual wxString GetResourceName() { return _T("ID_DEFAULTFILEEXISTS"); }
+	virtual wxString GetResourceName() { return _T("ID_SETTINGS_FILEEXISTS"); }
 	virtual bool LoadPage();
 	virtual bool SavePage();
 	virtual bool Validate();
