@@ -9,7 +9,7 @@
 
 bool CWrapEngine::m_use_cache = true;
 
-#define WRAPDEBUG 0
+#define WRAPDEBUG 1
 #if wxUSE_UNICODE
 // Chinese equivalents to ".", "," and ":"
 static const wxChar noWrapChars_Chinese[] = { '.', ',', ':', 0x3002, 0xFF0C, 0xFF1A, 0};
@@ -521,6 +521,8 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			pSizer->Layout();
 			
 #ifdef __WXMAC__
+			const int offset = 6;
+#elif defined(__WXGTK__)
 			const int offset = 4;
 #else
 			const int offset = 0;
@@ -588,6 +590,8 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			wxSizer* pSizer = (*iter)->GetSizer();
 #ifdef __WXMAC__
 			const int offset = 6;
+#elif defined(__WXGTK__)
+			const int offset = 4;
 #else
 			const int offset = 0;
 #endif
