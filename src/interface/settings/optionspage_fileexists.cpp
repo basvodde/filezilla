@@ -31,9 +31,9 @@ bool COptionsPageFileExists::SavePage()
 	m_pOptions->SetOption(OPTION_FILEEXISTS_DOWNLOAD, dlAction);
 
 	int ulAction = GetChoice(XRCID("ID_UPLOAD_ACTION"));
-	if (ulAction < 0 || dlAction >= CFileExistsNotification::ACTION_COUNT)
+	if (ulAction < 0 || ulAction >= CFileExistsNotification::ACTION_COUNT)
 		ulAction = 0;
-	m_pOptions->SetOption(OPTION_FILEEXISTS_DOWNLOAD, ulAction);
+	m_pOptions->SetOption(OPTION_FILEEXISTS_UPLOAD, ulAction);
 
 	m_pOptions->SetOption(OPTION_ASCIIRESUME, GetCheck(XRCID("ID_ASCIIRESUME")));
 	return true;
