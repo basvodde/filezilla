@@ -34,6 +34,8 @@ private:
 
 	enum _state m_intended_state;
 	unsigned int m_cookie;
+
+	bool m_use_gsm;
 };
 
 BEGIN_EVENT_TABLE(CPowerManagementInhibitorImpl, wxEvtHandler)
@@ -83,6 +85,7 @@ CPowerManagementInhibitorImpl::CPowerManagementInhibitorImpl()
 
 	m_intended_state = idle;
 	m_cookie = 0;
+	m_use_gsm = false;
 }
 
 CPowerManagementInhibitorImpl::~CPowerManagementInhibitorImpl()
@@ -100,22 +103,32 @@ void CPowerManagementInhibitorImpl::RequestIdle()
 	if (m_debug)
 		printf("wxD-Bus: CPowerManagementInhibitor: Requesting idle\n");
 
-	wxDBusMethodCall call(
+	wxDBusMethodCall *call;
+	if (!m_use_gsm)
+		call = new wxDBusMethodCall(
 			"org.freedesktop.PowerManagement",
 			"/org/freedesktop/PowerManagement/Inhibit",
 			"org.freedesktop.PowerManagement.Inhibit",
 			"UnInhibit");
+	else
+		call = new wxDBusMethodCall(
+			"org.gnome.SessionManager",
+			"/org/gnome/SessionManager",
+			"org.gnome.SessionManager",
+			"Uninhibit");
 
 	m_state = request_idle;
 
-	call.AddUnsignedInt(m_cookie);
+	call->AddUnsignedInt(m_cookie);
 
-	if (!call.CallAsync(m_pConnection, 1000))
+	if (!call->CallAsync(m_pConnection, 1000))
 	{
 		m_state = error;
 		if (m_debug)
 			printf("wxD-Bus: CPowerManagementInhibitor: Request failed\n");
 	}
+
+	delete call;
 }
 
 
@@ -128,23 +141,45 @@ void CPowerManagementInhibitorImpl::RequestBusy()
 	if (m_debug)
 		printf("wxD-Bus: CPowerManagementInhibitor: Requesting busy\n");
 
-	wxDBusMethodCall call(
+	wxDBusMethodCall *call;
+	if (!m_use_gsm)
+		call = new wxDBusMethodCall(
 			"org.freedesktop.PowerManagement",
 			"/org/freedesktop/PowerManagement/Inhibit",
 			"org.freedesktop.PowerManagement.Inhibit",
 			"Inhibit");
+	else
+		call = new wxDBusMethodCall(
+			"org.gnome.SessionManager",
+			"/org/gnome/SessionManager",
+			"org.gnome.SessionManager",
+			"Inhibit");
 
 	m_state = request_busy;
 
-	call.AddString("FileZilla");
-	call.AddString("File transfer or remote operation in progress");
+	call->AddString("FileZilla");
+	if (m_use_gsm)
+		call->AddUnsignedInt(0);
+	call->AddString("File transfer or remote operation in progress");
+	if (m_use_gsm)
+		call->AddUnsignedInt(8);
 
-	if (!call.CallAsync(m_pConnection, 1000))
+	if (!call->CallAsync(m_pConnection, 1000))
 	{
-		m_state = error;
 		if (m_debug)
 			printf("wxD-Bus: CPowerManagementInhibitor: Request failed\n");
+		if (m_use_gsm)
+			m_state = error;
+		else
+		{
+			if (m_debug)
+				printf("wxD-Bus: Falling back to org.gnome.SessionManager\n");
+			m_use_gsm = true;
+			RequestBusy();
+		}
 	}
+
+	delete call;
 }
 
 void CPowerManagementInhibitorImpl::OnSignal(wxDBusConnectionEvent& event)
@@ -163,7 +198,18 @@ void CPowerManagementInhibitorImpl::OnAsyncReply(wxDBusConnectionEvent& event)
 	{
 		if (m_debug)
 			printf("wxD-Bus: Reply: Error: %s\n", msg->GetString());
-		m_state = error;
+
+		if (m_state == request_busy && !m_use_gsm)
+		{
+			if (m_debug)
+				printf("wxD-Bus: Falling back to org.gnome.SessionManager\n");
+			m_use_gsm = true;
+			m_state = idle;
+			if (m_intended_state == busy)
+				RequestBusy();
+		}
+		else
+			m_state = error;
 		return;
 	}
 
