@@ -307,7 +307,7 @@ CSiteManager::~CSiteManager()
 bool CSiteManager::Create(wxWindow* parent, const wxString& connected_site_path, const CServer* pServer /*=0*/)
 {
 	m_pSiteManagerMutex = new CInterProcessMutex(MUTEX_SITEMANAGERGLOBAL, false);
-	if (!m_pSiteManagerMutex->TryLock())
+	if (m_pSiteManagerMutex->TryLock() == 0)
 	{
 		int answer = wxMessageBox(_("The Site Manager is opened in another instance of FileZilla 3.\nDo you want to continue? Any changes made in the Site Manager won't be saved then."),
 								  _("Site Manager already open"), wxYES_NO | wxICON_QUESTION);

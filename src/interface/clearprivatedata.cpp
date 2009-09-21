@@ -86,7 +86,7 @@ void CClearPrivateDataDialog::Show()
 	if (pSitemanagerCheck->GetValue())
 	{
 		CInterProcessMutex sitemanagerMutex(MUTEX_SITEMANAGERGLOBAL, false);
-		while (!sitemanagerMutex.TryLock())
+		while (sitemanagerMutex.TryLock() == 0)
 		{
 			int res = wxMessageBox(_("The Site Manager is opened in another instance of FileZilla 3.\nPlease close it or the data cannot be deleted."), _("Clear private data"), wxOK | wxCANCEL);
 			if (res != wxYES)

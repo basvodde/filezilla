@@ -37,8 +37,8 @@ public:
 	CInterProcessMutex(enum t_ipcMutexType mutexType, bool initialLock = true);
 	~CInterProcessMutex();
 
-	void Lock();
-	bool TryLock(); // Tries to lock the mutex. Returns true if successful, else otherwise.
+	bool Lock();
+	int TryLock(); // Tries to lock the mutex. Returns 1 on success, 0 if held by other process, -1 on failure
 	void Unlock();
 
 	bool IsLocked() const { return m_locked; }

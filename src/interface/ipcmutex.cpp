@@ -3,6 +3,7 @@
 #include "filezillaapp.h"
 
 #ifndef __WXMSW__
+#include <errno.h>
 int CInterProcessMutex::m_fd = -1;
 int CInterProcessMutex::m_instanceCount = 0;
 #endif
@@ -45,7 +46,7 @@ CInterProcessMutex::~CInterProcessMutex()
 #endif
 }
 
-void CInterProcessMutex::Lock()
+bool CInterProcessMutex::Lock()
 {
 	wxASSERT(!m_locked);
 #ifdef __WXMSW__
@@ -61,14 +62,24 @@ void CInterProcessMutex::Lock()
 		f.l_start = m_type;
 		f.l_len = 1;
 		f.l_pid = getpid();
-		fcntl(m_fd, F_SETLKW, &f);
+		
+		while (fcntl(m_fd, F_SETLKW, &f) == -1)
+		{
+			if (errno == EINTR) // Interrupted by signal, retry
+				continue;
+
+			// Can't do any locking in this case
+			return false;
+		}
 	}
 #endif
 
 	m_locked = true;
+
+	return true;
 }
 
-bool CInterProcessMutex::TryLock()
+int CInterProcessMutex::TryLock()
 {
 	wxASSERT(!m_locked);
 
@@ -76,14 +87,14 @@ bool CInterProcessMutex::TryLock()
 	if (!hMutex)
 	{
 		m_locked = false;
-		return false;
+		return 0;
 	}
 
 	int res = ::WaitForSingleObject(hMutex, 1);
 	if (res == WAIT_OBJECT_0)
 	{
 		m_locked = true;
-		return true;
+		return 1;
 	}
 #else
 	if (m_fd >= 0)
@@ -95,20 +106,27 @@ bool CInterProcessMutex::TryLock()
 		f.l_start = m_type;
 		f.l_len = 1;
 		f.l_pid = getpid();
-		if (!fcntl(m_fd, F_SETLK, &f))
+		while (fcntl(m_fd, F_SETLK, &f) == -1)
 		{
-			m_locked = true;
-			return true;
+			if (errno == EINTR) // Interrupted by signal, retry
+				continue;
+
+			// Can't do any locking in this case
+			return -1;
 		}
+
+		m_locked = true;
+		return 1;
 	}
 #endif
 
-	return false;
+	return 0;
 }
 
 void CInterProcessMutex::Unlock()
 {
-	wxASSERT(m_locked);
+	if (!m_locked)
+		return;
 	m_locked = false;
 
 #ifdef __WXMSW__
