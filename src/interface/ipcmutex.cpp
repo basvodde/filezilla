@@ -111,7 +111,7 @@ int CInterProcessMutex::TryLock()
 			if (errno == EINTR) // Interrupted by signal, retry
 				continue;
 
-			if (error == AGAIN || error == EACCES) // Lock held by other process
+			if (errno == EAGAIN || errno == EACCES) // Lock held by other process
 				return 0;
 
 			// Can't do any locking in this case
