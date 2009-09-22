@@ -262,7 +262,7 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 
 	const unsigned long widths[4] = { 120, 80, 100, 120 };
 
-	AddColumn(_("Filename"), wxLIST_FORMAT_LEFT, widths[0]);
+	AddColumn(_("Filename"), wxLIST_FORMAT_LEFT, widths[0], true);
 	AddColumn(_("Filesize"), wxLIST_FORMAT_RIGHT, widths[1]);
 	AddColumn(_("Filetype"), wxLIST_FORMAT_LEFT, widths[2]);
 	AddColumn(_("Last modified"), wxLIST_FORMAT_LEFT, widths[3]);

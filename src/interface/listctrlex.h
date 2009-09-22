@@ -31,7 +31,7 @@ public:
 	void MoveColumn(unsigned int col, unsigned int before);
 	
 	// Do not call after calling LoadColumnSettings
-	void AddColumn(const wxString& name, int align, int initialWidth);
+	void AddColumn(const wxString& name, int align, int initialWidth, bool fixed = false);
 	
 	// LoadColumnSettings needs to be called exactly once after adding
 	// all columns
@@ -90,6 +90,7 @@ private:
 		int width;
 		bool shown;
 		unsigned int order;
+		bool fixed;
 	};
 	std::vector<t_columnInfo> m_columnInfo;
 	unsigned int *m_pVisibleColumnMapping;

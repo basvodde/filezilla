@@ -406,7 +406,10 @@ void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId
 		if (visibleColumns.Len() >= m_columnInfo.size())
 		{
 			for (unsigned int i = 0; i < m_columnInfo.size(); i++)
-				m_columnInfo[i].shown = visibleColumns[i] == '1';
+			{
+				if (!m_columnInfo[i].fixed)
+					m_columnInfo[i].shown = visibleColumns[i] == '1';
+			}
 		}
 	}
 
@@ -434,8 +437,22 @@ void wxListCtrlEx::LoadColumnSettings(int widthsOptionId, int visibilityOptionId
 			}
 			if (i == count)
 			{
-				for (unsigned int i = 0; i < m_columnInfo.size(); i++)
-					m_columnInfo[i].order = order[i];
+				bool valid = true;
+				for (unsigned int j = 0; j < m_columnInfo.size(); j++)
+				{
+					if (!m_columnInfo[j].fixed)
+						continue;
+
+					if (j != order[j])
+					{
+						valid = false;
+						break;
+					}
+				}
+
+				if (valid)
+					for (unsigned int i = 0; i < m_columnInfo.size(); i++)
+						m_columnInfo[i].order = order[i];
 			}
 
 			delete [] order;
@@ -541,7 +558,7 @@ void wxListCtrlEx::SaveColumnWidths(unsigned int optionId)
 }
 
 
-void wxListCtrlEx::AddColumn(const wxString& name, int align, int initialWidth)
+void wxListCtrlEx::AddColumn(const wxString& name, int align, int initialWidth, bool fixed /*=false*/)
 {
 	wxASSERT(!GetColumnCount());
 
@@ -551,6 +568,7 @@ void wxListCtrlEx::AddColumn(const wxString& name, int align, int initialWidth)
 	info.width = initialWidth;
 	info.shown = true;
 	info.order = m_columnInfo.size();
+	info.fixed = fixed;
 
 	m_columnInfo.push_back(info);
 }
