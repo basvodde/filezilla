@@ -17,7 +17,7 @@ bool CDefaultFileExistsDlg::Load(wxWindow *parent, bool fromQueue)
 	else
 		XRCCTRL(*this, "ID_DESCRIPTION", wxStaticText)->SetLabel(_("Select default file exists action if the target file already exists. This selection is valid only for the current session."));
 
-	WrapRecursive(this, 1.7, "DEFAULTFILEEXISTS");
+	WrapRecursive(this, 1.8, "DEFAULTFILEEXISTS");
 
 	if (fromQueue)
 		return true;
@@ -30,72 +30,9 @@ bool CDefaultFileExistsDlg::Load(wxWindow *parent, bool fromQueue)
 void CDefaultFileExistsDlg::SelectDefaults(enum CFileExistsNotification::OverwriteAction* downloadAction, enum CFileExistsNotification::OverwriteAction* uploadAction)
 {
 	if (downloadAction)
-	{
-		switch (*downloadAction)
-		{
-		case CFileExistsNotification::ask:
-			XRCCTRL(*this, "ID_DL_ASK", wxRadioButton)->SetValue(true);
-			break;	
-		case CFileExistsNotification::overwrite:
-			XRCCTRL(*this, "ID_DL_OVERWRITE", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::overwriteNewer:
-			XRCCTRL(*this, "ID_DL_OVERWRITEIFNEWER", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::overwriteSize:
-			XRCCTRL(*this, "ID_DL_OVERWRITESIZE", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::overwriteSizeOrNewer:
-			XRCCTRL(*this, "ID_DL_OVERWRITESIZEORNEWER", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::resume:
-			XRCCTRL(*this, "ID_DL_RESUME", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::rename:
-			XRCCTRL(*this, "ID_DL_RENAME", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::skip:
-			XRCCTRL(*this, "ID_DL_SKIP", wxRadioButton)->SetValue(true);
-			break;
-		default:
-			XRCCTRL(*this, "ID_DL_DEFAULT", wxRadioButton)->SetValue(true);
-			break;
-		};
-	}
-
+		XRCCTRL(*this, "ID_DOWNLOAD_ACTION", wxChoice)->SetSelection(*downloadAction + 1);
 	if (uploadAction)
-	{
-		switch (*uploadAction)
-		{
-		case CFileExistsNotification::ask:
-			XRCCTRL(*this, "ID_UL_ASK", wxRadioButton)->SetValue(true);
-			break;	
-		case CFileExistsNotification::overwrite:
-			XRCCTRL(*this, "ID_UL_OVERWRITE", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::overwriteNewer:
-			XRCCTRL(*this, "ID_UL_OVERWRITEIFNEWER", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::overwriteSize:
-			XRCCTRL(*this, "ID_UL_OVERWRITESIZE", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::overwriteSizeOrNewer:
-			XRCCTRL(*this, "ID_UL_OVERWRITESIZEORNEWER", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::resume:
-			XRCCTRL(*this, "ID_UL_RESUME", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::rename:
-			XRCCTRL(*this, "ID_UL_RENAME", wxRadioButton)->SetValue(true);
-			break;
-		case CFileExistsNotification::skip:
-			XRCCTRL(*this, "ID_UL_SKIP", wxRadioButton)->SetValue(true);
-			break;
-		default:
-			XRCCTRL(*this, "ID_UL_DEFAULT", wxRadioButton)->SetValue(true);
-			break;
-		};
-	}
+		XRCCTRL(*this, "ID_UPLOAD_ACTION", wxChoice)->SetSelection(*uploadAction + 1);
 }
 
 enum CFileExistsNotification::OverwriteAction CDefaultFileExistsDlg::GetDefault(bool download)
@@ -108,22 +45,16 @@ bool CDefaultFileExistsDlg::Run(enum CFileExistsNotification::OverwriteAction *d
 	SelectDefaults(downloadAction, uploadAction);
 
 	// Remove one side of the dialog if not needed
-	wxWindow* pDummy = XRCCTRL(*this, "ID_DUMMY", wxWindow);
-	wxGridSizer* pSizer = (wxGridSizer*)pDummy->GetContainingSizer();
 	if (!downloadAction && uploadAction)
 	{
-		pSizer->Hide((size_t)0);
-		pSizer->Remove((int)0);
-		pSizer->SetCols(1);
+		XRCCTRL(*this, "ID_DOWNLOAD_ACTION_DESC", wxWindow)->Hide();
+		XRCCTRL(*this, "ID_DOWNLOAD_ACTION", wxWindow)->Hide();
 	}
 	else if (downloadAction && !uploadAction)
 	{
-		pSizer->Hide((size_t)1);
-		pSizer->Remove((int)1);
-		pSizer->SetCols(1);
+		XRCCTRL(*this, "ID_UPLOAD_ACTION_DESC", wxStaticText)->Hide();
+		XRCCTRL(*this, "ID_UPLOAD_ACTION", wxWindow)->Hide();
 	}
-	pDummy->Destroy();
-	pSizer->SetRows(1);
 	Layout();
 	GetSizer()->Fit(this);
 
@@ -132,26 +63,11 @@ bool CDefaultFileExistsDlg::Run(enum CFileExistsNotification::OverwriteAction *d
 
 	if (downloadAction || !uploadAction)
 	{
-		enum CFileExistsNotification::OverwriteAction action;
-		if (XRCCTRL(*this, "ID_DL_ASK", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::ask;
-		else if (XRCCTRL(*this, "ID_DL_OVERWRITE", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwrite;
-		else if (XRCCTRL(*this, "ID_DL_OVERWRITEIFNEWER", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwriteNewer;
-		else if (XRCCTRL(*this, "ID_DL_OVERWRITESIZE", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwriteSize;
-		else if (XRCCTRL(*this, "ID_DL_OVERWRITESIZEORNEWER", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwriteSizeOrNewer;
-		else if (XRCCTRL(*this, "ID_DL_RESUME", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::resume;
-		else if (XRCCTRL(*this, "ID_DL_RENAME", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::rename;
-		else if (XRCCTRL(*this, "ID_DL_SKIP", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::skip;
-		else
-			action = CFileExistsNotification::unknown;
-	
+		int dl = XRCCTRL(*this, "ID_DOWNLOAD_ACTION", wxChoice)->GetSelection();
+		if (dl >= 0)
+			dl--;
+		enum CFileExistsNotification::OverwriteAction action = (enum CFileExistsNotification::OverwriteAction)dl;
+
 		if (downloadAction)
 			*downloadAction = action;
 		else
@@ -160,25 +76,10 @@ bool CDefaultFileExistsDlg::Run(enum CFileExistsNotification::OverwriteAction *d
 
 	if (!downloadAction || uploadAction)
 	{
-		enum CFileExistsNotification::OverwriteAction action;
-		if (XRCCTRL(*this, "ID_UL_ASK", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::ask;
-		else if (XRCCTRL(*this, "ID_UL_OVERWRITE", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwrite;
-		else if (XRCCTRL(*this, "ID_UL_OVERWRITEIFNEWER", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwriteNewer;
-		else if (XRCCTRL(*this, "ID_UL_OVERWRITESIZE", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwriteSize;
-		else if (XRCCTRL(*this, "ID_UL_OVERWRITESIZEORNEWER", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::overwriteSizeOrNewer;
-		else if (XRCCTRL(*this, "ID_UL_RESUME", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::resume;
-		else if (XRCCTRL(*this, "ID_UL_RENAME", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::rename;
-		else if (XRCCTRL(*this, "ID_UL_SKIP", wxRadioButton)->GetValue())
-			action = CFileExistsNotification::skip;
-		else
-			action = CFileExistsNotification::unknown;
+		int ul = XRCCTRL(*this, "ID_UPLOAD_ACTION", wxChoice)->GetSelection();
+		if (ul >= 0)
+			ul--;
+		enum CFileExistsNotification::OverwriteAction action = (enum CFileExistsNotification::OverwriteAction)ul;
 
 		if (uploadAction)
 			*uploadAction = action;

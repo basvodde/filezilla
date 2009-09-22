@@ -2658,144 +2658,65 @@
             <size>0,5</size>
           </object>
           <object class="sizeritem">
-            <object class="wxGridSizer">
+            <object class="wxStaticBoxSizer">
               <object class="sizeritem">
-                <object class="wxStaticBoxSizer">
-                  <label>Downloads</label>
-                  <orient>wxVERTICAL</orient>
+                <object class="wxFlexGridSizer">
                   <object class="sizeritem">
-                    <object class="wxGridSizer">
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_DEFAULT">
-                          <label>Use &amp;default</label>
-                          <style>wxRB_GROUP</style>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_ASK">
-                          <label>&amp;Ask for action</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_OVERWRITE">
-                          <label>&amp;Overwrite</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_OVERWRITEIFNEWER">
-                          <label>Ov&amp;erwrite if source newer</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_OVERWRITESIZE">
-                          <label>Overwrite if different size</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_OVERWRITESIZEORNEWER">
-                          <label>Overwrite if different size or source newer</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_RESUME">
-                          <label>&amp;Resume</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_RENAME">
-                          <label>Re&amp;name</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_DL_SKIP">
-                          <label>S&amp;kip</label>
-                        </object>
-                      </object>
-                      <cols>1</cols>
-                      <vgap>5</vgap>
+                    <object class="wxStaticText" name="ID_DOWNLOAD_ACTION_DESC">
+                      <label>Downloads:</label>
                     </object>
-                    <flag>wxALL</flag>
-                    <border>3</border>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
                   </object>
-                </object>
-                <option>1</option>
-                <flag>wxALL|wxGROW</flag>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticBoxSizer">
-                  <label>Uploads</label>
-                  <orient>wxVERTICAL</orient>
                   <object class="sizeritem">
-                    <object class="wxGridSizer">
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_DEFAULT">
-                          <label>Use d&amp;efault</label>
-                          <value>1</value>
-                          <style>wxRB_GROUP</style>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_ASK">
-                          <label>A&amp;sk for action</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_OVERWRITE">
-                          <label>O&amp;verwrite</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_OVERWRITEIFNEWER">
-                          <label>Over&amp;write if source newer</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_OVERWRITESIZE">
-                          <label>Overwrite if different size</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_OVERWRITESIZEORNEWER">
-                          <label>Overwrite if different size or source newer</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_RESUME">
-                          <label>Res&amp;ume</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_RENAME">
-                          <label>Rena&amp;me</label>
-                        </object>
-                      </object>
-                      <object class="sizeritem">
-                        <object class="wxRadioButton" name="ID_UL_SKIP">
-                          <label>Sk&amp;ip</label>
-                        </object>
-                      </object>
-                      <cols>1</cols>
-                      <vgap>5</vgap>
+                    <object class="wxChoice" name="ID_DOWNLOAD_ACTION">
+                      <content>
+                        <item>Use default action</item>
+                        <item>Ask for action</item>
+                        <item>Overwrite file</item>
+                        <item>Overwrite file if source file newer</item>
+                        <item>Overwrite file if size differs</item>
+                        <item>Overwrite file if size differs or source file is newer</item>
+                        <item>Resume file transfer</item>
+                        <item>Rename file</item>
+                        <item>Skip file</item>
+                      </content>
                     </object>
-                    <flag>wxALL</flag>
-                    <border>3</border>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
                   </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_UPLOAD_ACTION_DESC">
+                      <label>Uploads:</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxChoice" name="ID_UPLOAD_ACTION">
+                      <content>
+                        <item>Use default action</item>
+                        <item>Ask for action</item>
+                        <item>Overwrite file</item>
+                        <item>Overwrite file if source file newer</item>
+                        <item>Overwrite file if size differs</item>
+                        <item>Overwrite file if size differs or source file is newer</item>
+                        <item>Resume file transfer</item>
+                        <item>Rename file</item>
+                        <item>Skip file</item>
+                      </content>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <vgap>5</vgap>
+                  <hgap>5</hgap>
                 </object>
-                <option>1</option>
-                <flag>wxGROW</flag>
+                <flag>wxALL</flag>
+                <border>3</border>
               </object>
-              <cols>2</cols>
-              <hgap>5</hgap>
-              <object class="sizeritem">
-                <object class="wxStaticText" name="ID_DUMMY">
-                  <label>&lt;dummy&gt;</label>
-                  <hidden>1</hidden>
-                </object>
-              </object>
-              <rows>2</rows>
+              <label>Default file exists action</label>
+              <orient>wxVERTICAL</orient>
             </object>
-            <flag>wxGROW</flag>
           </object>
+          
           <object class="spacer">
             <size>0,5</size>
           </object>
@@ -2833,7 +2754,6 @@
       </object>
     </object>
   </object>
-  
   <object class="wxDialog" name="ID_CLEARPRIVATEDATA">
     <title>Clear private data</title>
     <object class="wxBoxSizer">
