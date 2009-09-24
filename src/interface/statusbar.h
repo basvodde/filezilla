@@ -80,6 +80,8 @@ protected:
 	void MeasureQueueSizeWidth();
 
 	int m_sizeFormat;
+	bool m_sizeFormatThousandsSep;
+	int m_sizeFormatDecimalPlaces;
 	wxLongLong m_size;
 	bool m_hasUnknownFiles;
 

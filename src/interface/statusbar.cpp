@@ -293,8 +293,6 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 
 	SetStatusWidths(count, statbarWidths);
 
-	MeasureQueueSizeWidth();
-
 	UpdateSizeFormat();
 }
 
@@ -303,6 +301,9 @@ CStatusBar::~CStatusBar()
 	delete m_pCertificate;
 	delete m_pSftpEncryptionInfo;
 }
+
+// Defined in LocalListView.cpp
+extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
 
 void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 {
@@ -314,49 +315,10 @@ void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 		SetStatusText(_("Queue: empty"), FIELD_QUEUESIZE);
 		return;
 	}
-	int divider;
-	if (m_sizeFormat == 3)
-		divider = 1000;
-	else
-		divider = 1024;
 
-	// We always round up. Set to true if there's a reminder
-	bool r2 = false;
+	wxString queueSize = wxString::Format(_("Queue: %s%s"), hasUnknown ? _T(">") : _T(""),
+			FormatSize(totalSize, true, m_sizeFormat, m_sizeFormatThousandsSep, m_sizeFormatDecimalPlaces));
 
-	int p = 0; // Exponent (2^(10p) or 10^(3p) depending on option
-	while (totalSize > divider && p < 6)
-	{
-		const wxLongLong rr = totalSize / divider;
-		if (rr * divider != totalSize)
-			r2 = true;
-		totalSize = rr;
-		p++;
-	}
-	if (r2)
-		totalSize++;
-
-	wxString queueSize;
-	if (!p)
-		queueSize.Printf(_("Queue: %s%d bytes"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo());
-	else
-	{
-		// We stop at Exa. If someone has files bigger than that, he can afford to
-		// make a donation to have this changed ;)
-		const wxChar prefix[] = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
-
-		queueSize.Printf(_("Queue: %s%d %c"), hasUnknown ? _T(">") : _T(""), totalSize.GetLo(), prefix[p]);
-
-		if (m_sizeFormat == 1)
-			queueSize += 'i';
-		
-		static wxChar byte_unit = 0;
-		if (!byte_unit)
-		{
-			wxString t = _("B <Unit symbol for bytes. Only translate first letter>");
-			byte_unit = t[0];
-		}
-		queueSize += byte_unit;
-	}
 	SetStatusText(queueSize, FIELD_QUEUESIZE);
 }
 
@@ -423,8 +385,15 @@ void CStatusBar::MeasureQueueSizeWidth()
 	dc.SetFont(GetFont());
 
 	wxSize s = dc.GetTextExtent(_("Queue: empty"));
-	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d MiB"), _T(">"), 8888)));
-	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s%d bytes"), _T(">"), 8888)));
+	
+	wxString tmp = _T(">8888");
+	if (m_sizeFormatDecimalPlaces)
+	{
+		tmp += _T(".");
+		for (int i = 0; i < m_sizeFormatDecimalPlaces; i++)
+			tmp += _T("8");
+	}
+	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s MiB"), tmp.c_str())));
 
 	SetFieldWidth(-2, s.x + 10);
 }
@@ -463,6 +432,11 @@ void CStatusBar::UpdateSizeFormat()
 	m_sizeFormat = COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT);
 	if (!m_sizeFormat)
 		m_sizeFormat = 1;
+
+	m_sizeFormatThousandsSep = COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0;
+	m_sizeFormatDecimalPlaces = COptions::Get()->GetOptionVal(OPTION_SIZE_DECIMALPLACES);
+
+	MeasureQueueSizeWidth();
 
 	DisplayQueueSize(m_size, m_hasUnknownFiles);
 }
