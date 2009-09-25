@@ -10,6 +10,26 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.2.8-rc1 (2009-09-26)
+
++ Remember last used search conditions
++ Display link overlay on icons of links in remote file list
++ Display of average transfer speed should converge faster to overall average
++ Simply default file exists action dialogs
++ Apply decimal places size formatting option also to total queue size
++ MSW: Reduce number of needed user interactions in installer if update started from within FileZilla
++ MSW: Check that there are no running instances of FileZilla before installing
+- Fix handling of remote directory names with leading or trailing spaces
+- *nix: Fix memory leaks in D-Bus session management and power management inhibitor client code
+- *nix: Fall back to org.gnome.SessionManager if org.freedesktop.PowerManagment does not exit to inhibit idle sleep during transfers
+- Increase default size of SO_RCVBUF (TCP advertised window) to fix performance issues on high-latency connections
+- MSW: Fix displaying list of shares on local network resources
+- MSW: Remote file editing no longer gets confused if two filenames only differ in character case
+- Fix dialog line wrapping issues
+- Ensure width of site manager is large enough to fit all tabs
+- Better guard against filename columns being moved or hidden
+- *nix, OS X: Handle filesystems without advisory file locking instead of falsly warning about site manager being opened in a different instance of FileZilla
+
 3.2.7.1 (2009-08-23)
 
 - Fix crash if adding new filters
