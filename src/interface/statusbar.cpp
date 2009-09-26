@@ -317,7 +317,7 @@ void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 	}
 
 	wxString queueSize = wxString::Format(_("Queue: %s%s"), hasUnknown ? _T(">") : _T(""),
-			FormatSize(totalSize, true, m_sizeFormat, m_sizeFormatThousandsSep, m_sizeFormatDecimalPlaces));
+			FormatSize(totalSize, true, m_sizeFormat, m_sizeFormatThousandsSep, m_sizeFormatDecimalPlaces).c_str());
 
 	SetStatusText(queueSize, FIELD_QUEUESIZE);
 }
