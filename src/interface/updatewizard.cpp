@@ -23,6 +23,7 @@ typedef unsigned int uint32;
 // Listed here so that they are included in the translations
 _("&Next >");
 _("< &Back");
+_("&Finish");
 #endif
 
 #define MAXCHECKPROGRESS 11 // Maximum value of progress bar
