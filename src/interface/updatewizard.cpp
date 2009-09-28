@@ -18,6 +18,13 @@ typedef unsigned int uint32;
 #include "../putty/int64.h"
 #include "../putty/sshsh512.c"
 
+#if 0
+// Used inside of wx to create the next/back buttons on the wizard.
+// Listed here so that they are included in the translations
+_("&Next >");
+_("< &Back");
+#endif
+
 #define MAXCHECKPROGRESS 11 // Maximum value of progress bar
 
 BEGIN_EVENT_TABLE(CUpdateWizard, wxWizard)
