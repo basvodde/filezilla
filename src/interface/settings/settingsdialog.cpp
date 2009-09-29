@@ -148,6 +148,7 @@ bool CSettingsDialog::LoadPages()
 	wxSize size = treeCtrl->GetBestSize();
 	int scrollWidth = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, treeCtrl);
 	size.x += scrollWidth;
+	size.y = 0;
 	treeCtrl->SetInitialSize(size);
 	Layout();
 
