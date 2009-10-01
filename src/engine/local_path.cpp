@@ -496,12 +496,20 @@ bool CLocalPath::Exists(wxString *error /*=0*/) const
 
 bool CLocalPath::operator==(const CLocalPath& op) const
 {
+#ifdef __WXMSW__
+	return m_path.CmpNoCase(op.m_path) == 0;
+#else
 	return m_path == op.m_path;
+#endif
 }
 
 bool CLocalPath::operator!=(const CLocalPath& op) const
 {
+#ifdef __WXMSW__
+	return m_path.CmpNoCase(op.m_path) != 0;
+#else
 	return m_path != op.m_path;
+#endif
 }
 
 bool CLocalPath::IsParentOf(const CLocalPath &path) const
@@ -512,8 +520,13 @@ bool CLocalPath::IsParentOf(const CLocalPath &path) const
 	if (path.m_path.Len() < m_path.Len())
 		return false;
 
+#ifdef __WXMSW__
+	if (m_path.CmpNoCase(path.m_path.Left(m_path.Len())))
+		return false;
+#else
 	if (m_path != path.m_path.Left(m_path.Len()))
 		return false;
+#endif
 
 	return true;
 }
@@ -526,8 +539,13 @@ bool CLocalPath::IsSubdirOf(const CLocalPath &path) const
 	if (path.m_path.Len() > m_path.Len())
 		return false;
 
+#ifdef __WXMSW__
+	if (path.m_path.CmpNoCase(m_path.Left(path.m_path.Len())))
+		return false;
+#else
 	if (path.m_path != m_path.Left(path.m_path.Len()))
 		return false;
+#endif
 
 	return true;
 }
