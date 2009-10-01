@@ -283,7 +283,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 	else
 		NotifyHandlers(STATECHANGE_REMOTE_DIR_MODIFIED);
 
-	if (m_sync_browse.is_changing)
+	if (m_sync_browse.is_changing && !modified)
 	{
 		m_sync_browse.is_changing = false;
 		if (m_pDirectoryListing->path != m_sync_browse.remote_root && !m_pDirectoryListing->path.IsSubdirOf(m_sync_browse.remote_root, false))
