@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: filezilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-26 00:14+0200\n"
-"PO-Revision-Date: 2009-09-22 20:37+0100\n"
+"POT-Creation-Date: 2009-10-03 14:26+0200\n"
+"PO-Revision-Date: 2009-09-29 19:28+0100\n"
 "Last-Translator: Magnus Nilsson <magnus.nilsson@telia.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -125,25 +125,25 @@ msgid_plural "%s bytes"
 msgstr[0] "%s byte"
 msgstr[1] "%s byte"
 
-#: ../../locales/../src/interface/updatewizard.cpp:857
+#: ../../locales/../src/interface/updatewizard.cpp:865
 #, c-format
 msgid "%s bytes"
 msgstr "%s byte"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:170
-#: ../../locales/../src/interface/updatewizard.cpp:841
+#: ../../locales/../src/interface/updatewizard.cpp:849
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s byte (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:168
-#: ../../locales/../src/interface/updatewizard.cpp:839
+#: ../../locales/../src/interface/updatewizard.cpp:847
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s byte (%d.%d kB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:166
-#: ../../locales/../src/interface/updatewizard.cpp:837
+#: ../../locales/../src/interface/updatewizard.cpp:845
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s byte (%d.%d MB/s)"
@@ -402,6 +402,10 @@ msgstr "&Hämta till:"
 msgid "&Download..."
 msgstr "&Hämta..."
 
+#: resources.h:251 resources.h:779
+msgid "&Downloads:"
+msgstr "&Hämtningar:"
+
 #: resources.h:465 resources.h:522
 msgid "&Edit"
 msgstr "R&edigera"
@@ -469,6 +473,10 @@ msgstr "&Filteruppsättningar:"
 #: resources.h:208
 msgid "&Filters:"
 msgstr "&Filter:"
+
+#: ../../locales/../src/interface/updatewizard.cpp:26
+msgid "&Finish"
+msgstr "&Slutför"
 
 #: resources.h:311
 msgid "&Finish editing and delete local file"
@@ -614,9 +622,13 @@ msgstr "&Ny"
 msgid "&New Site"
 msgstr "&Ny plats"
 
-#: ../../locales/../src/interface/updatewizard.cpp:992
+#: ../../locales/../src/interface/updatewizard.cpp:1000
 msgid "&New version available!"
 msgstr "&Ny version finns tillgänglig!"
+
+#: ../../locales/../src/interface/updatewizard.cpp:24
+msgid "&Next >"
+msgstr "&Nästa >"
 
 #: resources.h:313
 msgid "&No"
@@ -875,6 +887,10 @@ msgstr "&Uppdatera cachelagrad nyckel för denna värd"
 msgid "&Upload"
 msgstr "&Skicka"
 
+#: resources.h:261 resources.h:788
+msgid "&Uploads:"
+msgstr "&Sändningar:"
+
 #: resources.h:419
 msgid "&Use custom program"
 msgstr "&Använd anpassat program"
@@ -907,7 +923,7 @@ msgstr "&Användare:"
 msgid "&Username:"
 msgstr "&Användarnamn:"
 
-#: ../../locales/../src/interface/updatewizard.cpp:988
+#: ../../locales/../src/interface/updatewizard.cpp:996
 #, c-format
 msgid "&Version %s"
 msgstr "&Version %s"
@@ -1005,11 +1021,11 @@ msgstr "(exempel: %Y-%m-%d)"
 msgid "(in KB/s)"
 msgstr "(i kB/s)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:849
+#: ../../locales/../src/interface/updatewizard.cpp:857
 msgid ", %H:%M:%S left"
 msgstr ", %H:%M:%S kvar"
 
-#: ../../locales/../src/interface/updatewizard.cpp:853
+#: ../../locales/../src/interface/updatewizard.cpp:861
 msgid ", --:--:-- left"
 msgstr ", --:--:-- kvar"
 
@@ -1073,6 +1089,10 @@ msgstr "4 - Felsökning"
 #: ../../locales/../src/engine/directorylistingparser.cpp:1625
 msgid ";1"
 msgstr ";1"
+
+#: ../../locales/../src/interface/updatewizard.cpp:25
+msgid "< &Back"
+msgstr "< &Tillbaka"
 
 #: resources.h:506
 msgid "?"
@@ -1329,7 +1349,7 @@ msgstr ""
 "Alternativt kan du använda ditt systems SSH-agent. För att göra det, se till "
 "att miljövariabeln SSH_AUTH_SOCK är inställd."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1032
+#: ../../locales/../src/interface/updatewizard.cpp:1040
 msgid ""
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
@@ -1396,7 +1416,7 @@ msgid "Apply to &files only"
 msgstr "Verkställ endast på &filer"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:79
-#: ../../locales/../src/interface/updatewizard.cpp:311
+#: ../../locales/../src/interface/updatewizard.cpp:319
 msgid "Archive"
 msgstr "Arkiv"
 
@@ -1751,7 +1771,7 @@ msgstr "Sök efter &uppdateringar..."
 msgid "Check for newer versions of FileZilla"
 msgstr "Sök efter nyare versioner av FileZilla"
 
-#: ../../locales/../src/interface/updatewizard.cpp:142
+#: ../../locales/../src/interface/updatewizard.cpp:150
 msgid "Check for updates"
 msgstr "Sök efter uppdateringar"
 
@@ -1767,7 +1787,7 @@ msgstr "Söker efter den korrekta externa IP-adressen"
 msgid "Checking for updates"
 msgstr "Söker efter uppdateringar"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1176
+#: ../../locales/../src/interface/updatewizard.cpp:1184
 msgid "Checksum mismatch of downloaded file."
 msgstr "Kontrollsumman stämmer inte för den hämtade filen."
 
@@ -1833,7 +1853,7 @@ msgstr "Töm snabbanslutningsraden"
 msgid "Click on Finish to save your configuration."
 msgstr "Klicka på Slutför för att spara din konfiguration."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1031
+#: ../../locales/../src/interface/updatewizard.cpp:1039
 msgid "Click on next to download the new version."
 msgstr "Klicka på Nästa för att hämta den nya versionen."
 
@@ -1888,7 +1908,7 @@ msgstr "Kommandot stöds inte av det här protokollet"
 #: ../../locales/../src/engine/logging.cpp:208
 #: ../../locales/../src/interface/StatusView.cpp:280
 #: ../../locales/../src/interface/StatusView.cpp:332
-#: ../../locales/../src/interface/updatewizard.cpp:499
+#: ../../locales/../src/interface/updatewizard.cpp:507
 msgid "Command:"
 msgstr "Kommando:"
 
@@ -2012,8 +2032,8 @@ msgstr "Ansluter till %s genom proxy"
 msgid "Connecting to %s..."
 msgstr "Ansluter till %s..."
 
-#: ../../locales/../src/interface/updatewizard.cpp:382
-#: ../../locales/../src/interface/updatewizard.cpp:947
+#: ../../locales/../src/interface/updatewizard.cpp:390
+#: ../../locales/../src/interface/updatewizard.cpp:955
 msgid "Connecting to server"
 msgstr "Ansluter till servern"
 
@@ -2750,7 +2770,7 @@ msgid "Do &nothing"
 msgstr "Gör &ingenting"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
+#: ../../locales/../src/interface/updatewizard.cpp:238
 msgid ""
 "Do you really want to check for beta versions?\n"
 "Unless you want to test new features, keep using stable versions."
@@ -2825,7 +2845,7 @@ msgid "Downloading"
 msgstr "Hämtar"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:354
-#: ../../locales/../src/interface/updatewizard.cpp:373
+#: ../../locales/../src/interface/updatewizard.cpp:381
 #, c-format
 msgid "Downloading %s"
 msgstr "Hämtar %s"
@@ -2837,10 +2857,6 @@ msgstr "Hämtning av flera orelaterade kataloger stöds ännu inte"
 #: ../../locales/../src/interface/search.cpp:954
 msgid "Downloading search results"
 msgstr "Hämtar sökresultat"
-
-#: resources.h:251 resources.h:779
-msgid "Downloads:"
-msgstr "Hämtningar:"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
@@ -3098,14 +3114,14 @@ msgstr "Fel vid start av programmet"
 msgid "Error writing xml file"
 msgstr "Fel vid skrivning av XML-fil"
 
-#: ../../locales/../src/interface/updatewizard.cpp:332
+#: ../../locales/../src/interface/updatewizard.cpp:340
 msgid "Error, local file exists but cannot be removed"
 msgstr "Fel, den lokala filen finns men kan inte tas bort"
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
 #: ../../locales/../src/interface/StatusView.cpp:328
-#: ../../locales/../src/interface/updatewizard.cpp:493
+#: ../../locales/../src/interface/updatewizard.cpp:501
 msgid "Error:"
 msgstr "Fel:"
 
@@ -3121,7 +3137,7 @@ msgstr "Exempel"
 msgid "Exe&cute"
 msgstr "&Kör"
 
-#: ../../locales/../src/interface/updatewizard.cpp:309
+#: ../../locales/../src/interface/updatewizard.cpp:317
 msgid "Executable"
 msgstr "Körbar fil"
 
@@ -3204,7 +3220,7 @@ msgstr "Misslyckades med att byta katalog"
 msgid "Failed to change language"
 msgstr "Misslyckades med att byta språk"
 
-#: ../../locales/../src/interface/updatewizard.cpp:411
+#: ../../locales/../src/interface/updatewizard.cpp:419
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Misslyckades med att söka efter en nyare version av FileZilla."
 
@@ -3226,7 +3242,7 @@ msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
 "Misslyckades med att skapa ett lyssningsuttag för överföring i aktivt läge"
 
-#: ../../locales/../src/interface/updatewizard.cpp:413
+#: ../../locales/../src/interface/updatewizard.cpp:421
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Misslyckades med att hämta den senaste versionen av FileZilla."
 
@@ -3260,7 +3276,7 @@ msgstr "Misslyckades med att initiera FTP-motorn"
 msgid "Failed to initialize TLS."
 msgstr "Misslyckades med att initiera TLS."
 
-#: ../../locales/../src/interface/settings/settingsdialog.cpp:172
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:173
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Misslyckades med att läsa in paneler, ogiltiga resursfiler?"
 
@@ -4735,12 +4751,12 @@ msgid "Overwrite file if source file newer"
 msgstr "Skriv över filen om källfilen är nyare"
 
 #: resources.h:60
-msgid "Overwrite if different size"
-msgstr "Skriv över om storleken skiljer sig"
+msgid "Overwrite if &different size"
+msgstr "Skriv över om storleken &skiljer sig"
 
 #: resources.h:61
-msgid "Overwrite if different size or source newer"
-msgstr "Skriv över om storleken skiljer sig eller källan är nyare"
+msgid "Overwrite if different si&ze or source newer"
+msgstr "Skriv över om storle&ken skiljer sig eller källan är nyare"
 
 #: resources.h:133
 msgid "Owner permissions"
@@ -4772,7 +4788,7 @@ msgstr "PORT-kommandot påverkat av en router eller brandvägg."
 msgid "Pa&ssive (recommended)"
 msgstr "Pa&ssivt läge (rekommenderas)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:313
+#: ../../locales/../src/interface/updatewizard.cpp:321
 msgid "Package"
 msgstr "Paket"
 
@@ -4850,7 +4866,7 @@ msgstr ""
 "Kontrollera på http://filezilla-project.org/probe.php att servern kör och "
 "kontrollera noga dina inställningar igen."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1011
+#: ../../locales/../src/interface/updatewizard.cpp:1019
 msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
@@ -5147,8 +5163,8 @@ msgid ""
 "FileZilla."
 msgstr "Besök http://filezilla-project.org för mer information om FileZilla."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1009
-#: ../../locales/../src/interface/updatewizard.cpp:1025
+#: ../../locales/../src/interface/updatewizard.cpp:1017
+#: ../../locales/../src/interface/updatewizard.cpp:1033
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
@@ -5258,14 +5274,14 @@ msgid "Queue has been fully processed"
 msgstr "Hela kön har behandlats"
 
 #: ../../locales/../src/interface/statusbar.cpp:396
-#, fuzzy, c-format
+#, c-format
 msgid "Queue: %s MiB"
-msgstr "Kö: %s%d MiB"
+msgstr "Kö: %s MiB"
 
 #: ../../locales/../src/interface/statusbar.cpp:319
-#, fuzzy, c-format
+#, c-format
 msgid "Queue: %s%s"
-msgstr "Kö: %s%d %c"
+msgstr "Kö: %s%s"
 
 #: ../../locales/../src/interface/statusbar.cpp:315
 #: ../../locales/../src/interface/statusbar.cpp:387
@@ -5499,7 +5515,7 @@ msgstr "Återställ och lägg markerade filer i kö på nytt"
 msgid "Resolving address of %s"
 msgstr "Slår upp adressen för %s"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1094
+#: ../../locales/../src/interface/updatewizard.cpp:1102
 msgid "Resolving hostname"
 msgstr "Slår upp värdnamnet"
 
@@ -5507,7 +5523,7 @@ msgstr "Slår upp värdnamnet"
 #: ../../locales/../src/interface/netconfwizard.cpp:395
 #: ../../locales/../src/interface/StatusView.cpp:283
 #: ../../locales/../src/interface/StatusView.cpp:339
-#: ../../locales/../src/interface/updatewizard.cpp:502
+#: ../../locales/../src/interface/updatewizard.cpp:510
 msgid "Response:"
 msgstr "Svar:"
 
@@ -5638,7 +5654,7 @@ msgstr ""
 "Välj standardåtgärd om filen redan finns (gäller bara för de för närvarande "
 "markerade filerna i kön)."
 
-#: ../../locales/../src/interface/updatewizard.cpp:317
+#: ../../locales/../src/interface/updatewizard.cpp:325
 msgid "Select download location for package"
 msgstr "Välj hämtningsplats för paket"
 
@@ -6093,7 +6109,7 @@ msgstr "Status"
 #: ../../locales/../src/engine/logging.cpp:206
 #: ../../locales/../src/interface/StatusView.cpp:292
 #: ../../locales/../src/interface/StatusView.cpp:363
-#: ../../locales/../src/interface/updatewizard.cpp:496
+#: ../../locales/../src/interface/updatewizard.cpp:504
 msgid "Status:"
 msgstr "Status:"
 
@@ -6427,7 +6443,7 @@ msgstr ""
 "Den lägsta tillgängliga porten måste vara mindre än eller lika med den "
 "högsta tillgängliga porten."
 
-#: ../../locales/../src/interface/updatewizard.cpp:565
+#: ../../locales/../src/interface/updatewizard.cpp:573
 msgid ""
 "The most recent version has been downloaded. Click on Finish to close "
 "FileZilla and to start the installation."
@@ -6435,7 +6451,7 @@ msgstr ""
 "Den senaste versionen har hämtats. Klicka på Slutför för att stänga "
 "FileZilla och starta installationen."
 
-#: ../../locales/../src/interface/updatewizard.cpp:567
+#: ../../locales/../src/interface/updatewizard.cpp:575
 msgid ""
 "The most recent version has been downloaded. Please install like you did "
 "install this version."
@@ -6886,8 +6902,8 @@ msgid "Update Check"
 msgstr "Uppdateringskontroll"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:238
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid "Update wizard"
 msgstr "Uppdateringsguide"
 
@@ -6931,10 +6947,6 @@ msgstr "Skickar och borttagning pågår"
 msgid "Uploading and unediting"
 msgstr "Skickar och ångrar ändringar"
 
-#: resources.h:261 resources.h:788
-msgid "Uploads:"
-msgstr "Sändningar:"
-
 #: resources.h:109
 msgid "Use &custom charset"
 msgstr "Använd anpassad t&eckenuppsättning"
@@ -6957,9 +6969,8 @@ msgstr ""
 "Använd UTF-8 om servern stöder det, använd annars lokal teckenuppsättning."
 
 #: resources.h:252 resources.h:262
-#, fuzzy
 msgid "Use default action"
-msgstr "A&nvänd standard"
+msgstr "Använd standardåtgärden"
 
 #: resources.h:365
 msgid "Use server currently connected to"
@@ -7121,7 +7132,7 @@ msgstr ""
 msgid "Warning, ignoring data connection from wrong IP."
 msgstr "Varning, ignorerar dataanslutning från felaktig IP-adress."
 
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid ""
 "Warning, use nightly builds at your own risk.\n"
 "No support is given for nightly builds.\n"
@@ -7451,6 +7462,9 @@ msgstr "skrivbar för alla"
 msgid "wxWidgets:"
 msgstr "wxWidgets:"
 
+#~ msgid "Queue: %s%d bytes"
+#~ msgstr "Kö: %s%d byte"
+
 #~ msgid "&Ask for action"
 #~ msgstr "&Fråga efter åtgärd"
 
@@ -7468,9 +7482,6 @@ msgstr "wxWidgets:"
 
 #~ msgid "Over&write if source newer"
 #~ msgstr "Skriv över o&m källan är nyare"
-
-#~ msgid "Queue: %s%d bytes"
-#~ msgstr "Kö: %s%d byte"
 
 #~ msgid "Rena&me"
 #~ msgstr "Byt na&mn"

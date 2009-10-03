@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fr_FR\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-26 00:14+0200\n"
+"POT-Creation-Date: 2009-10-03 14:26+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Frédéric DUARTE <pgase.filezilla@free.fr>\n"
 "Language-Team: Frédéric DUARTE, Arnaud DAVID, Kud Gray <pgase.filezilla@free."
@@ -123,25 +123,25 @@ msgid_plural "%s bytes"
 msgstr[0] "%s octet"
 msgstr[1] "%s octets"
 
-#: ../../locales/../src/interface/updatewizard.cpp:857
+#: ../../locales/../src/interface/updatewizard.cpp:865
 #, c-format
 msgid "%s bytes"
 msgstr "%s octets"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:170
-#: ../../locales/../src/interface/updatewizard.cpp:841
+#: ../../locales/../src/interface/updatewizard.cpp:849
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s octets (%d o/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:168
-#: ../../locales/../src/interface/updatewizard.cpp:839
+#: ../../locales/../src/interface/updatewizard.cpp:847
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s octets (%d.%d Ko/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:166
-#: ../../locales/../src/interface/updatewizard.cpp:837
+#: ../../locales/../src/interface/updatewizard.cpp:845
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s octets (%d.%d Mo/s)"
@@ -405,6 +405,10 @@ msgstr "&Télécharger vers :"
 msgid "&Download..."
 msgstr "&Télécharger..."
 
+#: resources.h:251 resources.h:779
+msgid "&Downloads:"
+msgstr "&Téléchargements :"
+
 #: resources.h:465 resources.h:522
 msgid "&Edit"
 msgstr "É&dition"
@@ -472,6 +476,10 @@ msgstr "Jeux de &filtres :"
 #: resources.h:208
 msgid "&Filters:"
 msgstr "&Filtres :"
+
+#: ../../locales/../src/interface/updatewizard.cpp:26
+msgid "&Finish"
+msgstr "&Terminer"
 
 #: resources.h:311
 msgid "&Finish editing and delete local file"
@@ -618,9 +626,13 @@ msgstr "&Nouveau"
 msgid "&New Site"
 msgstr "&Nouveau Site"
 
-#: ../../locales/../src/interface/updatewizard.cpp:992
+#: ../../locales/../src/interface/updatewizard.cpp:1000
 msgid "&New version available!"
 msgstr "&Nouvelle version disponible !"
+
+#: ../../locales/../src/interface/updatewizard.cpp:24
+msgid "&Next >"
+msgstr "&Suivant >"
 
 #: resources.h:313
 msgid "&No"
@@ -879,6 +891,10 @@ msgstr "Mise à jo&ur de la clé placée en cache pour cet hôte"
 msgid "&Upload"
 msgstr "&Envoyer"
 
+#: resources.h:261 resources.h:788
+msgid "&Uploads:"
+msgstr "&Envois :"
+
 #: resources.h:419
 msgid "&Use custom program"
 msgstr "&Utiliser un programme personnalisé"
@@ -911,7 +927,7 @@ msgstr "&Identifiant :"
 msgid "&Username:"
 msgstr "&Identifiant :"
 
-#: ../../locales/../src/interface/updatewizard.cpp:988
+#: ../../locales/../src/interface/updatewizard.cpp:996
 #, c-format
 msgid "&Version %s"
 msgstr "&Version %s"
@@ -1013,11 +1029,11 @@ msgstr "(exemple : %Y-%m-%d)"
 msgid "(in KB/s)"
 msgstr "(en Ko/s)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:849
+#: ../../locales/../src/interface/updatewizard.cpp:857
 msgid ", %H:%M:%S left"
 msgstr ", %H:%M:%S restante(s)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:853
+#: ../../locales/../src/interface/updatewizard.cpp:861
 msgid ", --:--:-- left"
 msgstr ", --:--:-- restant"
 
@@ -1081,6 +1097,10 @@ msgstr "4 - Déboguer"
 #: ../../locales/../src/engine/directorylistingparser.cpp:1625
 msgid ";1"
 msgstr ";1"
+
+#: ../../locales/../src/interface/updatewizard.cpp:25
+msgid "< &Back"
+msgstr "< &Précédent"
 
 #: resources.h:506
 msgid "?"
@@ -1341,7 +1361,7 @@ msgstr ""
 "faire, veuillez vérifier que la variable d'environnement SSH_AUTH_SOCK soit "
 "définie."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1032
+#: ../../locales/../src/interface/updatewizard.cpp:1040
 msgid ""
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
@@ -1415,7 +1435,7 @@ msgid "Apply to &files only"
 msgstr "Appliquer uniquement aux &fichiers"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:79
-#: ../../locales/../src/interface/updatewizard.cpp:311
+#: ../../locales/../src/interface/updatewizard.cpp:319
 msgid "Archive"
 msgstr "Archive"
 
@@ -1779,7 +1799,7 @@ msgstr "Vérifier les mises à jo&ur..."
 msgid "Check for newer versions of FileZilla"
 msgstr "Vérifie les nouvelles versions de FileZilla"
 
-#: ../../locales/../src/interface/updatewizard.cpp:142
+#: ../../locales/../src/interface/updatewizard.cpp:150
 msgid "Check for updates"
 msgstr "Vérification des mises à jour"
 
@@ -1795,7 +1815,7 @@ msgstr "Vérification pour l'adresse IP externe correcte"
 msgid "Checking for updates"
 msgstr "Vérification des mises à jour"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1176
+#: ../../locales/../src/interface/updatewizard.cpp:1184
 msgid "Checksum mismatch of downloaded file."
 msgstr "Contrôle de l'intégrité du fichier téléchargé négatif."
 
@@ -1861,7 +1881,7 @@ msgstr "Réinitialiser la barre de connexion rapide"
 msgid "Click on Finish to save your configuration."
 msgstr "Cliquez sur Finir pour sauvegarder vos paramètres."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1031
+#: ../../locales/../src/interface/updatewizard.cpp:1039
 msgid "Click on next to download the new version."
 msgstr "Cliquez sur Suivant pour télécharger la nouvelle version."
 
@@ -1915,7 +1935,7 @@ msgstr "Commande non supportée par ce protocole"
 #: ../../locales/../src/engine/logging.cpp:208
 #: ../../locales/../src/interface/StatusView.cpp:280
 #: ../../locales/../src/interface/StatusView.cpp:332
-#: ../../locales/../src/interface/updatewizard.cpp:499
+#: ../../locales/../src/interface/updatewizard.cpp:507
 msgid "Command:"
 msgstr "Commande :"
 
@@ -2039,8 +2059,8 @@ msgstr "Connexion à %s via le Proxy"
 msgid "Connecting to %s..."
 msgstr "Connexion à %s..."
 
-#: ../../locales/../src/interface/updatewizard.cpp:382
-#: ../../locales/../src/interface/updatewizard.cpp:947
+#: ../../locales/../src/interface/updatewizard.cpp:390
+#: ../../locales/../src/interface/updatewizard.cpp:955
 msgid "Connecting to server"
 msgstr "Connexion au serveur"
 
@@ -2785,7 +2805,7 @@ msgid "Do &nothing"
 msgstr "Ne rie&n faire"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
+#: ../../locales/../src/interface/updatewizard.cpp:238
 msgid ""
 "Do you really want to check for beta versions?\n"
 "Unless you want to test new features, keep using stable versions."
@@ -2863,7 +2883,7 @@ msgid "Downloading"
 msgstr "En cours de téléchargement"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:354
-#: ../../locales/../src/interface/updatewizard.cpp:373
+#: ../../locales/../src/interface/updatewizard.cpp:381
 #, c-format
 msgid "Downloading %s"
 msgstr "Téléchargement de %s"
@@ -2877,10 +2897,6 @@ msgstr ""
 #: ../../locales/../src/interface/search.cpp:954
 msgid "Downloading search results"
 msgstr "Téléchargement des résultats de recherche"
-
-#: resources.h:251 resources.h:779
-msgid "Downloads:"
-msgstr "Téléchargements :"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
@@ -3142,14 +3158,14 @@ msgstr "Erreur lors du démarrage du programme"
 msgid "Error writing xml file"
 msgstr "Erreur lors de l'écriture du fichier xml"
 
-#: ../../locales/../src/interface/updatewizard.cpp:332
+#: ../../locales/../src/interface/updatewizard.cpp:340
 msgid "Error, local file exists but cannot be removed"
 msgstr "Erreur, le fichier local existe mais ne peut pas être supprimé"
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
 #: ../../locales/../src/interface/StatusView.cpp:328
-#: ../../locales/../src/interface/updatewizard.cpp:493
+#: ../../locales/../src/interface/updatewizard.cpp:501
 msgid "Error:"
 msgstr "Erreur :"
 
@@ -3165,7 +3181,7 @@ msgstr "Exemples"
 msgid "Exe&cute"
 msgstr "Exéc&uter"
 
-#: ../../locales/../src/interface/updatewizard.cpp:309
+#: ../../locales/../src/interface/updatewizard.cpp:317
 msgid "Executable"
 msgstr "Executable"
 
@@ -3248,7 +3264,7 @@ msgstr "Échec lors du changement de dossier"
 msgid "Failed to change language"
 msgstr "Échec lors du changement de langue"
 
-#: ../../locales/../src/interface/updatewizard.cpp:411
+#: ../../locales/../src/interface/updatewizard.cpp:419
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Échec lors de la vérification de nouvelles versions de FileZilla."
 
@@ -3270,7 +3286,7 @@ msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
 "Échec lors de la création du socket d'écoute pour le mode de transfert actif"
 
-#: ../../locales/../src/interface/updatewizard.cpp:413
+#: ../../locales/../src/interface/updatewizard.cpp:421
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Échec lors du téléchargement de la dernière version de FileZilla."
 
@@ -3304,7 +3320,7 @@ msgstr "Échec lors de l'initialisation du moteur FTP"
 msgid "Failed to initialize TLS."
 msgstr "Échec lors de l'initialisation du protocole TLS."
 
-#: ../../locales/../src/interface/settings/settingsdialog.cpp:172
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:173
 msgid "Failed to load panels, invalid resource files?"
 msgstr ""
 "Échec lors du chargement de l'interface, les fichiers de ressources sont-ils "
@@ -4813,12 +4829,13 @@ msgid "Overwrite file if source file newer"
 msgstr "Remplacer le fichier si la source est plus récente"
 
 #: resources.h:60
-msgid "Overwrite if different size"
-msgstr "Remplacer si la taille est différente"
+msgid "Overwrite if &different size"
+msgstr "Remplacer si la taille est &différente"
 
 #: resources.h:61
-msgid "Overwrite if different size or source newer"
-msgstr "Remplacer si la taille est différente ou si la source est plus récente"
+msgid "Overwrite if different si&ze or source newer"
+msgstr ""
+"Remplacer si la taille est différente ou si la &source est plus récente"
 
 #: resources.h:133
 msgid "Owner permissions"
@@ -4850,7 +4867,7 @@ msgstr "La commande PORT a été corrompue par le routeur ou le pare-feu."
 msgid "Pa&ssive (recommended)"
 msgstr "Pa&ssif (recommandé)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:313
+#: ../../locales/../src/interface/updatewizard.cpp:321
 msgid "Package"
 msgstr "Paquet"
 
@@ -4929,7 +4946,7 @@ msgstr ""
 "Veuillez vérifier sur http://filezilla-project.org/probe.php que le serveur "
 "est démarré et vérifiez encore attentivement vos paramètres."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1011
+#: ../../locales/../src/interface/updatewizard.cpp:1019
 msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
@@ -5249,8 +5266,8 @@ msgstr ""
 "Veuillez visiter http://filezilla-project.org pour plus d'informations à "
 "propos de FileZilla."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1009
-#: ../../locales/../src/interface/updatewizard.cpp:1025
+#: ../../locales/../src/interface/updatewizard.cpp:1017
+#: ../../locales/../src/interface/updatewizard.cpp:1033
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
@@ -5610,7 +5627,7 @@ msgstr ""
 msgid "Resolving address of %s"
 msgstr "Résolution de l'adresse de %s"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1094
+#: ../../locales/../src/interface/updatewizard.cpp:1102
 msgid "Resolving hostname"
 msgstr "Résolution du nom d'hôte"
 
@@ -5618,7 +5635,7 @@ msgstr "Résolution du nom d'hôte"
 #: ../../locales/../src/interface/netconfwizard.cpp:395
 #: ../../locales/../src/interface/StatusView.cpp:283
 #: ../../locales/../src/interface/StatusView.cpp:339
-#: ../../locales/../src/interface/updatewizard.cpp:502
+#: ../../locales/../src/interface/updatewizard.cpp:510
 msgid "Response:"
 msgstr "Réponse :"
 
@@ -5751,7 +5768,7 @@ msgstr ""
 "Sélectionnez une action par défaut à effectuer uniquement pour les fichiers "
 "cibles sélectionnés présents dans la file d'attente."
 
-#: ../../locales/../src/interface/updatewizard.cpp:317
+#: ../../locales/../src/interface/updatewizard.cpp:325
 msgid "Select download location for package"
 msgstr "Sélection du dossier de réception pour le paquet"
 
@@ -6216,7 +6233,7 @@ msgstr "Statut"
 #: ../../locales/../src/engine/logging.cpp:206
 #: ../../locales/../src/interface/StatusView.cpp:292
 #: ../../locales/../src/interface/StatusView.cpp:363
-#: ../../locales/../src/interface/updatewizard.cpp:496
+#: ../../locales/../src/interface/updatewizard.cpp:504
 msgid "Status:"
 msgstr "Statut :"
 
@@ -6552,7 +6569,7 @@ msgstr ""
 "Le port le plus bas disponible doit être inférieur ou égal au port le plus "
 "élevé."
 
-#: ../../locales/../src/interface/updatewizard.cpp:565
+#: ../../locales/../src/interface/updatewizard.cpp:573
 msgid ""
 "The most recent version has been downloaded. Click on Finish to close "
 "FileZilla and to start the installation."
@@ -6560,7 +6577,7 @@ msgstr ""
 "La version la plus récente a été téléchargée. Cliquez sur Fin pour quitter "
 "FileZilla et démarrer l'installation."
 
-#: ../../locales/../src/interface/updatewizard.cpp:567
+#: ../../locales/../src/interface/updatewizard.cpp:575
 msgid ""
 "The most recent version has been downloaded. Please install like you did "
 "install this version."
@@ -7025,8 +7042,8 @@ msgid "Update Check"
 msgstr "Vérification des mises à jour"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:238
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid "Update wizard"
 msgstr "Assistant de mise à jour"
 
@@ -7069,10 +7086,6 @@ msgstr "Envoi et attente de retrait"
 #: ../../locales/../src/interface/edithandler.cpp:1441
 msgid "Uploading and unediting"
 msgstr "Envoi et fin de l'édition"
-
-#: resources.h:261 resources.h:788
-msgid "Uploads:"
-msgstr "Envois :"
 
 #: resources.h:109
 msgid "Use &custom charset"
@@ -7262,7 +7275,7 @@ msgid "Warning, ignoring data connection from wrong IP."
 msgstr ""
 "Attention, données de connexion ignorée en provenance d'une IP incorrecte."
 
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid ""
 "Warning, use nightly builds at your own risk.\n"
 "No support is given for nightly builds.\n"

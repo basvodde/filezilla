@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: filezilla-3.2.7.1\n"
+"Project-Id-Version: filezilla-3.2.8-rc1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-26 00:14+0200\n"
-"PO-Revision-Date: 2009-09-22 08:12+0700\n"
+"POT-Creation-Date: 2009-10-03 14:26+0200\n"
+"PO-Revision-Date: 2009-09-27 08:00+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -128,25 +128,25 @@ msgid_plural "%s bytes"
 msgstr[0] "%s bytes"
 msgstr[1] "%s bytes"
 
-#: ../../locales/../src/interface/updatewizard.cpp:857
+#: ../../locales/../src/interface/updatewizard.cpp:865
 #, c-format
 msgid "%s bytes"
 msgstr "%s bytes"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:170
-#: ../../locales/../src/interface/updatewizard.cpp:841
+#: ../../locales/../src/interface/updatewizard.cpp:849
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bytes (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:168
-#: ../../locales/../src/interface/updatewizard.cpp:839
+#: ../../locales/../src/interface/updatewizard.cpp:847
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bytes (%d.%d KB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:166
-#: ../../locales/../src/interface/updatewizard.cpp:837
+#: ../../locales/../src/interface/updatewizard.cpp:845
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bytes (%d.%d MB/s)"
@@ -408,6 +408,11 @@ msgstr "&Tải về tới:"
 msgid "&Download..."
 msgstr "&Tải về..."
 
+#: resources.h:251 resources.h:779
+#, fuzzy
+msgid "&Downloads:"
+msgstr "Tải về:"
+
 #: resources.h:465 resources.h:522
 msgid "&Edit"
 msgstr "&Biên tập"
@@ -475,6 +480,10 @@ msgstr "Đặt &bộ lọc:"
 #: resources.h:208
 msgid "&Filters:"
 msgstr "&Bộ lọc:"
+
+#: ../../locales/../src/interface/updatewizard.cpp:26
+msgid "&Finish"
+msgstr ""
 
 #: resources.h:311
 msgid "&Finish editing and delete local file"
@@ -620,9 +629,13 @@ msgstr "Tạo &mới"
 msgid "&New Site"
 msgstr "Địa chỉ &mới"
 
-#: ../../locales/../src/interface/updatewizard.cpp:992
+#: ../../locales/../src/interface/updatewizard.cpp:1000
 msgid "&New version available!"
 msgstr "Đã có phiên bả&n mới!"
+
+#: ../../locales/../src/interface/updatewizard.cpp:24
+msgid "&Next >"
+msgstr ""
 
 #: resources.h:313
 msgid "&No"
@@ -881,6 +894,11 @@ msgstr "&Lưu giữ lại từ khóa cho máy chủ này"
 msgid "&Upload"
 msgstr "&Tải lên"
 
+#: resources.h:261 resources.h:788
+#, fuzzy
+msgid "&Uploads:"
+msgstr "Tải lên:"
+
 #: resources.h:419
 msgid "&Use custom program"
 msgstr "Dùng chương trình riêng"
@@ -913,7 +931,7 @@ msgstr "&Người dùng:"
 msgid "&Username:"
 msgstr "Tên tài &khoản:"
 
-#: ../../locales/../src/interface/updatewizard.cpp:988
+#: ../../locales/../src/interface/updatewizard.cpp:996
 #, c-format
 msgid "&Version %s"
 msgstr "&Phiên bản %s"
@@ -1011,11 +1029,11 @@ msgstr "(ví dụ: %Y-%m-%d)"
 msgid "(in KB/s)"
 msgstr "(trong KB/s)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:849
+#: ../../locales/../src/interface/updatewizard.cpp:857
 msgid ", %H:%M:%S left"
 msgstr ", dưới  %H:%M:%S"
 
-#: ../../locales/../src/interface/updatewizard.cpp:853
+#: ../../locales/../src/interface/updatewizard.cpp:861
 msgid ", --:--:-- left"
 msgstr ", dưới --:--:-- "
 
@@ -1079,6 +1097,10 @@ msgstr "4 –Gỡ lỗi"
 #: ../../locales/../src/engine/directorylistingparser.cpp:1625
 msgid ";1"
 msgstr ";1"
+
+#: ../../locales/../src/interface/updatewizard.cpp:25
+msgid "< &Back"
+msgstr ""
 
 #: resources.h:506
 msgid "?"
@@ -1331,7 +1353,7 @@ msgstr ""
 "Bạn có thể lựa chọn là sử dụng hệ thống SSH. Để làm được như vậy, xin chắc "
 "chắn rằng biến môi trường SSH&AUTH&SOCK phải được đặt."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1032
+#: ../../locales/../src/interface/updatewizard.cpp:1040
 msgid ""
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
@@ -1397,7 +1419,7 @@ msgid "Apply to &files only"
 msgstr "Chỉ chấp nhận tệp &tin"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:79
-#: ../../locales/../src/interface/updatewizard.cpp:311
+#: ../../locales/../src/interface/updatewizard.cpp:319
 msgid "Archive"
 msgstr "Lưu trữ"
 
@@ -1750,7 +1772,7 @@ msgstr "Kiểm tra phiên bản &mới..."
 msgid "Check for newer versions of FileZilla"
 msgstr "Kiểm tra phiên bản mới hơn của FileZilla"
 
-#: ../../locales/../src/interface/updatewizard.cpp:142
+#: ../../locales/../src/interface/updatewizard.cpp:150
 msgid "Check for updates"
 msgstr "Kiểm tra phiên bản mới"
 
@@ -1766,7 +1788,7 @@ msgstr "Kiểm tra địa chỉ IP"
 msgid "Checking for updates"
 msgstr "Đang kiểm tra phiên bản mới"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1176
+#: ../../locales/../src/interface/updatewizard.cpp:1184
 msgid "Checksum mismatch of downloaded file."
 msgstr "Tệp tin tải xuống có mã tổng kiểm tra không đúng."
 
@@ -1832,7 +1854,7 @@ msgstr "Xóa thanh công cụ kết nối nhanh"
 msgid "Click on Finish to save your configuration."
 msgstr "Bấm vào nút Hoàn tất để ghi lại thông tin cấu hình."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1031
+#: ../../locales/../src/interface/updatewizard.cpp:1039
 msgid "Click on next to download the new version."
 msgstr "Bấm vào Tiếp tục để tải về phiên bản mới."
 
@@ -1886,7 +1908,7 @@ msgstr "Lệnh không được hỗ trợ bởi giao thức này"
 #: ../../locales/../src/engine/logging.cpp:208
 #: ../../locales/../src/interface/StatusView.cpp:280
 #: ../../locales/../src/interface/StatusView.cpp:332
-#: ../../locales/../src/interface/updatewizard.cpp:499
+#: ../../locales/../src/interface/updatewizard.cpp:507
 msgid "Command:"
 msgstr "Lệnh:"
 
@@ -2010,8 +2032,8 @@ msgstr "Đang kết nối tới %s thông qua máy chủ proxy"
 msgid "Connecting to %s..."
 msgstr "Đang kết nối tới %s..."
 
-#: ../../locales/../src/interface/updatewizard.cpp:382
-#: ../../locales/../src/interface/updatewizard.cpp:947
+#: ../../locales/../src/interface/updatewizard.cpp:390
+#: ../../locales/../src/interface/updatewizard.cpp:955
 msgid "Connecting to server"
 msgstr "Đang kết nối tới máy chủ dịch vụ"
 
@@ -2733,7 +2755,7 @@ msgid "Do &nothing"
 msgstr "Không làm gì cả"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
+#: ../../locales/../src/interface/updatewizard.cpp:238
 msgid ""
 "Do you really want to check for beta versions?\n"
 "Unless you want to test new features, keep using stable versions."
@@ -2809,7 +2831,7 @@ msgid "Downloading"
 msgstr "Đang tải về"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:354
-#: ../../locales/../src/interface/updatewizard.cpp:373
+#: ../../locales/../src/interface/updatewizard.cpp:381
 #, c-format
 msgid "Downloading %s"
 msgstr "Đang tải về %s"
@@ -2821,10 +2843,6 @@ msgstr "Việc bội tải xuống không liên quan đến thư mục vẫn ch�
 #: ../../locales/../src/interface/search.cpp:954
 msgid "Downloading search results"
 msgstr "Đang tải về kết quả tìm kiếm"
-
-#: resources.h:251 resources.h:779
-msgid "Downloads:"
-msgstr "Tải về:"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
@@ -3079,14 +3097,14 @@ msgstr "Lỗi khởi động chương trình"
 msgid "Error writing xml file"
 msgstr "Lỗi ghi tệp tin xml"
 
-#: ../../locales/../src/interface/updatewizard.cpp:332
+#: ../../locales/../src/interface/updatewizard.cpp:340
 msgid "Error, local file exists but cannot be removed"
 msgstr "Lỗi, tệp tin trên máy có tồn tại nhưng không thể xóa."
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
 #: ../../locales/../src/interface/StatusView.cpp:328
-#: ../../locales/../src/interface/updatewizard.cpp:493
+#: ../../locales/../src/interface/updatewizard.cpp:501
 msgid "Error:"
 msgstr "Lỗi:"
 
@@ -3102,7 +3120,7 @@ msgstr "Ví dụ"
 msgid "Exe&cute"
 msgstr "Thực th&i"
 
-#: ../../locales/../src/interface/updatewizard.cpp:309
+#: ../../locales/../src/interface/updatewizard.cpp:317
 msgid "Executable"
 msgstr "Có thể thực thi"
 
@@ -3185,7 +3203,7 @@ msgstr "Đổi thư mục gặp lỗi"
 msgid "Failed to change language"
 msgstr "Đổi ngôn ngữ gặp lỗi"
 
-#: ../../locales/../src/interface/updatewizard.cpp:411
+#: ../../locales/../src/interface/updatewizard.cpp:419
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Kiểm tra phiên bản mới của FileZilla gặp lỗi."
 
@@ -3206,7 +3224,7 @@ msgstr "Tạo gói mạng lắng nghe gặp lỗi, đang bỏ qua"
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Tạo gói mạng để nghe cho chế độ truyền tích cực gặp lỗi"
 
-#: ../../locales/../src/interface/updatewizard.cpp:413
+#: ../../locales/../src/interface/updatewizard.cpp:421
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Tải bản mới của FileZilla  gặp lỗi."
 
@@ -3237,7 +3255,7 @@ msgstr "Khởi tạo bộ máy FTP gặp lỗi."
 msgid "Failed to initialize TLS."
 msgstr "Khởi tạo TLS gặp lỗi."
 
-#: ../../locales/../src/interface/settings/settingsdialog.cpp:172
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:173
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Tải bảng điều khiển gặp lỗi, tệp tin tài nguyên không hợp lệ?"
 
@@ -4699,11 +4717,13 @@ msgid "Overwrite file if source file newer"
 msgstr "Ghi đè nếu có nguồn mới hơn"
 
 #: resources.h:60
-msgid "Overwrite if different size"
+#, fuzzy
+msgid "Overwrite if &different size"
 msgstr "Ghi đè nếu kích thước khác biệt"
 
 #: resources.h:61
-msgid "Overwrite if different size or source newer"
+#, fuzzy
+msgid "Overwrite if different si&ze or source newer"
 msgstr "Ghi đè nếu có nguồn mới hơn hay kích thước khách biệt"
 
 #: resources.h:133
@@ -4736,7 +4756,7 @@ msgstr "Lệnh PORT hỏng bởi bộ định tuyến router hoặc tường l�
 msgid "Pa&ssive (recommended)"
 msgstr "Thụ độn&g (nên dùng)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:313
+#: ../../locales/../src/interface/updatewizard.cpp:321
 msgid "Package"
 msgstr "Đóng gói"
 
@@ -4813,7 +4833,7 @@ msgstr ""
 "Xin kiểm tra tại http://filezilla-project.org/probe.php máy chủ này phải "
 "chạy được và cẩn thận kiểm tra lại cài đặt của bạn."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1011
+#: ../../locales/../src/interface/updatewizard.cpp:1019
 msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
@@ -5116,8 +5136,8 @@ msgstr ""
 "Mời bạn truy cập  http://filezilla-project.org để tìm thêm thông tin về  "
 "FileZilla."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1009
-#: ../../locales/../src/interface/updatewizard.cpp:1025
+#: ../../locales/../src/interface/updatewizard.cpp:1017
+#: ../../locales/../src/interface/updatewizard.cpp:1033
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
@@ -5227,14 +5247,14 @@ msgid "Queue has been fully processed"
 msgstr "Hàng đợi đã đầy"
 
 #: ../../locales/../src/interface/statusbar.cpp:396
-#, fuzzy, c-format
+#, c-format
 msgid "Queue: %s MiB"
-msgstr "Hàng đợi: %s%d MiB"
+msgstr "Hàng đợi: %s MiB"
 
 #: ../../locales/../src/interface/statusbar.cpp:319
-#, fuzzy, c-format
+#, c-format
 msgid "Queue: %s%s"
-msgstr "Hàng đợi: %s%d %c"
+msgstr "Hàng đợi: %s%s"
 
 #: ../../locales/../src/interface/statusbar.cpp:315
 #: ../../locales/../src/interface/statusbar.cpp:387
@@ -5466,7 +5486,7 @@ msgstr "Soạn và sắp xếp lại các tệp tin đã chọn"
 msgid "Resolving address of %s"
 msgstr "Phân giải địa chỉ IP của %s"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1094
+#: ../../locales/../src/interface/updatewizard.cpp:1102
 msgid "Resolving hostname"
 msgstr "Phân giải tên máy chủ"
 
@@ -5474,7 +5494,7 @@ msgstr "Phân giải tên máy chủ"
 #: ../../locales/../src/interface/netconfwizard.cpp:395
 #: ../../locales/../src/interface/StatusView.cpp:283
 #: ../../locales/../src/interface/StatusView.cpp:339
-#: ../../locales/../src/interface/updatewizard.cpp:502
+#: ../../locales/../src/interface/updatewizard.cpp:510
 msgid "Response:"
 msgstr "Trả về:"
 
@@ -5606,7 +5626,7 @@ msgstr ""
 "Chọn hành động mặc định với tệp tin đích đã tồn tại chỉ dành cho các tệp tin "
 "hiện hành đã chọn trong hàng đợi."
 
-#: ../../locales/../src/interface/updatewizard.cpp:317
+#: ../../locales/../src/interface/updatewizard.cpp:325
 msgid "Select download location for package"
 msgstr "Chọn vị trí tải về cho gói tin"
 
@@ -6060,7 +6080,7 @@ msgstr "Tình trạng"
 #: ../../locales/../src/engine/logging.cpp:206
 #: ../../locales/../src/interface/StatusView.cpp:292
 #: ../../locales/../src/interface/StatusView.cpp:363
-#: ../../locales/../src/interface/updatewizard.cpp:496
+#: ../../locales/../src/interface/updatewizard.cpp:504
 msgid "Status:"
 msgstr "Tình trạng:"
 
@@ -6393,7 +6413,7 @@ msgid ""
 msgstr ""
 "Giá trị cổng thấp nhất có thể phải nhỏ hơn hoặc bằng giá trị cổng cao nhất."
 
-#: ../../locales/../src/interface/updatewizard.cpp:565
+#: ../../locales/../src/interface/updatewizard.cpp:573
 msgid ""
 "The most recent version has been downloaded. Click on Finish to close "
 "FileZilla and to start the installation."
@@ -6401,7 +6421,7 @@ msgstr ""
 "Phiên bản gần đây nhất đã được tải về. Bấm vào nút Hoàn tất để đóng "
 "FileZilla và bắt đầu việc cài đặt."
 
-#: ../../locales/../src/interface/updatewizard.cpp:567
+#: ../../locales/../src/interface/updatewizard.cpp:575
 msgid ""
 "The most recent version has been downloaded. Please install like you did "
 "install this version."
@@ -6854,8 +6874,8 @@ msgid "Update Check"
 msgstr "Kiểm tra bản mới"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:238
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid "Update wizard"
 msgstr "Giúp bạn tải về bản mới nhất"
 
@@ -6899,10 +6919,6 @@ msgstr "Đang tải lên và đang chờ bị bỏ đi"
 msgid "Uploading and unediting"
 msgstr "Đang tải lên và không biên tập"
 
-#: resources.h:261 resources.h:788
-msgid "Uploads:"
-msgstr "Tải lên:"
-
 #: resources.h:109
 msgid "Use &custom charset"
 msgstr "Bộ mã ký tự người &dùng"
@@ -6925,9 +6941,8 @@ msgstr ""
 "Sử dụng UTF-8 nếu máy chủ có hỗ trợ, nếu không sử dụng bộ mã ký tự nội bộ."
 
 #: resources.h:252 resources.h:262
-#, fuzzy
 msgid "Use default action"
-msgstr "&Dùng mặc định"
+msgstr "Dùng hành động mặc định"
 
 #: resources.h:365
 msgid "Use server currently connected to"
@@ -7088,7 +7103,7 @@ msgstr ""
 msgid "Warning, ignoring data connection from wrong IP."
 msgstr "Cảnh báo, đang bỏ qua dữ liệu kết nối từ một địa chỉ IP sai."
 
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid ""
 "Warning, use nightly builds at your own risk.\n"
 "No support is given for nightly builds.\n"

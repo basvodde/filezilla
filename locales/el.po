@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-26 00:14+0200\n"
-"PO-Revision-Date: 2009-09-24 17:40+0200\n"
-"Last-Translator: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
+"POT-Creation-Date: 2009-10-03 14:26+0200\n"
+"PO-Revision-Date: 2009-09-29 08:22+0200\n"
+"Last-Translator: Σταμάτιος Η. Σταματέλλος <ydatografida@gmail.com>\n"
 "Language-Team: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -128,25 +128,25 @@ msgid_plural "%s bytes"
 msgstr[0] "%s byte"
 msgstr[1] "%s bytes"
 
-#: ../../locales/../src/interface/updatewizard.cpp:857
+#: ../../locales/../src/interface/updatewizard.cpp:865
 #, c-format
 msgid "%s bytes"
 msgstr "%s bytes"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:170
-#: ../../locales/../src/interface/updatewizard.cpp:841
+#: ../../locales/../src/interface/updatewizard.cpp:849
 #, c-format
 msgid "%s bytes (%d B/s)"
 msgstr "%s bytes (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:168
-#: ../../locales/../src/interface/updatewizard.cpp:839
+#: ../../locales/../src/interface/updatewizard.cpp:847
 #, c-format
 msgid "%s bytes (%d.%d KB/s)"
 msgstr "%s bytes (%d.%d KB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:166
-#: ../../locales/../src/interface/updatewizard.cpp:837
+#: ../../locales/../src/interface/updatewizard.cpp:845
 #, c-format
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bytes (%d.%d MB/s)"
@@ -407,6 +407,10 @@ msgstr "&Λήψη στο:"
 msgid "&Download..."
 msgstr "&Λήψη..."
 
+#: resources.h:251 resources.h:779
+msgid "&Downloads:"
+msgstr "&Ληφθέντα:"
+
 #: resources.h:465 resources.h:522
 msgid "&Edit"
 msgstr "&Επεξεργασία"
@@ -474,6 +478,10 @@ msgstr "&Oρίσματα φίλτρου:"
 #: resources.h:208
 msgid "&Filters:"
 msgstr "&Φίλτρα:"
+
+#: ../../locales/../src/interface/updatewizard.cpp:26
+msgid "&Finish"
+msgstr "&Ολοκλήρωση"
 
 #: resources.h:311
 msgid "&Finish editing and delete local file"
@@ -620,9 +628,13 @@ msgstr "&Νέο"
 msgid "&New Site"
 msgstr "&Νέα τοποθεσία"
 
-#: ../../locales/../src/interface/updatewizard.cpp:992
+#: ../../locales/../src/interface/updatewizard.cpp:1000
 msgid "&New version available!"
 msgstr "&Διαθέσιμη νέα έκδοση!"
+
+#: ../../locales/../src/interface/updatewizard.cpp:24
+msgid "&Next >"
+msgstr "&Επόμενο >"
 
 #: resources.h:313
 msgid "&No"
@@ -881,6 +893,10 @@ msgstr "&Ανανέωση του αποθηκευμένου κλειδιού γ�
 msgid "&Upload"
 msgstr "&Αποστολή"
 
+#: resources.h:261 resources.h:788
+msgid "&Uploads:"
+msgstr "&Απεσταλμένα:"
+
 #: resources.h:419
 msgid "&Use custom program"
 msgstr "&Χρήση προσαρμοσμένης εφαρμογής"
@@ -914,7 +930,7 @@ msgstr "&Χρήστης:"
 msgid "&Username:"
 msgstr "&Όνομα χρήστη:"
 
-#: ../../locales/../src/interface/updatewizard.cpp:988
+#: ../../locales/../src/interface/updatewizard.cpp:996
 #, c-format
 msgid "&Version %s"
 msgstr "&Έκδοση %s"
@@ -1014,11 +1030,11 @@ msgstr "(παράδειγμα: %Y-%m-%d)"
 msgid "(in KB/s)"
 msgstr "(σε KB/s)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:849
+#: ../../locales/../src/interface/updatewizard.cpp:857
 msgid ", %H:%M:%S left"
 msgstr ", %H:%M:%S απομένουν"
 
-#: ../../locales/../src/interface/updatewizard.cpp:853
+#: ../../locales/../src/interface/updatewizard.cpp:861
 msgid ", --:--:-- left"
 msgstr ", --:--:-- απομένουν"
 
@@ -1083,6 +1099,10 @@ msgstr "4 - Αποσφαλματώσεις"
 #: ../../locales/../src/engine/directorylistingparser.cpp:1625
 msgid ";1"
 msgstr ";1"
+
+#: ../../locales/../src/interface/updatewizard.cpp:25
+msgid "< &Back"
+msgstr "< &Προηγούμενο"
 
 #: resources.h:506
 msgid "?"
@@ -1344,7 +1364,7 @@ msgstr ""
 "Εναλλακτικά, μπορείτε να χρησιμοποιήσετε το αναγνωριστικό SSH του συστήματος "
 "σας. Βεβαιωθείτε ότι οι μεταβλητές περιβάλλοντος SSH_AUTH_SOCK έχουν οριστεί."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1032
+#: ../../locales/../src/interface/updatewizard.cpp:1040
 msgid ""
 "Alternatively, visit http://filezilla-project.org to download the most "
 "recent version."
@@ -1414,7 +1434,7 @@ msgid "Apply to &files only"
 msgstr "Εφαρμογή στα &αρχεία μόνο"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:79
-#: ../../locales/../src/interface/updatewizard.cpp:311
+#: ../../locales/../src/interface/updatewizard.cpp:319
 msgid "Archive"
 msgstr "Αρχείο"
 
@@ -1773,7 +1793,7 @@ msgstr "Έλεγχος για &αναβαθμίσεις..."
 msgid "Check for newer versions of FileZilla"
 msgstr "Έλεγχος για νεώτερες εκδόσεις του FileZilla"
 
-#: ../../locales/../src/interface/updatewizard.cpp:142
+#: ../../locales/../src/interface/updatewizard.cpp:150
 msgid "Check for updates"
 msgstr "Έλεγχος για αναβαθμίσεις"
 
@@ -1789,7 +1809,7 @@ msgstr "Έλεγχος για τη σωστή εξωτερική διεύθυν�
 msgid "Checking for updates"
 msgstr "Έλεγχος αναβαθμίσεων"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1176
+#: ../../locales/../src/interface/updatewizard.cpp:1184
 msgid "Checksum mismatch of downloaded file."
 msgstr "Αναντιστοιχία αθροίσματος ελέγχου (checksum) στο ληφθέν αρχείο."
 
@@ -1855,7 +1875,7 @@ msgstr "Καθαρισμός της γραμμής γρήγορης σύνδεσ
 msgid "Click on Finish to save your configuration."
 msgstr "Κάντε κλικ στο τέλος για να αποθηκεύσετε τις ρυθμίσεις σας."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1031
+#: ../../locales/../src/interface/updatewizard.cpp:1039
 msgid "Click on next to download the new version."
 msgstr "Κάνε κλικ στο συνέχεια για να αποκτήσετε την νέα έκδοση."
 
@@ -1909,7 +1929,7 @@ msgstr "Η εντολή δεν υποστηρίζεται από αυτό το �
 #: ../../locales/../src/engine/logging.cpp:208
 #: ../../locales/../src/interface/StatusView.cpp:280
 #: ../../locales/../src/interface/StatusView.cpp:332
-#: ../../locales/../src/interface/updatewizard.cpp:499
+#: ../../locales/../src/interface/updatewizard.cpp:507
 msgid "Command:"
 msgstr "Εντολή:"
 
@@ -2035,8 +2055,8 @@ msgstr "Σύνδεση στο %s διαμέσου διαμεσολαβητή"
 msgid "Connecting to %s..."
 msgstr "Σύνδεση στο %s..."
 
-#: ../../locales/../src/interface/updatewizard.cpp:382
-#: ../../locales/../src/interface/updatewizard.cpp:947
+#: ../../locales/../src/interface/updatewizard.cpp:390
+#: ../../locales/../src/interface/updatewizard.cpp:955
 msgid "Connecting to server"
 msgstr "Σύνδεση στον εξυπηρετητή"
 
@@ -2782,7 +2802,7 @@ msgid "Do &nothing"
 msgstr "&Καμία ενέργεια"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
+#: ../../locales/../src/interface/updatewizard.cpp:238
 msgid ""
 "Do you really want to check for beta versions?\n"
 "Unless you want to test new features, keep using stable versions."
@@ -2859,7 +2879,7 @@ msgid "Downloading"
 msgstr "Λήψη"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:354
-#: ../../locales/../src/interface/updatewizard.cpp:373
+#: ../../locales/../src/interface/updatewizard.cpp:381
 #, c-format
 msgid "Downloading %s"
 msgstr "Λήψη %s"
@@ -2871,10 +2891,6 @@ msgstr "Δεν υποστηρίζεται προς το παρόν η λήψη �
 #: ../../locales/../src/interface/search.cpp:954
 msgid "Downloading search results"
 msgstr "Λήψη των αποτελεσμάτων αναζήτησης"
-
-#: resources.h:251 resources.h:779
-msgid "Downloads:"
-msgstr "Ληφθέντα:"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
@@ -3136,14 +3152,14 @@ msgstr "Σφάλμα κατά την εκκίνηση του προγράμμα�
 msgid "Error writing xml file"
 msgstr "Σφάλμα εγγραφής αρχείου xml"
 
-#: ../../locales/../src/interface/updatewizard.cpp:332
+#: ../../locales/../src/interface/updatewizard.cpp:340
 msgid "Error, local file exists but cannot be removed"
 msgstr "Σφάλμα, το τοπικό αρχείο υπάρχει αλλά δεν μπορεί να απομακρυνθεί"
 
 #: ../../locales/../src/engine/logging.cpp:207
 #: ../../locales/../src/interface/StatusView.cpp:278
 #: ../../locales/../src/interface/StatusView.cpp:328
-#: ../../locales/../src/interface/updatewizard.cpp:493
+#: ../../locales/../src/interface/updatewizard.cpp:501
 msgid "Error:"
 msgstr "Σφάλμα:"
 
@@ -3159,7 +3175,7 @@ msgstr "Παραδείγματα"
 msgid "Exe&cute"
 msgstr "Εκτ&έλεση"
 
-#: ../../locales/../src/interface/updatewizard.cpp:309
+#: ../../locales/../src/interface/updatewizard.cpp:317
 msgid "Executable"
 msgstr "Εκτελέσιμο"
 
@@ -3243,7 +3259,7 @@ msgstr "Απέτυχε η αλλαγή φακέλου"
 msgid "Failed to change language"
 msgstr "Απέτυχε η αλλαγή γλώσσας"
 
-#: ../../locales/../src/interface/updatewizard.cpp:411
+#: ../../locales/../src/interface/updatewizard.cpp:419
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Απέτυχε ο έλεγχος για νέα έκδοση του FileZilla."
 
@@ -3265,7 +3281,7 @@ msgid "Failed to create listening socket for active mode transfer"
 msgstr ""
 "Αποτυχία δημιουργίας listen socket για μεταφορά σε ενεργητική κατάσταση "
 
-#: ../../locales/../src/interface/updatewizard.cpp:413
+#: ../../locales/../src/interface/updatewizard.cpp:421
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Αποτυχία λήψης της νεώτερης έκδοσης του FileZilla."
 
@@ -3297,7 +3313,7 @@ msgstr "Αποτυχία αρχικοποίησης της μηχανής FTP"
 msgid "Failed to initialize TLS."
 msgstr "Αποτυχία αρχικοποίησης του TLS."
 
-#: ../../locales/../src/interface/settings/settingsdialog.cpp:172
+#: ../../locales/../src/interface/settings/settingsdialog.cpp:173
 msgid "Failed to load panels, invalid resource files?"
 msgstr "Αδυναμία φόρτωσης πινάκων οργάνων, λάθος resource αρχείο;"
 
@@ -4803,12 +4819,12 @@ msgid "Overwrite file if source file newer"
 msgstr "Αντικατάσταση αρχείου αν είναι νεώτερο"
 
 #: resources.h:60
-msgid "Overwrite if different size"
-msgstr "Αντικατάσταση αν είναι διαφορετικού μεγέθους"
+msgid "Overwrite if &different size"
+msgstr "Αντικατάσταση αν είναι &διαφορετικού μεγέθους"
 
 #: resources.h:61
-msgid "Overwrite if different size or source newer"
-msgstr "Αντικατάσταση αν είναι διαφορετικού μεγέθους ή αν είναι νεώτερο"
+msgid "Overwrite if different si&ze or source newer"
+msgstr "Αντικατάσταση αν είναι διαφορετικού με&γέθους ή αν είναι νεώτερο"
 
 #: resources.h:133
 msgid "Owner permissions"
@@ -4842,7 +4858,7 @@ msgstr ""
 msgid "Pa&ssive (recommended)"
 msgstr "Πα&θητική (συνιστάται)"
 
-#: ../../locales/../src/interface/updatewizard.cpp:313
+#: ../../locales/../src/interface/updatewizard.cpp:321
 msgid "Package"
 msgstr "Πακέτο"
 
@@ -4921,7 +4937,7 @@ msgstr ""
 "filezilla-project.org/probe.php  και στη συνέχεια ελέγξτε προσεκτικά τις "
 "ρυθμίσεις σας."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1011
+#: ../../locales/../src/interface/updatewizard.cpp:1019
 msgid ""
 "Please check the package manager of your system for an updated package or "
 "visit http://filezilla-project.org to download the source code of FileZilla."
@@ -5245,8 +5261,8 @@ msgstr ""
 "Παρακαλώ, επισκευθείτε την τοποθεσία http://filezilla-project.org για "
 "περισσότερες πληροφορίες σχετικά με το FileZilla."
 
-#: ../../locales/../src/interface/updatewizard.cpp:1009
-#: ../../locales/../src/interface/updatewizard.cpp:1025
+#: ../../locales/../src/interface/updatewizard.cpp:1017
+#: ../../locales/../src/interface/updatewizard.cpp:1033
 msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
@@ -5359,14 +5375,14 @@ msgid "Queue has been fully processed"
 msgstr "Η λίστα αναμονής έχει υποβληθεί σε πλήρης επεξεργασία"
 
 #: ../../locales/../src/interface/statusbar.cpp:396
-#, fuzzy, c-format
+#, c-format
 msgid "Queue: %s MiB"
-msgstr "Λίστα αναμονής: %s%d MiB"
+msgstr "Λίστα αναμονής: %s MiB"
 
 #: ../../locales/../src/interface/statusbar.cpp:319
-#, fuzzy, c-format
+#, c-format
 msgid "Queue: %s%s"
-msgstr "Λίστα αναμονής: %s%d %c"
+msgstr "Λίστα αναμονής: %s%s"
 
 #: ../../locales/../src/interface/statusbar.cpp:315
 #: ../../locales/../src/interface/statusbar.cpp:387
@@ -5605,7 +5621,7 @@ msgstr ""
 msgid "Resolving address of %s"
 msgstr "Ανάλυση διεύθυνσης για %s"
 
-#: ../../locales/../src/interface/updatewizard.cpp:1094
+#: ../../locales/../src/interface/updatewizard.cpp:1102
 msgid "Resolving hostname"
 msgstr "Ανάλυση ονόματος κόμβου"
 
@@ -5613,7 +5629,7 @@ msgstr "Ανάλυση ονόματος κόμβου"
 #: ../../locales/../src/interface/netconfwizard.cpp:395
 #: ../../locales/../src/interface/StatusView.cpp:283
 #: ../../locales/../src/interface/StatusView.cpp:339
-#: ../../locales/../src/interface/updatewizard.cpp:502
+#: ../../locales/../src/interface/updatewizard.cpp:510
 msgid "Response:"
 msgstr "Απάντηση:"
 
@@ -5746,7 +5762,7 @@ msgstr ""
 "Επιλογή προεπιλογής ενέργειας υπάρχοντος αρχείου μόνο για τα επιλεγμένα "
 "αρχεία στη λίστα αναμονής."
 
-#: ../../locales/../src/interface/updatewizard.cpp:317
+#: ../../locales/../src/interface/updatewizard.cpp:325
 msgid "Select download location for package"
 msgstr "Επιλογή τοποθεσίας αποθήκευσης του πακέτου"
 
@@ -6209,7 +6225,7 @@ msgstr "Κατάσταση"
 #: ../../locales/../src/engine/logging.cpp:206
 #: ../../locales/../src/interface/StatusView.cpp:292
 #: ../../locales/../src/interface/StatusView.cpp:363
-#: ../../locales/../src/interface/updatewizard.cpp:496
+#: ../../locales/../src/interface/updatewizard.cpp:504
 msgid "Status:"
 msgstr "Κατάσταση:"
 
@@ -6544,7 +6560,7 @@ msgstr ""
 "Η χαμηλότερη θύρα πρέπει να είναι λιγότερο ή ίσο με την υψηλότερη διαθέσιμη "
 "θύρα."
 
-#: ../../locales/../src/interface/updatewizard.cpp:565
+#: ../../locales/../src/interface/updatewizard.cpp:573
 msgid ""
 "The most recent version has been downloaded. Click on Finish to close "
 "FileZilla and to start the installation."
@@ -6552,7 +6568,7 @@ msgstr ""
 "Η νεώτερη έκδοση έχει ληφθεί. Κάντε κλικ στο Τερματισμός για να κλείσετε το "
 "FileZilla και να εκκινήσετε την εγκατάσταση."
 
-#: ../../locales/../src/interface/updatewizard.cpp:567
+#: ../../locales/../src/interface/updatewizard.cpp:575
 msgid ""
 "The most recent version has been downloaded. Please install like you did "
 "install this version."
@@ -7025,8 +7041,8 @@ msgid "Update Check"
 msgstr "Έλεγχος αναβαθμίσεων"
 
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:60
-#: ../../locales/../src/interface/updatewizard.cpp:230
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:238
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid "Update wizard"
 msgstr "Οδηγός αναβάθμισης"
 
@@ -7069,10 +7085,6 @@ msgstr "Αποστολή και αναμονή αφαίρεσης"
 #: ../../locales/../src/interface/edithandler.cpp:1441
 msgid "Uploading and unediting"
 msgstr "Αποστολή και αναίρεση επεξεργασίας"
-
-#: resources.h:261 resources.h:788
-msgid "Uploads:"
-msgstr "Απεσταλμένα:"
 
 #: resources.h:109
 msgid "Use &custom charset"
@@ -7263,7 +7275,7 @@ msgid "Warning, ignoring data connection from wrong IP."
 msgstr ""
 "Προειδοποίηση, αγνόηση δεδομένων σύνδεσης λόγω εσφαλμένης διεύθυνσης IP."
 
-#: ../../locales/../src/interface/updatewizard.cpp:243
+#: ../../locales/../src/interface/updatewizard.cpp:251
 msgid ""
 "Warning, use nightly builds at your own risk.\n"
 "No support is given for nightly builds.\n"
@@ -7747,9 +7759,6 @@ msgstr "wxWidgets:"
 
 #~ msgid "D&iscard"
 #~ msgstr "Α&πόρριψη"
-
-#~ msgid "&Finish editing"
-#~ msgstr "&Ολοκλήρωση επεξεργασίας"
 
 #~ msgid "Toggle directory comparison. Right-click to change comparison mode."
 #~ msgstr ""
