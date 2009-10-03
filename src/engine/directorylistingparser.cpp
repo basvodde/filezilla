@@ -1622,7 +1622,7 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 	if (pos > 4 && token.GetString().Mid(pos - 4, 4) == _T(".DIR"))
 	{
 		entry.dir = true;
-		if (token.GetString().Mid(pos) == _(";1"))
+		if (token.GetString().Mid(pos) == _T(";1"))
 			entry.name = token.GetString().Left(pos - 4);
 		else
 			entry.name = token.GetString().Left(pos - 4) + token.GetString().Mid(pos);
