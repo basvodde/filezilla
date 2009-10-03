@@ -596,10 +596,13 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 			const int offset = 0;
 #endif
 			int res = WrapRecursive(*iter, pSizer, desiredWidth - offset);
-			didwrap.push_back(res);
 			if (res & wrap_didwrap)
 				pSizer->Layout();
-			size.IncTo(pSizer->GetMinSize());
+			didwrap.push_back(res);
+			wxSize minSize = pSizer->GetMinSize();
+			if (minSize.x > desiredWidth)
+				res |= wrap_failed;
+			size.IncTo(minSize);
 			if (res & wrap_failed)
 				break;
 		}
