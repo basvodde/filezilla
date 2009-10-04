@@ -314,6 +314,8 @@ void CFtpControlSocket::ParseLine(wxString line)
 				CServerCapabilities::SetCapability(*m_pCurrentServer, size_command, yes);
 			else if (up == _T(" TVFS"))
 				CServerCapabilities::SetCapability(*m_pCurrentServer, tvfs_support, yes);
+			else if (up == _T(" REST STREAM"))
+				CServerCapabilities::SetCapability(*m_pCurrentServer, rest_stream, yes);
 		}
 		else if (pData->opState == LOGON_WELCOME)
 		{
@@ -2680,6 +2682,17 @@ int CFtpControlSocket::FileTransferSend()
 				else
 					startOffset = 0;
 
+				if (CServerCapabilities::GetCapability(*m_pCurrentServer, rest_stream) == yes)
+				{
+					// Use REST + STOR if resuming
+					pData->resumeOffset = startOffset;
+				}
+				else
+				{
+					// Play it safe, use APPE if resuming
+					pData->resumeOffset = 0;
+				}
+
 				wxFileOffset len = pFile->Length();
 				InitTransferStatus(len, startOffset, false);
 			}
@@ -2701,7 +2714,15 @@ int CFtpControlSocket::FileTransferSend()
 		if (pData->download)
 			cmd = _T("RETR ");
 		else if (pData->resume)
-			cmd = _T("APPE ");
+		{
+			if (CServerCapabilities::GetCapability(*m_pCurrentServer, rest_stream) == yes)
+				cmd = _T("STOR "); // In this case REST gets sent since resume offset was set earlier
+			else
+			{
+				wxASSERT(pData->resumeOffset == 0);
+				cmd = _T("APPE ");
+			}
+		}
 		else
 			cmd = _T("STOR ");
 		cmd += pData->remotePath.FormatFilename(pData->remoteFile, !pData->tryAbsolutePath);

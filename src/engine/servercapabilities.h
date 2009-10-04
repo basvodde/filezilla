@@ -26,7 +26,8 @@ enum capabilityNames
 	size_command,
 	mode_z_support,
 	tvfs_support, // Trivial virtual file store (RFC 3659)
-	list_hidden_support, // LIST -a command
+	list_hidden_support, // LIST -a command,
+	rest_stream, // supports REST+STOR in addition to APPE
 
 	// FTPS and HTTPS
 	tls_resume, // Does the server resuming of TLS sessions?
