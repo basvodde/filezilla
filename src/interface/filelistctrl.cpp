@@ -125,9 +125,11 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 		LV_ITEM& lvi = info->item;
 		long item = lvi.iItem;
 
+		int column = pFileListCtrl->m_pVisibleColumnMapping[lvi.iSubItem];
+
 		if (lvi.mask & LVIF_TEXT)
 		{
-			wxString text = pFileListCtrl->GetItemText(item, lvi.iSubItem);
+			wxString text = pFileListCtrl->GetItemText(item, column);
 			wxStrncpy(lvi.pszText, text, lvi.cchTextMax - 1);
 			lvi.pszText[lvi.cchTextMax - 1] = 0;
 		}
