@@ -17,7 +17,7 @@ enum capabilityNames
 	syst_command, // reply of SYST command as option
 	feat_command,
 	clnt_command, // set to 'yes' if CLNT should be sent
-	utf8_command, // set to yes if OPTS UTF8 ON should be sent
+	utf8_command, // set to 'yes' if OPTS UTF8 ON should be sent
 	mlsd_command,
 	opst_mlst_command, // Arguments for OPTS MLST command
 	mfmt_command,
@@ -26,16 +26,16 @@ enum capabilityNames
 	size_command,
 	mode_z_support,
 	tvfs_support, // Trivial virtual file store (RFC 3659)
-	list_hidden_support, // LIST -a command,
+	list_hidden_support, // LIST -a command
 	rest_stream, // supports REST+STOR in addition to APPE
 
 	// FTPS and HTTPS
-	tls_resume, // Does the server resuming of TLS sessions?
+	tls_resume, // Does the server support resuming of TLS sessions?
 
 	// Server timezone offset. If using FTP, LIST details are unspecified and
 	// can return different times than the UTC based times using the MLST or
 	// MDTM commands.
-	// Not that the user can invoke an additional timezone offset on top of
+	// Note that the user can invoke an additional timezone offset on top of
 	// this for server not supporting auto-detection or to compensate 
 	// unsynchronized clocks.
 	timezone_offset
