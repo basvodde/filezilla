@@ -87,11 +87,16 @@ END_EVENT_TABLE()
 CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 	: wxWindow(pParent, wxID_ANY)
 {
+	m_cbOffset = 0;
+	m_labelHeight = 0;
 	m_alreadyInPaint = false;
 	m_pComboBox = new CComboBoxEx(this);
 	m_pLabel = new wxStaticText(this, wxID_ANY, label, wxDefaultPosition, wxDefaultSize);
 	wxSize size = GetSize();
 	size.SetHeight(m_pComboBox->GetBestSize().GetHeight() + border_offset);
+
+	SetLabel(label);
+
 	SetSize(size);
 
 #ifdef __WXMSW__
@@ -100,8 +105,6 @@ CViewHeader::CViewHeader(wxWindow* pParent, const wxString& label)
 	m_pComboBox->Connect(wxID_ANY, wxEVT_LEFT_UP, (wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)&CViewHeader::OnComboMouseEvent, 0, this);
 	m_bLeftMousePressed = false;
 #endif //__WXMSW__
-
-	SetLabel(label);
 }
 
 void CViewHeader::OnSize(wxSizeEvent& event)
