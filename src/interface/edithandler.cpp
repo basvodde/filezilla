@@ -1595,7 +1595,14 @@ bool CNewAssociationDialog::Show(const wxString &file)
 
 void CNewAssociationDialog::SetCtrlState()
 {
-	const bool custom = XRCCTRL(*this, "ID_USE_CUSTOM", wxRadioButton)->GetValue();
+	wxRadioButton* pCustom = wxDynamicCast(FindWindow(XRCID("ID_USE_CUSTOM")), wxRadioButton);
+	if (!pCustom)
+	{
+		// Return since it can get called before dialog got fully loaded
+		return;
+	}
+
+	const bool custom = pCustom->GetValue();
 
 	XRCCTRL(*this, "ID_CUSTOM", wxTextCtrl)->Enable(custom);
 	XRCCTRL(*this, "ID_BROWSE", wxButton)->Enable(custom);
