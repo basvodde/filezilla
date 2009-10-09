@@ -685,7 +685,7 @@ bool CMainFrame::CreateQuickconnectBar()
 		delete m_pQuickconnectBar;
 
 	m_pQuickconnectBar = new CQuickconnectBar();
-	if (!m_pQuickconnectBar->Create(this, m_pState))
+	if (!m_pQuickconnectBar->Create(this))
 	{
 		delete m_pQuickconnectBar;
 		m_pQuickconnectBar = 0;

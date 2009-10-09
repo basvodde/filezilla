@@ -26,10 +26,8 @@ CQuickconnectBar::~CQuickconnectBar()
 {
 }
 
-bool CQuickconnectBar::Create(wxWindow* pParent, CState* pState)
+bool CQuickconnectBar::Create(wxWindow* pParent)
 {
-	m_pState = pState;
-
     if (!wxXmlResource::Get()->LoadPanel(this, pParent, _T("ID_QUICKCONNECTBAR")))
 	{
 		wxLogError(_("Cannot load Quickconnect bar from resource file"));
@@ -60,8 +58,9 @@ bool CQuickconnectBar::Create(wxWindow* pParent, CState* pState)
 }
 
 void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
-{	
-	if (!m_pState->m_pEngine)
+{
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState || !pState->m_pEngine)
 	{
 		wxMessageBox(_("FTP Engine not initialized, can't connect"), _("FileZilla Error"), wxICON_EXCLAMATION);
 		return;
@@ -128,7 +127,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	if (event.GetId() == 1)
 		server.SetBypassProxy(true);
 
-	if (!m_pState->Connect(server, true, path))
+	if (!pState->Connect(server, true, path))
 		return;
 
 	CRecentServerList::SetMostRecentServer(server);
@@ -186,7 +185,14 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 			return;
 	}
 
-	m_pState->Connect(server, true);
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState || !pState->m_pEngine)
+	{
+		wxMessageBox(_("FTP Engine not initialized, can't connect"), _("FileZilla Error"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	pState->Connect(server, true);
 }
 
 void CQuickconnectBar::ClearFields()
