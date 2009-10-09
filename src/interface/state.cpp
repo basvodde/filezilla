@@ -11,11 +11,16 @@
 #include "local_filesys.h"
 #include "listingcomparison.h"
 
-CContextManager the_context_manager;
+CContextManager CContextManager::m_the_context_manager;
+
+CContextManager::CContextManager()
+{
+	m_current_context = -1;
+}
 
 CContextManager* CContextManager::Get()
 {
-	return &the_context_manager;
+	return &m_the_context_manager;
 }
 
 CState* CContextManager::CreateState(CMainFrame* pMainFrame)
@@ -25,6 +30,13 @@ CState* CContextManager::CreateState(CMainFrame* pMainFrame)
 	CState* pState = new CState(pMainFrame);
 
 	m_contexts.push_back(pState);
+
+	NotifyHandlers(pState, STATECHANGE_NEWCONTEXT, _T(""), 0, false);
+	if (m_current_context == -1)
+	{
+		m_current_context = 0;
+		NotifyHandlers(pState, STATECHANGE_CHANGEDCONTEXT, _T(""), 0, false);
+	}
 
 	return pState;
 }
@@ -41,13 +53,15 @@ void CContextManager::DestroyState(CState* pState)
 			m_current_context--;
 		else if ((int)i == m_current_context)
 		{
-			m_current_context--;
-			// TODO context change
+			if (i >= m_contexts.size())
+				m_current_context--;
+			NotifyHandlers(GetCurrentContext(), STATECHANGE_CHANGEDCONTEXT, _T(""), 0, false);
 		}
 
 		break;
 	}
 
+	NotifyHandlers(pState, STATECHANGE_REMOVECONTEXT, _T(""), 0, false);
 	delete pState;
 }
 
@@ -117,6 +131,14 @@ void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications
 
 		iter->pHandler->OnStateChange(pState, notification, data, data2);
 	}
+}
+
+CState* CContextManager::GetCurrentContext()
+{
+	if (m_current_context == -1)
+		return 0;
+
+	return m_contexts[m_current_context];
 }
 
 CState::CState(CMainFrame* pMainFrame)

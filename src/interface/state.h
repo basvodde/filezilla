@@ -26,6 +26,10 @@ enum t_statechange_notifications
 	STATECHANGE_SYNC_BROWSE,
 	STATECHANGE_COMPARISON,
 
+	STATECHANGE_NEWCONTEXT, /* New context created */
+	STATECHANGE_CHANGEDCONTEXT, /* Currently active context changed */
+	STATECHANGE_REMOVECONTEXT, /* Right before deleting a context */
+
 	STATECHANGE_MAX
 };
 
@@ -56,6 +60,8 @@ public:
 
 	static CContextManager* Get();
 protected:
+	CContextManager();
+
 	std::vector<CState*> m_contexts;
 	int m_current_context;
 
@@ -68,6 +74,8 @@ protected:
 	std::list<t_handler> m_handlers[STATECHANGE_MAX];
 
 	void NotifyHandlers(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2, bool blocked);
+
+	static CContextManager m_the_context_manager;
 };
 
 class CState
