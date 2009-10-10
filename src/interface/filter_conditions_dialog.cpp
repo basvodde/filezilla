@@ -267,6 +267,8 @@ void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 	{
 		if (!m_filterControls[item].pType || m_filterControls[item].pType->GetId() != event.GetId())
 			continue;
+
+		break;
 	}
 	if (item == (int)m_filterControls.size())
 		return;
@@ -410,7 +412,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 		controls.pSet->Select(condition.strValue != _T("0") ? 0 : 1);
 
 		// Need to explicitely set min size, otherwise initial size becomes min size
-		controls.pValue->SetMinSize(wxSize(20, -1));
+		controls.pSet->SetMinSize(wxSize(20, -1));
 	}
 }
 
