@@ -248,6 +248,11 @@ DBusHandlerResult handle_notification(DBusConnection *connection, DBusMessage *m
 
 wxDBusConnection::wxDBusConnection(int ID, wxEvtHandler * EvtHandler, bool System)
 {
+	// Make sure libdbus locks its data structures, otherwise
+	// there'll be crashes if it gets used from multiple threads
+	// at the same time
+	dbus_threads_init_default();
+
 	m_error = new wxDBusError;
 	m_connection = System ? dbus_bus_get(DBUS_BUS_SYSTEM, &(m_error->GetError())) : dbus_bus_get(DBUS_BUS_SESSION, &(m_error->GetError()));
 	if (!m_connection) {
