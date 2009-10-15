@@ -6,6 +6,20 @@
 #include <gnutls/x509.h>
 #include <errno.h>
 
+//#define TLSDEBUG 1
+#if TLSDEBUG
+// This is quite ugly
+CControlSocket* pLoggingControlSocket;
+void log_func(int level, const char* msg)
+{
+	if (!msg)
+		return;
+	wxString s(msg, wxConvLocal);
+	s.Trim();
+	pLoggingControlSocket->LogMessage(Debug_Debug, _T("tls: %d %s"), level, s.c_str());
+}
+#endif
+
 CTlsSocket::CTlsSocket(CSocketEventHandler* pEvtHandler, CSocket* pSocket, CControlSocket* pOwner)
 	: CBackend(pEvtHandler), m_pOwner(pOwner)
 {
@@ -62,6 +76,11 @@ bool CTlsSocket::Init()
 		return false;
 	}
 
+#if TLSDEBUG
+	pLoggingControlSocket = m_pOwner;
+	gnutls_global_set_log_function(log_func);
+	gnutls_global_set_log_level(99);
+#endif
 	res = gnutls_certificate_allocate_credentials(&m_certCredentials);
 	if (res < 0)
 	{
@@ -194,6 +213,9 @@ ssize_t CTlsSocket::PullFunction(gnutls_transport_ptr_t ptr, void* data, size_t 
 
 ssize_t CTlsSocket::PushFunction(const void* data, size_t len)
 {
+#if TLSDEBUG
+	m_pOwner->LogMessage(Debug_Debug, _T("CTlsSocket::PushFunction(%x, %d)"), data, len);
+#endif
 	if (!m_canWriteToSocket)
 	{
 		gnutls_transport_set_errno(m_session, EAGAIN);
@@ -222,11 +244,18 @@ ssize_t CTlsSocket::PushFunction(const void* data, size_t len)
 		return -1;
 	}
 
+#if TLSDEBUG
+	m_pOwner->LogMessage(Debug_Debug, _T("  returning %d"), written);
+#endif
+
 	return written;
 }
 
 ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 {
+#if TLSDEBUG
+	m_pOwner->LogMessage(Debug_Debug, _T("CTlsSocket::PullFunction(%x, %d)"), data, len);
+#endif
 	if (!m_pSocketBackend)
 	{
 		gnutls_transport_set_errno(m_session, 0);
@@ -268,6 +297,10 @@ ssize_t CTlsSocket::PullFunction(void* data, size_t len)
 
 	if (!read)
 		m_socket_eof = true;
+
+#if TLSDEBUG
+	m_pOwner->LogMessage(Debug_Debug, _T("  returning %d"), read);
+#endif
 
 	return read;
 }
@@ -677,6 +710,7 @@ void CTlsSocket::CheckResumeFailedReadWrite()
 
 void CTlsSocket::Failure(int code, int socket_error)
 {
+	m_pOwner->LogMessage(::Debug_Debug, _T("CTlsSocket::Failure(%d, %d)"), code, socket_error);
 	if (code)
 	{
 		LogError(code);
