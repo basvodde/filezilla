@@ -63,6 +63,8 @@ public:
 	void ProcessCommandLine();
 
 	void ClearBookmarks();
+
+	void PostInitialize();
 	
 protected:
 	bool CreateMenus();

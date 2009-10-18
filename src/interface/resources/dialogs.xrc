@@ -4479,4 +4479,190 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_WELCOME">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxBoxSizer">
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_FZVERSION">
+                      <label>&lt;FZ version&gt;</label>
+                      <font>
+                        <weight>bold</weight>
+                      </font>
+                    </object>
+                    <flag>wxBOTTOM</flag>
+                    <border>2</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label>The free open source FTP solution</label>
+                    </object>
+                  </object>
+                  <orient>wxVERTICAL</orient>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="spacer">
+                <size>20, -1</size>
+                <option>1</option>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticBitmap">
+                  <size>48,48</size>
+                  <bitmap stock_id="ART_FILEZILLA"/>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <orient>wxHORIZONTAL</orient>
+            </object>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_HEADING_NEWS">
+                  <label>What's new</label>
+                  <font>
+                    <weight>bold</weight>
+                  </font>
+                </object>
+                <flag>wxTOP|wxBOTTOM</flag>
+                <border>2</border>
+              </object>
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxHyperlinkCtrl" name="ID_LINK_NEWS">
+                      <label>Yada yada</label>
+                      <url>http://</url>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>2</vgap>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>20</border>
+              </object>
+            </object>
+            <flag>wxTOP</flag>
+            <border>3</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Documentation</label>
+                  <font>
+                    <weight>bold</weight>
+                  </font>
+                </object>
+                <flag>wxTOP|wxBOTTOM</flag>
+                <border>2</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxHyperlinkCtrl" name="ID_DOCUMENTATION_BASIC">
+                      <label>Basic usage instructions</label>
+                      <url>http://</url>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxHyperlinkCtrl" name="ID_DOCUMENTATION_NETWORK">
+                      <label>Configuring FileZilla and your network</label>
+                      <url>http://</url>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxHyperlinkCtrl" name="ID_DOCUMENTATION_MORE">
+                      <label>Further documentation</label>
+                      <url>http://</url>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>2</vgap>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>20</border>
+              </object>
+              <orient>wxVERTICAL</orient>
+            </object>
+            <flag>wxTOP</flag>
+            <border>3</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>Getting help</label>
+                  <font>
+                    <weight>bold</weight>
+                  </font>
+                </object>
+                <flag>wxTOP|wxBOTTOM</flag>
+                <border>2</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxHyperlinkCtrl" name="ID_SUPPORT_FORUM">
+                      <label>Asking questions in the FileZilla forums</label>
+                      <url>http://</url>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxHyperlinkCtrl" name="ID_SUPPORT_MORE">
+                      <label>Reporting bugs and feature requests</label>
+                      <url>http://</url>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <vgap>2</vgap>
+                </object>
+                <flag>wxLEFT</flag>
+                <border>20</border>
+              </object>
+              <orient>wxVERTICAL</orient>
+            </object>
+            <flag>wxTOP</flag>
+            <border>3</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>You can always open this dialog again through the help menu.</label>
+            </object>
+            <flag>wxTOP</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxGROW|wxTOP|wxBOTTOM</flag>
+            <border>2</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="wxID_OK">
+              <label>OK</label>
+              <default>1</default>
+            </object>
+            <flag>wxALIGN_CENTRE_HORIZONTAL</flag>
+          </object>
+          <cols>1</cols>
+          <vgap>5</vgap>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+    </object>
+    <title>Welcome to FileZilla</title>
+  </object>
 </resource>

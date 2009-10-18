@@ -47,6 +47,7 @@
 #endif
 #include "search.h"
 #include "power_management.h"
+#include "welcome_dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -510,16 +511,6 @@ CMainFrame::CMainFrame()
 
 	wxAcceleratorTable accel(sizeof(entries) / sizeof(wxAcceleratorEntry), entries);
 	SetAcceleratorTable(accel);
-
-#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
-	{
-		m_pUpdateWizard = new CUpdateWizard(this);
-		m_pUpdateWizard->InitAutoUpdateCheck();
-	}
-	else
-		m_pUpdateWizard = 0;
-#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	m_pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
 
@@ -996,6 +987,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 				UpdateBookmarkMenu();
 			}	
 		}
+	}
+	else if (event.GetId() == XRCID("ID_MENU_HELP_WELCOME"))
+	{
+		CWelcomeDialog dlg;
+		dlg.Run(this, true);
 	}
 	else
 	{
@@ -2998,4 +2994,18 @@ void CMainFrame::OnSearch(wxCommandEvent& event)
 		return;
 
 	dlg.Run();
+}
+
+void CMainFrame::PostInitialize()
+{
+#if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+	// Need to do this after welcome screen to avoid simultaneous display of multiple dialogs
+	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	{
+		m_pUpdateWizard = new CUpdateWizard(this);
+		m_pUpdateWizard->InitAutoUpdateCheck();
+	}
+	else
+		m_pUpdateWizard = 0;
+#endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 }

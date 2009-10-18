@@ -10,6 +10,7 @@
 #include "xmlfunctions.h"
 #include <wx/tokenzr.h>
 #include "cmdline.h"
+#include "welcome_dialog.h"
 
 #include <wx/xrc/xh_bmpbt.h>
 #include <wx/xrc/xh_bttn.h>
@@ -246,19 +247,6 @@ DO NOT use it in production environments,\r\n\
 DO NOT distribute the binaries,\r\n\
 DO NOT complain about it\r\n\
 USE AT OWN RISK"), _T("Important Information"));
-	else if (buildType == _T("official"))
-	{
-		wxString greetingVersion = COptions::Get()->GetOption(OPTION_GREETINGVERSION);
-		if (greetingVersion == _T("") ||
-			CBuildInfo::ConvertToVersionNumber(CBuildInfo::GetVersion()) > CBuildInfo::ConvertToVersionNumber(greetingVersion))
-		{
-			COptions::Get()->SetOption(OPTION_GREETINGVERSION, CBuildInfo::GetVersion());
-
-			wxMessageBox(wxString::Format(_T("Welcome to FileZilla %s\r\n\r\n\
-Please report all bugs you may encounter.\
-"), CBuildInfo::GetVersion().c_str()), _T("Welcome"));
-		}
-	}
 #endif
 
 	if (!LoadResourceFiles())
@@ -302,7 +290,11 @@ FileZilla will timeout on big transfers.\
 	frame->Show(true);
 	SetTopWindow(frame);
 
+	CWelcomeDialog welcome_dialog;
+	welcome_dialog.Run(frame);
+
 	frame->ProcessCommandLine();
+	frame->PostInitialize();
 
 	return true;
 }
