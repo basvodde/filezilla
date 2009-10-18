@@ -222,6 +222,7 @@ EVT_MENU(XRCID("ID_MKDIR"), CLocalTreeView::OnMenuMkdir)
 EVT_TREE_BEGIN_LABEL_EDIT(wxID_ANY, CLocalTreeView::OnBeginLabelEdit)
 EVT_TREE_END_LABEL_EDIT(wxID_ANY, CLocalTreeView::OnEndLabelEdit)
 EVT_CHAR(CLocalTreeView::OnChar)
+EVT_MENU(XRCID("ID_OPEN"), CLocalTreeView::OnMenuOpen)
 END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
@@ -1624,3 +1625,19 @@ void CLocalTreeView::OnSelectionChanging(wxTreeEvent& event)
 }
 
 #endif
+
+void CLocalTreeView::OnMenuOpen(wxCommandEvent& event)
+{
+	if (!m_contextMenuItem.IsOk())
+		return;
+
+	wxString path = GetDirFromItem(m_contextMenuItem);
+	if (path == _T(""))
+		return;
+
+	wxString url = CState::GetAsURL(path);
+	if (url == _T(""))
+		return;
+
+	wxLaunchDefaultBrowser(url);
+}
