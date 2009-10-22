@@ -12,7 +12,7 @@
 #include "recursive_operation.h"
 
 BEGIN_EVENT_TABLE(CClearPrivateDataDialog, wxDialogEx)
-EVT_TIMER(1, CClearPrivateDataDialog::OnTimer)
+EVT_TIMER(wxID_ANY, CClearPrivateDataDialog::OnTimer)
 END_EVENT_TABLE()
 
 CClearPrivateDataDialog::CClearPrivateDataDialog(CMainFrame* pMainFrame)
@@ -64,21 +64,32 @@ void CClearPrivateDataDialog::Show()
 	
 	if (pCheck->GetValue())
 	{
-		CState* pState = m_pMainFrame->GetState();
-		if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
-		{
-			int res = wxMessageBox(_("Reconnect information cannot be cleared while connected to a server.\nIf you continue, your connection will be disconnected."), _("Clear private data"), wxOK | wxCANCEL);
-			if (res != wxOK)
-				return;
+		bool asked = false;
 
-			pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
-			if (!pState->m_pCommandQueue->Cancel())
+		const std::vector<CState*> *states = CContextManager::Get()->GetAllStates();
+
+		for (std::vector<CState*>::const_iterator iter = states->begin(); iter != states->end(); iter++)
+		{
+			CState* pState = *iter;
+			if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 			{
-				m_timer.SetOwner(this);
-				m_timer.Start(250, true);
+				if (!asked)
+				{
+					int res = wxMessageBox(_("Reconnect information cannot be cleared while connected to a server.\nIf you continue, your connection will be disconnected."), _("Clear private data"), wxOK | wxCANCEL);
+					if (res != wxOK)
+						return;
+					asked = true;
+				}
+
+				pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
+				if (!pState->m_pCommandQueue->Cancel())
+				{
+					m_timer.SetOwner(this);
+					m_timer.Start(250, true);
+				}
+				else
+					pState->Disconnect();
 			}
-			else
-				pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 		}
 
 		// Doesn't harm to do it now, but has to be repeated later just to be safe
@@ -110,18 +121,24 @@ void CClearPrivateDataDialog::Show()
 
 void CClearPrivateDataDialog::OnTimer(wxTimerEvent& event)
 {
-	CState* pState = m_pMainFrame->GetState();
+	const std::vector<CState*> *states = CContextManager::Get()->GetAllStates();
 
-	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
+	for (std::vector<CState*>::const_iterator iter = states->begin(); iter != states->end(); iter++)
 	{
-		if (!pState->m_pCommandQueue->Cancel())
+		CState* pState = *iter;
+
+		if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
+		{
+			if (!pState->m_pCommandQueue->Cancel())
+				return;
+
+			pState->Disconnect();
+		}
+
+		if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 			return;
 
-		pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 	}
-
-	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
-		return;
 
 	m_timer.Stop();
 	ClearReconnect();
