@@ -9,6 +9,7 @@
 #include "ipcmutex.h"
 #include "filezillaapp.h"
 #include "queue.h"
+#include "recursive_operation.h"
 
 BEGIN_EVENT_TABLE(CClearPrivateDataDialog, wxDialogEx)
 EVT_TIMER(1, CClearPrivateDataDialog::OnTimer)
@@ -70,6 +71,7 @@ void CClearPrivateDataDialog::Show()
 			if (res != wxOK)
 				return;
 
+			pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
 			if (!pState->m_pCommandQueue->Cancel())
 			{
 				m_timer.SetOwner(this);
