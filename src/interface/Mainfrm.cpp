@@ -162,6 +162,14 @@ protected:
 
 			if (!pServer)
 				m_pMainFrame->SetTitle(_T("FileZilla"));
+			else
+			{
+				const wxString& name = pServer->GetName();
+				if (!name.IsEmpty())
+					m_pMainFrame->SetTitle(name + _T(" - ") + pServer->FormatServer() + _T(" - FileZilla"));
+				else
+					m_pMainFrame->SetTitle(pServer->FormatServer() + _T(" - FileZilla"));
+			}
 			// Don't return here, need to update toolbar state
 		}
 		else if (notification == STATECHANGE_SYNC_BROWSE)
@@ -1325,7 +1333,7 @@ void CMainFrame::OnDisconnect(wxCommandEvent& event)
 	if (!m_pState->IsRemoteIdle())
 		return;
 
-	m_pState->m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
+	m_pState->Disconnect();
 }
 
 void CMainFrame::OnCancel(wxCommandEvent& event)

@@ -59,20 +59,9 @@ void CCommandQueue::ProcessNextCommand()
 
 		int res = m_pEngine->Command(*pCommand);
 		
-		if (pCommand->GetId() == cmd_connect)
-		{
-			if (res == FZ_REPLY_WOULDBLOCK || res == FZ_REPLY_OK)
-			{
-				const CConnectCommand* pConnectCommand = (const CConnectCommand *)pCommand;
-				const CServer& server = pConnectCommand->GetServer();
-				m_pMainFrame->GetState()->SetServer(&server);
-			}
-		}
-		else if (pCommand->GetId() == cmd_disconnect)
-		{
-			m_pMainFrame->GetState()->SetServer(0);
-		}
-		else if (pCommand->GetId() != cmd_cancel)
+		if (pCommand->GetId() != cmd_cancel &&
+			pCommand->GetId() != cmd_connect &&
+			pCommand->GetId() != cmd_disconnect)
 		{
 			if (res == FZ_REPLY_NOTCONNECTED)
 			{
@@ -97,7 +86,6 @@ void CCommandQueue::ProcessNextCommand()
 		}
 		else if (res == FZ_REPLY_ALREADYCONNECTED)
 		{
-			m_pMainFrame->GetState()->SetServer(0);
 			res = m_pEngine->Command(CDisconnectCommand());
 			if (res == FZ_REPLY_WOULDBLOCK)
 			{

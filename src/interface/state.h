@@ -95,6 +95,7 @@ public:
 	static wxString GetAsURL(const wxString& dir);
 
 	bool Connect(const CServer& server, bool askBreak, const CServerPath& path = CServerPath());
+	bool Disconnect();
 
 	bool ChangeRemoteDir(const CServerPath& path, const wxString& subdir = _T(""), int flags = 0, bool ignore_busy = false);
 	bool SetRemoteDir(const CDirectoryListing *m_pDirectoryListing, bool modified = false);
