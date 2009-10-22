@@ -2000,7 +2000,7 @@ void CMainFrame::OnFilter(wxCommandEvent& event)
 	dlg.ShowModal();
 	if (m_pToolBar)
 		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
-	m_pState->NotifyHandlers(STATECHANGE_APPLYFILTER);
+	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_APPLYFILTER);
 }
 
 #if FZ_MANUALUPDATECHECK
@@ -2800,8 +2800,7 @@ void CMainFrame::OnFilterRightclicked(wxCommandEvent& event)
 	if (active == CFilterManager::HasActiveFilters())
 		return;
 
-	if (m_pState)
-		m_pState->NotifyHandlers(STATECHANGE_APPLYFILTER);
+	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_APPLYFILTER);
 	if (m_pToolBar)
 		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), !active);
 }
