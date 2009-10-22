@@ -9,10 +9,11 @@
 
 DEFINE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS)
 
-CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame)
+CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame, CState* pState)
 {
 	m_pEngine = pEngine;
 	m_pMainFrame = pMainFrame;
+	m_pState = pState;
 	m_exclusiveEngineRequest = false;
 	m_exclusiveEngineLock = false;
 	m_requestId = 0;
@@ -35,7 +36,7 @@ void CCommandQueue::ProcessCommand(CCommand *pCommand)
 	m_CommandList.push_back(pCommand);
 	if (m_CommandList.size() == 1)
 	{
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+		m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 		ProcessNextCommand();
 	}
 }
@@ -66,7 +67,7 @@ void CCommandQueue::ProcessNextCommand()
 			if (res == FZ_REPLY_NOTCONNECTED)
 			{
 				// Try automatic reconnect
-				const CServer* pServer = m_pMainFrame->GetState()->GetServer();
+				const CServer* pServer = m_pState->GetServer();
 				if (pServer)
 				{
 					CCommand *pCommand = new CConnectCommand(*pServer);
@@ -105,7 +106,7 @@ void CCommandQueue::ProcessNextCommand()
 			wxBell();
 			
 			if (pCommand->GetId() == cmd_list)
-				m_pMainFrame->GetState()->ListingFailed(res);
+				m_pState->ListingFailed(res);
 
 			m_CommandList.pop_front();
 			delete pCommand;
@@ -119,7 +120,7 @@ void CCommandQueue::ProcessNextCommand()
 		if (m_exclusiveEngineRequest)
 			GrantExclusiveEngineRequest();
 		else
-			m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+			m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 	}
 }
 
@@ -144,7 +145,7 @@ bool CCommandQueue::Cancel()
 	{
 		delete pCommand;
 		m_CommandList.clear();
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+		m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 		return true;
 	}
 
@@ -155,7 +156,7 @@ bool CCommandQueue::Cancel()
 	{
 		delete pCommand;
 		m_CommandList.clear();
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+		m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 		return true;
 	}
 }
@@ -171,9 +172,9 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 			return;
 		}
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
-			CLoginManager::Get().CachedPasswordFailed(*m_pMainFrame->GetState()->GetServer());
-		if (!m_pMainFrame->GetState()->SuccessfulConnect())
-			m_pMainFrame->GetState()->SetServer(0);
+			CLoginManager::Get().CachedPasswordFailed(*m_pState->GetServer());
+		if (!m_pState->SuccessfulConnect())
+			m_pState->SetServer(0);
 	}
 
 	if (m_exclusiveEngineLock)
@@ -202,10 +203,10 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 			CListCommand* pListCommand = (CListCommand*)pCommand;
 			wxASSERT(pListCommand->GetFlags() & LIST_FLAG_LINK);
 
-			m_pMainFrame->GetState()->LinkIsNotDir(pListCommand->GetPath(), pListCommand->GetSubDir());
+			m_pState->LinkIsNotDir(pListCommand->GetPath(), pListCommand->GetSubDir());
 		}
 		else
-			m_pMainFrame->GetState()->ListingFailed(pNotification->nReplyCode);
+			m_pState->ListingFailed(pNotification->nReplyCode);
 		m_CommandList.pop_front();
 	}
 	else if (pCommand->GetId() == cmd_connect && pNotification->nReplyCode != FZ_REPLY_OK)
@@ -223,11 +224,11 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 
 		// If this was an automatic reconnect during a recursive
 		// operation, stop the recursive operation
-		m_pMainFrame->GetState()->GetRecursiveOperationHandler()->StopRecursiveOperation();
+		m_pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
 	}
 	else if (pCommand->GetId() == cmd_connect && pNotification->nReplyCode == FZ_REPLY_OK)
 	{
-		m_pMainFrame->GetState()->SetSuccessfulConnect();
+		m_pState->SetSuccessfulConnect();
 		m_CommandList.pop_front();
 	}
 	else
@@ -253,7 +254,7 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 			m_requestId = 0;
 		if (m_CommandList.empty())
 		{
-			m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+			m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 			GrantExclusiveEngineRequest();
 			return;
 		}
@@ -261,7 +262,7 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 	if (!requestExclusive)
 		m_exclusiveEngineLock = false;
 	m_exclusiveEngineRequest = requestExclusive;
-	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+	m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
 }
 
 void CCommandQueue::GrantExclusiveEngineRequest()

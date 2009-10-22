@@ -3,6 +3,7 @@
 
 class CFileZillaEngine;
 class CNotification;
+class CState;
 class CMainFrame;
 
 DECLARE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS, -1)
@@ -10,7 +11,7 @@ DECLARE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS, -1)
 class CCommandQueue
 {
 public:
-	CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame);
+	CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame, CState* pState);
 	~CCommandQueue();
 
 	void ProcessCommand(CCommand *pCommand);
@@ -30,6 +31,7 @@ protected:
 
 	CFileZillaEngine *m_pEngine;
 	CMainFrame* m_pMainFrame;
+	CState* m_pState;
 	bool m_exclusiveEngineRequest;
 	bool m_exclusiveEngineLock;
 	int m_requestId;
