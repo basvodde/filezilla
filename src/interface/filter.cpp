@@ -519,7 +519,7 @@ void CFilterDialog::OnApply(wxCommandEvent& event)
 
 	SaveFilters();
 
-	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_APPLYFILTER);
+	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_APPLYFILTER);
 }
 
 void CFilterDialog::SetCtrlState()

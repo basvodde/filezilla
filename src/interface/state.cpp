@@ -141,6 +141,12 @@ CState* CContextManager::GetCurrentContext()
 	return m_contexts[m_current_context];
 }
 
+void CContextManager::NotifyAllHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/, const void* data2 /*=0*/)
+{
+	for (unsigned int i = 0; i < m_contexts.size(); i++)
+		m_contexts[i]->NotifyHandlers(notification, data, data2);
+}
+
 CState::CState(CMainFrame* pMainFrame)
 {
 	memset(m_blocked, 0, sizeof(m_blocked));

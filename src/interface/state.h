@@ -59,6 +59,9 @@ public:
 	const std::vector<CState*>* GetAllStates() { return &m_contexts; }
 
 	static CContextManager* Get();
+
+	void NotifyAllHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""), const void* data2 = 0);
+
 protected:
 	CContextManager();
 
