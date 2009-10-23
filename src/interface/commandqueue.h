@@ -35,6 +35,7 @@ protected:
 	bool m_exclusiveEngineRequest;
 	bool m_exclusiveEngineLock;
 	int m_requestId;
+	static int m_requestIdCounter;
 
 	// Used to make this class reentrance-safe
 	bool m_inside_commandqueue;

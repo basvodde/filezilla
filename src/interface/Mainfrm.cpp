@@ -715,7 +715,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_FILE_COPYSITEMANAGER"))
 	{
-		const CServer* pServer = m_pState->GetServer();
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		const CServer* pServer = pState ? pState->GetServer() : 0;
 		if (!pServer)
 		{
 			wxMessageBox(_("Not connected to any server."), _("Cannot add server to Site Manager"), wxICON_EXCLAMATION);

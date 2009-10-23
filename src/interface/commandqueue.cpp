@@ -9,6 +9,8 @@
 
 DEFINE_EVENT_TYPE(fzEVT_GRANTEXCLUSIVEENGINEACCESS)
 
+int CCommandQueue::m_requestIdCounter = 0;
+
 CCommandQueue::CCommandQueue(CFileZillaEngine *pEngine, CMainFrame* pMainFrame, CState* pState)
 {
 	m_pEngine = pEngine;
@@ -249,9 +251,12 @@ void CCommandQueue::RequestExclusiveEngine(bool requestExclusive)
 
 	if (!m_exclusiveEngineRequest && requestExclusive)
 	{
-		m_requestId++;
+		m_requestId = ++m_requestIdCounter;
 		if (m_requestId < 0)
+		{
+			m_requestIdCounter = 0;
 			m_requestId = 0;
+		}
 		if (m_CommandList.empty())
 		{
 			m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);

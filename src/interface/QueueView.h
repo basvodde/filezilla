@@ -250,6 +250,8 @@ protected:
 
 	wxTimer m_resize_timer;
 
+	void ReleaseExclusiveEngineLock(CFileZillaEngine* pEngine);
+
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);
 	void OnFolderThreadComplete(wxCommandEvent& event);
