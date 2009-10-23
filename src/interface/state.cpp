@@ -419,7 +419,9 @@ void CState::SetServer(const CServer* server)
 {
 	if (m_pServer)
 	{
-		if (server && *server == *m_pServer)
+		if (server && *server == *m_pServer &&
+			server->GetName() == m_pServer->GetName() &&
+			server->MaximumMultipleConnections() == m_pServer->MaximumMultipleConnections())
 		{
 			// Nothing changes
 			return;
