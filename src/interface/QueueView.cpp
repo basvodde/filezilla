@@ -60,7 +60,9 @@ public:
 
 		if (m_pDataObject->GetReceivedFormat() == m_pFileDataObject->GetFormat())
 		{
-			CState* const pState = m_pQueueView->m_pMainFrame->GetState();
+			CState* const pState = CContextManager::Get()->GetCurrentContext();
+			if (!pState)
+				return wxDragNone;
 			const CServer* const pServer = pState->GetServer();
 			if (!pServer)
 				return wxDragNone;
@@ -79,7 +81,9 @@ public:
 				return wxDragNone;
 			}
 
-			CState* const pState = m_pQueueView->m_pMainFrame->GetState();
+			CState* const pState = CContextManager::Get()->GetCurrentContext();
+			if (!pState)
+				return wxDragNone;
 			const CServer* const pServer = pState->GetServer();
 			if (!pServer)
 				return wxDragNone;
@@ -122,7 +126,9 @@ public:
 		if (pDragDropManager && !pDragDropManager->remoteParent.IsEmpty())
 		{
 			// Drag from remote to queue, check if local path is writeable
-			CState* const pState = m_pQueueView->m_pMainFrame->GetState();
+			CState* const pState = CContextManager::Get()->GetCurrentContext();
+			if (!pState)
+				return wxDragNone;
 			if (!pState->GetLocalDir().IsWriteable())
 				return wxDragNone;			
 		}
@@ -544,7 +550,7 @@ void CQueueView::QueueFile_Finish(const bool start)
 	if (!m_activeMode && start)
 	{
 		m_activeMode = 1;
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+		CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
 	}
 
 	if (m_activeMode)
@@ -713,9 +719,9 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		if (m_pMainFrame)
 		{
 			CLocalDirCreatedNotification *pLocalDirCreatedNotification = reinterpret_cast<CLocalDirCreatedNotification *>(pNotification);
-			CState* pState = m_pMainFrame->GetState();
-			if (pState)
-				pState->LocalDirCreated(pLocalDirCreatedNotification->dir);
+			const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
+			for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
+				(*iter)->LocalDirCreated(pLocalDirCreatedNotification->dir);
 		}
 		delete pNotification;
 		break;
@@ -723,6 +729,52 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 		delete pNotification;
 		break;
 	}
+}
+
+bool CQueueView::CanStartTransfer(const CServerItem& server_item, struct t_EngineData *&pEngineData)
+{
+	const CServer &server = server_item.GetServer();
+	const int max_count = server.MaximumMultipleConnections();
+	if (!max_count)
+		return true;
+
+	int active_count = server_item.m_activeCount;
+
+	bool browsing_on_same = false;
+	const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
+	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
+	{
+		const CState* pState = *iter;
+		const CServer* pBrowsingServer = pState->GetServer();
+		if (!pBrowsingServer)
+			continue;
+
+		if (*pBrowsingServer == server)
+		{
+			active_count++;
+			browsing_on_same = true;
+			break;
+		}
+	}
+
+	if (active_count < max_count)
+		return true;
+
+	// Max count has been reached
+
+	// If we got an idle engine connected to this very server, start the
+	// transfer anyhow. Let's not get this connection go to waste.
+	pEngineData = GetIdleEngine(&server);
+	if (pEngineData->pEngine->IsConnected() && pEngineData->lastServer == server)
+		return true;
+
+	if (!browsing_on_same || active_count > 1)
+		return false;
+
+	// At this point the following holds:
+	// max_count is limited to 1, only connection to server is held by the browsing connection
+	pEngineData = m_engineData[0];
+	return !pEngineData->active;
 }
 
 bool CQueueView::TryStartNextTransfer()
@@ -764,48 +816,9 @@ bool CQueueView::TryStartNextTransfer()
 	{
 		t_EngineData* pEngineData = 0;
 		CServerItem* currentServerItem = *iter;
-		int maxCount = currentServerItem->GetServer().MaximumMultipleConnections();
-		int activeCount = currentServerItem->m_activeCount;
-		const CServer* pBrowsingServer = m_pMainFrame->GetState()->GetServer();
-		bool browsingOnSame = false;
-		if (pBrowsingServer && currentServerItem->GetServer() == *pBrowsingServer)
-		{
-			browsingOnSame = true;
-			activeCount++;
-		}
-		if (maxCount && activeCount >= maxCount)
-		{
-			// If we got an idle engine connected to this very server, start the
-			// transfer anyhow. Let's not get this connection go to waste.
-			pEngineData = GetIdleEngine(&(*iter)->GetServer());
-			if (pEngineData)
-			{
-				if (!pEngineData->pEngine->IsConnected() || pEngineData->lastServer != (*iter)->GetServer())
-				{
-					// If the browsing connection is connected to this server and idle, use it
-					if (browsingOnSame && activeCount == 1)
-					{
-						pEngineData = m_engineData[0];
-						if (pEngineData->active)
-							continue;
-					}
-					else
-						continue;
-				}
-			}
-			else
-			{
-				// If the browsing connection is connected to this server and idle, use it
-				if (browsingOnSame && activeCount == 1)
-				{
-					pEngineData = m_engineData[0];
-					if (pEngineData->active)
-						continue;
-				}
-				else
-					continue;
-			}
-		}
+
+		if (!CanStartTransfer(*currentServerItem, pEngineData))
+			continue;
 
 		CFileItem* newFileItem = currentServerItem->GetIdleChild(m_activeMode == 1, wantedDirection);
 
@@ -1511,7 +1524,7 @@ bool CQueueView::SetActive(bool active /*=true*/)
 			}
 		}
 
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+		CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
 
 		return m_activeCount == 0;
 	}
@@ -1525,7 +1538,7 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		UpdateStatusLinePositions();
 	}
 
-	m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
 
 	return true;
 }
@@ -1610,7 +1623,7 @@ void CQueueView::CheckQueueState()
 
 		TryRefreshListings();
 
-		m_pMainFrame->GetState()->NotifyHandlers(STATECHANGE_QUEUEPROCESSING);
+		CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
 
 		if (!m_quit)
 			ActionAfter();

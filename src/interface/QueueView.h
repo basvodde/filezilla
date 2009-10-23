@@ -129,6 +129,11 @@ protected:
 
 	void AdvanceQueue(bool refresh = true);
 	bool TryStartNextTransfer();
+
+	// Called from TryStartNextTransfer(), checks
+	// whether it is allowed to start another transfer on that server item
+	bool CanStartTransfer(const CServerItem& server_item, struct t_EngineData *&pEngineData);
+
 	bool ProcessFolderItems(int type = -1);
 	void ProcessUploadFolderItems();
 
