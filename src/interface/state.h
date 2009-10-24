@@ -63,6 +63,8 @@ public:
 
 	void NotifyAllHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""), const void* data2 = 0);
 
+	void SetCurrentContext(CState* pState);
+
 protected:
 	CContextManager();
 

@@ -99,6 +99,10 @@ protected:
 		CSplitterWindowEx* pViewSplitter; // Contains local and remote splitters
 		CSplitterWindowEx* pLocalSplitter;
 		CSplitterWindowEx* pRemoteSplitter;
+
+		CState* pState;
+
+		wxString title;
 	};
 
 	std::vector<struct _context_controls> m_context_controls;
@@ -182,6 +186,8 @@ protected:
 	void OnTaskBarClick(wxTaskBarIconEvent& event);
 #endif
 	void OnSearch(wxCommandEvent& event);
+	void OnMenuNewTab(wxCommandEvent& event);
+	void OnMenuCloseTab(wxCommandEvent& event);
 
 	bool m_bInitDone;
 	bool m_bQuit;

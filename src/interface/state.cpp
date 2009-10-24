@@ -65,6 +65,18 @@ void CContextManager::DestroyState(CState* pState)
 	delete pState;
 }
 
+void CContextManager::SetCurrentContext(CState* pState)
+{
+	for (unsigned int i = 0; i < m_contexts.size(); i++)
+	{
+		if (m_contexts[i] != pState)
+			continue;
+
+		m_current_context = i;
+		NotifyHandlers(GetCurrentContext(), STATECHANGE_CHANGEDCONTEXT, _T(""), 0, false);
+	}
+}
+
 void CContextManager::DestroyAllStates()
 {
 	m_current_context = -1;
@@ -180,6 +192,8 @@ CState::CState(CMainFrame* pMainFrame)
 
 	m_sync_browse.is_changing = false;
 	m_sync_browse.compare = false;
+
+	m_localDir.SetPath(CLocalPath::path_separator);
 }
 
 CState::~CState()

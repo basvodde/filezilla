@@ -110,6 +110,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 #endif
 	EVT_TOOL(XRCID("ID_TOOLBAR_FIND"), CMainFrame::OnSearch)
 	EVT_MENU(XRCID("ID_MENU_SERVER_SEARCH"), CMainFrame::OnSearch)
+	EVT_MENU(XRCID("ID_MENU_FILE_NEWTAB"), CMainFrame::OnMenuNewTab)
+	EVT_MENU(XRCID("ID_MENU_FILE_CLOSETAB"), CMainFrame::OnMenuCloseTab)
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -3024,6 +3026,8 @@ void CMainFrame::PostInitialize()
 
 void CMainFrame::CreateContextControls(CState* pState)
 {
+	Freeze();
+
 	wxWindow* parent = m_pBottomSplitter;
 
 	if (!m_context_controls.empty())
@@ -3033,19 +3037,22 @@ void CMainFrame::CreateContextControls(CState* pState)
 			m_tabs = new wxAuiNotebookEx();
 			m_tabs->Create(m_pBottomSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
 			m_tabs->SetExArtProvider();
+
+			m_context_controls[0].pViewSplitter->Reparent(m_tabs);
+
+			m_tabs->AddPage(m_context_controls[0].pViewSplitter, m_context_controls[0].title);
+			m_pBottomSplitter->ReplaceWindow(m_context_controls[0].pViewSplitter, m_tabs);
 		}
+
 		parent = m_tabs;
 	}
 
 	struct _context_controls context_controls;
+
+	context_controls.pState = pState;
 	context_controls.pViewSplitter = new CSplitterWindowEx(parent, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	context_controls.pViewSplitter->SetMinimumPaneSize(50, 100);
 	context_controls.pViewSplitter->SetSashGravity(0.5);
-
-	if (m_tabs)
-	{
-		m_tabs->AddPage(context_controls.pViewSplitter, _T("FOO"));
-	}
 
 	context_controls.pLocalSplitter = new CSplitterWindowEx(context_controls.pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	context_controls.pLocalSplitter->SetMinimumPaneSize(50, 100);
@@ -3143,5 +3150,31 @@ void CMainFrame::CreateContextControls(CState* pState)
 			context_controls.pLocalSplitter->SetSashGravity(1.0);
 	}
 
+	context_controls.title = _("Not connected");
+
+	if (m_tabs)
+	{
+		m_tabs->AddPage(context_controls.pViewSplitter, context_controls.title);
+	}
+
+	Thaw();
+
 	m_context_controls.push_back(context_controls);
+}
+
+void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
+{
+	CState* pState = CContextManager::Get()->CreateState(this);
+	pState->CreateEngine();
+	CreateContextControls(pState);
+
+	pState->SetLocalDir(_T("/"));
+
+	CContextManager::Get()->SetCurrentContext(pState);
+
+	m_tabs->SetSelection(m_tabs->GetPageCount() - 1);
+}
+
+void CMainFrame::OnMenuCloseTab(wxCommandEvent& event)
+{
 }
