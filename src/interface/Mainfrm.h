@@ -38,8 +38,8 @@ public:
 
 	void AddToRequestQueue(CFileZillaEngine* pEngine, CAsyncRequestNotification* pNotification);
 	CStatusView* GetStatusView() { return m_pStatusView; }
-	CLocalListView* GetLocalListView() { return m_pLocalListView; }
-	CRemoteListView* GetRemoteListView() { return m_pRemoteListView; }
+	CLocalListView* GetLocalListView() { return m_context_controls.pLocalListView; }
+	CRemoteListView* GetRemoteListView() { return m_context_controls.pRemoteListView; }
 	CQueueView* GetQueue() { return m_pQueueView; }
 	CQuickconnectBar* GetQuickconnectBar() { return m_pQuickconnectBar; }
 
@@ -75,9 +75,32 @@ protected:
 	void InitToolbarState();
 	void InitMenubarState();
 
+	void CreateContextControls(CState* pState);
+
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
 
 	void UpdateBookmarkMenu();
+
+	struct _context_controls
+	{
+		// List of all windows and controls assorted with a context
+		CView* pLocalTreeViewPanel;
+		CView* pLocalListViewPanel;
+		CLocalTreeView* pLocalTreeView;
+		CLocalListView* pLocalListView;
+		CView* pRemoteTreeViewPanel;
+		CView* pRemoteListViewPanel;
+		CRemoteTreeView* pRemoteTreeView;
+		CRemoteListView* pRemoteListView;
+		CViewHeader* pLocalViewHeader;
+		CViewHeader* pRemoteViewHeader;
+	
+		CSplitterWindowEx* pViewSplitter; // Contains local and remote splitters
+		CSplitterWindowEx* pLocalSplitter;
+		CSplitterWindowEx* pRemoteSplitter;
+	};
+
+	struct _context_controls m_context_controls;
 
 	std::list<int> m_bookmark_menu_ids;
 	std::map<int, wxString> m_bookmark_menu_id_map_global;
@@ -91,24 +114,11 @@ protected:
 	CQuickconnectBar* m_pQuickconnectBar;
 
 	CSplitterWindowEx* m_pTopSplitter; // If log position is 0, splits message log from rest of panes
-	CSplitterWindowEx* m_pBottomSplitter; // Top contains view splitter, buttom queue (or queuelog splitter if in position 1)
-	CSplitterWindowEx* m_pViewSplitter; // Contains local and remote splitters
-	CSplitterWindowEx* m_pLocalSplitter;
-	CSplitterWindowEx* m_pRemoteSplitter;
+	CSplitterWindowEx* m_pBottomSplitter; // Top contains view splitter, bottom queue (or queuelog splitter if in position 1)
 	CSplitterWindowEx* m_pQueueLogSplitter;
 
 	CStatusView* m_pStatusView;
 	CQueueView* m_pQueueView;
-	CView* m_pLocalTreeViewPanel;
-	CView* m_pLocalListViewPanel;
-	CLocalTreeView* m_pLocalTreeView;
-	CLocalListView* m_pLocalListView;
-	CView* m_pRemoteTreeViewPanel;
-	CView* m_pRemoteListViewPanel;
-	CRemoteTreeView* m_pRemoteTreeView;
-	CRemoteListView* m_pRemoteListView;
-	CViewHeader* m_pLocalViewHeader;
-	CViewHeader* m_pRemoteViewHeader;
 	CLed* m_pActivityLed[2];
 	wxTimer m_transferStatusTimer;
 	CThemeProvider* m_pThemeProvider;

@@ -209,8 +209,8 @@ CMainFrame::CMainFrame()
 	initial_size.y = wxMin(750, screen_size.GetHeight() - 50);
 
 	// Needed because on MSW we can get WM_DEVICECHANGE prior to creation of
-	// m_pLocalTreeView
-	m_pLocalTreeView = 0;
+	// m_context_controls.pLocalTreeView
+	m_context_controls.pLocalTreeView = 0;
 
 	Create(NULL, -1, _T("FileZilla"), wxDefaultPosition, initial_size);
 	SetSizeHints(250, 250);
@@ -241,9 +241,9 @@ CMainFrame::CMainFrame()
 	m_pQuickconnectBar = NULL;
 	m_pTopSplitter = NULL;
 	m_pBottomSplitter = NULL;
-	m_pViewSplitter = NULL;
-	m_pLocalSplitter = NULL;
-	m_pRemoteSplitter = NULL;
+	m_context_controls.pViewSplitter = NULL;
+	m_context_controls.pLocalSplitter = NULL;
+	m_context_controls.pRemoteSplitter = NULL;
 	m_pQueueLogSplitter = 0;
 	m_bInitDone = false;
 	m_bQuit = false;
@@ -322,16 +322,6 @@ CMainFrame::CMainFrame()
 	m_pBottomSplitter->SetMinimumPaneSize(10, 60);
 	m_pBottomSplitter->SetSashGravity(1.0);
 
-	m_pViewSplitter = new CSplitterWindowEx(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pViewSplitter->SetMinimumPaneSize(50, 100);
-	m_pViewSplitter->SetSashGravity(0.5);
-
-	m_pLocalSplitter = new CSplitterWindowEx(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pLocalSplitter->SetMinimumPaneSize(50, 100);
-
-	m_pRemoteSplitter = new CSplitterWindowEx(m_pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
-	m_pRemoteSplitter->SetMinimumPaneSize(50, 100);
-
 	const int message_log_position = COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION);
 	m_pQueueLogSplitter = new CSplitterWindowEx(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
 	m_pQueueLogSplitter->SetMinimumPaneSize(50, 250);
@@ -345,33 +335,7 @@ CMainFrame::CMainFrame()
 
 	m_pQueueView = m_pQueuePane->GetQueueView();
 
-	bool show_filelist_statusbars = COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0;
-
-	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
-	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
-	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1, pState, m_pQueueView);
-	m_pLocalListView = new CLocalListView(m_pLocalListViewPanel, pState, m_pQueueView);
-	m_pLocalTreeViewPanel->SetWindow(m_pLocalTreeView);
-	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
-
-	CFilelistStatusBar* pLocalFilelistStatusBar = new CFilelistStatusBar(m_pLocalListViewPanel);
-	if (!show_filelist_statusbars)
-		pLocalFilelistStatusBar->Hide();
-	m_pLocalListViewPanel->SetStatusBar(pLocalFilelistStatusBar);
-	m_pLocalListView->SetFilelistStatusBar(pLocalFilelistStatusBar);
-
-	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
-	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
-	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, pState, m_pQueueView);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, pState, m_pQueueView);
-	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
-	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
-
-	CFilelistStatusBar* pRemoteFilelistStatusBar = new CFilelistStatusBar(m_pRemoteListViewPanel);
-	if (!show_filelist_statusbars)
-		pRemoteFilelistStatusBar->Hide();
-	m_pRemoteListViewPanel->SetStatusBar(pRemoteFilelistStatusBar);
-	m_pRemoteListView->SetFilelistStatusBar(pRemoteFilelistStatusBar);
+	CreateContextControls(pState);
 
 	switch (message_log_position)
 	{
@@ -432,73 +396,11 @@ CMainFrame::CMainFrame()
 	}
 
 	if (m_pQueueLogSplitter->IsShown())
-		m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
+		m_pBottomSplitter->SplitHorizontally(m_context_controls.pViewSplitter, m_pQueueLogSplitter);
 	else
 	{
 		m_pQueueLogSplitter->Hide();
-		m_pBottomSplitter->Initialize(m_pViewSplitter);
-	}
-
-	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-
-	if (layout == 1)
-	{
-		if (swap)
-			m_pViewSplitter->SplitHorizontally(m_pRemoteSplitter, m_pLocalSplitter);
-		else
-			m_pViewSplitter->SplitHorizontally(m_pLocalSplitter, m_pRemoteSplitter);
-	}
-	else
-	{
-		if (swap)
-			m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
-		else
-			m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
-	}
-
-	m_pLocalViewHeader = new CLocalViewHeader(m_pLocalSplitter, pState);
-	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
-	{
-		m_pLocalTreeViewPanel->SetHeader(m_pLocalViewHeader);
-		if (layout == 3 && swap)
-			m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel);
-		else if (layout)
-			m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
-		else
-			m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
-	}
-	else
-	{
-		m_pLocalTreeViewPanel->Hide();
-		m_pLocalListViewPanel->SetHeader(m_pLocalViewHeader);
-		m_pLocalSplitter->Initialize(m_pLocalListViewPanel);
-	}
-
-	m_pRemoteViewHeader = new CRemoteViewHeader(m_pRemoteSplitter, pState);
-	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
-	{
-		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteViewHeader);
-		if (layout == 3 && !swap)
-			m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel);
-		else if (layout)
-			m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
-		else
-			m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
-	}
-	else
-	{
-		m_pRemoteTreeViewPanel->Hide();
-		m_pRemoteListViewPanel->SetHeader(m_pRemoteViewHeader);
-		m_pRemoteSplitter->Initialize(m_pRemoteListViewPanel);
-	}
-
-	if (layout == 3)
-	{
-		if (!swap)
-			m_pRemoteSplitter->SetSashGravity(1.0);
-		else
-			m_pLocalSplitter->SetSashGravity(1.0);
+		m_pBottomSplitter->Initialize(m_context_controls.pViewSplitter);
 	}
 
 	m_pWindowStateManager = new CWindowStateManager(this);
@@ -523,12 +425,12 @@ CMainFrame::CMainFrame()
 	pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
 
 	ConnectNavigationHandler(m_pStatusView);
-	ConnectNavigationHandler(m_pLocalListView);
-	ConnectNavigationHandler(m_pRemoteListView);
-	ConnectNavigationHandler(m_pLocalTreeView);
-	ConnectNavigationHandler(m_pRemoteTreeView);
-	ConnectNavigationHandler(m_pLocalViewHeader);
-	ConnectNavigationHandler(m_pRemoteViewHeader);
+	ConnectNavigationHandler(m_context_controls.pLocalListView);
+	ConnectNavigationHandler(m_context_controls.pRemoteListView);
+	ConnectNavigationHandler(m_context_controls.pLocalTreeView);
+	ConnectNavigationHandler(m_context_controls.pRemoteTreeView);
+	ConnectNavigationHandler(m_context_controls.pLocalViewHeader);
+	ConnectNavigationHandler(m_context_controls.pRemoteViewHeader);
 	ConnectNavigationHandler(m_pQueuePane);
 
 	wxNavigationKeyEvent evt;
@@ -542,7 +444,7 @@ CMainFrame::CMainFrame()
 
 	CAutoAsciiFiles::SettingsChanged();
 
-	pState->GetComparisonManager()->SetListings(m_pLocalListView, m_pRemoteListView);
+	pState->GetComparisonManager()->SetListings(m_context_controls.pLocalListView, m_context_controls.pRemoteListView);
 }
 
 CMainFrame::~CMainFrame()
@@ -921,24 +823,24 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		bool show = COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) == 0;
 		COptions::Get()->SetOption(OPTION_FILELIST_STATUSBAR, show ? 1 : 0);
-		if (m_pLocalListViewPanel)
+		if (m_context_controls.pLocalListViewPanel)
 		{
-			wxStatusBar* pStatusBar = m_pLocalListViewPanel->GetStatusBar();
+			wxStatusBar* pStatusBar = m_context_controls.pLocalListViewPanel->GetStatusBar();
 			if (pStatusBar)
 			{
 				pStatusBar->Show(show);
 				wxSizeEvent evt;
-				m_pLocalListViewPanel->ProcessEvent(evt);
+				m_context_controls.pLocalListViewPanel->ProcessEvent(evt);
 			}
 		}
-		if (m_pRemoteListViewPanel)
+		if (m_context_controls.pRemoteListViewPanel)
 		{
-			wxStatusBar* pStatusBar = m_pRemoteListViewPanel->GetStatusBar();
+			wxStatusBar* pStatusBar = m_context_controls.pRemoteListViewPanel->GetStatusBar();
 			if (pStatusBar)
 			{
 				pStatusBar->Show(show);
 				wxSizeEvent evt;
-				m_pRemoteListViewPanel->ProcessEvent(evt);
+				m_context_controls.pRemoteListViewPanel->ProcessEvent(evt);
 			}
 		}
 	}
@@ -1592,8 +1494,8 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	CSiteManager::ClearIdMap();
 
-	m_pLocalListView->SaveColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
-	m_pRemoteListView->SaveColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
+	m_context_controls.pLocalListView->SaveColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
+	m_context_controls.pRemoteListView->SaveColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
 
 	bool filters_toggled = CFilterManager::HasActiveFilters(true) && !CFilterManager::HasActiveFilters(false);
 	COptions::Get()->SetOption(OPTION_FILTERTOGGLESTATE, filters_toggled ? 1 : 0);
@@ -1873,7 +1775,7 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 		else if (!m_pQueueLogSplitter->IsShown())
 		{
 			m_pQueueLogSplitter->Initialize(m_pStatusView);
-			m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
+			m_pBottomSplitter->SplitHorizontally(m_context_controls.pViewSplitter, m_pQueueLogSplitter);
 			shown = true;
 		}
 		else
@@ -1910,37 +1812,37 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 	if (!m_pTopSplitter)
 		return;
 
-	if (m_pLocalSplitter->IsSplit())
+	if (m_context_controls.pLocalSplitter->IsSplit())
 	{
-		m_pLocalListViewPanel->SetHeader(m_pLocalTreeViewPanel->DetachHeader());
-		m_pLocalSplitter->Unsplit(m_pLocalTreeViewPanel);
+		m_context_controls.pLocalListViewPanel->SetHeader(m_context_controls.pLocalTreeViewPanel->DetachHeader());
+		m_context_controls.pLocalSplitter->Unsplit(m_context_controls.pLocalTreeViewPanel);
 	}
 	else
 		ShowLocalTree();
 
-	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, m_pLocalSplitter->IsSplit());
+	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, m_context_controls.pLocalSplitter->IsSplit());
 
 	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter->IsSplit());
+		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_context_controls.pLocalSplitter->IsSplit());
 	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_pLocalSplitter->IsSplit());
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_context_controls.pLocalSplitter->IsSplit());
 }
 
 void CMainFrame::ShowLocalTree()
 {
-	if (m_pLocalSplitter->IsSplit())
+	if (m_context_controls.pLocalSplitter->IsSplit())
 		return;
 
-	m_pLocalTreeViewPanel->SetHeader(m_pLocalListViewPanel->DetachHeader());
-	wxSize size = m_pLocalSplitter->GetClientSize();
+	m_context_controls.pLocalTreeViewPanel->SetHeader(m_context_controls.pLocalListViewPanel->DetachHeader());
+	wxSize size = m_context_controls.pLocalSplitter->GetClientSize();
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 	if (layout == 3 && swap)
-		m_pLocalSplitter->SplitVertically(m_pLocalListViewPanel, m_pLocalTreeViewPanel);
+		m_context_controls.pLocalSplitter->SplitVertically(m_context_controls.pLocalListViewPanel, m_context_controls.pLocalTreeViewPanel);
 	else if (layout)
-		m_pLocalSplitter->SplitVertically(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
+		m_context_controls.pLocalSplitter->SplitVertically(m_context_controls.pLocalTreeViewPanel, m_context_controls.pLocalListViewPanel);
 	else
-		m_pLocalSplitter->SplitHorizontally(m_pLocalTreeViewPanel, m_pLocalListViewPanel);
+		m_context_controls.pLocalSplitter->SplitHorizontally(m_context_controls.pLocalTreeViewPanel, m_context_controls.pLocalListViewPanel);
 }
 
 void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
@@ -1948,37 +1850,37 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 	if (!m_pTopSplitter)
 		return;
 
-	if (m_pRemoteSplitter->IsSplit())
+	if (m_context_controls.pRemoteSplitter->IsSplit())
 	{
-		m_pRemoteListViewPanel->SetHeader(m_pRemoteTreeViewPanel->DetachHeader());
-		m_pRemoteSplitter->Unsplit(m_pRemoteTreeViewPanel);
+		m_context_controls.pRemoteListViewPanel->SetHeader(m_context_controls.pRemoteTreeViewPanel->DetachHeader());
+		m_context_controls.pRemoteSplitter->Unsplit(m_context_controls.pRemoteTreeViewPanel);
 	}
 	else
 		ShowRemoteTree();
 
-	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_pRemoteSplitter->IsSplit());
+	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_context_controls.pRemoteSplitter->IsSplit());
 
 	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter->IsSplit());
+		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_context_controls.pRemoteSplitter->IsSplit());
 	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_pRemoteSplitter->IsSplit());
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_context_controls.pRemoteSplitter->IsSplit());
 }
 
 void CMainFrame::ShowRemoteTree()
 {
-	if (m_pRemoteSplitter->IsSplit())
+	if (m_context_controls.pRemoteSplitter->IsSplit())
 		return;
 
-	m_pRemoteTreeViewPanel->SetHeader(m_pRemoteListViewPanel->DetachHeader());
-	wxSize size = m_pRemoteSplitter->GetClientSize();
+	m_context_controls.pRemoteTreeViewPanel->SetHeader(m_context_controls.pRemoteListViewPanel->DetachHeader());
+	wxSize size = m_context_controls.pRemoteSplitter->GetClientSize();
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 	if (layout == 3 && !swap)
-		m_pRemoteSplitter->SplitVertically(m_pRemoteListViewPanel, m_pRemoteTreeViewPanel);
+		m_context_controls.pRemoteSplitter->SplitVertically(m_context_controls.pRemoteListViewPanel, m_context_controls.pRemoteTreeViewPanel);
 	else if (layout)
-		m_pRemoteSplitter->SplitVertically(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
+		m_context_controls.pRemoteSplitter->SplitVertically(m_context_controls.pRemoteTreeViewPanel, m_context_controls.pRemoteListViewPanel);
 	else
-		m_pRemoteSplitter->SplitHorizontally(m_pRemoteTreeViewPanel, m_pRemoteListViewPanel);
+		m_context_controls.pRemoteSplitter->SplitHorizontally(m_context_controls.pRemoteTreeViewPanel, m_context_controls.pRemoteListViewPanel);
 }
 
 void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
@@ -2005,7 +1907,7 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		else if (!m_pQueueLogSplitter->IsShown())
 		{
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
-			m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
+			m_pBottomSplitter->SplitHorizontally(m_context_controls.pViewSplitter, m_pQueueLogSplitter);
 			shown = true;
 		}
 		else
@@ -2025,7 +1927,7 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		{
 			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
-			m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
+			m_pBottomSplitter->SplitHorizontally(m_context_controls.pViewSplitter, m_pQueueLogSplitter);
 		}
 		shown = m_pBottomSplitter->IsSplit();
 	}
@@ -2149,7 +2051,7 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 					else
 					{
 						m_pQueueLogSplitter->Initialize(m_pStatusView);
-						m_pBottomSplitter->SplitHorizontally(m_pViewSplitter, m_pQueueLogSplitter);
+						m_pBottomSplitter->SplitHorizontally(m_context_controls.pViewSplitter, m_pQueueLogSplitter);
 					}
 				}
 				break;
@@ -2176,30 +2078,30 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 	else
 		mode = wxSPLIT_HORIZONTAL;
 
-	int isMode = m_pViewSplitter->GetSplitMode();
+	int isMode = m_context_controls.pViewSplitter->GetSplitMode();
 
-	int isSwap = m_pViewSplitter->GetWindow1() == m_pRemoteSplitter ? 1 : 0;
+	int isSwap = m_context_controls.pViewSplitter->GetWindow1() == m_context_controls.pRemoteSplitter ? 1 : 0;
 
 	if (mode != isMode || swap != isSwap)
 	{
-		m_pViewSplitter->Unsplit();
+		m_context_controls.pViewSplitter->Unsplit();
 		if (mode == wxSPLIT_VERTICAL)
 		{
 			if (swap)
-				m_pViewSplitter->SplitVertically(m_pRemoteSplitter, m_pLocalSplitter);
+				m_context_controls.pViewSplitter->SplitVertically(m_context_controls.pRemoteSplitter, m_context_controls.pLocalSplitter);
 			else
-				m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
+				m_context_controls.pViewSplitter->SplitVertically(m_context_controls.pLocalSplitter, m_context_controls.pRemoteSplitter);
 		}
 		else
 		{
 			if (swap)
-				m_pViewSplitter->SplitHorizontally(m_pRemoteSplitter, m_pLocalSplitter);
+				m_context_controls.pViewSplitter->SplitHorizontally(m_context_controls.pRemoteSplitter, m_context_controls.pLocalSplitter);
 			else
-				m_pViewSplitter->SplitHorizontally(m_pLocalSplitter, m_pRemoteSplitter);
+				m_context_controls.pViewSplitter->SplitHorizontally(m_context_controls.pLocalSplitter, m_context_controls.pRemoteSplitter);
 		}
 	}
 
-	if (m_pLocalSplitter->IsSplit())
+	if (m_context_controls.pLocalSplitter->IsSplit())
 	{
 		if (!layout)
 			mode = wxSPLIT_HORIZONTAL;
@@ -2210,26 +2112,26 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 		wxWindow* pSecond;
 		if (layout == 3 && swap)
 		{
-			pFirst = m_pLocalListViewPanel;
-			pSecond = m_pLocalTreeViewPanel;
+			pFirst = m_context_controls.pLocalListViewPanel;
+			pSecond = m_context_controls.pLocalTreeViewPanel;
 		}
 		else
 		{
-			pFirst = m_pLocalTreeViewPanel;
-			pSecond = m_pLocalListViewPanel;
+			pFirst = m_context_controls.pLocalTreeViewPanel;
+			pSecond = m_context_controls.pLocalListViewPanel;
 		}
 
-		if (mode != m_pLocalSplitter->GetSplitMode() || pFirst != m_pLocalSplitter->GetWindow1())
+		if (mode != m_context_controls.pLocalSplitter->GetSplitMode() || pFirst != m_context_controls.pLocalSplitter->GetWindow1())
 		{
-			m_pLocalSplitter->Unsplit();
+			m_context_controls.pLocalSplitter->Unsplit();
 			if (mode == wxSPLIT_VERTICAL)
-				m_pLocalSplitter->SplitVertically(pFirst, pSecond);
+				m_context_controls.pLocalSplitter->SplitVertically(pFirst, pSecond);
 			else
-				m_pLocalSplitter->SplitHorizontally(pFirst, pSecond);
+				m_context_controls.pLocalSplitter->SplitHorizontally(pFirst, pSecond);
 		}
 	}
 
-	if (m_pRemoteSplitter->IsSplit())
+	if (m_context_controls.pRemoteSplitter->IsSplit())
 	{
 		if (!layout)
 			mode = wxSPLIT_HORIZONTAL;
@@ -2240,22 +2142,22 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 		wxWindow* pSecond;
 		if (layout == 3 && !swap)
 		{
-			pFirst = m_pRemoteListViewPanel;
-			pSecond = m_pRemoteTreeViewPanel;
+			pFirst = m_context_controls.pRemoteListViewPanel;
+			pSecond = m_context_controls.pRemoteTreeViewPanel;
 		}
 		else
 		{
-			pFirst = m_pRemoteTreeViewPanel;
-			pSecond = m_pRemoteListViewPanel;
+			pFirst = m_context_controls.pRemoteTreeViewPanel;
+			pSecond = m_context_controls.pRemoteListViewPanel;
 		}
 
-		if (mode != m_pRemoteSplitter->GetSplitMode() || pFirst != m_pRemoteSplitter->GetWindow1())
+		if (mode != m_context_controls.pRemoteSplitter->GetSplitMode() || pFirst != m_context_controls.pRemoteSplitter->GetWindow1())
 		{
-			m_pRemoteSplitter->Unsplit();
+			m_context_controls.pRemoteSplitter->Unsplit();
 			if (mode == wxSPLIT_VERTICAL)
-				m_pRemoteSplitter->SplitVertically(pFirst, pSecond);
+				m_context_controls.pRemoteSplitter->SplitVertically(pFirst, pSecond);
 			else
-				m_pRemoteSplitter->SplitHorizontally(pFirst, pSecond);
+				m_context_controls.pRemoteSplitter->SplitHorizontally(pFirst, pSecond);
 		}
 	}
 
@@ -2263,19 +2165,19 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 	{
 		if (!swap)
 		{
-			m_pRemoteSplitter->SetSashGravity(1.0);
-			m_pLocalSplitter->SetSashGravity(0.0);
+			m_context_controls.pRemoteSplitter->SetSashGravity(1.0);
+			m_context_controls.pLocalSplitter->SetSashGravity(0.0);
 		}
 		else
 		{
-			m_pLocalSplitter->SetSashGravity(1.0);
-			m_pRemoteSplitter->SetSashGravity(0.0);
+			m_context_controls.pLocalSplitter->SetSashGravity(1.0);
+			m_context_controls.pRemoteSplitter->SetSashGravity(0.0);
 		}
 	}
 	else
 	{
-		m_pLocalSplitter->SetSashGravity(0.0);
-		m_pRemoteSplitter->SetSashGravity(0.0);
+		m_context_controls.pLocalSplitter->SetSashGravity(0.0);
+		m_context_controls.pRemoteSplitter->SetSashGravity(0.0);
 	}
 }
 
@@ -2343,8 +2245,8 @@ void CMainFrame::CheckChangedSettings()
 
 	m_pAsyncRequestQueue->RecheckDefaults();
 
-	m_pLocalListView->InitDateFormat();
-	m_pRemoteListView->InitDateFormat();
+	m_context_controls.pLocalListView->InitDateFormat();
+	m_context_controls.pRemoteListView->InitDateFormat();
 
 	m_pQueueView->SettingsChanged();
 	CAutoAsciiFiles::SettingsChanged();
@@ -2367,21 +2269,21 @@ void CMainFrame::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
 		windowOrder.push_back(m_pStatusView);
 	if (COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP) == 0)
 	{
-		windowOrder.push_back(m_pLocalViewHeader);
-		windowOrder.push_back(m_pLocalTreeView);
-		windowOrder.push_back(m_pLocalListView);
-		windowOrder.push_back(m_pRemoteViewHeader);
-		windowOrder.push_back(m_pRemoteTreeView);
-		windowOrder.push_back(m_pRemoteListView);
+		windowOrder.push_back(m_context_controls.pLocalViewHeader);
+		windowOrder.push_back(m_context_controls.pLocalTreeView);
+		windowOrder.push_back(m_context_controls.pLocalListView);
+		windowOrder.push_back(m_context_controls.pRemoteViewHeader);
+		windowOrder.push_back(m_context_controls.pRemoteTreeView);
+		windowOrder.push_back(m_context_controls.pRemoteListView);
 	}
 	else
 	{
-		windowOrder.push_back(m_pRemoteViewHeader);
-		windowOrder.push_back(m_pRemoteTreeView);
-		windowOrder.push_back(m_pRemoteListView);
-		windowOrder.push_back(m_pLocalViewHeader);
-		windowOrder.push_back(m_pLocalTreeView);
-		windowOrder.push_back(m_pLocalListView);
+		windowOrder.push_back(m_context_controls.pRemoteViewHeader);
+		windowOrder.push_back(m_context_controls.pRemoteTreeView);
+		windowOrder.push_back(m_context_controls.pRemoteListView);
+		windowOrder.push_back(m_context_controls.pLocalViewHeader);
+		windowOrder.push_back(m_context_controls.pLocalTreeView);
+		windowOrder.push_back(m_context_controls.pLocalListView);
 	}
 	windowOrder.push_back(m_pQueuePane);
 
@@ -2423,8 +2325,8 @@ void CMainFrame::OnChar(wxKeyEvent& event)
 	std::list<wxWindow*> windowOrder;
 	if (m_pQuickconnectBar)
 		windowOrder.push_back(m_pQuickconnectBar);
-	windowOrder.push_back(m_pLocalViewHeader);
-	windowOrder.push_back(m_pRemoteViewHeader);
+	windowOrder.push_back(m_context_controls.pLocalViewHeader);
+	windowOrder.push_back(m_context_controls.pRemoteViewHeader);
 
 	wxWindow* focused = FindFocus();
 
@@ -2497,13 +2399,13 @@ void CMainFrame::RememberSplitterPositions()
 	posString += wxString::Format(_T("%d "), m_pBottomSplitter->GetSashPosition());
 
 	// view_pos
-	posString += wxString::Format(_T("%d "), (int)(m_pViewSplitter->GetRelativeSashPosition() * 1000000000));
+	posString += wxString::Format(_T("%d "), (int)(m_context_controls.pViewSplitter->GetRelativeSashPosition() * 1000000000));
 
 	// local_pos
-	posString += wxString::Format(_T("%d "), m_pLocalSplitter->GetSashPosition());
+	posString += wxString::Format(_T("%d "), m_context_controls.pLocalSplitter->GetSashPosition());
 
 	// remote_pos
-	posString += wxString::Format(_T("%d "), m_pRemoteSplitter->GetSashPosition());
+	posString += wxString::Format(_T("%d "), m_context_controls.pRemoteSplitter->GetSashPosition());
 
 	// queuelog splitter
 	// Note that we cannot use %f, it is locale-dependent
@@ -2542,10 +2444,10 @@ bool CMainFrame::RestoreSplitterPositions()
 
 	double pos = (double)aPosValues[2] / 1000000000;
 	if (pos >= 0 && pos <= 1)
-		m_pViewSplitter->SetRelativeSashPosition(pos);
+		m_context_controls.pViewSplitter->SetRelativeSashPosition(pos);
 
-	m_pLocalSplitter->SetSashPosition(aPosValues[3]);
-	m_pRemoteSplitter->SetSashPosition(aPosValues[4]);
+	m_context_controls.pLocalSplitter->SetSashPosition(aPosValues[3]);
+	m_context_controls.pRemoteSplitter->SetSashPosition(aPosValues[4]);
 
 	pos = (double)aPosValues[5] / 1000000000;
 	if (pos >= 0 && pos <= 1)
@@ -2559,7 +2461,7 @@ void CMainFrame::SetDefaultSplitterPositions()
 {
 	m_pTopSplitter->SetSashPosition(97);
 
-	m_pViewSplitter->SetSashPosition(0);
+	m_context_controls.pViewSplitter->SetSashPosition(0);
 
 	wxSize size = m_pBottomSplitter->GetClientSize();
 	int h = size.GetHeight() - 135;
@@ -2569,8 +2471,8 @@ void CMainFrame::SetDefaultSplitterPositions()
 
 	m_pQueueLogSplitter->SetSashPosition(0);
 
-	m_pLocalSplitter->SetRelativeSashPosition(0.4);
-	m_pRemoteSplitter->SetRelativeSashPosition(0.4);
+	m_context_controls.pLocalSplitter->SetRelativeSashPosition(0.4);
+	m_context_controls.pRemoteSplitter->SetRelativeSashPosition(0.4);
 }
 
 void CMainFrame::OnActivate(wxActivateEvent& event)
@@ -2604,8 +2506,8 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 
 	if (!COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT))
 	{
-		if ((m_pLocalSplitter->IsSplit() && !m_pRemoteSplitter->IsSplit()) ||
-			(!m_pLocalSplitter->IsSplit() && m_pRemoteSplitter->IsSplit()))
+		if ((m_context_controls.pLocalSplitter->IsSplit() && !m_context_controls.pRemoteSplitter->IsSplit()) ||
+			(!m_context_controls.pLocalSplitter->IsSplit() && m_context_controls.pRemoteSplitter->IsSplit()))
 		{
 			CConditionalDialog dlg(this, CConditionalDialog::compare_treeviewmismatch, CConditionalDialog::yesno);
 			dlg.SetTitle(_("Directory comparison"));
@@ -2622,9 +2524,9 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 			ShowLocalTree();
 			ShowRemoteTree();
 		}
-		int pos = (m_pLocalSplitter->GetSashPosition() + m_pRemoteSplitter->GetSashPosition()) / 2;
-		m_pLocalSplitter->SetSashPosition(pos);
-		m_pRemoteSplitter->SetSashPosition(pos);
+		int pos = (m_context_controls.pLocalSplitter->GetSashPosition() + m_context_controls.pRemoteSplitter->GetSashPosition()) / 2;
+		m_context_controls.pLocalSplitter->SetSashPosition(pos);
+		m_context_controls.pRemoteSplitter->SetSashPosition(pos);
 	}
 
 	pComparisonManager->CompareListings();
@@ -2726,8 +2628,8 @@ void CMainFrame::InitToolbarState()
 	if (!m_pToolBar)
 		return;
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), m_pStatusView && m_pStatusView->IsShown());
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_context_controls.pLocalSplitter && m_context_controls.pLocalSplitter->IsSplit());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_context_controls.pRemoteSplitter && m_context_controls.pRemoteSplitter->IsSplit());
 	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_QUEUEVIEW"), m_pQueuePane && m_pQueuePane->IsShown());
 }
 
@@ -2778,8 +2680,8 @@ void CMainFrame::InitMenubarState()
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
 	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
 		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pStatusView && m_pStatusView->IsShown());
-	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_pLocalSplitter && m_pLocalSplitter->IsSplit());
-	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_pRemoteSplitter && m_pRemoteSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_context_controls.pLocalSplitter && m_context_controls.pLocalSplitter->IsSplit());
+	m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_context_controls.pRemoteSplitter && m_context_controls.pRemoteSplitter->IsSplit());
 	m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pQueuePane && m_pQueuePane->IsShown());
 	m_pMenuBar->Check(XRCID("ID_MENU_VIEW_FILELISTSTATUSBAR"), COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0);
 }
@@ -2903,8 +2805,8 @@ WXLRESULT CMainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lPara
 		// They get sent by Window on adding or removing drive
 		// letters
 
-		if (m_pLocalTreeView)
-			m_pLocalTreeView->OnDevicechange(wParam, lParam);
+		if (m_context_controls.pLocalTreeView)
+			m_context_controls.pLocalTreeView->OnDevicechange(wParam, lParam);
 		return 0;
 	}
 	else if (nMsg == WM_DISPLAYCHANGE)
@@ -3109,4 +3011,107 @@ void CMainFrame::PostInitialize()
 	else
 		m_pUpdateWizard = 0;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+}
+
+void CMainFrame::CreateContextControls(CState* pState)
+{
+	m_context_controls.pViewSplitter = new CSplitterWindowEx(m_pBottomSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
+	m_context_controls.pViewSplitter->SetMinimumPaneSize(50, 100);
+	m_context_controls.pViewSplitter->SetSashGravity(0.5);
+
+	m_context_controls.pLocalSplitter = new CSplitterWindowEx(m_context_controls.pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
+	m_context_controls.pLocalSplitter->SetMinimumPaneSize(50, 100);
+
+	m_context_controls.pRemoteSplitter = new CSplitterWindowEx(m_context_controls.pViewSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER  | wxSP_LIVE_UPDATE);
+	m_context_controls.pRemoteSplitter->SetMinimumPaneSize(50, 100);
+
+	m_context_controls.pLocalTreeViewPanel = new CView(m_context_controls.pLocalSplitter);
+	m_context_controls.pLocalListViewPanel = new CView(m_context_controls.pLocalSplitter);
+	m_context_controls.pLocalTreeView = new CLocalTreeView(m_context_controls.pLocalTreeViewPanel, -1, pState, m_pQueueView);
+	m_context_controls.pLocalListView = new CLocalListView(m_context_controls.pLocalListViewPanel, pState, m_pQueueView);
+	m_context_controls.pLocalTreeViewPanel->SetWindow(m_context_controls.pLocalTreeView);
+	m_context_controls.pLocalListViewPanel->SetWindow(m_context_controls.pLocalListView);
+
+	m_context_controls.pRemoteTreeViewPanel = new CView(m_context_controls.pRemoteSplitter);
+	m_context_controls.pRemoteListViewPanel = new CView(m_context_controls.pRemoteSplitter);
+	m_context_controls.pRemoteTreeView = new CRemoteTreeView(m_context_controls.pRemoteTreeViewPanel, -1, pState, m_pQueueView);
+	m_context_controls.pRemoteListView = new CRemoteListView(m_context_controls.pRemoteListViewPanel, pState, m_pQueueView);
+	m_context_controls.pRemoteTreeViewPanel->SetWindow(m_context_controls.pRemoteTreeView);
+	m_context_controls.pRemoteListViewPanel->SetWindow(m_context_controls.pRemoteListView);
+
+	bool show_filelist_statusbars = COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0;
+
+	CFilelistStatusBar* pLocalFilelistStatusBar = new CFilelistStatusBar(m_context_controls.pLocalListViewPanel);
+	if (!show_filelist_statusbars)
+		pLocalFilelistStatusBar->Hide();
+	m_context_controls.pLocalListViewPanel->SetStatusBar(pLocalFilelistStatusBar);
+	m_context_controls.pLocalListView->SetFilelistStatusBar(pLocalFilelistStatusBar);
+
+	CFilelistStatusBar* pRemoteFilelistStatusBar = new CFilelistStatusBar(m_context_controls.pRemoteListViewPanel);
+	if (!show_filelist_statusbars)
+		pRemoteFilelistStatusBar->Hide();
+	m_context_controls.pRemoteListViewPanel->SetStatusBar(pRemoteFilelistStatusBar);
+	m_context_controls.pRemoteListView->SetFilelistStatusBar(pRemoteFilelistStatusBar);
+
+	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+
+	if (layout == 1)
+	{
+		if (swap)
+			m_context_controls.pViewSplitter->SplitHorizontally(m_context_controls.pRemoteSplitter, m_context_controls.pLocalSplitter);
+		else
+			m_context_controls.pViewSplitter->SplitHorizontally(m_context_controls.pLocalSplitter, m_context_controls.pRemoteSplitter);
+	}
+	else
+	{
+		if (swap)
+			m_context_controls.pViewSplitter->SplitVertically(m_context_controls.pRemoteSplitter, m_context_controls.pLocalSplitter);
+		else
+			m_context_controls.pViewSplitter->SplitVertically(m_context_controls.pLocalSplitter, m_context_controls.pRemoteSplitter);
+	}
+
+	m_context_controls.pLocalViewHeader = new CLocalViewHeader(m_context_controls.pLocalSplitter, pState);
+	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
+	{
+		m_context_controls.pLocalTreeViewPanel->SetHeader(m_context_controls.pLocalViewHeader);
+		if (layout == 3 && swap)
+			m_context_controls.pLocalSplitter->SplitVertically(m_context_controls.pLocalListViewPanel, m_context_controls.pLocalTreeViewPanel);
+		else if (layout)
+			m_context_controls.pLocalSplitter->SplitVertically(m_context_controls.pLocalTreeViewPanel, m_context_controls.pLocalListViewPanel);
+		else
+			m_context_controls.pLocalSplitter->SplitHorizontally(m_context_controls.pLocalTreeViewPanel, m_context_controls.pLocalListViewPanel);
+	}
+	else
+	{
+		m_context_controls.pLocalTreeViewPanel->Hide();
+		m_context_controls.pLocalListViewPanel->SetHeader(m_context_controls.pLocalViewHeader);
+		m_context_controls.pLocalSplitter->Initialize(m_context_controls.pLocalListViewPanel);
+	}
+
+	m_context_controls.pRemoteViewHeader = new CRemoteViewHeader(m_context_controls.pRemoteSplitter, pState);
+	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
+	{
+		m_context_controls.pRemoteTreeViewPanel->SetHeader(m_context_controls.pRemoteViewHeader);
+		if (layout == 3 && !swap)
+			m_context_controls.pRemoteSplitter->SplitVertically(m_context_controls.pRemoteListViewPanel, m_context_controls.pRemoteTreeViewPanel);
+		else if (layout)
+			m_context_controls.pRemoteSplitter->SplitVertically(m_context_controls.pRemoteTreeViewPanel, m_context_controls.pRemoteListViewPanel);
+		else
+			m_context_controls.pRemoteSplitter->SplitHorizontally(m_context_controls.pRemoteTreeViewPanel, m_context_controls.pRemoteListViewPanel);
+	}
+	else
+	{
+		m_context_controls.pRemoteTreeViewPanel->Hide();
+		m_context_controls.pRemoteListViewPanel->SetHeader(m_context_controls.pRemoteViewHeader);
+		m_context_controls.pRemoteSplitter->Initialize(m_context_controls.pRemoteListViewPanel);
+	}
+
+	if (layout == 3)
+	{
+		if (!swap)
+			m_context_controls.pRemoteSplitter->SetSashGravity(1.0);
+		else
+			m_context_controls.pLocalSplitter->SetSashGravity(1.0);
+	}
 }
