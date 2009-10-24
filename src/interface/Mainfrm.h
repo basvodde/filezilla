@@ -27,6 +27,7 @@ class CWindowStateManager;
 class CStatusBar;
 class CMainFrameStateEventHandler;
 class CSplitterWindowEx;
+class wxAuiNotebookEx;
 
 class CMainFrame : public wxFrame
 {
@@ -38,8 +39,8 @@ public:
 
 	void AddToRequestQueue(CFileZillaEngine* pEngine, CAsyncRequestNotification* pNotification);
 	CStatusView* GetStatusView() { return m_pStatusView; }
-	CLocalListView* GetLocalListView() { return m_context_controls.pLocalListView; }
-	CRemoteListView* GetRemoteListView() { return m_context_controls.pRemoteListView; }
+	CLocalListView* GetLocalListView() { return m_context_controls[m_current_context_controls].pLocalListView; }
+	CRemoteListView* GetRemoteListView() { return m_context_controls[m_current_context_controls].pRemoteListView; }
 	CQueueView* GetQueue() { return m_pQueueView; }
 	CQuickconnectBar* GetQuickconnectBar() { return m_pQuickconnectBar; }
 
@@ -100,7 +101,8 @@ protected:
 		CSplitterWindowEx* pRemoteSplitter;
 	};
 
-	struct _context_controls m_context_controls;
+	std::vector<struct _context_controls> m_context_controls;
+	size_t m_current_context_controls;
 
 	std::list<int> m_bookmark_menu_ids;
 	std::map<int, wxString> m_bookmark_menu_id_map_global;
@@ -196,6 +198,8 @@ protected:
 #ifndef __WXMAC__
 	wxTaskBarIcon* m_taskBarIcon;
 #endif
+
+	wxAuiNotebookEx* m_tabs;
 };
 
 #endif
