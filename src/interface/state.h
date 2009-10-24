@@ -54,6 +54,7 @@ public:
 
 	CState* CreateState(CMainFrame* pMainFrame);
 	void DestroyState(CState* pState);
+	void DestroyAllStates();
 
 	CState* GetCurrentContext();
 	const std::vector<CState*>* GetAllStates() { return &m_contexts; }

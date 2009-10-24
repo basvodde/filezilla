@@ -65,6 +65,21 @@ void CContextManager::DestroyState(CState* pState)
 	delete pState;
 }
 
+void CContextManager::DestroyAllStates()
+{
+	m_current_context = -1;
+	NotifyHandlers(GetCurrentContext(), STATECHANGE_CHANGEDCONTEXT, _T(""), 0, false);
+
+	while (!m_contexts.empty())
+	{
+		CState* pState = m_contexts.back();
+		m_contexts.pop_back();
+
+		NotifyHandlers(pState, STATECHANGE_REMOVECONTEXT, _T(""), 0, false);
+		delete pState;
+	}
+}
+
 void CContextManager::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool current_only, bool blockable)
 {
 	wxASSERT(pHandler);

@@ -177,7 +177,6 @@ protected:
 	wxTimer m_closeEventTimer;
 
 	CAsyncRequestQueue* m_pAsyncRequestQueue;
-	CState* m_pState;
 	CMainFrameStateEventHandler* m_pStateEventHandler;
 
 	CWindowStateManager* m_pWindowStateManager;

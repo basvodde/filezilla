@@ -255,8 +255,8 @@ CMainFrame::CMainFrame()
 	m_pStatusView = 0;
 
 	m_pThemeProvider = new CThemeProvider();
-	m_pState = CContextManager::Get()->CreateState(this);
-	m_pStateEventHandler = new CMainFrameStateEventHandler(m_pState, this);
+	CState* pState = CContextManager::Get()->CreateState(this);
+	m_pStateEventHandler = new CMainFrameStateEventHandler(pState, this);
 
 	CPowerManagement::Create(this);
 
@@ -296,15 +296,15 @@ CMainFrame::CMainFrame()
 
 	m_pAsyncRequestQueue = new CAsyncRequestQueue(this);
 
-	if (!m_pState->CreateEngine())
+	if (!pState->CreateEngine())
 	{
 		wxMessageBox(_("Failed to initialize FTP engine"));
 	}
 
 	if (m_pActivityLed[0])
 	{
-		m_pActivityLed[0]->SetEngine(m_pState->m_pEngine);
-		m_pActivityLed[1]->SetEngine(m_pState->m_pEngine);
+		m_pActivityLed[0]->SetEngine(pState->m_pEngine);
+		m_pActivityLed[1]->SetEngine(pState->m_pEngine);
 	}
 
 #ifdef __WXMSW__
@@ -349,8 +349,8 @@ CMainFrame::CMainFrame()
 
 	m_pLocalTreeViewPanel = new CView(m_pLocalSplitter);
 	m_pLocalListViewPanel = new CView(m_pLocalSplitter);
-	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1, m_pState, m_pQueueView);
-	m_pLocalListView = new CLocalListView(m_pLocalListViewPanel, m_pState, m_pQueueView);
+	m_pLocalTreeView = new CLocalTreeView(m_pLocalTreeViewPanel, -1, pState, m_pQueueView);
+	m_pLocalListView = new CLocalListView(m_pLocalListViewPanel, pState, m_pQueueView);
 	m_pLocalTreeViewPanel->SetWindow(m_pLocalTreeView);
 	m_pLocalListViewPanel->SetWindow(m_pLocalListView);
 
@@ -362,8 +362,8 @@ CMainFrame::CMainFrame()
 
 	m_pRemoteTreeViewPanel = new CView(m_pRemoteSplitter);
 	m_pRemoteListViewPanel = new CView(m_pRemoteSplitter);
-	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, m_pState, m_pQueueView);
-	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, m_pState, m_pQueueView);
+	m_pRemoteTreeView = new CRemoteTreeView(m_pRemoteTreeViewPanel, -1, pState, m_pQueueView);
+	m_pRemoteListView = new CRemoteListView(m_pRemoteListViewPanel, pState, m_pQueueView);
 	m_pRemoteTreeViewPanel->SetWindow(m_pRemoteTreeView);
 	m_pRemoteListViewPanel->SetWindow(m_pRemoteListView);
 
@@ -457,7 +457,7 @@ CMainFrame::CMainFrame()
 			m_pViewSplitter->SplitVertically(m_pLocalSplitter, m_pRemoteSplitter);
 	}
 
-	m_pLocalViewHeader = new CLocalViewHeader(m_pLocalSplitter, m_pState);
+	m_pLocalViewHeader = new CLocalViewHeader(m_pLocalSplitter, pState);
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL))
 	{
 		m_pLocalTreeViewPanel->SetHeader(m_pLocalViewHeader);
@@ -475,7 +475,7 @@ CMainFrame::CMainFrame()
 		m_pLocalSplitter->Initialize(m_pLocalListViewPanel);
 	}
 
-	m_pRemoteViewHeader = new CRemoteViewHeader(m_pRemoteSplitter, m_pState);
+	m_pRemoteViewHeader = new CRemoteViewHeader(m_pRemoteSplitter, pState);
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE))
 	{
 		m_pRemoteTreeViewPanel->SetHeader(m_pRemoteViewHeader);
@@ -511,8 +511,8 @@ CMainFrame::CMainFrame()
 		SetDefaultSplitterPositions();
 
 	wxString localDir = COptions::Get()->GetOption(OPTION_LASTLOCALDIR);
-	if (!m_pState->SetLocalDir(localDir))
-		m_pState->SetLocalDir(_T("/"));
+	if (!pState->SetLocalDir(localDir))
+		pState->SetLocalDir(_T("/"));
 
 	wxAcceleratorEntry entries[1];
 	entries[0].Set(wxACCEL_CMD | wxACCEL_SHIFT, 'I', XRCID("ID_MENU_VIEW_FILTERS"));
@@ -520,7 +520,7 @@ CMainFrame::CMainFrame()
 	wxAcceleratorTable accel(sizeof(entries) / sizeof(wxAcceleratorEntry), entries);
 	SetAcceleratorTable(accel);
 
-	m_pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
+	pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
 
 	ConnectNavigationHandler(m_pStatusView);
 	ConnectNavigationHandler(m_pLocalListView);
@@ -542,7 +542,7 @@ CMainFrame::CMainFrame()
 
 	CAutoAsciiFiles::SettingsChanged();
 
-	m_pState->GetComparisonManager()->SetListings(m_pLocalListView, m_pRemoteListView);
+	pState->GetComparisonManager()->SetListings(m_pLocalListView, m_pRemoteListView);
 }
 
 CMainFrame::~CMainFrame()
@@ -550,8 +550,8 @@ CMainFrame::~CMainFrame()
 	CPowerManagement::Destroy();
 
 	delete m_pStateEventHandler;
-	CContextManager::Get()->DestroyState(m_pState);
-	m_pState = 0;
+
+	CContextManager::Get()->DestroyAllStates();
 	delete m_pAsyncRequestQueue;
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	delete m_pUpdateWizard;
@@ -726,7 +726,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_CMD"))
 	{
-		if (!m_pState || !m_pState->m_pCommandQueue || !m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		if (!pState || !pState->m_pCommandQueue || !pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 			return;
 
 		CInputDialog dlg;
@@ -734,7 +735,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		if (dlg.ShowModal() != wxID_OK)
 			return;
 
-		if (!m_pState || !m_pState->m_pCommandQueue || !m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
+		pState = CContextManager::Get()->GetCurrentContext();
+		if (!pState || !pState->m_pCommandQueue || !pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 		{
 			wxBell();
 			return;
@@ -754,7 +756,13 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 				return;
 		}
 
-		m_pState->m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));
+		pState = CContextManager::Get()->GetCurrentContext();
+		if (!pState || !pState->m_pCommandQueue || !pState->IsRemoteConnected() || !pState->IsRemoteIdle())
+		{
+			wxBell();
+			return;
+		}
+		pState->m_pCommandQueue->ProcessCommand(new CRawCommand(dlg.GetValue()));
 	}
 	else if (event.GetId() == XRCID("wxID_PREFERENCES"))
 	{
@@ -813,9 +821,14 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 
 		COptions::Get()->SetOption(OPTION_VIEW_HIDDEN_FILES, showHidden ? 1 : 0);
-		CServerPath path = m_pState->GetRemotePath();
-		if (!path.IsEmpty() && m_pState->m_pCommandQueue)
-			m_pState->ChangeRemoteDir(path, _T(""), LIST_FLAG_REFRESH);
+		const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
+		for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
+		{
+			CState* pState = *iter;
+			CServerPath path = pState->GetRemotePath();
+			if (!path.IsEmpty() && pState->m_pCommandQueue)
+				pState->ChangeRemoteDir(path, _T(""), LIST_FLAG_REFRESH);
+		}
 	}
 	else if (event.GetId() == XRCID("ID_EXPORT"))
 	{
@@ -836,22 +849,25 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
-		if (m_pStatusBar)
-			m_pStatusBar->DisplayDataType(m_pState->GetServer());
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		if (m_pStatusBar && pState)
+			m_pStatusBar->DisplayDataType(pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 1);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
-		if (m_pStatusBar)
-			m_pStatusBar->DisplayDataType(m_pState->GetServer());
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		if (m_pStatusBar && pState)
+			m_pStatusBar->DisplayDataType(pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
-		if (m_pStatusBar)
-			m_pStatusBar->DisplayDataType(m_pState->GetServer());
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		if (m_pStatusBar && pState)
+			m_pStatusBar->DisplayDataType(pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))
 	{
@@ -942,18 +958,20 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_MANUAL"))
 	{
-		if (!m_pState || !m_pQueueView)
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		if (!pState || !m_pQueueView)
 		{
 			wxBell();
 			return;
 		}
 		CManualTransfer dlg(m_pQueueView);
-		dlg.Show(this, m_pState);
+		dlg.Show(this, pState);
 	}
 	else if (event.GetId() == XRCID("ID_BOOKMARK_ADD") || event.GetId() == XRCID("ID_BOOKMARK_MANAGE"))
 	{
 		CServer server;
-		const CServer* pServer = m_pState ? m_pState->GetServer() : 0;
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		const CServer* pServer = pState ? pState->GetServer() : 0;
 
 		if (!pServer && !m_last_bookmark_path.empty())
 		{
@@ -978,7 +996,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
 
-			if (dlg.ShowModal(m_pState->GetLocalDir().GetPath(), m_pState->GetRemotePath()) == wxID_OK)
+			if (dlg.ShowModal(pState->GetLocalDir().GetPath(), pState->GetRemotePath()) == wxID_OK)
 			{
 				m_bookmarks.clear();
 				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
@@ -989,7 +1007,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			CBookmarksDialog dlg(this, m_last_bookmark_path, pServer);
 
-			if (dlg.ShowModal(m_pState->GetLocalDir().GetPath(), m_pState->GetRemotePath()) == wxID_OK)
+			if (dlg.ShowModal(pState->GetLocalDir().GetPath(), pState->GetRemotePath()) == wxID_OK)
 			{
 				m_bookmarks.clear();
 				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
@@ -1004,6 +1022,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 	{
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+
 		std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.find(event.GetId());
 		if (iter != m_bookmark_menu_id_map_site.end())
 		{
@@ -1020,26 +1040,29 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			if (!pData)
 				return;
 
-			m_pState->SetSyncBrowse(false);
-			if (!pData->m_remoteDir.IsEmpty() && m_pState->IsRemoteIdle())
+			if (!pState)
+				return;
+
+			pState->SetSyncBrowse(false);
+			if (!pData->m_remoteDir.IsEmpty() && pState->IsRemoteIdle())
 			{
-				const CServer* pServer = m_pState->GetServer();
+				const CServer* pServer = pState->GetServer();
 				if (!pServer || *pServer != pData->m_server)
 				{
 					ConnectToSite(pData);
 					pData->m_localDir.clear(); // So not to set again below
 				}
 				else
-					m_pState->ChangeRemoteDir(pData->m_remoteDir);
+					pState->ChangeRemoteDir(pData->m_remoteDir);
 			}
 			if (!pData->m_localDir.empty())
 			{
-				bool set = m_pState->SetLocalDir(pData->m_localDir);
+				bool set = pState->SetLocalDir(pData->m_localDir);
 
 				if (set && pData->m_sync)
 				{
 					wxASSERT(!pData->m_remoteDir.IsEmpty());
-					m_pState->SetSyncBrowse(true, pData->m_remoteDir);
+					pState->SetSyncBrowse(true, pData->m_remoteDir);
 				}
 			}
 
@@ -1058,29 +1081,29 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			if (!CBookmarksDialog::GetBookmark(iter2->second, local_dir, remote_dir, sync))
 				return;
 
-			m_pState->SetSyncBrowse(false);
-			if (!remote_dir.IsEmpty() && m_pState->IsRemoteIdle())
+			pState->SetSyncBrowse(false);
+			if (!remote_dir.IsEmpty() && pState->IsRemoteIdle())
 			{
-				const CServer* pServer = m_pState->GetServer();
+				const CServer* pServer = pState->GetServer();
 				if (pServer)
 				{
-					CServerPath current_remote_path = m_pState->GetRemotePath();
+					CServerPath current_remote_path = pState->GetRemotePath();
 					if (!current_remote_path.IsEmpty() && current_remote_path.GetType() != remote_dir.GetType())
 					{
 						wxMessageBox(_("Selected global bookmark and current server use a different server type.\nUse site-specific bookmarks for this server."), _("Bookmark"), wxICON_EXCLAMATION, this);
 						return;
 					}
-					m_pState->ChangeRemoteDir(remote_dir);
+					pState->ChangeRemoteDir(remote_dir);
 				}
 			}
 			if (!local_dir.empty())
 			{
-				bool set = m_pState->SetLocalDir(local_dir);
+				bool set = pState->SetLocalDir(local_dir);
 
 				if (set && sync)
 				{
 					wxASSERT(!remote_dir.IsEmpty());
-					m_pState->SetSyncBrowse(true, remote_dir);
+					pState->SetSyncBrowse(true, remote_dir);
 				}
 			}
 		}
@@ -1114,8 +1137,9 @@ void CMainFrame::OnMenuOpenHandler(wxMenuEvent& event)
 		return;
 
 	const CServer* pServer = 0;
-	if (m_pState)
-		pServer = m_pState->GetServer();
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (pState)
+		pServer = pState->GetServer();
 
 	if (!pServer || CServer::ProtocolHasDataTypeConcept(pServer->GetProtocol()))
 	{
@@ -1142,10 +1166,24 @@ void CMainFrame::OnMenuOpenHandler(wxMenuEvent& event)
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
 {
-	if (!m_pState->m_pEngine)
+	CFileZillaEngine* pEngine = (CFileZillaEngine*)event.GetEventObject();
+	if (!pEngine)
 		return;
 
-	CNotification *pNotification = m_pState->m_pEngine->GetNextNotification();
+	const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
+	CState* pState = 0;
+	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
+	{
+		if ((*iter)->m_pEngine != pEngine)
+			continue;
+		
+		pState = *iter;
+		break;
+	}
+	if (!pState)
+		return;
+
+	CNotification *pNotification = pState->m_pEngine->GetNextNotification();
 	while (pNotification)
 	{
 		switch (pNotification->GetID())
@@ -1157,7 +1195,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			delete pNotification;
 			break;
 		case nId_operation:
-			m_pState->m_pCommandQueue->Finish(reinterpret_cast<COperationNotification*>(pNotification));
+			pState->m_pCommandQueue->Finish(reinterpret_cast<COperationNotification*>(pNotification));
 			if (m_bQuit)
 			{
 				Close();
@@ -1169,12 +1207,12 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				const CDirectoryListingNotification* const pListingNotification = reinterpret_cast<CDirectoryListingNotification *>(pNotification);
 
 				if (pListingNotification->GetPath().IsEmpty())
-					m_pState->SetRemoteDir(0, false);
+					pState->SetRemoteDir(0, false);
 				else
 				{
 					CDirectoryListing* pListing = new CDirectoryListing;
 					if (pListingNotification->Failed() ||
-						m_pState->m_pEngine->CacheLookup(pListingNotification->GetPath(), *pListing) != FZ_REPLY_OK)
+						pState->m_pEngine->CacheLookup(pListingNotification->GetPath(), *pListing) != FZ_REPLY_OK)
 					{
 						delete pListing;
 						pListing = new CDirectoryListing;
@@ -1183,7 +1221,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 						pListing->m_firstListTime = CTimeEx::Now();
 					}
 
-					m_pState->SetRemoteDir(pListing, pListingNotification->Modified());
+					pState->SetRemoteDir(pListing, pListingNotification->Modified());
 				}
 			}
 			delete pNotification;
@@ -1197,7 +1235,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 				{
 					if (pAsyncRequest->GetRequestID() == reqId_certificate && m_pStatusBar)
 						m_pStatusBar->SetCertificate((CCertificateNotification*)pNotification);
-					m_pAsyncRequestQueue->AddRequest(m_pState->m_pEngine, pAsyncRequest);
+					m_pAsyncRequestQueue->AddRequest(pState->m_pEngine, pAsyncRequest);
 				}
 			}
 			break;
@@ -1231,10 +1269,10 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			}
 			break;
 		case nId_local_dir_created:
-			if (m_pState)
+			if (pState)
 			{
 				CLocalDirCreatedNotification *pLocalDirCreatedNotification = reinterpret_cast<CLocalDirCreatedNotification *>(pNotification);
-				m_pState->LocalDirCreated(pLocalDirCreatedNotification->dir);
+				pState->LocalDirCreated(pLocalDirCreatedNotification->dir);
 			}
 			delete pNotification;
 			break;
@@ -1243,7 +1281,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			break;
 		}
 
-		pNotification = m_pState->m_pEngine->GetNextNotification();
+		pNotification = pState->m_pEngine->GetNextNotification();
 	}
 }
 
@@ -1328,24 +1366,26 @@ bool CMainFrame::CreateToolBar()
 
 void CMainFrame::OnDisconnect(wxCommandEvent& event)
 {
-	if (!m_pState->IsRemoteConnected())
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState || !pState->IsRemoteConnected())
 		return;
 
-	if (!m_pState->IsRemoteIdle())
+	if (!pState->IsRemoteIdle())
 		return;
 
-	m_pState->Disconnect();
+	pState->Disconnect();
 }
 
 void CMainFrame::OnCancel(wxCommandEvent& event)
 {
-	if (m_pState->m_pCommandQueue->Idle())
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState || pState->m_pCommandQueue->Idle())
 		return;
 
 	if (wxMessageBox(_("Really cancel current operation?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
 	{
-		m_pState->m_pCommandQueue->Cancel();
-		m_pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
+		pState->m_pCommandQueue->Cancel();
+		pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
 	}
 }
 
@@ -1527,8 +1567,16 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	}
 
 	bool res = true;
-	if (m_pState->m_pCommandQueue)
-		res = m_pState->m_pCommandQueue->Cancel();
+	const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
+	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
+	{
+		CState* pState = *iter;
+		if (!pState->m_pCommandQueue)
+			continue;
+
+		if (!pState->m_pCommandQueue->Cancel())
+			res = false;
+	}
 
 	if (!res)
 	{
@@ -1536,7 +1584,11 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		return;
 	}
 
-	m_pState->DestroyEngine();
+	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
+	{
+		CState *pState = *iter;
+		pState->DestroyEngine();
+	}
 
 	CSiteManager::ClearIdMap();
 
@@ -1553,10 +1605,11 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 void CMainFrame::OnReconnect(wxCommandEvent &event)
 {
-	if (!m_pState)
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
 		return;
 
-	if (m_pState->IsRemoteConnected() || !m_pState->IsRemoteIdle())
+	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 		return;
 
 	CServer server;
@@ -1571,22 +1624,24 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 
 	CServerPath path;
 	path.SetSafePath(COptions::Get()->GetOption(OPTION_LASTSERVERPATH));
-	m_pState->Connect(server, false, path);
+	pState->Connect(server, false, path);
 }
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
 {
-	if (!m_pState)
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
 		return;
 
-	if (m_pState->m_pCommandQueue && m_pState->IsRemoteConnected() && m_pState->IsRemoteIdle())
-		m_pState->ChangeRemoteDir(m_pState->GetRemotePath(), _T(""), LIST_FLAG_REFRESH);
+	if (pState->m_pCommandQueue && pState->IsRemoteConnected() && pState->IsRemoteIdle())
+		pState->ChangeRemoteDir(pState->GetRemotePath(), _T(""), LIST_FLAG_REFRESH);
 
-	m_pState->RefreshLocal();
+	pState->RefreshLocal();
 }
 
 void CMainFrame::OnTimer(wxTimerEvent& event)
 {
+	/*
 	if (m_transferStatusTimer.IsRunning() && event.GetId() == m_transferStatusTimer.GetId())
 	{
 		if (!m_pState->m_pEngine)
@@ -1607,7 +1662,8 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 		else
 			m_transferStatusTimer.Stop();
 	}
-	else if (event.GetId() == m_closeEventTimer.GetId())
+	else */
+	if (event.GetId() == m_closeEventTimer.GetId())
 	{
 		if (m_closeEvent == 0)
 			return;
@@ -1671,6 +1727,10 @@ void CMainFrame::SetProgress(const CTransferStatus *pStatus)
 
 void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 {
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
 	CSiteManager dlg;
 
 	if (!dlg.Create(this, m_last_bookmark_path, pServer))
@@ -1689,7 +1749,7 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 		}
 	}
 	else if (res == wxID_OK)
-		m_last_bookmark_path = dlg.GetChangedBookmarkPath(m_pState->GetServer());
+		m_last_bookmark_path = dlg.GetChangedBookmarkPath(pState->GetServer());
 
 	m_bookmarks.clear();
 	dlg.GetBookmarks(m_last_bookmark_path, m_bookmarks);
@@ -1780,9 +1840,10 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 
 	CheckChangedSettings();
 
-	if (m_pStatusBar)
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (m_pStatusBar && pState)
 	{
-		m_pStatusBar->DisplayDataType(m_pState->GetServer());
+		m_pStatusBar->DisplayDataType(pState->GetServer());
 		m_pStatusBar->UpdateSizeFormat();
 	}
 }
@@ -2238,18 +2299,19 @@ bool CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 			return false;
 	}
 
-	if (!m_pState->Connect(pData->m_server, true, pData->m_remoteDir))
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState || !pState->Connect(pData->m_server, true, pData->m_remoteDir))
 		return false;
 
 	if (pData->m_localDir != _T(""))
 	{
-		bool set = m_pState->SetLocalDir(pData->m_localDir);
+		bool set = pState->SetLocalDir(pData->m_localDir);
 
 		if (set && pData->m_sync)
 		{
 			wxASSERT(!pData->m_remoteDir.IsEmpty());
 
-			m_pState->SetSyncBrowse(true, pData->m_remoteDir);
+			pState->SetSyncBrowse(true, pData->m_remoteDir);
 		}
 	}
 
@@ -2529,7 +2591,11 @@ void CMainFrame::OnActivate(wxActivateEvent& event)
 
 void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 {
-	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
+	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	if (pComparisonManager->IsComparing())
 	{
 		pComparisonManager->ExitComparisonMode();
@@ -2549,7 +2615,7 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 			if (!dlg.Run())
 			{
 				// Needed to restore non-toggle state of button
-				m_pState->NotifyHandlers(STATECHANGE_COMPARISON);
+				pState->NotifyHandlers(STATECHANGE_COMPARISON);
 				return;
 			}
 
@@ -2570,7 +2636,11 @@ void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
 	if (!pMenu)
 		return;
 
-	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
+	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	pMenu->FindItem(XRCID("ID_TOOLBAR_COMPARISON"))->Check(pComparisonManager->IsComparing());
 
 	const int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
@@ -2609,6 +2679,10 @@ void CMainFrame::ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandE
 
 void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 {
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
 	int old_mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
 	int new_mode = (event.GetId() == XRCID("ID_COMPARE_SIZE")) ? 0 : 1;
 	COptions::Get()->SetOption(OPTION_COMPARISONMODE, new_mode);
@@ -2621,13 +2695,17 @@ void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
 	}
 
-	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
 		pComparisonManager->CompareListings();
 }
 
 void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
 {
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
 	bool old_mode = COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0;
 	bool new_mode = event.IsChecked();
 
@@ -2638,7 +2716,7 @@ void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
 		m_pMenuBar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), new_mode);
 	}
 
-	CComparisonManager* pComparisonManager = m_pState->GetComparisonManager();
+	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
 		pComparisonManager->CompareListings();
 }
@@ -2657,10 +2735,13 @@ void CMainFrame::UpdateToolbarState()
 {
 	if (!m_pToolBar)
 		return;
-	wxASSERT(m_pState);
 
-	const CServer* pServer = m_pState->GetServer();
-	const bool idle = m_pState->IsRemoteIdle();
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
+	const CServer* pServer = pState->GetServer();
+	const bool idle = pState->IsRemoteIdle();
 
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_DISCONNECT"), pServer && idle);
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_CANCEL"), pServer && !idle);
@@ -2707,10 +2788,13 @@ void CMainFrame::UpdateMenubarState()
 {
 	if (!m_pMenuBar)
 		return;
-	wxASSERT(m_pState);
 
-	const CServer* const pServer = m_pState->GetServer();
-	const bool idle = m_pState->IsRemoteIdle();
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
+	const CServer* const pServer = pState->GetServer();
+	const bool idle = pState->IsRemoteIdle();
 
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_DISCONNECT"), pServer && idle);
 	m_pMenuBar->Enable(XRCID("ID_CANCEL"), pServer && !idle);
@@ -2788,7 +2872,11 @@ void CMainFrame::ProcessCommandLine()
 				return;
 		}
 
-		m_pState->Connect(server, true, path);
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		if (!pState)
+			return;
+
+		pState->Connect(server, true, path);
 	}
 }
 
@@ -2935,13 +3023,14 @@ void CMainFrame::ClearBookmarks()
 
 void CMainFrame::OnSyncBrowse(wxCommandEvent& event)
 {
-	if (!m_pState)
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
 		return;
 
-	m_pState->SetSyncBrowse(!m_pState->GetSyncBrowse());
+	pState->SetSyncBrowse(!pState->GetSyncBrowse());
 
 	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 }
 
 #ifndef __WXMAC__
@@ -2997,7 +3086,11 @@ void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
 
 void CMainFrame::OnSearch(wxCommandEvent& event)
 {
-	CSearchDialog dlg(this, m_pState, m_pQueueView);
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return;
+
+	CSearchDialog dlg(this, pState, m_pQueueView);
 	if (!dlg.Load())
 		return;
 
