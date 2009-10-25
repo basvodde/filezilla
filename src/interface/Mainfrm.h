@@ -77,7 +77,7 @@ protected:
 	void OpenSiteManager(const CServer* pServer = 0);
 	void InitToolbarState();
 	void InitMenubarState();
-	void CloseTab(int tab);
+	bool CloseTab(int tab);
 	void CreateContextControls(CState* pState);
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
@@ -193,6 +193,8 @@ protected:
 	void OnMenuNewTab(wxCommandEvent& event);
 	void OnMenuCloseTab(wxCommandEvent& event);
 	void OnTabChanged(wxAuiNotebookEvent& event);
+	void OnTabClosing(wxAuiNotebookEvent& event);
+	void OnTabClosing_Deferred(wxCommandEvent& event);
 
 	bool m_bInitDone;
 	bool m_bQuit;

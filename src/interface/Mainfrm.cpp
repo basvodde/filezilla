@@ -53,6 +53,9 @@
 #define new DEBUG_NEW
 #endif
 
+DECLARE_EVENT_TYPE(fzEVT_TAB_CLOSING_DEFERRED, -1);
+DEFINE_EVENT_TYPE(fzEVT_TAB_CLOSING_DEFERRED);
+
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
@@ -112,6 +115,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_MENU_SERVER_SEARCH"), CMainFrame::OnSearch)
 	EVT_MENU(XRCID("ID_MENU_FILE_NEWTAB"), CMainFrame::OnMenuNewTab)
 	EVT_MENU(XRCID("ID_MENU_FILE_CLOSETAB"), CMainFrame::OnMenuCloseTab)
+	EVT_COMMAND(wxID_ANY, fzEVT_TAB_CLOSING_DEFERRED, CMainFrame::OnTabClosing_Deferred)
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -3156,6 +3160,7 @@ void CMainFrame::CreateContextControls(CState* pState)
 			m_pBottomSplitter->ReplaceWindow(m_context_controls[m_current_context_controls].pViewSplitter, m_tabs);
 
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
+			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
 		}
 
 		parent = m_tabs;
@@ -3292,10 +3297,10 @@ void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 	m_tabs->SetSelection(m_tabs->GetPageCount() - 1);
 }
 
-void CMainFrame::CloseTab(int tab)
+bool CMainFrame::CloseTab(int tab)
 {
 	if (!m_tabs)
-		return;
+		return false;
 
 	size_t i = 0;
 	for (i = 0; i < m_context_controls.size(); i++)
@@ -3304,7 +3309,7 @@ void CMainFrame::CloseTab(int tab)
 			break;
 	}
 	if (i == m_context_controls.size())
-		return;
+		return false;
 
 	Freeze();
 
@@ -3312,11 +3317,11 @@ void CMainFrame::CloseTab(int tab)
 
 	if (!pState->m_pCommandQueue->Idle())
 	{
-		if (wxMessageBox(_("Cannot close tab while busy.\nCancel current operation and close tab?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
-		{
-			pState->m_pCommandQueue->Cancel();
-			pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
-		}
+		if (wxMessageBox(_("Cannot close tab while busy.\nCancel current operation and close tab?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
+			return false;
+
+		pState->m_pCommandQueue->Cancel();
+		pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
 	}
 
 	if (m_tabs->GetPageCount() == 2)
@@ -3376,6 +3381,8 @@ void CMainFrame::CloseTab(int tab)
 	}
 
 	Thaw();
+
+	return true;
 }
 
 void CMainFrame::OnMenuCloseTab(wxCommandEvent& event)
@@ -3400,4 +3407,18 @@ void CMainFrame::OnTabChanged(wxAuiNotebookEvent& event)
 		CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
 		break;
 	}
+}
+
+void CMainFrame::OnTabClosing(wxAuiNotebookEvent& event)
+{
+	// Need to defer event, wxAUI would write to free'd memory
+	// if we'd actually delete tab and potenially the notebook with it
+	AddPendingEvent(wxCommandEvent(fzEVT_TAB_CLOSING_DEFERRED, event.GetSelection()));
+
+	event.Veto();
+}
+
+void CMainFrame::OnTabClosing_Deferred(wxCommandEvent& event)
+{
+	CloseTab(event.GetId());
 }
