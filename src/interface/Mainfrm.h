@@ -77,7 +77,7 @@ protected:
 	void OpenSiteManager(const CServer* pServer = 0);
 	void InitToolbarState();
 	void InitMenubarState();
-
+	void CloseTab(int tab);
 	void CreateContextControls(CState* pState);
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
@@ -105,6 +105,8 @@ protected:
 		CState* pState;
 
 		wxString title;
+
+		int m_tab_index;
 	};
 
 	std::vector<struct _context_controls> m_context_controls;

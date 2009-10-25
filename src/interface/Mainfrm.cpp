@@ -230,7 +230,8 @@ protected:
 				}
 			}
 
-			m_pMainFrame->m_tabs->SetPageText(i, controls.title);
+			if (m_pMainFrame->m_tabs)
+				m_pMainFrame->m_tabs->SetPageText(i, controls.title);
 
 			if (i == m_pMainFrame->m_current_context_controls)
 			{
@@ -1890,37 +1891,48 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 	if (!m_pTopSplitter)
 		return;
 
-	if (m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit())
+	bool show = !m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit();
+
+	if (!show)
 	{
-		m_context_controls[m_current_context_controls].pLocalListViewPanel->SetHeader(m_context_controls[m_current_context_controls].pLocalTreeViewPanel->DetachHeader());
-		m_context_controls[m_current_context_controls].pLocalSplitter->Unsplit(m_context_controls[m_current_context_controls].pLocalTreeViewPanel);
+		for (size_t i = 0; i < m_context_controls.size(); i++)
+		{
+			if (!m_context_controls[i].pLocalSplitter->IsSplit())
+				continue;
+
+			m_context_controls[i].pLocalListViewPanel->SetHeader(m_context_controls[i].pLocalTreeViewPanel->DetachHeader());
+			m_context_controls[i].pLocalSplitter->Unsplit(m_context_controls[i].pLocalTreeViewPanel);
+		}
 	}
 	else
 		ShowLocalTree();
 
-	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit());
+	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, show);
 
 	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit());
+		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), show);
 	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit());
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), show);
 }
 
 void CMainFrame::ShowLocalTree()
 {
-	if (m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit())
-		return;
+	for (size_t i = 0; i < m_context_controls.size(); i++)
+	{
+		if (m_context_controls[i].pLocalSplitter->IsSplit())
+			continue;
 
-	m_context_controls[m_current_context_controls].pLocalTreeViewPanel->SetHeader(m_context_controls[m_current_context_controls].pLocalListViewPanel->DetachHeader());
-	wxSize size = m_context_controls[m_current_context_controls].pLocalSplitter->GetClientSize();
-	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-	if (layout == 3 && swap)
-		m_context_controls[m_current_context_controls].pLocalSplitter->SplitVertically(m_context_controls[m_current_context_controls].pLocalListViewPanel, m_context_controls[m_current_context_controls].pLocalTreeViewPanel);
-	else if (layout)
-		m_context_controls[m_current_context_controls].pLocalSplitter->SplitVertically(m_context_controls[m_current_context_controls].pLocalTreeViewPanel, m_context_controls[m_current_context_controls].pLocalListViewPanel);
-	else
-		m_context_controls[m_current_context_controls].pLocalSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pLocalTreeViewPanel, m_context_controls[m_current_context_controls].pLocalListViewPanel);
+		m_context_controls[i].pLocalTreeViewPanel->SetHeader(m_context_controls[i].pLocalListViewPanel->DetachHeader());
+		wxSize size = m_context_controls[i].pLocalSplitter->GetClientSize();
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+		if (layout == 3 && swap)
+			m_context_controls[i].pLocalSplitter->SplitVertically(m_context_controls[i].pLocalListViewPanel, m_context_controls[i].pLocalTreeViewPanel);
+		else if (layout)
+			m_context_controls[i].pLocalSplitter->SplitVertically(m_context_controls[i].pLocalTreeViewPanel, m_context_controls[i].pLocalListViewPanel);
+		else
+			m_context_controls[i].pLocalSplitter->SplitHorizontally(m_context_controls[i].pLocalTreeViewPanel, m_context_controls[i].pLocalListViewPanel);
+	}
 }
 
 void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
@@ -1928,37 +1940,48 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 	if (!m_pTopSplitter)
 		return;
 
-	if (m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit())
+	bool show = !m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit();
+
+	if (!show)
 	{
-		m_context_controls[m_current_context_controls].pRemoteListViewPanel->SetHeader(m_context_controls[m_current_context_controls].pRemoteTreeViewPanel->DetachHeader());
-		m_context_controls[m_current_context_controls].pRemoteSplitter->Unsplit(m_context_controls[m_current_context_controls].pRemoteTreeViewPanel);
+		for (size_t i = 0; i < m_context_controls.size(); i++)
+		{
+			if (!m_context_controls[i].pRemoteSplitter->IsSplit())
+				continue;
+
+			m_context_controls[i].pRemoteListViewPanel->SetHeader(m_context_controls[i].pRemoteTreeViewPanel->DetachHeader());
+			m_context_controls[i].pRemoteSplitter->Unsplit(m_context_controls[i].pRemoteTreeViewPanel);
+		}
 	}
 	else
 		ShowRemoteTree();
 
-	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit());
+	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, show);
 
 	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit());
+		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), show);
 	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit());
+		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), show);
 }
 
 void CMainFrame::ShowRemoteTree()
 {
-	if (m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit())
-		return;
+	for (size_t i = 0; i < m_context_controls.size(); i++)
+	{
+		if (m_context_controls[i].pRemoteSplitter->IsSplit())
+			continue;
 
-	m_context_controls[m_current_context_controls].pRemoteTreeViewPanel->SetHeader(m_context_controls[m_current_context_controls].pRemoteListViewPanel->DetachHeader());
-	wxSize size = m_context_controls[m_current_context_controls].pRemoteSplitter->GetClientSize();
-	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
-	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
-	if (layout == 3 && !swap)
-		m_context_controls[m_current_context_controls].pRemoteSplitter->SplitVertically(m_context_controls[m_current_context_controls].pRemoteListViewPanel, m_context_controls[m_current_context_controls].pRemoteTreeViewPanel);
-	else if (layout)
-		m_context_controls[m_current_context_controls].pRemoteSplitter->SplitVertically(m_context_controls[m_current_context_controls].pRemoteTreeViewPanel, m_context_controls[m_current_context_controls].pRemoteListViewPanel);
-	else
-		m_context_controls[m_current_context_controls].pRemoteSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pRemoteTreeViewPanel, m_context_controls[m_current_context_controls].pRemoteListViewPanel);
+		m_context_controls[i].pRemoteTreeViewPanel->SetHeader(m_context_controls[i].pRemoteListViewPanel->DetachHeader());
+		wxSize size = m_context_controls[i].pRemoteSplitter->GetClientSize();
+		const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
+		const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
+		if (layout == 3 && swap)
+			m_context_controls[i].pRemoteSplitter->SplitVertically(m_context_controls[i].pRemoteListViewPanel, m_context_controls[i].pRemoteTreeViewPanel);
+		else if (layout)
+			m_context_controls[i].pRemoteSplitter->SplitVertically(m_context_controls[i].pRemoteTreeViewPanel, m_context_controls[i].pRemoteListViewPanel);
+		else
+			m_context_controls[i].pRemoteSplitter->SplitHorizontally(m_context_controls[i].pRemoteTreeViewPanel, m_context_controls[i].pRemoteListViewPanel);
+	}
 }
 
 void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
@@ -1985,7 +2008,10 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		else if (!m_pQueueLogSplitter->IsShown())
 		{
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
-			m_pBottomSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pViewSplitter, m_pQueueLogSplitter);
+			if (m_tabs)
+				m_pBottomSplitter->SplitHorizontally(m_tabs, m_pQueueLogSplitter);
+			else
+				m_pBottomSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pViewSplitter, m_pQueueLogSplitter);
 			shown = true;
 		}
 		else
@@ -2005,7 +2031,10 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 		{
 			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
-			m_pBottomSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pViewSplitter, m_pQueueLogSplitter);
+			if (m_tabs)
+				m_pBottomSplitter->SplitHorizontally(m_tabs, m_pQueueLogSplitter);
+			else
+				m_pBottomSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pViewSplitter, m_pQueueLogSplitter);
 		}
 		shown = m_pBottomSplitter->IsSplit();
 	}
@@ -2129,7 +2158,10 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 					else
 					{
 						m_pQueueLogSplitter->Initialize(m_pStatusView);
-						m_pBottomSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pViewSplitter, m_pQueueLogSplitter);
+						if (m_tabs)
+							m_pBottomSplitter->SplitHorizontally(m_tabs, m_pQueueLogSplitter);
+						else
+							m_pBottomSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pViewSplitter, m_pQueueLogSplitter);
 					}
 				}
 				break;
@@ -2156,106 +2188,109 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 	else
 		mode = wxSPLIT_HORIZONTAL;
 
-	int isMode = m_context_controls[m_current_context_controls].pViewSplitter->GetSplitMode();
-
-	int isSwap = m_context_controls[m_current_context_controls].pViewSplitter->GetWindow1() == m_context_controls[m_current_context_controls].pRemoteSplitter ? 1 : 0;
-
-	if (mode != isMode || swap != isSwap)
+	for (size_t i = 0; i < m_context_controls.size(); i++)
 	{
-		m_context_controls[m_current_context_controls].pViewSplitter->Unsplit();
-		if (mode == wxSPLIT_VERTICAL)
-		{
-			if (swap)
-				m_context_controls[m_current_context_controls].pViewSplitter->SplitVertically(m_context_controls[m_current_context_controls].pRemoteSplitter, m_context_controls[m_current_context_controls].pLocalSplitter);
-			else
-				m_context_controls[m_current_context_controls].pViewSplitter->SplitVertically(m_context_controls[m_current_context_controls].pLocalSplitter, m_context_controls[m_current_context_controls].pRemoteSplitter);
-		}
-		else
-		{
-			if (swap)
-				m_context_controls[m_current_context_controls].pViewSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pRemoteSplitter, m_context_controls[m_current_context_controls].pLocalSplitter);
-			else
-				m_context_controls[m_current_context_controls].pViewSplitter->SplitHorizontally(m_context_controls[m_current_context_controls].pLocalSplitter, m_context_controls[m_current_context_controls].pRemoteSplitter);
-		}
-	}
+		int isMode = m_context_controls[i].pViewSplitter->GetSplitMode();
 
-	if (m_context_controls[m_current_context_controls].pLocalSplitter->IsSplit())
-	{
-		if (!layout)
-			mode = wxSPLIT_HORIZONTAL;
-		else
-			mode = wxSPLIT_VERTICAL;
+		int isSwap = m_context_controls[i].pViewSplitter->GetWindow1() == m_context_controls[i].pRemoteSplitter ? 1 : 0;
 
-		wxWindow* pFirst;
-		wxWindow* pSecond;
-		if (layout == 3 && swap)
+		if (mode != isMode || swap != isSwap)
 		{
-			pFirst = m_context_controls[m_current_context_controls].pLocalListViewPanel;
-			pSecond = m_context_controls[m_current_context_controls].pLocalTreeViewPanel;
-		}
-		else
-		{
-			pFirst = m_context_controls[m_current_context_controls].pLocalTreeViewPanel;
-			pSecond = m_context_controls[m_current_context_controls].pLocalListViewPanel;
-		}
-
-		if (mode != m_context_controls[m_current_context_controls].pLocalSplitter->GetSplitMode() || pFirst != m_context_controls[m_current_context_controls].pLocalSplitter->GetWindow1())
-		{
-			m_context_controls[m_current_context_controls].pLocalSplitter->Unsplit();
+			m_context_controls[i].pViewSplitter->Unsplit();
 			if (mode == wxSPLIT_VERTICAL)
-				m_context_controls[m_current_context_controls].pLocalSplitter->SplitVertically(pFirst, pSecond);
+			{
+				if (swap)
+					m_context_controls[i].pViewSplitter->SplitVertically(m_context_controls[i].pRemoteSplitter, m_context_controls[i].pLocalSplitter);
+				else
+					m_context_controls[i].pViewSplitter->SplitVertically(m_context_controls[i].pLocalSplitter, m_context_controls[i].pRemoteSplitter);
+			}
 			else
-				m_context_controls[m_current_context_controls].pLocalSplitter->SplitHorizontally(pFirst, pSecond);
-		}
-	}
-
-	if (m_context_controls[m_current_context_controls].pRemoteSplitter->IsSplit())
-	{
-		if (!layout)
-			mode = wxSPLIT_HORIZONTAL;
-		else
-			mode = wxSPLIT_VERTICAL;
-
-		wxWindow* pFirst;
-		wxWindow* pSecond;
-		if (layout == 3 && !swap)
-		{
-			pFirst = m_context_controls[m_current_context_controls].pRemoteListViewPanel;
-			pSecond = m_context_controls[m_current_context_controls].pRemoteTreeViewPanel;
-		}
-		else
-		{
-			pFirst = m_context_controls[m_current_context_controls].pRemoteTreeViewPanel;
-			pSecond = m_context_controls[m_current_context_controls].pRemoteListViewPanel;
+			{
+				if (swap)
+					m_context_controls[i].pViewSplitter->SplitHorizontally(m_context_controls[i].pRemoteSplitter, m_context_controls[i].pLocalSplitter);
+				else
+					m_context_controls[i].pViewSplitter->SplitHorizontally(m_context_controls[i].pLocalSplitter, m_context_controls[i].pRemoteSplitter);
+			}
 		}
 
-		if (mode != m_context_controls[m_current_context_controls].pRemoteSplitter->GetSplitMode() || pFirst != m_context_controls[m_current_context_controls].pRemoteSplitter->GetWindow1())
+		if (m_context_controls[i].pLocalSplitter->IsSplit())
 		{
-			m_context_controls[m_current_context_controls].pRemoteSplitter->Unsplit();
-			if (mode == wxSPLIT_VERTICAL)
-				m_context_controls[m_current_context_controls].pRemoteSplitter->SplitVertically(pFirst, pSecond);
+			if (!layout)
+				mode = wxSPLIT_HORIZONTAL;
 			else
-				m_context_controls[m_current_context_controls].pRemoteSplitter->SplitHorizontally(pFirst, pSecond);
-		}
-	}
+				mode = wxSPLIT_VERTICAL;
 
-	if (layout == 3)
-	{
-		if (!swap)
+			wxWindow* pFirst;
+			wxWindow* pSecond;
+			if (layout == 3 && swap)
+			{
+				pFirst = m_context_controls[i].pLocalListViewPanel;
+				pSecond = m_context_controls[i].pLocalTreeViewPanel;
+			}
+			else
+			{
+				pFirst = m_context_controls[i].pLocalTreeViewPanel;
+				pSecond = m_context_controls[i].pLocalListViewPanel;
+			}
+
+			if (mode != m_context_controls[i].pLocalSplitter->GetSplitMode() || pFirst != m_context_controls[i].pLocalSplitter->GetWindow1())
+			{
+				m_context_controls[i].pLocalSplitter->Unsplit();
+				if (mode == wxSPLIT_VERTICAL)
+					m_context_controls[i].pLocalSplitter->SplitVertically(pFirst, pSecond);
+				else
+					m_context_controls[i].pLocalSplitter->SplitHorizontally(pFirst, pSecond);
+			}
+		}
+
+		if (m_context_controls[i].pRemoteSplitter->IsSplit())
 		{
-			m_context_controls[m_current_context_controls].pRemoteSplitter->SetSashGravity(1.0);
-			m_context_controls[m_current_context_controls].pLocalSplitter->SetSashGravity(0.0);
+			if (!layout)
+				mode = wxSPLIT_HORIZONTAL;
+			else
+				mode = wxSPLIT_VERTICAL;
+
+			wxWindow* pFirst;
+			wxWindow* pSecond;
+			if (layout == 3 && !swap)
+			{
+				pFirst = m_context_controls[i].pRemoteListViewPanel;
+				pSecond = m_context_controls[i].pRemoteTreeViewPanel;
+			}
+			else
+			{
+				pFirst = m_context_controls[i].pRemoteTreeViewPanel;
+				pSecond = m_context_controls[i].pRemoteListViewPanel;
+			}
+
+			if (mode != m_context_controls[i].pRemoteSplitter->GetSplitMode() || pFirst != m_context_controls[i].pRemoteSplitter->GetWindow1())
+			{
+				m_context_controls[i].pRemoteSplitter->Unsplit();
+				if (mode == wxSPLIT_VERTICAL)
+					m_context_controls[i].pRemoteSplitter->SplitVertically(pFirst, pSecond);
+				else
+					m_context_controls[i].pRemoteSplitter->SplitHorizontally(pFirst, pSecond);
+			}
+		}
+
+		if (layout == 3)
+		{
+			if (!swap)
+			{
+				m_context_controls[i].pRemoteSplitter->SetSashGravity(1.0);
+				m_context_controls[i].pLocalSplitter->SetSashGravity(0.0);
+			}
+			else
+			{
+				m_context_controls[i].pLocalSplitter->SetSashGravity(1.0);
+				m_context_controls[i].pRemoteSplitter->SetSashGravity(0.0);
+			}
 		}
 		else
 		{
-			m_context_controls[m_current_context_controls].pLocalSplitter->SetSashGravity(1.0);
-			m_context_controls[m_current_context_controls].pRemoteSplitter->SetSashGravity(0.0);
+			m_context_controls[i].pLocalSplitter->SetSashGravity(0.0);
+			m_context_controls[i].pRemoteSplitter->SetSashGravity(0.0);
 		}
-	}
-	else
-	{
-		m_context_controls[m_current_context_controls].pLocalSplitter->SetSashGravity(0.0);
-		m_context_controls[m_current_context_controls].pRemoteSplitter->SetSashGravity(0.0);
 	}
 }
 
@@ -3111,15 +3146,16 @@ void CMainFrame::CreateContextControls(CState* pState)
 		if (!m_tabs )
 		{
 			m_tabs = new wxAuiNotebookEx();
-			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
 
 			m_tabs->Create(m_pBottomSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ALL_TABS);
 			m_tabs->SetExArtProvider();
 
-			m_context_controls[0].pViewSplitter->Reparent(m_tabs);
+			m_context_controls[m_current_context_controls].pViewSplitter->Reparent(m_tabs);
 
-			m_tabs->AddPage(m_context_controls[0].pViewSplitter, m_context_controls[0].title);
-			m_pBottomSplitter->ReplaceWindow(m_context_controls[0].pViewSplitter, m_tabs);
+			m_tabs->AddPage(m_context_controls[m_current_context_controls].pViewSplitter, m_context_controls[m_current_context_controls].title);
+			m_pBottomSplitter->ReplaceWindow(m_context_controls[m_current_context_controls].pViewSplitter, m_tabs);
+
+			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
 		}
 
 		parent = m_tabs;
@@ -3232,8 +3268,11 @@ void CMainFrame::CreateContextControls(CState* pState)
 
 	if (m_tabs)
 	{
+		context_controls.m_tab_index = m_tabs->GetPageCount();
 		m_tabs->AddPage(context_controls.pViewSplitter, context_controls.title);
 	}
+	else
+		context_controls.m_tab_index = 0;
 
 	Thaw();
 
@@ -3253,8 +3292,98 @@ void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 	m_tabs->SetSelection(m_tabs->GetPageCount() - 1);
 }
 
+void CMainFrame::CloseTab(int tab)
+{
+	if (!m_tabs)
+		return;
+
+	size_t i = 0;
+	for (i = 0; i < m_context_controls.size(); i++)
+	{
+		if (m_context_controls[i].m_tab_index == tab)
+			break;
+	}
+	if (i == m_context_controls.size())
+		return;
+
+	Freeze();
+
+	CState* pState = m_context_controls[i].pState;
+
+	if (!pState->m_pCommandQueue->Idle())
+	{
+		if (wxMessageBox(_("Cannot close tab while busy.\nCancel current operation and close tab?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) == wxYES)
+		{
+			pState->m_pCommandQueue->Cancel();
+			pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
+		}
+	}
+
+	if (m_tabs->GetPageCount() == 2)
+	{
+		// Get rid again of tab bar
+		m_tabs->Disconnect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
+
+		int keep = tab ? 0 : 1;
+		m_tabs->RemovePage(keep);
+
+		int j;
+		for (j = 0; j < m_context_controls.size(); j++)
+		{
+			if (m_context_controls[j].m_tab_index != keep)
+				continue;
+
+			break;
+		}
+
+		m_context_controls[j].pViewSplitter->Reparent(m_pBottomSplitter);
+		m_pBottomSplitter->ReplaceWindow(m_tabs, m_context_controls[j].pViewSplitter);
+		m_context_controls[j].pViewSplitter->Show();
+		m_context_controls[j].m_tab_index = 0;
+		
+		wxAuiNotebookEx *tabs = m_tabs;
+		m_tabs = 0;
+
+		m_context_controls[i].m_tab_index = -1;
+
+		CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
+
+		tabs->Destroy();
+	}
+	else
+	{
+		if (pState == CContextManager::Get()->GetCurrentContext())
+		{
+			int newsel = tab + 1;
+			if (newsel >= m_tabs->GetPageCount())
+				newsel = m_tabs->GetPageCount() - 2;
+
+			for (int j = 0; j < m_context_controls.size(); j++)
+			{
+				if (m_context_controls[j].m_tab_index != newsel)
+					continue;
+				m_tabs->SetSelection(newsel);
+				CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
+			}
+		}
+		for (int j = 0; j < m_context_controls.size(); j++)
+		{
+			if (m_context_controls[j].m_tab_index > tab)
+				m_context_controls[j].m_tab_index--;
+		}
+		m_context_controls[i].m_tab_index = -1;
+		m_tabs->DeletePage(tab);
+	}
+
+	Thaw();
+}
+
 void CMainFrame::OnMenuCloseTab(wxCommandEvent& event)
 {
+	if (!m_tabs)
+		return;
+
+	CloseTab(m_tabs->GetSelection());
 }
 
 void CMainFrame::OnTabChanged(wxAuiNotebookEvent& event)
@@ -3263,5 +3392,12 @@ void CMainFrame::OnTabChanged(wxAuiNotebookEvent& event)
 	if (i < 0 || i >= (int)m_context_controls.size())
 		return;
 
-	CContextManager::Get()->SetCurrentContext(m_context_controls[i].pState);
+	for (int j = 0; j < m_context_controls.size(); j++)
+	{
+		if (m_context_controls[j].m_tab_index != i)
+			continue;
+
+		CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
+		break;
+	}
 }
