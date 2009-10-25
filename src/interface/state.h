@@ -22,10 +22,11 @@ enum t_statechange_notifications
 	STATECHANGE_REMOTE_IDLE,
 	STATECHANGE_SERVER,
 
-	STATECHANGE_QUEUEPROCESSING,
 	STATECHANGE_SYNC_BROWSE,
 	STATECHANGE_COMPARISON,
 
+	/* Global notifications */
+	STATECHANGE_QUEUEPROCESSING,
 	STATECHANGE_NEWCONTEXT, /* New context created */
 	STATECHANGE_CHANGEDCONTEXT, /* Currently active context changed */
 	STATECHANGE_REMOVECONTEXT, /* Right before deleting a context */
@@ -62,6 +63,7 @@ public:
 	static CContextManager* Get();
 
 	void NotifyAllHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""), const void* data2 = 0);
+	void NotifyGlobalHandlers(enum t_statechange_notifications notification, const wxString& data = _T(""), const void* data2 = 0);
 
 	void SetCurrentContext(CState* pState);
 

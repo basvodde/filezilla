@@ -550,7 +550,7 @@ void CQueueView::QueueFile_Finish(const bool start)
 	if (!m_activeMode && start)
 	{
 		m_activeMode = 1;
-		CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
+		CContextManager::Get()->NotifyGlobalHandlers(STATECHANGE_QUEUEPROCESSING);
 	}
 
 	if (m_activeMode)
@@ -1572,7 +1572,7 @@ bool CQueueView::SetActive(bool active /*=true*/)
 			}
 		}
 
-		CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
+		CContextManager::Get()->NotifyGlobalHandlers(STATECHANGE_QUEUEPROCESSING);
 
 		return m_activeCount == 0;
 	}
@@ -1586,7 +1586,7 @@ bool CQueueView::SetActive(bool active /*=true*/)
 		UpdateStatusLinePositions();
 	}
 
-	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
+	CContextManager::Get()->NotifyGlobalHandlers(STATECHANGE_QUEUEPROCESSING);
 
 	return true;
 }
@@ -1669,7 +1669,7 @@ void CQueueView::CheckQueueState()
 
 		TryRefreshListings();
 
-		CContextManager::Get()->NotifyAllHandlers(STATECHANGE_QUEUEPROCESSING);
+		CContextManager::Get()->NotifyGlobalHandlers(STATECHANGE_QUEUEPROCESSING);
 
 		if (!m_quit)
 			ActionAfter();

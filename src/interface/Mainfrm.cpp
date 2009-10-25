@@ -117,16 +117,18 @@ END_EVENT_TABLE()
 class CMainFrameStateEventHandler : public CStateEventHandler
 {
 public:
-	CMainFrameStateEventHandler(CState* pState, CMainFrame* pMainFrame)
-		: CStateEventHandler(pState)
+	CMainFrameStateEventHandler(CMainFrame* pMainFrame)
+		: CStateEventHandler(0)
 	{
 		m_pMainFrame = pMainFrame;
 
-		pState->RegisterHandler(this, STATECHANGE_REMOTE_IDLE);
-		pState->RegisterHandler(this, STATECHANGE_SERVER);
-		pState->RegisterHandler(this, STATECHANGE_QUEUEPROCESSING);
-		pState->RegisterHandler(this, STATECHANGE_SYNC_BROWSE);
-		pState->RegisterHandler(this, STATECHANGE_COMPARISON);
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_REMOTE_IDLE, true, true);
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_SERVER, false, true);
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_SYNC_BROWSE, true, true);
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_COMPARISON, true, true);
+
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_QUEUEPROCESSING, false, false);
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_CHANGEDCONTEXT, false, false);
 	}
 
 protected:
@@ -145,15 +147,34 @@ protected:
 				pMenuBar->Check(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), check);
 			return;
 		}
-		else if (notification == STATECHANGE_SERVER)
+		else if (notification == STATECHANGE_CHANGEDCONTEXT)
 		{
-			const CServer* pServer = m_pState->GetServer();
+			m_pMainFrame->UpdateMenubarState();
+			m_pMainFrame->UpdateToolbarState();
 
-			if (pServer && pServer->GetName() == _T(""))
+			if (!pState)
 			{
-				// Can only happen through quickconnect bar
-				m_pMainFrame->ClearBookmarks();
+				m_pMainFrame->m_current_context_controls = 0;
+				return;
 			}
+
+			for (m_pMainFrame->m_current_context_controls = 0; m_pMainFrame->m_current_context_controls < m_pMainFrame->m_context_controls.size(); m_pMainFrame->m_current_context_controls++)
+			{
+				if (m_pMainFrame->m_context_controls[m_pMainFrame->m_current_context_controls].pState == pState)
+					break;
+			}
+			if (m_pMainFrame->m_current_context_controls == m_pMainFrame->m_context_controls.size())
+			{
+				m_pMainFrame->m_current_context_controls = 0;
+				return;
+			}
+
+			const CServer* pServer = pState ? pState->GetServer() : 0;
+
+			if (!pServer)
+				m_pMainFrame->SetTitle(_T("FileZilla"));
+			else
+				m_pMainFrame->SetTitle(m_pMainFrame->m_context_controls[m_pMainFrame->m_current_context_controls].title + _T(" - FileZilla"));
 
 			CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
 			if (pStatusBar)
@@ -162,24 +183,79 @@ protected:
 				pStatusBar->DisplayEncrypted(pServer);
 			}
 
+			return;
+		}
+
+		if (!pState)
+			return;
+
+		if (notification == STATECHANGE_SERVER)
+		{
+			size_t i = 0;
+			for (i = 0; i < m_pMainFrame->m_context_controls.size(); i++)
+			{
+				if (m_pMainFrame->m_context_controls[i].pState == pState)
+					break;
+			}
+			if (i == m_pMainFrame->m_context_controls.size())
+				return;
+
+			struct CMainFrame::_context_controls &controls = m_pMainFrame->m_context_controls[i];
+
+			const CServer* pServer = pState->GetServer();
+
 			if (!pServer)
-				m_pMainFrame->SetTitle(_T("FileZilla"));
+			{
+				if (i == m_pMainFrame->m_current_context_controls)
+					m_pMainFrame->SetTitle(_T("FileZilla"));
+				controls.title = _("Not connected");
+			}
 			else
 			{
 				const wxString& name = pServer->GetName();
 				if (!name.IsEmpty())
-					m_pMainFrame->SetTitle(name + _T(" - ") + pServer->FormatServer() + _T(" - FileZilla"));
+					controls.title = name + _T(" - ") + pServer->FormatServer();
 				else
-					m_pMainFrame->SetTitle(pServer->FormatServer() + _T(" - FileZilla"));
+					controls.title = pServer->FormatServer();
+
+				if (i == m_pMainFrame->m_current_context_controls)
+				{
+					m_pMainFrame->SetTitle(controls.title + _T(" - FileZilla"));
+
+					if (pServer->GetName() == _T(""))
+					{
+						// Can only happen through quickconnect bar
+						m_pMainFrame->ClearBookmarks();
+					}
+				}
 			}
-			// Don't return here, need to update toolbar state
+
+			m_pMainFrame->m_tabs->SetPageText(i, controls.title);
+
+			if (i == m_pMainFrame->m_current_context_controls)
+			{
+				CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
+				if (pStatusBar)
+				{
+					pStatusBar->DisplayDataType(pServer);
+					pStatusBar->DisplayEncrypted(pServer);
+				}
+
+				m_pMainFrame->UpdateMenubarState();
+				m_pMainFrame->UpdateToolbarState();
+			}
+			return;
 		}
-		else if (notification == STATECHANGE_SYNC_BROWSE)
+
+		if (pState != CContextManager::Get()->GetCurrentContext())
+			return;
+
+		if (notification == STATECHANGE_SYNC_BROWSE)
 		{
 			if (m_pMainFrame->GetToolBar())
-				m_pMainFrame->GetToolBar()->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+				m_pMainFrame->GetToolBar()->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 			if (m_pMainFrame->GetMenuBar())
-				m_pMainFrame->GetMenuBar()->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), m_pState->GetSyncBrowse());
+				m_pMainFrame->GetMenuBar()->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 			return;
 		}
 		else if (notification == STATECHANGE_COMPARISON)
@@ -253,7 +329,7 @@ CMainFrame::CMainFrame()
 
 	m_pThemeProvider = new CThemeProvider();
 	CState* pState = CContextManager::Get()->CreateState(this);
-	m_pStateEventHandler = new CMainFrameStateEventHandler(pState, this);
+	m_pStateEventHandler = new CMainFrameStateEventHandler(this);
 
 	CPowerManagement::Create(this);
 
@@ -3035,7 +3111,7 @@ void CMainFrame::CreateContextControls(CState* pState)
 		if (!m_tabs )
 		{
 			m_tabs = new wxAuiNotebookEx();
-			m_tabs->Create(m_pBottomSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
+			m_tabs->Create(m_pBottomSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ALL_TABS);
 			m_tabs->SetExArtProvider();
 
 			m_context_controls[0].pViewSplitter->Reparent(m_tabs);

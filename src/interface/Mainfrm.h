@@ -31,6 +31,7 @@ class wxAuiNotebookEx;
 
 class CMainFrame : public wxFrame
 {
+	friend class CMainFrameStateEventHandler;
 public:
 	CMainFrame();
 	virtual ~CMainFrame();

@@ -156,6 +156,9 @@ void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications
 		if (blocked && iter->blockable)
 			continue;
 
+		if (iter->current_only && pState != GetCurrentContext())
+			continue;
+
 		iter->pHandler->OnStateChange(pState, notification, data, data2);
 	}
 }
@@ -172,6 +175,13 @@ void CContextManager::NotifyAllHandlers(enum t_statechange_notifications notific
 {
 	for (unsigned int i = 0; i < m_contexts.size(); i++)
 		m_contexts[i]->NotifyHandlers(notification, data, data2);
+}
+
+void CContextManager::NotifyGlobalHandlers(enum t_statechange_notifications notification, const wxString& data /*=_T("")*/, const void* data2 /*=0*/)
+{
+	const std::list<t_handler> &handlers = m_handlers[notification];
+	for (std::list<t_handler>::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++)
+		iter->pHandler->OnStateChange(0, notification, data, data2);
 }
 
 CState::CState(CMainFrame* pMainFrame)
@@ -541,6 +551,8 @@ void CState::RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_no
 {
 	wxASSERT(pHandler);
 	wxASSERT(pHandler->m_pState == this);
+	if (pHandler->m_pState != this)
+		return;
 	wxASSERT(notification != STATECHANGE_MAX && notification != STATECHANGE_NONE);
 
 	std::list<t_handler> &handlers = m_handlers[notification];
@@ -635,11 +647,8 @@ void CState::NotifyHandlers(enum t_statechange_notifications notification, const
 }
 
 CStateEventHandler::CStateEventHandler(CState* pState)
+	: m_pState(pState)
 {
-	if (!pState)
-		return;
-
-	m_pState = pState;
 }
 
 CStateEventHandler::~CStateEventHandler()
