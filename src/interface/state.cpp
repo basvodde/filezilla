@@ -67,6 +67,9 @@ void CContextManager::DestroyState(CState* pState)
 
 void CContextManager::SetCurrentContext(CState* pState)
 {
+	if (GetCurrentContext() == pState)
+		return;
+
 	for (unsigned int i = 0; i < m_contexts.size(); i++)
 	{
 		if (m_contexts[i] != pState)

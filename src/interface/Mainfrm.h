@@ -4,6 +4,7 @@
 #ifndef __WXMAC__
 #include <wx/taskbar.h>
 #endif
+#include <wx/aui/auibook.h>
 
 class CStatusView;
 class CQueueView;
@@ -189,6 +190,7 @@ protected:
 	void OnSearch(wxCommandEvent& event);
 	void OnMenuNewTab(wxCommandEvent& event);
 	void OnMenuCloseTab(wxCommandEvent& event);
+	void OnTabChanged(wxAuiNotebookEvent& event);
 
 	bool m_bInitDone;
 	bool m_bQuit;

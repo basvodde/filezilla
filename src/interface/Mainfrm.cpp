@@ -3111,6 +3111,8 @@ void CMainFrame::CreateContextControls(CState* pState)
 		if (!m_tabs )
 		{
 			m_tabs = new wxAuiNotebookEx();
+			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
+
 			m_tabs->Create(m_pBottomSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ALL_TABS);
 			m_tabs->SetExArtProvider();
 
@@ -3253,4 +3255,13 @@ void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 
 void CMainFrame::OnMenuCloseTab(wxCommandEvent& event)
 {
+}
+
+void CMainFrame::OnTabChanged(wxAuiNotebookEvent& event)
+{
+	int i = m_tabs->GetSelection();
+	if (i < 0 || i >= (int)m_context_controls.size())
+		return;
+
+	CContextManager::Get()->SetCurrentContext(m_context_controls[i].pState);
 }
