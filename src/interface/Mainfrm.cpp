@@ -189,6 +189,8 @@ protected:
 				pStatusBar->DisplayEncrypted(pServer);
 			}
 
+			m_pMainFrame->UpdateBookmarkMenu();
+
 			return;
 		}
 
@@ -374,9 +376,6 @@ CMainFrame::CMainFrame()
 			CFilterManager::ToggleFilters();
 	}
 
-	m_last_bookmark_path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
-	CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
-
 	CreateMenus();
 	CreateToolBar();
 	if (COptions::Get()->GetOptionVal(OPTION_SHOW_QUICKCONNECT))
@@ -424,6 +423,10 @@ CMainFrame::CMainFrame()
 	m_pQueueView = m_pQueuePane->GetQueueView();
 
 	CreateContextControls(pState);
+
+	m_context_controls[m_current_context_controls].last_bookmark_path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
+	CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
+	UpdateBookmarkMenu();
 
 	switch (message_log_position)
 	{
@@ -975,10 +978,10 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		CState* pState = CContextManager::Get()->GetCurrentContext();
 		const CServer* pServer = pState ? pState->GetServer() : 0;
 
-		if (!pServer && !m_last_bookmark_path.empty())
+		if (!pServer && !m_context_controls[m_current_context_controls].last_bookmark_path.empty())
 		{
 			// Get server from site manager
-			CSiteManagerItemData_Site* data = CSiteManager::GetSiteByPath(m_last_bookmark_path);
+			CSiteManagerItemData_Site* data = CSiteManager::GetSiteByPath(m_context_controls[m_current_context_controls].last_bookmark_path);
 			if (data)
 			{
 				server = data->m_server;
@@ -987,32 +990,32 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			}
 			else
 			{
-				m_last_bookmark_path.clear();
-				m_bookmarks.clear();
+				m_context_controls[m_current_context_controls].last_bookmark_path.clear();
+				m_context_controls[m_current_context_controls].bookmarks.clear();
 				UpdateBookmarkMenu();
 			}
 		}
 
-		// m_last_bookmark_path can get modified if it's empty now
+		// m_context_controls[m_current_context_controls].last_bookmark_path can get modified if it's empty now
 		if (event.GetId() == XRCID("ID_BOOKMARK_ADD"))
 		{
-			CNewBookmarkDialog dlg(this, m_last_bookmark_path, pServer);
+			CNewBookmarkDialog dlg(this, m_context_controls[m_current_context_controls].last_bookmark_path, pServer);
 
 			if (dlg.ShowModal(pState->GetLocalDir().GetPath(), pState->GetRemotePath()) == wxID_OK)
 			{
-				m_bookmarks.clear();
-				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+				m_context_controls[m_current_context_controls].bookmarks.clear();
+				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
 				UpdateBookmarkMenu();
 			}	
 		}
 		else
 		{
-			CBookmarksDialog dlg(this, m_last_bookmark_path, pServer);
+			CBookmarksDialog dlg(this, m_context_controls[m_current_context_controls].last_bookmark_path, pServer);
 
 			if (dlg.ShowModal(pState->GetLocalDir().GetPath(), pState->GetRemotePath()) == wxID_OK)
 			{
-				m_bookmarks.clear();
-				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+				m_context_controls[m_current_context_controls].bookmarks.clear();
+				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
 				UpdateBookmarkMenu();
 			}	
 		}
@@ -1035,7 +1038,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			int sel = i - 1;
 			if (sel < 0)
 				sel = 9;
-			if (m_tabs->GetPageCount() <= sel)
+			if ((int)m_tabs->GetPageCount() <= sel)
 				return;
 
 			m_tabs->SetSelection(sel);
@@ -1048,13 +1051,13 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		if (iter != m_bookmark_menu_id_map_site.end())
 		{
 			// We hit a site-specific bookmark
-			if (m_last_bookmark_path.empty())
+			if (m_context_controls[m_current_context_controls].last_bookmark_path.empty())
 				return;
 
 			wxString name = iter->second;
 			name.Replace(_T("\\"), _T("\\\\"));
 			name.Replace(_T("/"), _T("\\/"));
-			name = m_last_bookmark_path + _T("/") + name;
+			name = m_context_controls[m_current_context_controls].last_bookmark_path + _T("/") + name;
 
 			CSiteManagerItemData_Site *pData = CSiteManager::GetSiteByPath(name);
 			if (!pData)
@@ -1138,9 +1141,9 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 
 		ConnectToSite(pData);
-		m_last_bookmark_path = path;
-		m_bookmarks.clear();
-		CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+		m_context_controls[m_current_context_controls].last_bookmark_path = path;
+		m_context_controls[m_current_context_controls].bookmarks.clear();
+		CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
 		UpdateBookmarkMenu();
 
 		delete pData;
@@ -1618,7 +1621,7 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	bool filters_toggled = CFilterManager::HasActiveFilters(true) && !CFilterManager::HasActiveFilters(false);
 	COptions::Get()->SetOption(OPTION_FILTERTOGGLESTATE, filters_toggled ? 1 : 0);
 
-	COptions::Get()->SetOption(OPTION_LAST_CONNECTED_SITE, m_last_bookmark_path);
+	COptions::Get()->SetOption(OPTION_LAST_CONNECTED_SITE, m_context_controls[m_current_context_controls].last_bookmark_path);
 
 	Destroy();
 }
@@ -1753,7 +1756,7 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 
 	CSiteManager dlg;
 
-	if (!dlg.Create(this, m_last_bookmark_path, pServer))
+	if (!dlg.Create(this, m_context_controls[m_current_context_controls].last_bookmark_path, pServer))
 		return;
 
 	int res = dlg.ShowModal();
@@ -1765,14 +1768,14 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 
 		if (ConnectToSite(&data))
 		{
-			m_last_bookmark_path = dlg.GetSitePath();
+			m_context_controls[m_current_context_controls].last_bookmark_path = dlg.GetSitePath();
 		}
 	}
 	else if (res == wxID_OK)
-		m_last_bookmark_path = dlg.GetChangedBookmarkPath(pState->GetServer());
+		m_context_controls[m_current_context_controls].last_bookmark_path = dlg.GetChangedBookmarkPath(pState->GetServer());
 
-	m_bookmarks.clear();
-	dlg.GetBookmarks(m_last_bookmark_path, m_bookmarks);
+	m_context_controls[m_current_context_controls].bookmarks.clear();
+	dlg.GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
 	UpdateBookmarkMenu();
 }
 
@@ -2895,9 +2898,9 @@ void CMainFrame::ProcessCommandLine()
 		{
             if (ConnectToSite(pData))
 			{
-				m_last_bookmark_path = site;
-				m_bookmarks.clear();
-				CSiteManager::GetBookmarks(m_last_bookmark_path, m_bookmarks);
+				m_context_controls[m_current_context_controls].last_bookmark_path = site;
+				m_context_controls[m_current_context_controls].bookmarks.clear();
+				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
 				UpdateBookmarkMenu();
 			}
 			delete pData;
@@ -3053,12 +3056,15 @@ void CMainFrame::UpdateBookmarkMenu()
 	}
 
 	// Insert site-specific bookmarks
-	if (!m_bookmarks.empty())
+	if (m_current_context_controls >= m_context_controls.size())
+		return;
+
+	if (!m_context_controls[m_current_context_controls].bookmarks.empty())
 		pMenu->AppendSeparator();
 
 	m_bookmark_menu_id_map_site.clear();
 
-	for (std::list<wxString>::const_iterator iter = m_bookmarks.begin(); iter != m_bookmarks.end(); iter++)
+	for (std::list<wxString>::const_iterator iter = m_context_controls[m_current_context_controls].bookmarks.begin(); iter != m_context_controls[m_current_context_controls].bookmarks.end(); iter++)
 	{
 		int id;
 		if (ids == m_bookmark_menu_ids.end())
@@ -3079,8 +3085,8 @@ void CMainFrame::UpdateBookmarkMenu()
 
 void CMainFrame::ClearBookmarks()
 {
-	m_last_bookmark_path.clear();
-	m_bookmarks.clear();
+	m_context_controls[m_current_context_controls].last_bookmark_path.clear();
+	m_context_controls[m_current_context_controls].bookmarks.clear();
 	UpdateBookmarkMenu();
 }
 
@@ -3324,7 +3330,7 @@ void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 	CState* pState = 0;
 	
 	// See if we can reuse an existing context
-	for (int i = 0; i < m_context_controls.size(); i++)
+	for (size_t i = 0; i < m_context_controls.size(); i++)
 	{
 		if (m_context_controls[i].tab_index != -1)
 			continue;
@@ -3388,7 +3394,7 @@ bool CMainFrame::CloseTab(int tab)
 		int keep = tab ? 0 : 1;
 		m_tabs->RemovePage(keep);
 
-		int j;
+		size_t j;
 		for (j = 0; j < m_context_controls.size(); j++)
 		{
 			if (m_context_controls[j].tab_index != keep)
@@ -3401,7 +3407,7 @@ bool CMainFrame::CloseTab(int tab)
 		m_pBottomSplitter->ReplaceWindow(m_tabs, m_context_controls[j].pViewSplitter);
 		m_context_controls[j].pViewSplitter->Show();
 		m_context_controls[j].tab_index = 0;
-		
+
 		wxAuiNotebookEx *tabs = m_tabs;
 		m_tabs = 0;
 
@@ -3416,10 +3422,10 @@ bool CMainFrame::CloseTab(int tab)
 		if (pState == CContextManager::Get()->GetCurrentContext())
 		{
 			int newsel = tab + 1;
-			if (newsel >= m_tabs->GetPageCount())
+			if (newsel >= (int)m_tabs->GetPageCount())
 				newsel = m_tabs->GetPageCount() - 2;
 
-			for (int j = 0; j < m_context_controls.size(); j++)
+			for (size_t j = 0; j < m_context_controls.size(); j++)
 			{
 				if (m_context_controls[j].tab_index != newsel)
 					continue;
@@ -3427,7 +3433,7 @@ bool CMainFrame::CloseTab(int tab)
 				CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
 			}
 		}
-		for (int j = 0; j < m_context_controls.size(); j++)
+		for (size_t j = 0; j < m_context_controls.size(); j++)
 		{
 			if (m_context_controls[j].tab_index > tab)
 				m_context_controls[j].tab_index--;
@@ -3457,7 +3463,7 @@ void CMainFrame::OnTabChanged(wxAuiNotebookEvent& event)
 	if (i < 0 || i >= (int)m_context_controls.size())
 		return;
 
-	for (int j = 0; j < m_context_controls.size(); j++)
+	for (size_t j = 0; j < m_context_controls.size(); j++)
 	{
 		if (m_context_controls[j].tab_index != i)
 			continue;

@@ -107,6 +107,9 @@ protected:
 		wxString title;
 
 		int tab_index;
+
+		wxString last_bookmark_path;
+		std::list<wxString> bookmarks;
 	};
 
 	std::vector<struct _context_controls> m_context_controls;
@@ -115,8 +118,6 @@ protected:
 	std::list<int> m_bookmark_menu_ids;
 	std::map<int, wxString> m_bookmark_menu_id_map_global;
 	std::map<int, wxString> m_bookmark_menu_id_map_site;
-	wxString m_last_bookmark_path;
-	std::list<wxString> m_bookmarks;
 
 	CStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
