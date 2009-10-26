@@ -128,7 +128,7 @@ public:
 	{
 		m_pMainFrame = pMainFrame;
 
-		CContextManager::Get()->RegisterHandler(this, STATECHANGE_REMOTE_IDLE, true, true);
+		CContextManager::Get()->RegisterHandler(this, STATECHANGE_REMOTE_IDLE, false, true);
 		CContextManager::Get()->RegisterHandler(this, STATECHANGE_SERVER, false, true);
 		CContextManager::Get()->RegisterHandler(this, STATECHANGE_SYNC_BROWSE, true, true);
 		CContextManager::Get()->RegisterHandler(this, STATECHANGE_COMPARISON, true, true);
@@ -195,17 +195,25 @@ protected:
 		if (!pState)
 			return;
 
+		size_t i = 0;
+		for (i = 0; i < m_pMainFrame->m_context_controls.size(); i++)
+		{
+			if (m_pMainFrame->m_context_controls[i].pState == pState)
+				break;
+		}
+		if (i == m_pMainFrame->m_context_controls.size())
+			return;
+
+		if (m_pMainFrame->m_context_controls[i].tab_index == -1)
+		{
+			if (notification == STATECHANGE_REMOTE_IDLE || notification == STATECHANGE_SERVER)
+				pState->Disconnect();
+
+			return;
+		}
+
 		if (notification == STATECHANGE_SERVER)
 		{
-			size_t i = 0;
-			for (i = 0; i < m_pMainFrame->m_context_controls.size(); i++)
-			{
-				if (m_pMainFrame->m_context_controls[i].pState == pState)
-					break;
-			}
-			if (i == m_pMainFrame->m_context_controls.size())
-				return;
-
 			struct CMainFrame::_context_controls &controls = m_pMainFrame->m_context_controls[i];
 
 			const CServer* pServer = pState->GetServer();
@@ -237,7 +245,7 @@ protected:
 			}
 
 			if (m_pMainFrame->m_tabs)
-				m_pMainFrame->m_tabs->SetPageText(i, controls.title);
+				m_pMainFrame->m_tabs->SetPageText(controls.tab_index, controls.title);
 
 			if (i == m_pMainFrame->m_current_context_controls)
 			{
@@ -3298,11 +3306,11 @@ void CMainFrame::CreateContextControls(CState* pState)
 
 	if (m_tabs)
 	{
-		context_controls.m_tab_index = m_tabs->GetPageCount();
+		context_controls.tab_index = m_tabs->GetPageCount();
 		m_tabs->AddPage(context_controls.pViewSplitter, context_controls.title);
 	}
 	else
-		context_controls.m_tab_index = 0;
+		context_controls.tab_index = 0;
 
 	Thaw();
 
@@ -3311,8 +3319,29 @@ void CMainFrame::CreateContextControls(CState* pState)
 
 void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 {
-	CState* pState = CContextManager::Get()->CreateState(this);
-	pState->CreateEngine();
+	CState* pState = 0;
+	
+	// See if we can reuse an existing context
+	for (int i = 0; i < m_context_controls.size(); i++)
+	{
+		if (m_context_controls[i].tab_index != -1)
+			continue;
+		
+		if (m_context_controls[i].pState->IsRemoteConnected() ||
+			!m_context_controls[i].pState->IsRemoteIdle())
+			continue;
+
+		pState = m_context_controls[i].pState;
+		m_context_controls.erase(m_context_controls.begin() + i);
+		if (m_current_context_controls > i)
+			m_current_context_controls--;
+		break;
+	}
+	if (!pState)
+	{
+		pState = CContextManager::Get()->CreateState(this);
+		pState->CreateEngine();
+	}
 	CreateContextControls(pState);
 
 	pState->SetLocalDir(_T("/"));
@@ -3330,7 +3359,7 @@ bool CMainFrame::CloseTab(int tab)
 	size_t i = 0;
 	for (i = 0; i < m_context_controls.size(); i++)
 	{
-		if (m_context_controls[i].m_tab_index == tab)
+		if (m_context_controls[i].tab_index == tab)
 			break;
 	}
 	if (i == m_context_controls.size())
@@ -3360,7 +3389,7 @@ bool CMainFrame::CloseTab(int tab)
 		int j;
 		for (j = 0; j < m_context_controls.size(); j++)
 		{
-			if (m_context_controls[j].m_tab_index != keep)
+			if (m_context_controls[j].tab_index != keep)
 				continue;
 
 			break;
@@ -3369,12 +3398,12 @@ bool CMainFrame::CloseTab(int tab)
 		m_context_controls[j].pViewSplitter->Reparent(m_pBottomSplitter);
 		m_pBottomSplitter->ReplaceWindow(m_tabs, m_context_controls[j].pViewSplitter);
 		m_context_controls[j].pViewSplitter->Show();
-		m_context_controls[j].m_tab_index = 0;
+		m_context_controls[j].tab_index = 0;
 		
 		wxAuiNotebookEx *tabs = m_tabs;
 		m_tabs = 0;
 
-		m_context_controls[i].m_tab_index = -1;
+		m_context_controls[i].tab_index = -1;
 
 		CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
 
@@ -3390,7 +3419,7 @@ bool CMainFrame::CloseTab(int tab)
 
 			for (int j = 0; j < m_context_controls.size(); j++)
 			{
-				if (m_context_controls[j].m_tab_index != newsel)
+				if (m_context_controls[j].tab_index != newsel)
 					continue;
 				m_tabs->SetSelection(newsel);
 				CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
@@ -3398,12 +3427,14 @@ bool CMainFrame::CloseTab(int tab)
 		}
 		for (int j = 0; j < m_context_controls.size(); j++)
 		{
-			if (m_context_controls[j].m_tab_index > tab)
-				m_context_controls[j].m_tab_index--;
+			if (m_context_controls[j].tab_index > tab)
+				m_context_controls[j].tab_index--;
 		}
-		m_context_controls[i].m_tab_index = -1;
+		m_context_controls[i].tab_index = -1;
 		m_tabs->DeletePage(tab);
 	}
+
+	pState->Disconnect();
 
 	Thaw();
 
@@ -3426,7 +3457,7 @@ void CMainFrame::OnTabChanged(wxAuiNotebookEvent& event)
 
 	for (int j = 0; j < m_context_controls.size(); j++)
 	{
-		if (m_context_controls[j].m_tab_index != i)
+		if (m_context_controls[j].tab_index != i)
 			continue;
 
 		CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);

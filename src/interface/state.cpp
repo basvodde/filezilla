@@ -521,9 +521,8 @@ bool CState::Disconnect()
 	if (!IsRemoteIdle())
 		return false;
 
-	m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
-
 	SetServer(0);
+	m_pCommandQueue->ProcessCommand(new CDisconnectCommand());
 
 	return true;
 }

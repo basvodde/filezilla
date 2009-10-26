@@ -106,7 +106,7 @@ protected:
 
 		wxString title;
 
-		int m_tab_index;
+		int tab_index;
 	};
 
 	std::vector<struct _context_controls> m_context_controls;

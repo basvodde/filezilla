@@ -336,8 +336,11 @@ void CRecursiveOperation::SetChmodDialog(CChmodDialog* pChmodDialog)
 
 void CRecursiveOperation::StopRecursiveOperation()
 {
-	m_operationMode = recursive_none;
-	m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+	if (m_operationMode != recursive_none)
+	{
+		m_operationMode = recursive_none;
+		m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+	}
 	m_dirsToVisit.clear();
 	m_visitedDirs.clear();
 
