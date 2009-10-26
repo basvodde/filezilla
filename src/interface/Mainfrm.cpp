@@ -615,6 +615,8 @@ bool CMainFrame::CreateMenus()
 	{
 		SetMenuBar(0);
 		delete m_pMenuBar;
+		m_bookmark_menu_id_map_global.clear();
+		m_bookmark_menu_id_map_site.clear();
 	}
 	m_pMenuBar = wxXmlResource::Get()->LoadMenuBar(_T("ID_MENUBAR"));
 	if (!m_pMenuBar)
