@@ -336,7 +336,7 @@ bool CState::SetRemoteDir(const CDirectoryListing *pDirectoryListing, bool modif
 		}
 	}
 	else
-		COptions::Get()->SetOption(OPTION_LASTSERVERPATH, pDirectoryListing->path.GetSafePath());
+		m_last_path = pDirectoryListing->path;
 
 	if (m_pDirectoryListing && m_pDirectoryListing->path == pDirectoryListing->path &&
         pDirectoryListing->m_failed)
@@ -469,6 +469,10 @@ void CState::SetServer(const CServer* server)
 			return;
 		}
 
+		if (m_last_server != *m_pServer)
+			m_last_path.Clear();
+		m_last_server = *m_pServer;
+
 		SetRemoteDir(0);
 		delete m_pServer;
 	}
@@ -501,9 +505,6 @@ bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& pa
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), LIST_FLAG_FALLBACK_CURRENT));
-
-	COptions::Get()->SetLastServer(server);
-	COptions::Get()->SetOption(OPTION_LASTSERVERPATH, path.GetSafePath());
 
 	SetServer(&server);
 

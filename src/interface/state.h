@@ -149,6 +149,11 @@ public:
 	bool SetSyncBrowse(bool enable, const CServerPath& assumed_remote_root = CServerPath());
 	bool GetSyncBrowse() const { return !m_sync_browse.local_root.empty(); }
 
+	CServer GetLastServer() const { return m_last_server; }
+	CServerPath GetLastServerPath() const { return m_last_path; }
+	void SetLastServer(const CServer& server, const CServerPath& path)
+	{ m_last_server = server; m_last_path = path; }
+
 protected:
 	void SetServer(const CServer* server);
 
@@ -157,6 +162,9 @@ protected:
 
 	CServer* m_pServer;
 	bool m_successful_connect;
+
+	CServer m_last_server;
+	CServerPath m_last_path;
 
 	CMainFrame* m_pMainFrame;
 

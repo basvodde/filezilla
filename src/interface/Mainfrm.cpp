@@ -348,6 +348,12 @@ CMainFrame::CMainFrame()
 	CState* pState = CContextManager::Get()->CreateState(this);
 	m_pStateEventHandler = new CMainFrameStateEventHandler(this);
 
+	// Restore last server and path
+	CServer last_server;
+	CServerPath last_path;
+	if (COptions::Get()->GetLastServer(last_server) && last_path.SetSafePath(COptions::Get()->GetOption(OPTION_LASTSERVERPATH)))
+		pState->SetLastServer(last_server, last_path);
+
 	CPowerManagement::Create(this);
 
 	m_pStatusBar = new CStatusBar(this);
@@ -1607,6 +1613,12 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		return;
 	}
 
+	if (m_context_controls.size())
+	{
+		COptions::Get()->SetLastServer(m_context_controls[m_current_context_controls].pState->GetLastServer());
+		COptions::Get()->SetOption(OPTION_LASTSERVERPATH, m_context_controls[m_current_context_controls].pState->GetLastServerPath().GetSafePath());
+	}
+
 	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
 	{
 		CState *pState = *iter;
@@ -1615,8 +1627,11 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	CSiteManager::ClearIdMap();
 
-	m_context_controls[m_current_context_controls].pLocalListView->SaveColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
-	m_context_controls[m_current_context_controls].pRemoteListView->SaveColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
+	if (m_context_controls.size())
+	{
+		m_context_controls[m_current_context_controls].pLocalListView->SaveColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
+		m_context_controls[m_current_context_controls].pRemoteListView->SaveColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
+	}
 
 	bool filters_toggled = CFilterManager::HasActiveFilters(true) && !CFilterManager::HasActiveFilters(false);
 	COptions::Get()->SetOption(OPTION_FILTERTOGGLESTATE, filters_toggled ? 1 : 0);
@@ -1635,9 +1650,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 		return;
 
-	CServer server;
-	if (!COptions::Get()->GetLastServer(server))
-		return;
+	CServer server = pState->GetLastServer();
 
 	if (server.GetLogonType() == ASK)
 	{
@@ -1645,8 +1658,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 			return;
 	}
 
-	CServerPath path;
-	path.SetSafePath(COptions::Get()->GetOption(OPTION_LASTSERVERPATH));
+	CServerPath path = pState->GetLastServerPath();
 	pState->Connect(server, false, path);
 }
 
@@ -2815,7 +2827,7 @@ void CMainFrame::UpdateToolbarState()
 	else
 	{
 		CServer tmp;
-		canReconnect = COptions::Get()->GetLastServer(tmp);
+		canReconnect = pState->GetLastServer().GetHost() != _T("");
 	}
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_RECONNECT"), canReconnect);
 }
@@ -2873,7 +2885,7 @@ void CMainFrame::UpdateMenubarState()
 	else
 	{
 		CServer tmp;
-		canReconnect = COptions::Get()->GetLastServer(tmp);
+		canReconnect = pState->GetLastServer().GetHost() != _T("");
 	}
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_RECONNECT"), canReconnect);
 }
@@ -3316,6 +3328,10 @@ void CMainFrame::CreateContextControls(CState* pState)
 	{
 		context_controls.tab_index = m_tabs->GetPageCount();
 		m_tabs->AddPage(context_controls.pViewSplitter, context_controls.title);
+
+		pState->SetLastServer(
+			m_context_controls[m_current_context_controls].pState->GetLastServer(),
+			m_context_controls[m_current_context_controls].pState->GetLastServerPath());
 	}
 	else
 		context_controls.tab_index = 0;
