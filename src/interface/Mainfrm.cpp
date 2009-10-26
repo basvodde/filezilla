@@ -56,6 +56,8 @@
 DECLARE_EVENT_TYPE(fzEVT_TAB_CLOSING_DEFERRED, -1);
 DEFINE_EVENT_TYPE(fzEVT_TAB_CLOSING_DEFERRED);
 
+static int tab_hotkey_ids[10];
+
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
@@ -499,8 +501,13 @@ CMainFrame::CMainFrame()
 	if (!pState->SetLocalDir(localDir))
 		pState->SetLocalDir(_T("/"));
 
-	wxAcceleratorEntry entries[1];
+	wxAcceleratorEntry entries[11];
 	entries[0].Set(wxACCEL_CMD | wxACCEL_SHIFT, 'I', XRCID("ID_MENU_VIEW_FILTERS"));
+	for (int i = 0; i < 10; i++)
+	{
+		tab_hotkey_ids[i] = wxNewId();
+		entries[i + 1].Set(wxACCEL_CMD, (int)'0' + i, tab_hotkey_ids[i]);
+	}
 
 	wxAcceleratorTable accel(sizeof(entries) / sizeof(wxAcceleratorEntry), entries);
 	SetAcceleratorTable(accel);
@@ -1007,6 +1014,24 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	}
 	else
 	{
+		for (int i = 0; i < 10; i++)
+		{
+			if (event.GetId() != tab_hotkey_ids[i])
+				continue;
+			
+			if (!m_tabs)
+				return;
+
+			int sel = i - 1;
+			if (sel < 0)
+				sel = 9;
+			if (m_tabs->GetPageCount() <= sel)
+				return;
+
+			m_tabs->SetSelection(sel);
+
+			return;
+		}
 		CState* pState = CContextManager::Get()->GetCurrentContext();
 
 		std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.find(event.GetId());
@@ -3413,7 +3438,8 @@ void CMainFrame::OnTabClosing(wxAuiNotebookEvent& event)
 {
 	// Need to defer event, wxAUI would write to free'd memory
 	// if we'd actually delete tab and potenially the notebook with it
-	AddPendingEvent(wxCommandEvent(fzEVT_TAB_CLOSING_DEFERRED, event.GetSelection()));
+	wxCommandEvent evt(fzEVT_TAB_CLOSING_DEFERRED, event.GetSelection());
+	AddPendingEvent(evt);
 
 	event.Veto();
 }
