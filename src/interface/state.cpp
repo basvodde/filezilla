@@ -469,15 +469,17 @@ void CState::SetServer(const CServer* server)
 			return;
 		}
 
-		if (m_last_server != *m_pServer)
-			m_last_path.Clear();
-		m_last_server = *m_pServer;
-
 		SetRemoteDir(0);
 		delete m_pServer;
 	}
 	if (server)
+	{
+		if (m_last_server != *server)
+			m_last_path.Clear();
+		m_last_server = *server;
+
 		m_pServer = new CServer(*server);
+	}
 	else
 		m_pServer = 0;
 
