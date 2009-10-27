@@ -58,7 +58,7 @@ void CRecursiveOperation::StartRecursiveOperation(enum OperationMode mode, const
 	if (mode == recursive_chmod && !m_pChmodDlg)
 		return;
 
-	if ((mode == recursive_download || mode == recursive_addtoqueue || recursive_download_flatten || mode == recursive_addtoqueue_flatten) && !m_pQueue)
+	if ((mode == recursive_download || mode == recursive_addtoqueue || mode == recursive_download_flatten || mode == recursive_addtoqueue_flatten) && !m_pQueue)
 		return;
 
 	if (m_dirsToVisit.empty())
