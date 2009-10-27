@@ -3434,6 +3434,8 @@ void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 	}
 	CreateContextControls(pState);
 
+	pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
+
 	pState->SetLocalDir(_T("/"));
 
 	CContextManager::Get()->SetCurrentContext(pState);
