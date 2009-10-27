@@ -247,7 +247,12 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 	CreateRoot();
 #else
-	AddRoot(_T("/"), GetIconIndex(dir), GetIconIndex(opened_dir));
+	wxTreeItemId root = AddRoot(_T("/"));
+	SetItemImage(root, GetIconIndex(dir), wxTreeItemIcon_Normal);
+	SetItemImage(root, GetIconIndex(opened_dir), wxTreeItemIcon_Selected);
+	SetItemImage(root, GetIconIndex(dir), wxTreeItemIcon_Expanded);
+	SetItemImage(root, GetIconIndex(opened_dir), wxTreeItemIcon_SelectedExpanded);
+
 	SetDir(_T("/"));
 #endif
 
