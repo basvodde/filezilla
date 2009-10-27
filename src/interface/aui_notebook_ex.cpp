@@ -20,11 +20,12 @@ wxColor wxAuiStepColour(const wxColor& c, int ialpha);
 class CFilterDC : public wxMirrorDC
 {
 public:
-	CFilterDC(wxDC& dc, int type, bool odd_tab_height)
+	CFilterDC(wxDC& dc, int type, bool odd_tab_height, bool bottom)
 		: wxMirrorDC(dc, false), m_original_dc(&dc), m_type(type), m_odd_tab_height(odd_tab_height)
 	{
 		m_gradient_called = 0;
 		m_rectangle_called = 0;
+		m_bottom = bottom;
 	}
 
 	virtual void DoDrawLine(wxCoord x1, wxCoord y1, wxCoord x2, wxCoord y2)
@@ -126,6 +127,14 @@ public:
 				wxColour new_init = wxAuiStepColour(destColour, 95);
 				wxColour new_dest = wxAuiStepColour(destColour, 65);
 				m_original_dc->GradientFillLinear(r, new_init, new_dest, nDirection);
+
+				if (!m_bottom)
+				{
+					m_original_dc->SetPen(wxPen(destColour));
+					m_original_dc->DrawPoint(r.x, r.y);
+					m_original_dc->DrawPoint(r.x + r.width - 1, r.y);
+				}
+
 			}
 			else
 			{
@@ -141,10 +150,15 @@ public:
 				m_original_dc->DrawRectangle(r2);
 
 				wxColour new_dest = wxAuiStepColour(destColour, 65);
+				if (!m_bottom)
+					r.height++;
 				m_original_dc->GradientFillLinear(r, new_dest, new_dest, nDirection);
-				m_original_dc->SetPen(wxPen(destColour));
-				m_original_dc->DrawPoint(r.x, r.y + r.height - 1);
-				m_original_dc->DrawPoint(r.x + r.width - 1, r.y + r.height - 1);
+				if (m_bottom)
+				{
+					m_original_dc->SetPen(wxPen(destColour));
+					m_original_dc->DrawPoint(r.x, r.y + r.height - 1);
+					m_original_dc->DrawPoint(r.x + r.width - 1, r.y + r.height - 1);
+				}
 			}
 		}
 		else if (m_type == 2)
@@ -154,8 +168,17 @@ public:
 				m_original_dc->GradientFillLinear(rect, initialColour, destColour, nDirection);
 			else
 			{
-				wxColour new_init = wxAuiStepColour(c, 70);
-				wxColour new_dest = wxAuiStepColour(c, 100);
+				wxColour new_init, new_dest;
+				if (m_bottom)
+				{
+					new_init = wxAuiStepColour(c, 70);
+					new_dest = wxAuiStepColour(c, 100);
+				}
+				else
+				{
+					new_init = wxAuiStepColour(c, 85);
+					new_dest = wxAuiStepColour(c, 100);
+				}
 				m_original_dc->GradientFillLinear(rect, new_init, new_dest, nDirection);
 			}
 		}
@@ -170,20 +193,22 @@ protected:
 	wxDC *m_original_dc;
 	const int m_type;
 	bool m_odd_tab_height;
+	bool m_bottom;
 };
 
 class wxAuiTabArtEx : public wxAuiDefaultTabArt
 {
 public:
-	wxAuiTabArtEx(wxAuiNotebookEx* pNotebook)
+	wxAuiTabArtEx(wxAuiNotebookEx* pNotebook, bool bottom)
 	{
 		m_pNotebook = pNotebook;
 		m_fonts_initialized = false;
+		m_bottom = bottom;
 	}
 
 	virtual wxAuiTabArt* Clone()
 	{
-		return new wxAuiTabArtEx(m_pNotebook);
+		return new wxAuiTabArtEx(m_pNotebook, m_bottom);
 	}
 
 	virtual wxSize GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption, const wxBitmap& bitmap, bool active, int close_button_state, int* x_extent)
@@ -243,13 +268,13 @@ public:
 				m_normal_font = m_original_normal_font;
 		}
 
-		CFilterDC filter_dc(dc, pane.active ? 1 : 0, m_tab_ctrl_height % 2);
+		CFilterDC filter_dc(dc, pane.active ? 1 : 0, m_tab_ctrl_height % 2, m_bottom);
 		wxAuiDefaultTabArt::DrawTab(*((wxDC*)&filter_dc), wnd, pane, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
 	}
 
 	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 	{
-		CFilterDC filter_dc(dc, 2, m_tab_ctrl_height % 2);
+		CFilterDC filter_dc(dc, 2, m_tab_ctrl_height % 2, m_bottom);
 		wxAuiDefaultTabArt::DrawBackground(*((wxDC*)&filter_dc), wnd, rect);
 	}
 protected:
@@ -260,6 +285,7 @@ protected:
 	wxFont m_original_normal_font;
 	wxFont m_highlighted_font;
 	bool m_fonts_initialized;
+	bool m_bottom;
 };
 
 std::map<wxString, int> wxAuiTabArtEx::m_maxSizes;
@@ -288,7 +314,7 @@ void wxAuiNotebookEx::RemoveExtraBorders()
 
 void wxAuiNotebookEx::SetExArtProvider()
 {
-	SetArtProvider(new wxAuiTabArtEx(this));
+	SetArtProvider(new wxAuiTabArtEx(this, GetWindowStyle() & wxAUI_NB_BOTTOM));
 }
 
 bool wxAuiNotebookEx::SetPageText(size_t page_idx, const wxString& text)
