@@ -82,6 +82,7 @@ protected:
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
 
+	void SetBookmarksFromPath(const wxString& path);
 	void UpdateBookmarkMenu();
 
 	struct _context_controls
@@ -108,8 +109,12 @@ protected:
 
 		int tab_index;
 
-		wxString last_bookmark_path;
-		std::list<wxString> bookmarks;
+		struct _site_bookmarks
+		{
+			wxString path;
+			std::list<wxString> bookmarks;
+		};
+		CSharedPointer<struct _site_bookmarks> site_bookmarks;
 	};
 
 	std::vector<struct _context_controls> m_context_controls;

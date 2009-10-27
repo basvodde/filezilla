@@ -304,7 +304,7 @@ CSiteManager::~CSiteManager()
 	}
 }
 
-bool CSiteManager::Create(wxWindow* parent, const wxString& connected_site_path, const CServer* pServer /*=0*/)
+bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connected_sites, const CServer* pServer /*=0*/)
 {
 	m_pSiteManagerMutex = new CInterProcessMutex(MUTEX_SITEMANAGERGLOBAL, false);
 	if (m_pSiteManagerMutex->TryLock() == 0)
@@ -414,23 +414,33 @@ bool CSiteManager::Create(wxWindow* parent, const wxString& connected_site_path,
 		XRCCTRL(*this, "wxID_OK", wxButton)->SetFocus();
 #endif
 
+	m_connected_sites = connected_sites;
+	MarkConnectedSites();
+
 	if (pServer)
 		CopyAddServer(*pServer);
-	else
-		MarkConnectedSite(connected_site_path);
 
 	return true;
 }
 
-void CSiteManager::MarkConnectedSite(wxString connected_site_path)
+void CSiteManager::MarkConnectedSites()
 {
+	for (int i = 0; i < (int)m_connected_sites->size(); i++)
+		MarkConnectedSite(i);
+}
+
+void CSiteManager::MarkConnectedSite(int connected_site)
+{
+	wxString connected_site_path = (*m_connected_sites)[connected_site].old_path;
+
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return;
 
 	if (connected_site_path.Left(1) == _T("1"))
 	{
-		m_changed_bookmark_path = connected_site_path;
+		// Default sites never change
+		(*m_connected_sites)[connected_site].new_path = (*m_connected_sites)[connected_site].old_path;
 		return;
 	}
 
@@ -465,7 +475,8 @@ void CSiteManager::MarkConnectedSite(wxString connected_site_path)
 		return;
 
 	CSiteManagerItemData_Site *site_data = reinterpret_cast<CSiteManagerItemData_Site* >(data);
-	site_data->is_connected_item = true;
+	wxASSERT(site_data->connected_item == -1);
+	site_data->connected_item = connected_site;
 }
 
 void CSiteManager::CreateControls(wxWindow* parent)
@@ -951,10 +962,13 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 
 		Save(pNode, child);
 
-		if (site_data->is_connected_item)
+		if (site_data->connected_item != -1)
 		{
-			m_changed_bookmark_path = GetSitePath(child);
-			m_changed_bookmark_server = site_data->m_server;
+			if ((*m_connected_sites)[site_data->connected_item].server == site_data->m_server)
+			{
+				(*m_connected_sites)[site_data->connected_item].new_path = GetSitePath(child);
+				(*m_connected_sites)[site_data->connected_item].server = site_data->m_server;
+			}
 		}
 	}
 	else
@@ -1517,9 +1531,7 @@ bool CSiteManager::GetServer(CSiteManagerItemData_Site& data)
 			data.m_localDir = pData->m_localDir;
 		if (!pData->m_remoteDir.IsEmpty())
 			data.m_remoteDir = pData->m_remoteDir;
-		if (!data.m_localDir.empty() && !data.m_remoteDir.IsEmpty())
-			data.m_sync = true;
-		else
+		if (data.m_localDir.empty() || data.m_remoteDir.IsEmpty())
 			data.m_sync = false;
 	}
 	else
@@ -1849,7 +1861,7 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 	if (data->m_type == CSiteManagerItemData::SITE)
 	{
 		CSiteManagerItemData_Site* newData = new CSiteManagerItemData_Site(*(CSiteManagerItemData_Site *)data);
-		newData->is_connected_item = false;
+		newData->connected_item = -1;
 		newItem = pTree->AppendItem(parent, newName, 2, 2, newData);
 
 		wxTreeItemIdValue cookie;
@@ -2324,7 +2336,7 @@ bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy
 		else if (data->m_type == CSiteManagerItemData::SITE)
 		{
 			CSiteManagerItemData_Site* newData = new CSiteManagerItemData_Site(*(CSiteManagerItemData_Site *)data);
-			newData->is_connected_item = false;
+			newData->connected_item = -1;
 			pTree->SetItemData(newItem, newData);
 		}
 		else
@@ -2433,7 +2445,7 @@ void CSiteManager::AddNewSite(wxTreeItemId parent, const CServer& server, bool c
 
 	CSiteManagerItemData_Site* pData = new CSiteManagerItemData_Site(server);
 	if (connected)
-		pData->is_connected_item = true;
+		pData->connected_item = 0;
 
 	wxTreeItemId newItem = pTree->AppendItem(parent, name, 2, 2, pData);
 	pTree->SortChildren(parent);
@@ -3104,12 +3116,4 @@ bool CSiteManager::ClearBookmarks(wxString sitePath)
 	}
 
 	return true;
-}
-
-wxString CSiteManager::GetChangedBookmarkPath(const CServer* pServer)
-{
-	if (pServer && m_changed_bookmark_server != *pServer)
-		return wxEmptyString;
-	
-	return m_changed_bookmark_path;
 }

@@ -34,13 +34,16 @@ public:
 	CSiteManagerItemData_Site(const CServer& server = CServer())
 		: CSiteManagerItemData(SITE), m_server(server)
 	{
-		is_connected_item = false;
+		connected_item = -1;
 	}
 
 	CServer m_server;
 	wxString m_comments;
 
-	bool is_connected_item;
+	// Needed to keep track of currently connected sites so that
+	// bookmarks and bookmark path can be updated in response to
+	// changes done here
+	int connected_item;
 };
 
 #include "dialogex.h"
@@ -57,12 +60,19 @@ class CSiteManager: public wxDialogEx
 	DECLARE_EVENT_TABLE();
 
 public:
+	struct _connected_site
+	{
+		CServer server;
+		wxString old_path;
+		wxString new_path;
+	};
+
 	/// Constructors
 	CSiteManager();
 	virtual ~CSiteManager();
 
 	// Creation. If pServer is set, it will cause a new item to be created.
-	bool Create(wxWindow* parent, const wxString& connected_site_path, const CServer* pServer = 0);
+	bool Create(wxWindow* parent, std::vector<_connected_site> *connected_sites, const CServer* pServer = 0);
 
 	bool GetServer(CSiteManagerItemData_Site& data);
 	wxString GetSitePath();
@@ -80,8 +90,6 @@ public:
 	static CSiteManagerItemData_Site* GetSiteByPath(wxString sitePath);
 
 	static bool UnescapeSitePath(wxString path, std::list<wxString>& result);
-
-	wxString GetChangedBookmarkPath(const CServer* pServer);
 
 protected:
 	// Creates the controls and sizers
@@ -113,7 +121,8 @@ protected:
 
 	wxString GetSitePath(wxTreeItemId item);
 
-	void MarkConnectedSite(wxString connected_site_path);
+	void MarkConnectedSites();
+	void MarkConnectedSite(int connected_site);
 
 	void OnOK(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
@@ -171,8 +180,7 @@ protected:
 	wxNotebook *m_pNotebook_Site;
 	wxNotebook *m_pNotebook_Bookmark;
 
-	wxString m_changed_bookmark_path;
-	CServer m_changed_bookmark_server;
+	std::vector<_connected_site> *m_connected_sites;
 
 	bool m_is_deleting;
 };

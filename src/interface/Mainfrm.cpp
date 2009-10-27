@@ -155,15 +155,16 @@ protected:
 		}
 		else if (notification == STATECHANGE_CHANGEDCONTEXT)
 		{
-			m_pMainFrame->UpdateMenubarState();
-			m_pMainFrame->UpdateToolbarState();
-
 			if (!pState)
 			{
 				m_pMainFrame->m_current_context_controls = 0;
+				m_pMainFrame->UpdateMenubarState();
+				m_pMainFrame->UpdateToolbarState();
+				m_pMainFrame->UpdateBookmarkMenu();
 				return;
 			}
 
+			// Get current controls for new current context
 			for (m_pMainFrame->m_current_context_controls = 0; m_pMainFrame->m_current_context_controls < m_pMainFrame->m_context_controls.size(); m_pMainFrame->m_current_context_controls++)
 			{
 				if (m_pMainFrame->m_context_controls[m_pMainFrame->m_current_context_controls].pState == pState)
@@ -172,16 +173,20 @@ protected:
 			if (m_pMainFrame->m_current_context_controls == m_pMainFrame->m_context_controls.size())
 			{
 				m_pMainFrame->m_current_context_controls = 0;
+				m_pMainFrame->UpdateMenubarState();
+				m_pMainFrame->UpdateToolbarState();
+				m_pMainFrame->UpdateBookmarkMenu();
 				return;
 			}
 
+			// Update window title
 			const CServer* pServer = pState ? pState->GetServer() : 0;
-
 			if (!pServer)
 				m_pMainFrame->SetTitle(_T("FileZilla"));
 			else
 				m_pMainFrame->SetTitle(m_pMainFrame->m_context_controls[m_pMainFrame->m_current_context_controls].title + _T(" - FileZilla"));
 
+			// Update UI state
 			CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
 			if (pStatusBar)
 			{
@@ -189,6 +194,8 @@ protected:
 				pStatusBar->DisplayEncrypted(pServer);
 			}
 
+			m_pMainFrame->UpdateMenubarState();
+			m_pMainFrame->UpdateToolbarState();
 			m_pMainFrame->UpdateBookmarkMenu();
 
 			return;
@@ -430,8 +437,9 @@ CMainFrame::CMainFrame()
 
 	CreateContextControls(pState);
 
-	m_context_controls[m_current_context_controls].last_bookmark_path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
-	CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
+	m_context_controls[m_current_context_controls].site_bookmarks->path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
+	CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].site_bookmarks->path,
+							   m_context_controls[m_current_context_controls].site_bookmarks->bookmarks);
 	UpdateBookmarkMenu();
 
 	switch (message_log_position)
@@ -577,6 +585,9 @@ CMainFrame::~CMainFrame()
 #ifndef __WXMAC__
 	delete m_taskBarIcon;
 #endif
+
+	for (size_t i = 0; i < m_context_controls.size(); i++)
+		m_context_controls[i].site_bookmarks.clear();
 }
 
 void CMainFrame::HandleResize()
@@ -984,10 +995,10 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		CState* pState = CContextManager::Get()->GetCurrentContext();
 		const CServer* pServer = pState ? pState->GetServer() : 0;
 
-		if (!pServer && !m_context_controls[m_current_context_controls].last_bookmark_path.empty())
+		if (!pServer && !m_context_controls[m_current_context_controls].site_bookmarks->path.empty())
 		{
 			// Get server from site manager
-			CSiteManagerItemData_Site* data = CSiteManager::GetSiteByPath(m_context_controls[m_current_context_controls].last_bookmark_path);
+			CSiteManagerItemData_Site* data = CSiteManager::GetSiteByPath(m_context_controls[m_current_context_controls].site_bookmarks->path);
 			if (data)
 			{
 				server = data->m_server;
@@ -996,8 +1007,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			}
 			else
 			{
-				m_context_controls[m_current_context_controls].last_bookmark_path.clear();
-				m_context_controls[m_current_context_controls].bookmarks.clear();
+				m_context_controls[m_current_context_controls].site_bookmarks->path.clear();
+				m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.clear();
 				UpdateBookmarkMenu();
 			}
 		}
@@ -1005,23 +1016,23 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		// m_context_controls[m_current_context_controls].last_bookmark_path can get modified if it's empty now
 		if (event.GetId() == XRCID("ID_BOOKMARK_ADD"))
 		{
-			CNewBookmarkDialog dlg(this, m_context_controls[m_current_context_controls].last_bookmark_path, pServer);
+			CNewBookmarkDialog dlg(this, m_context_controls[m_current_context_controls].site_bookmarks->path, pServer);
 
 			if (dlg.ShowModal(pState->GetLocalDir().GetPath(), pState->GetRemotePath()) == wxID_OK)
 			{
-				m_context_controls[m_current_context_controls].bookmarks.clear();
-				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
+				m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.clear();
+				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].site_bookmarks->path, m_context_controls[m_current_context_controls].site_bookmarks->bookmarks);
 				UpdateBookmarkMenu();
 			}	
 		}
 		else
 		{
-			CBookmarksDialog dlg(this, m_context_controls[m_current_context_controls].last_bookmark_path, pServer);
+			CBookmarksDialog dlg(this, m_context_controls[m_current_context_controls].site_bookmarks->path, pServer);
 
 			if (dlg.ShowModal(pState->GetLocalDir().GetPath(), pState->GetRemotePath()) == wxID_OK)
 			{
-				m_context_controls[m_current_context_controls].bookmarks.clear();
-				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
+				m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.clear();
+				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].site_bookmarks->path, m_context_controls[m_current_context_controls].site_bookmarks->bookmarks);
 				UpdateBookmarkMenu();
 			}	
 		}
@@ -1057,13 +1068,13 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		if (iter != m_bookmark_menu_id_map_site.end())
 		{
 			// We hit a site-specific bookmark
-			if (m_context_controls[m_current_context_controls].last_bookmark_path.empty())
+			if (m_context_controls[m_current_context_controls].site_bookmarks->path.empty())
 				return;
 
 			wxString name = iter->second;
 			name.Replace(_T("\\"), _T("\\\\"));
 			name.Replace(_T("/"), _T("\\/"));
-			name = m_context_controls[m_current_context_controls].last_bookmark_path + _T("/") + name;
+			name = m_context_controls[m_current_context_controls].site_bookmarks->path + _T("/") + name;
 
 			CSiteManagerItemData_Site *pData = CSiteManager::GetSiteByPath(name);
 			if (!pData)
@@ -1146,10 +1157,13 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			return;
 		}
 
-		ConnectToSite(pData);
-		m_context_controls[m_current_context_controls].last_bookmark_path = path;
-		m_context_controls[m_current_context_controls].bookmarks.clear();
-		CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
+		if (!ConnectToSite(pData))
+		{
+			delete pData;
+			return;
+		}
+
+		SetBookmarksFromPath(path);
 		UpdateBookmarkMenu();
 
 		delete pData;
@@ -1617,6 +1631,7 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 	{
 		COptions::Get()->SetLastServer(m_context_controls[m_current_context_controls].pState->GetLastServer());
 		COptions::Get()->SetOption(OPTION_LASTSERVERPATH, m_context_controls[m_current_context_controls].pState->GetLastServerPath().GetSafePath());
+		COptions::Get()->SetOption(OPTION_LAST_CONNECTED_SITE, m_context_controls[m_current_context_controls].site_bookmarks->path);
 	}
 
 	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
@@ -1635,8 +1650,6 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 
 	bool filters_toggled = CFilterManager::HasActiveFilters(true) && !CFilterManager::HasActiveFilters(false);
 	COptions::Get()->SetOption(OPTION_FILTERTOGGLESTATE, filters_toggled ? 1 : 0);
-
-	COptions::Get()->SetOption(OPTION_LAST_CONNECTED_SITE, m_context_controls[m_current_context_controls].last_bookmark_path);
 
 	Destroy();
 }
@@ -1768,10 +1781,57 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 
 	CSiteManager dlg;
 
-	if (!dlg.Create(this, m_context_controls[m_current_context_controls].last_bookmark_path, pServer))
+	std::set<wxString> handled_paths;
+	std::list<size_t> handled_contexts;
+	std::vector<CSiteManager::_connected_site> connected_sites;
+
+	if (pServer)
+	{
+		CSiteManager::_connected_site connected_site;
+		connected_site.server = *pServer;
+		connected_sites.push_back(connected_site);
+	}
+
+	for (size_t i = 0; i < m_context_controls.size(); i++)
+	{
+		const wxString& path = m_context_controls[i].site_bookmarks->path;
+		if (handled_paths.find(path) != handled_paths.end())
+			continue;
+		if (path == _T(""))
+			continue;
+
+		CSiteManager::_connected_site connected_site;
+		connected_site.old_path = path;
+		connected_site.server = m_context_controls[i].pState->GetLastServer();
+		connected_sites.push_back(connected_site);
+		handled_paths.insert(path);
+		handled_contexts.push_back(i);
+	}
+
+	if (!dlg.Create(this, &connected_sites, pServer))
 		return;
 
 	int res = dlg.ShowModal();
+	if (res == wxID_YES || res == wxID_OK)
+	{
+		// Update bookmark paths
+		for (std::list<size_t>::iterator iter = handled_contexts.begin(); iter != handled_contexts.end(); iter++)
+		{
+			for (size_t j = 0; j < connected_sites.size(); j++)
+			{
+				if (connected_sites[j].old_path != m_context_controls[*iter].site_bookmarks->path)
+					continue;
+
+				m_context_controls[*iter].site_bookmarks->path = connected_sites[j].new_path;
+				connected_sites.erase(connected_sites.begin() + j);
+				break;
+			}
+			m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.clear();
+			dlg.GetBookmarks(m_context_controls[m_current_context_controls].site_bookmarks->path,
+							 m_context_controls[m_current_context_controls].site_bookmarks->bookmarks);
+		}
+	}
+
 	if (res == wxID_YES)
 	{
 		CSiteManagerItemData_Site data;
@@ -1780,14 +1840,12 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 
 		if (ConnectToSite(&data))
 		{
-			m_context_controls[m_current_context_controls].last_bookmark_path = dlg.GetSitePath();
+			// Get new bookmarks
+			wxString path = dlg.GetSitePath();
+			SetBookmarksFromPath(path);
 		}
 	}
-	else if (res == wxID_OK)
-		m_context_controls[m_current_context_controls].last_bookmark_path = dlg.GetChangedBookmarkPath(pState->GetServer());
 
-	m_context_controls[m_current_context_controls].bookmarks.clear();
-	dlg.GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
 	UpdateBookmarkMenu();
 }
 
@@ -2910,9 +2968,7 @@ void CMainFrame::ProcessCommandLine()
 		{
             if (ConnectToSite(pData))
 			{
-				m_context_controls[m_current_context_controls].last_bookmark_path = site;
-				m_context_controls[m_current_context_controls].bookmarks.clear();
-				CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].last_bookmark_path, m_context_controls[m_current_context_controls].bookmarks);
+				SetBookmarksFromPath(site);
 				UpdateBookmarkMenu();
 			}
 			delete pData;
@@ -3071,12 +3127,17 @@ void CMainFrame::UpdateBookmarkMenu()
 	if (m_current_context_controls >= m_context_controls.size())
 		return;
 
-	if (!m_context_controls[m_current_context_controls].bookmarks.empty())
-		pMenu->AppendSeparator();
+	if (!m_context_controls[m_current_context_controls].site_bookmarks || 
+		m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.empty())
+	{
+		return;
+	}
+
+	pMenu->AppendSeparator();
 
 	m_bookmark_menu_id_map_site.clear();
 
-	for (std::list<wxString>::const_iterator iter = m_context_controls[m_current_context_controls].bookmarks.begin(); iter != m_context_controls[m_current_context_controls].bookmarks.end(); iter++)
+	for (std::list<wxString>::const_iterator iter = m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.begin(); iter != m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.end(); iter++)
 	{
 		int id;
 		if (ids == m_bookmark_menu_ids.end())
@@ -3097,8 +3158,7 @@ void CMainFrame::UpdateBookmarkMenu()
 
 void CMainFrame::ClearBookmarks()
 {
-	m_context_controls[m_current_context_controls].last_bookmark_path.clear();
-	m_context_controls[m_current_context_controls].bookmarks.clear();
+	m_context_controls[m_current_context_controls].site_bookmarks = new _context_controls::_site_bookmarks;
 	UpdateBookmarkMenu();
 }
 
@@ -3329,12 +3389,18 @@ void CMainFrame::CreateContextControls(CState* pState)
 		context_controls.tab_index = m_tabs->GetPageCount();
 		m_tabs->AddPage(context_controls.pViewSplitter, context_controls.title);
 
+		// Copy reconnect and bookmark information
 		pState->SetLastServer(
 			m_context_controls[m_current_context_controls].pState->GetLastServer(),
 			m_context_controls[m_current_context_controls].pState->GetLastServerPath());
+
+		context_controls.site_bookmarks = m_context_controls[m_current_context_controls].site_bookmarks;
 	}
 	else
+	{
 		context_controls.tab_index = 0;
+		context_controls.site_bookmarks = new _context_controls::_site_bookmarks;
+	}
 
 	Thaw();
 
@@ -3502,4 +3568,28 @@ void CMainFrame::OnTabClosing(wxAuiNotebookEvent& event)
 void CMainFrame::OnTabClosing_Deferred(wxCommandEvent& event)
 {
 	CloseTab(event.GetId());
+}
+
+void CMainFrame::SetBookmarksFromPath(const wxString& path)
+{
+	CSharedPointer<_context_controls::_site_bookmarks> site_bookmarks;
+	for (size_t i = 0; i < m_context_controls.size(); i++)
+	{
+		if (i == m_current_context_controls)
+			continue;
+		if (m_context_controls[i].site_bookmarks->path != path)
+			continue;
+
+		site_bookmarks = m_context_controls[i].site_bookmarks;
+		site_bookmarks->bookmarks.clear();
+	}
+	if (!site_bookmarks)
+	{
+		site_bookmarks = new _context_controls::_site_bookmarks;
+		site_bookmarks->path = path;
+	}
+
+	m_context_controls[m_current_context_controls].site_bookmarks = site_bookmarks;
+	CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].site_bookmarks->path,
+		m_context_controls[m_current_context_controls].site_bookmarks->bookmarks);
 }
