@@ -3277,6 +3277,7 @@ void CMainFrame::CreateContextControls(CState* pState)
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK, wxAuiNotebookEventHandler(CMainFrame::OnTabBgDoubleclick), 0, this);
+			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_UP, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
 		}
 
 		RememberSplitterPositions();
