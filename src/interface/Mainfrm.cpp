@@ -2294,14 +2294,14 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 	}
 
 	// Now the other panes
-	int mode;
-	if (!layout || layout == 2 || layout == 3)
-		mode = wxSPLIT_VERTICAL;
-	else
-		mode = wxSPLIT_HORIZONTAL;
-
 	for (size_t i = 0; i < m_context_controls.size(); i++)
 	{
+		int mode;
+		if (!layout || layout == 2 || layout == 3)
+			mode = wxSPLIT_VERTICAL;
+		else
+			mode = wxSPLIT_HORIZONTAL;
+
 		int isMode = m_context_controls[i].pViewSplitter->GetSplitMode();
 
 		int isSwap = m_context_controls[i].pViewSplitter->GetWindow1() == m_context_controls[i].pRemoteSplitter ? 1 : 0;
