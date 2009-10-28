@@ -3276,6 +3276,7 @@ void CMainFrame::CreateContextControls(CState* pState)
 
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
+			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK, wxAuiNotebookEventHandler(CMainFrame::OnTabBgDoubleclick), 0, this);
 		}
 
 		RememberSplitterPositions();
@@ -3625,4 +3626,9 @@ bool CMainFrame::Connect(const CServer &server, const CServerPath &path /*=CServ
 	}
 
 	return pState->Connect(server, path);
+}
+
+void CMainFrame::OnTabBgDoubleclick(wxAuiNotebookEvent& event)
+{
+	CreateTab();
 }

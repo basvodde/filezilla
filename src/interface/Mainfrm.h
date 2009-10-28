@@ -204,6 +204,7 @@ protected:
 	void OnTabChanged(wxAuiNotebookEvent& event);
 	void OnTabClosing(wxAuiNotebookEvent& event);
 	void OnTabClosing_Deferred(wxCommandEvent& event);
+	void OnTabBgDoubleclick(wxAuiNotebookEvent& event);
 
 	bool m_bInitDone;
 	bool m_bQuit;
