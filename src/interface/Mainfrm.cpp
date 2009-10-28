@@ -3254,8 +3254,6 @@ void CMainFrame::PostInitialize()
 
 void CMainFrame::CreateContextControls(CState* pState)
 {
-	Freeze();
-
 	wxWindow* parent = m_pBottomSplitter;
 
 	if (!m_context_controls.empty())
@@ -3275,6 +3273,10 @@ void CMainFrame::CreateContextControls(CState* pState)
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CMainFrame::OnTabChanged), 0, this);
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
 		}
+
+		RememberSplitterPositions();
+		m_context_controls[m_current_context_controls].pLocalListView->SaveColumnSettings(OPTION_LOCALFILELIST_COLUMN_WIDTHS, OPTION_LOCALFILELIST_COLUMN_SHOWN, OPTION_LOCALFILELIST_COLUMN_ORDER);
+		m_context_controls[m_current_context_controls].pRemoteListView->SaveColumnSettings(OPTION_REMOTEFILELIST_COLUMN_WIDTHS, OPTION_REMOTEFILELIST_COLUMN_SHOWN, OPTION_REMOTEFILELIST_COLUMN_ORDER);
 
 		parent = m_tabs;
 	}
@@ -3402,13 +3404,13 @@ void CMainFrame::CreateContextControls(CState* pState)
 		context_controls.site_bookmarks = new _context_controls::_site_bookmarks;
 	}
 
-	Thaw();
-
 	m_context_controls.push_back(context_controls);
 }
 
 void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 {
+	m_pBottomSplitter->Freeze();
+
 	CState* pState = 0;
 	
 	// See if we can reuse an existing context
@@ -3440,7 +3442,12 @@ void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 
 	CContextManager::Get()->SetCurrentContext(pState);
 
+	if (!RestoreSplitterPositions())
+		SetDefaultSplitterPositions();
+
 	m_tabs->SetSelection(m_tabs->GetPageCount() - 1);
+
+	m_pBottomSplitter->Thaw();
 }
 
 bool CMainFrame::CloseTab(int tab)
@@ -3457,7 +3464,7 @@ bool CMainFrame::CloseTab(int tab)
 	if (i == m_context_controls.size())
 		return false;
 
-	Freeze();
+	m_pBottomSplitter->Freeze();
 
 	CState* pState = m_context_controls[i].pState;
 
@@ -3528,7 +3535,7 @@ bool CMainFrame::CloseTab(int tab)
 
 	pState->Disconnect();
 
-	Thaw();
+	m_pBottomSplitter->Thaw();
 
 	return true;
 }
