@@ -18,6 +18,7 @@ public:
 	static wxString GetCompilerFlags();
 	static wxString GetHostname();
 	static wxString GetBuildSystem();
+	static bool IsUnstable(); // Returns true on beta or rc releases.
 };
 
 #endif //__BUILDINFO_H__

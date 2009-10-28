@@ -934,7 +934,11 @@ bool CUpdateWizard::CanAutoCheckForUpdateNow()
 		// Last check in future
 		return true;
 	
-	const int days = COptions::Get()->GetOptionVal(OPTION_UPDATECHECK_INTERVAL) * 3600 * 24;
+	int days;
+	if (CBuildInfo::GetBuildType() == _T("official") && CBuildInfo::IsUnstable())
+		days = 3600 * 24;
+	else
+		days = COptions::Get()->GetOptionVal(OPTION_UPDATECHECK_INTERVAL) * 3600 * 24;
 	if (span.GetSeconds() >= days)
 		return true;
 

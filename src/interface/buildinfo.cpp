@@ -173,3 +173,14 @@ wxString CBuildInfo::GetBuildSystem()
 	return flags;
 #endif
 }
+
+bool CBuildInfo::IsUnstable()
+{
+	if (GetVersion().Find(_T("beta")) != -1)
+		return true;
+
+	if (GetVersion().Find(_T("rc")) != -1)
+		return true;
+
+	return false;
+}
