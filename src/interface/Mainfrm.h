@@ -68,6 +68,8 @@ public:
 
 	void PostInitialize();
 	
+	bool Connect(const CServer& server, const CServerPath& path = CServerPath());
+
 protected:
 	bool CreateMenus();
 	bool CreateQuickconnectBar();
@@ -78,6 +80,7 @@ protected:
 	void InitToolbarState();
 	void InitMenubarState();
 	bool CloseTab(int tab);
+	void CreateTab();
 	void CreateContextControls(CState* pState);
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);

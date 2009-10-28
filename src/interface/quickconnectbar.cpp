@@ -5,6 +5,7 @@
 #include "state.h"
 #include "Options.h"
 #include "loginmanager.h"
+#include "Mainfrm.h"
 
 BEGIN_EVENT_TABLE(CQuickconnectBar, wxPanel)
 EVT_BUTTON(XRCID("ID_QUICKCONNECT_OK"), CQuickconnectBar::OnQuickconnect)
@@ -26,8 +27,9 @@ CQuickconnectBar::~CQuickconnectBar()
 {
 }
 
-bool CQuickconnectBar::Create(wxWindow* pParent)
+bool CQuickconnectBar::Create(CMainFrame* pParent)
 {
+	m_pMainFrame = pParent;
     if (!wxXmlResource::Get()->LoadPanel(this, pParent, _T("ID_QUICKCONNECTBAR")))
 	{
 		wxLogError(_("Cannot load Quickconnect bar from resource file"));
@@ -127,7 +129,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	if (event.GetId() == 1)
 		server.SetBypassProxy(true);
 
-	if (!pState->Connect(server, true, path))
+	if (!m_pMainFrame->Connect(server, path))
 		return;
 
 	CRecentServerList::SetMostRecentServer(server);
@@ -192,7 +194,7 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 		return;
 	}
 
-	pState->Connect(server, true);
+	m_pMainFrame->Connect(server);
 }
 
 void CQuickconnectBar::ClearFields()

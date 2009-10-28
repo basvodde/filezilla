@@ -493,17 +493,13 @@ const CServer* CState::GetServer() const
 	return m_pServer;
 }
 
-bool CState::Connect(const CServer& server, bool askBreak, const CServerPath& path /*=CServerPath()*/)
+bool CState::Connect(const CServer& server, const CServerPath& path /*=CServerPath()*/)
 {
 	if (!m_pEngine)
 		return false;
 	if (m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
-	{
-		if (askBreak)
-			if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
-				return false;
 		m_pCommandQueue->Cancel();
-	}
+	m_pRecursiveOperation->StopRecursiveOperation();
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), LIST_FLAG_FALLBACK_CURRENT));

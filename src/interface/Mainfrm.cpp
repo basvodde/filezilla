@@ -1672,7 +1672,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 	}
 
 	CServerPath path = pState->GetLastServerPath();
-	pState->Connect(server, false, path);
+	Connect(server, path);
 }
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
@@ -2426,13 +2426,13 @@ bool CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 			return false;
 	}
 
-	CState* pState = CContextManager::Get()->GetCurrentContext();
-	if (!pState || !pState->Connect(pData->m_server, true, pData->m_remoteDir))
+	if (!Connect(pData->m_server, pData->m_remoteDir))
 		return false;
 
 	if (pData->m_localDir != _T(""))
 	{
-		bool set = pState->SetLocalDir(pData->m_localDir);
+		CState *pState = CContextManager::Get()->GetCurrentContext();
+		bool set = pState && pState->SetLocalDir(pData->m_localDir);
 
 		if (set && pData->m_sync)
 		{
@@ -3007,7 +3007,7 @@ void CMainFrame::ProcessCommandLine()
 		if (!pState)
 			return;
 
-		pState->Connect(server, true, path);
+		Connect(server, path);
 	}
 }
 
@@ -3409,45 +3409,7 @@ void CMainFrame::CreateContextControls(CState* pState)
 
 void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
 {
-	m_pBottomSplitter->Freeze();
-
-	CState* pState = 0;
-	
-	// See if we can reuse an existing context
-	for (size_t i = 0; i < m_context_controls.size(); i++)
-	{
-		if (m_context_controls[i].tab_index != -1)
-			continue;
-		
-		if (m_context_controls[i].pState->IsRemoteConnected() ||
-			!m_context_controls[i].pState->IsRemoteIdle())
-			continue;
-
-		pState = m_context_controls[i].pState;
-		m_context_controls.erase(m_context_controls.begin() + i);
-		if (m_current_context_controls > i)
-			m_current_context_controls--;
-		break;
-	}
-	if (!pState)
-	{
-		pState = CContextManager::Get()->CreateState(this);
-		pState->CreateEngine();
-	}
-	CreateContextControls(pState);
-
-	pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
-
-	pState->SetLocalDir(_T("/"));
-
-	CContextManager::Get()->SetCurrentContext(pState);
-
-	if (!RestoreSplitterPositions())
-		SetDefaultSplitterPositions();
-
-	m_tabs->SetSelection(m_tabs->GetPageCount() - 1);
-
-	m_pBottomSplitter->Thaw();
+	CreateTab();
 }
 
 bool CMainFrame::CloseTab(int tab)
@@ -3601,4 +3563,62 @@ void CMainFrame::SetBookmarksFromPath(const wxString& path)
 	m_context_controls[m_current_context_controls].site_bookmarks = site_bookmarks;
 	CSiteManager::GetBookmarks(m_context_controls[m_current_context_controls].site_bookmarks->path,
 		m_context_controls[m_current_context_controls].site_bookmarks->bookmarks);
+}
+
+void CMainFrame::CreateTab()
+{
+	m_pBottomSplitter->Freeze();
+
+	CState* pState = 0;
+	
+	// See if we can reuse an existing context
+	for (size_t i = 0; i < m_context_controls.size(); i++)
+	{
+		if (m_context_controls[i].tab_index != -1)
+			continue;
+		
+		if (m_context_controls[i].pState->IsRemoteConnected() ||
+			!m_context_controls[i].pState->IsRemoteIdle())
+			continue;
+
+		pState = m_context_controls[i].pState;
+		m_context_controls.erase(m_context_controls.begin() + i);
+		if (m_current_context_controls > i)
+			m_current_context_controls--;
+		break;
+	}
+	if (!pState)
+	{
+		pState = CContextManager::Get()->CreateState(this);
+		pState->CreateEngine();
+	}
+	CreateContextControls(pState);
+
+	pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
+
+	pState->SetLocalDir(_T("/"));
+
+	CContextManager::Get()->SetCurrentContext(pState);
+
+	if (!RestoreSplitterPositions())
+		SetDefaultSplitterPositions();
+
+	m_tabs->SetSelection(m_tabs->GetPageCount() - 1);
+
+	m_pBottomSplitter->Thaw();
+}
+
+bool CMainFrame::Connect(const CServer &server, const CServerPath &path /*=CServerPath()*/)
+{
+	CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (!pState)
+		return false;
+
+	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
+	{
+		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
+			return false;
+	}
+
+	return pState->Connect(server, path);
 }
