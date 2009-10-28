@@ -3268,6 +3268,8 @@ void CMainFrame::CreateContextControls(CState* pState)
 
 			m_tabs->Create(m_pBottomSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_CLOSE_ON_ALL_TABS);
 			m_tabs->SetExArtProvider();
+			m_tabs->SetSelectedFont(*wxNORMAL_FONT);
+			m_tabs->SetMeasuringFont(*wxNORMAL_FONT);
 
 			m_context_controls[m_current_context_controls].pViewSplitter->Reparent(m_tabs);
 
