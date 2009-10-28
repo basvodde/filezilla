@@ -3085,10 +3085,13 @@ void CMainFrame::UpdateBookmarkMenu()
 	{
 		pMenu->Delete(iter->first);
 	}
+	m_bookmark_menu_id_map_global.clear();
+
 	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.begin(); iter != m_bookmark_menu_id_map_site.end(); iter++)
 	{
 		pMenu->Delete(iter->first);
 	}
+	m_bookmark_menu_id_map_site.clear();
 
 	// Delete the separators
 	while (pMenu->GetMenuItemCount() > 2)
@@ -3105,8 +3108,6 @@ void CMainFrame::UpdateBookmarkMenu()
 	if (CBookmarksDialog::GetBookmarks(global_bookmarks) && !global_bookmarks.empty())
 	{
 		pMenu->AppendSeparator();
-
-		m_bookmark_menu_id_map_global.clear();
 
 		for (std::list<wxString>::const_iterator iter = global_bookmarks.begin(); iter != global_bookmarks.end(); iter++)
 		{
@@ -3138,8 +3139,6 @@ void CMainFrame::UpdateBookmarkMenu()
 	}
 
 	pMenu->AppendSeparator();
-
-	m_bookmark_menu_id_map_site.clear();
 
 	for (std::list<wxString>::const_iterator iter = m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.begin(); iter != m_context_controls[m_current_context_controls].site_bookmarks->bookmarks.end(); iter++)
 	{
