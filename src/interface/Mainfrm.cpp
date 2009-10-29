@@ -3623,8 +3623,26 @@ bool CMainFrame::Connect(const CServer &server, const CServerPath &path /*=CServ
 
 	if (pState->IsRemoteConnected() || !pState->IsRemoteIdle())
 	{
-		if (wxMessageBox(_("Break current connection?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
-			return false;
+		wxDialogEx dlg;
+		if (dlg.Load(this, _T("ID_ALREADYCONNECTED")))
+		{
+			if (COptions::Get()->GetOptionVal(OPTION_ALREADYCONNECTED_CHOICE) != 0)
+				XRCCTRL(dlg, "ID_OLDTAB", wxRadioButton)->SetValue(true);
+			else
+				XRCCTRL(dlg, "ID_NEWTAB", wxRadioButton)->SetValue(true);
+
+			if (dlg.ShowModal() != wxID_OK)
+				return false;
+
+			if (XRCCTRL(dlg, "ID_NEWTAB", wxRadioButton)->GetValue())
+			{
+				CreateTab();
+				pState = CContextManager::Get()->GetCurrentContext();
+				COptions::Get()->SetOption(OPTION_ALREADYCONNECTED_CHOICE, 0);
+			}
+			else
+				COptions::Get()->SetOption(OPTION_ALREADYCONNECTED_CHOICE, 1);
+		}
 	}
 
 	return pState->Connect(server, path);

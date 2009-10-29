@@ -147,6 +147,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Filteredit window size", string, _T(""), false },
 	{ "Enable invalid char filter", number, _T("1"), false },
 	{ "Invalid char replace", string, _T("_"), false },
+	{ "Already connected choice", number, _T("0"), false }
 };
 
 struct t_default_option
