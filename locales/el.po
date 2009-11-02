@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-29 11:24+0100\n"
-"PO-Revision-Date: 2009-10-27 22:04+0200\n"
-"Last-Translator: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
+"POT-Creation-Date: 2009-11-02 23:22+0100\n"
+"PO-Revision-Date: 2009-11-02 12:48+0200\n"
+"Last-Translator: Σταμάτιος Η. Σταματέλλος <ydatografida@gmail.com>\n"
 "Language-Team: Stamatis H. Stamatellos <ydatografida@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -81,7 +81,7 @@ msgid_plural "%d files. Total size: At least %s"
 msgstr[0] "%d αρχείο. Συνολικό μέγεθος: Τουλάχιστον %s"
 msgstr[1] "%d αρχεία. Συνολικό μέγεθος: Τουλάχιστον %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2812
+#: ../../locales/../src/interface/QueueView.cpp:2823
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d αρχεία προστέθηκαν στη λίστα αναμονής"
@@ -332,7 +332,7 @@ msgstr "&Κατάρρευση"
 msgid "&Create directory"
 msgstr "&Δημιουργία φακέλου"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:678
+#: ../../locales/../src/interface/Mainfrm.cpp:672
 msgid "&Debug"
 msgstr "&Αποσφαλμάτωση"
 
@@ -976,7 +976,7 @@ msgid "'Account' logontype not supported by selected protocol"
 msgstr ""
 "Ο τύπος σύνδεσης 'Λογαριασμός' δεν υποστηρίζεται από το επιλεγμένο πρωτόκολλο"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:774
+#: ../../locales/../src/interface/Mainfrm.cpp:768
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -1172,7 +1172,7 @@ msgstr ""
 msgid "A newer version of FileZilla is available:"
 msgstr "Μία νέα έκδοση του FileZilla είναι διαθέσιμη:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:839
+#: ../../locales/../src/interface/Mainfrm.cpp:833
 msgid ""
 "A proper server always shows all files, but some broken servers hide files "
 "from the user. Use this option to force the server to show all files."
@@ -1229,10 +1229,9 @@ msgid "ASCII"
 msgstr "ASCII"
 
 #: resources.h:473
-#, fuzzy
 msgid "Abort previous connection and connect in current tab"
 msgstr ""
-"Η κύρια σύνδεση και τα πιστοποιητικά σύνδεσης δεδομένων δεν ταιριάζουν."
+"Διακοπή της προηγούμενης σύνδεσης και συνδέση σύμφωνα με τη τρέχουσα καρτέλα"
 
 #: resources.h:153
 msgid "About FileZilla"
@@ -1338,9 +1337,22 @@ msgstr "Επιλογές για προχωρημένους:"
 msgid "Algorithm:"
 msgstr "Αλγόριθμος:"
 
+#: ../../locales/../src/interface/QueueView.cpp:3008
+#, fuzzy
+msgid "All files have been successfully transferred"
+msgstr "&Αυτόματη απομάκρυνση των επιτυχημένων μεταφορών"
+
 #: resources.h:675
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Όλες οι θύρες που θα δωθούν πρέπει να είναι μεταξύ 1024 και 65535."
+
+#: ../../locales/../src/interface/QueueView.cpp:3004
+#, fuzzy, c-format
+msgid "All transfers have finished. %d file could not be transferred."
+msgid_plural ""
+"All transfers have finished. %d files could not be \ttransferred."
+msgstr[0] "Οι οποιεσδήποτε αλλαγές στα φίλτρα δε μπορούν να αποθηκευτούν."
+msgstr[1] "Οι οποιεσδήποτε αλλαγές στα φίλτρα δε μπορούν να αποθηκευτούν."
 
 #: resources.h:714
 msgid "Allow &fall back to other transfer mode on failure"
@@ -1351,9 +1363,8 @@ msgid "Allow fallback to other transfer mode on failure"
 msgstr "Επιτρεπτή η επιστροφή σε άλλες καταστάσεις μεταφοράς κατά την αποτυχία"
 
 #: resources.h:470
-#, fuzzy
 msgid "Already connected"
-msgstr "Δε συνδέθηκε"
+msgstr "Συνδέθηκε ήδη"
 
 #: resources.h:759
 msgid ""
@@ -1545,7 +1556,7 @@ msgid "Blackboard"
 msgstr "Μαυροπίνακα"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:264
-#: ../../locales/../src/interface/Mainfrm.cpp:1133
+#: ../../locales/../src/interface/Mainfrm.cpp:1127
 #: ../../locales/../src/interface/sitemanager.cpp:390
 msgid "Bookmark"
 msgstr "Σελιδοδείκτης"
@@ -1647,11 +1658,11 @@ msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
 "Αδύνατη η πρόσβαση στο '%s', δεν υπάρχει μέσο ή ο οδηγός δεν είναι έτοιμος."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:744
+#: ../../locales/../src/interface/Mainfrm.cpp:738
 msgid "Cannot add server to Site Manager"
 msgstr "Αδυναμία προσθήκης του εξυπηρετητή στο διαχειριστή τοποθεσιών"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:3442
+#: ../../locales/../src/interface/Mainfrm.cpp:3444
 msgid ""
 "Cannot close tab while busy.\n"
 "Cancel current operation and close tab?"
@@ -1713,11 +1724,11 @@ msgstr "Αδυναμία φόρτωσης αρχείου, μη έγκυρο XML 
 msgid "Cannot load keyfile"
 msgstr "Αδυναμία φόρτωσης του αρχείου-κλειδιού"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:644
+#: ../../locales/../src/interface/Mainfrm.cpp:638
 msgid "Cannot load main menu from resource file"
 msgstr "Αδυναμία φόρτωσης του κυρίως μενού από το αρχείο resource "
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1379
+#: ../../locales/../src/interface/Mainfrm.cpp:1373
 msgid "Cannot load toolbar from resource file"
 msgstr "Αδυναμία φόρτωσης γραμμής εργαλείων από το αρχείο resource"
 
@@ -1816,7 +1827,7 @@ msgstr "Έλεγχος για νεώτερες εκδόσεις του FileZilla
 msgid "Check for updates"
 msgstr "Έλεγχος για αναβαθμίσεις"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2195
+#: ../../locales/../src/interface/Mainfrm.cpp:2189
 msgid "Check for updates failed"
 msgstr "Επέτυχε ο έλεγχος για αναβαθμίσεις"
 
@@ -1910,8 +1921,8 @@ msgstr "Πελάτης πρός Φυσική Διεύθυνση (MAC) εξυπη
 msgid "Client to server cipher:"
 msgstr "Πελάτης προς αποτύπωμα εξυπηρετητή:"
 
-#: resources.h:487 ../../locales/../src/interface/Mainfrm.cpp:1471
-#: ../../locales/../src/interface/Mainfrm.cpp:1494
+#: resources.h:487 ../../locales/../src/interface/Mainfrm.cpp:1465
+#: ../../locales/../src/interface/Mainfrm.cpp:1488
 msgid "Close FileZilla"
 msgstr "Κλείσιμο του FileZilla"
 
@@ -2033,7 +2044,7 @@ msgstr "Ρύθμιση εύρους θυρών"
 
 #: resources.h:462
 msgid "Configuring FileZilla and your network"
-msgstr "Ρύθμιση του FileZilla και του δικτυού σας "
+msgstr "Ρύθμιση του FileZilla και του δικτύου σας "
 
 #: ../../locales/../src/interface/search.cpp:1055
 msgid "Confirm deletion"
@@ -2064,7 +2075,7 @@ msgstr "Σύνδεση σε καθορισμένη τοποθεσία του δ�
 msgid "Connected"
 msgstr "Συνδεδεμένος"
 
-#: ../../locales/../src/interface/QueueView.cpp:1420
+#: ../../locales/../src/interface/QueueView.cpp:1431
 msgid "Connecting"
 msgstr "Σύνδεση"
 
@@ -2095,7 +2106,7 @@ msgstr "Σύνδεση στον εξυπηρετητή"
 msgid "Connection"
 msgstr "Σύνδεση"
 
-#: ../../locales/../src/interface/QueueView.cpp:1038
+#: ../../locales/../src/interface/QueueView.cpp:1049
 msgid "Connection attempt failed"
 msgstr "Προσπάθεια σύνδεσης απέτυχε"
 
@@ -2414,8 +2425,8 @@ msgstr "Αδύνατη η δημιουργία ΙΟ thread"
 msgid "Could not start proxy handshake: %s"
 msgstr "Αδύνατη η εκκίνηση χειραψίας με το διαμεσολαβητή:  %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1089
-#: ../../locales/../src/interface/QueueView.cpp:1094
+#: ../../locales/../src/interface/QueueView.cpp:1100
+#: ../../locales/../src/interface/QueueView.cpp:1105
 msgid "Could not start transfer"
 msgstr "Αδύνατη η εκκίνηση της μεταφοράς"
 
@@ -2441,8 +2452,8 @@ msgstr ""
 "Αδυναμία εγγραφής \"%s\", οι καθολικοί σελιδοδείκτες ήταν αδύνατο να "
 "αποθηκευτούν: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1930
-#: ../../locales/../src/interface/QueueView.cpp:1966
+#: ../../locales/../src/interface/QueueView.cpp:1941
+#: ../../locales/../src/interface/QueueView.cpp:1977
 #, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
@@ -2470,7 +2481,7 @@ msgstr "Αδύνατη η εγγραφή του \"%s\": %s"
 msgid "Could not write keyfile: %s"
 msgstr "Αδυναμία εγγραφής του αρχείου-κλειδιού: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1083
+#: ../../locales/../src/interface/QueueView.cpp:1094
 msgid "Could not write to local file"
 msgstr "Αδυναμία εγγραφής στο τοπικό αρχείο"
 
@@ -2507,7 +2518,7 @@ msgstr "Δημιουργία υποφακέλου στον τρέχον φάκε
 msgid "Create directory"
 msgstr "Δημιουργία φακέλου"
 
-#: ../../locales/../src/interface/QueueView.cpp:1493
+#: ../../locales/../src/interface/QueueView.cpp:1504
 msgid "Creating directory"
 msgstr "Δημιουργία φακέλου"
 
@@ -2739,7 +2750,7 @@ msgstr "Φάκελος"
 
 #: resources.h:617 resources.h:880 resources.h:963
 #: ../../locales/../src/interface/filelistctrl.cpp:410
-#: ../../locales/../src/interface/Mainfrm.cpp:2742
+#: ../../locales/../src/interface/Mainfrm.cpp:2736
 msgid "Directory comparison"
 msgstr "Σύγκριση φακέλου"
 
@@ -2782,7 +2793,7 @@ msgstr ""
 "Απενεργοποίηση του συγχρονισμού περιήγησης και στη συνέχεια τροποποίηση του "
 "απομακρυσμένου φακέλου;"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:841
+#: ../../locales/../src/interface/Mainfrm.cpp:835
 msgid ""
 "Disable this option again if you will not be able to see the correct "
 "directory contents anymore."
@@ -2800,8 +2811,8 @@ msgstr "Αποσύνδεση από τον εξυπηρετητή"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:218
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:935
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:937
-#: ../../locales/../src/interface/QueueView.cpp:1036
-#: ../../locales/../src/interface/QueueView.cpp:1080
+#: ../../locales/../src/interface/QueueView.cpp:1047
+#: ../../locales/../src/interface/QueueView.cpp:1091
 msgid "Disconnected from server"
 msgstr "Αποσύνδεση από τον εξυπηρετητή"
 
@@ -2811,7 +2822,7 @@ msgstr "Αποσύνδεση από τον εξυπηρετητή"
 msgid "Disconnected from server: %s"
 msgstr "Αποσύνδεση από τον εξυπηρετητή: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1395
+#: ../../locales/../src/interface/QueueView.cpp:1406
 #: ../../locales/../src/interface/statuslinectrl.cpp:206
 msgid "Disconnecting from previous server"
 msgstr "Αποσύνδεση από τον προηγούμενο εξυπηρετητή"
@@ -2842,8 +2853,8 @@ msgstr ""
 "Συνεχίστε να χρησιμοποιείτε τις σταθερές εκδόσεις, εκτός κι αν θέλετε να "
 "δοκιμάσετε τα νέα χαρακτηριστικά των εκδόσεων beta."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1474
-#: ../../locales/../src/interface/Mainfrm.cpp:1498
+#: ../../locales/../src/interface/Mainfrm.cpp:1468
+#: ../../locales/../src/interface/Mainfrm.cpp:1492
 msgid "Do you really want to close FileZilla?"
 msgstr "Θέλετε πραγματικά να κλείσετε το FileZilla;"
 
@@ -2866,7 +2877,7 @@ msgstr "Θέλετε πραγματικά να διαγράψετε την επ�
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Θέλετε πραγματικά να διαγράψετε τη λίστα αναμονής;"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:775
+#: ../../locales/../src/interface/Mainfrm.cpp:769
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "Θέλετε πραγματικά να στείλετε το '%s' στον εξυπηρετητή;"
@@ -2929,7 +2940,7 @@ msgstr "Λήψη των αποτελεσμάτων αναζήτησης"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
-#: ../../locales/../src/interface/QueueView.cpp:80
+#: ../../locales/../src/interface/QueueView.cpp:83
 #: ../../locales/../src/interface/RemoteListView.cpp:99
 #: ../../locales/../src/interface/RemoteTreeView.cpp:87
 msgid ""
@@ -2941,7 +2952,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:108
 #: ../../locales/../src/interface/LocalTreeView.cpp:110
-#: ../../locales/../src/interface/QueueView.cpp:93
+#: ../../locales/../src/interface/QueueView.cpp:96
 #: ../../locales/../src/interface/RemoteListView.cpp:105
 #: ../../locales/../src/interface/RemoteTreeView.cpp:93
 msgid "Drag&drop between different servers has not been implemented yet."
@@ -2998,7 +3009,7 @@ msgstr "Αποτυχία Επεξεργασίας"
 msgid "Email:"
 msgstr "E-Mail:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2205
 msgid "Empty command"
 msgstr "Κενή εντολή"
 
@@ -3060,11 +3071,11 @@ msgstr "Να ολοκληρωθεί σύγκριση και η αλλαγή τω
 msgid "Enter &custom command..."
 msgstr "Εισαγωγή &προσαρμοσμένης εντολής..."
 
-#: ../../locales/../src/interface/QueueView.cpp:2183
+#: ../../locales/../src/interface/QueueView.cpp:2194
 msgid "Enter command"
 msgstr "Εισαγωγή εντολής"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:756
+#: ../../locales/../src/interface/Mainfrm.cpp:750
 msgid "Enter custom command"
 msgstr "Εισαγωγή προσαρμοσμένης εντολής"
 
@@ -3153,8 +3164,8 @@ msgstr "Σφάλμα εισαγωγής"
 #: ../../locales/../src/interface/import.cpp:121
 #: ../../locales/../src/interface/import.cpp:312
 #: ../../locales/../src/interface/Options.cpp:188
-#: ../../locales/../src/interface/QueueView.cpp:1920
-#: ../../locales/../src/interface/QueueView.cpp:1947
+#: ../../locales/../src/interface/QueueView.cpp:1931
+#: ../../locales/../src/interface/QueueView.cpp:1958
 #: ../../locales/../src/interface/search.cpp:1116
 #: ../../locales/../src/interface/search.cpp:1137
 #: ../../locales/../src/interface/sitemanager.cpp:728
@@ -3176,8 +3187,8 @@ msgstr "Σφάλμα κατά την εκκίνηση του προγράμμα�
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:321
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:849
-#: ../../locales/../src/interface/QueueView.cpp:1931
-#: ../../locales/../src/interface/QueueView.cpp:1967
+#: ../../locales/../src/interface/QueueView.cpp:1942
+#: ../../locales/../src/interface/QueueView.cpp:1978
 #: ../../locales/../src/interface/sitemanager.cpp:905
 #: ../../locales/../src/interface/sitemanager.cpp:2691
 #: ../../locales/../src/interface/sitemanager.cpp:2926
@@ -3199,9 +3210,8 @@ msgid "Error:"
 msgstr "Σφάλμα:"
 
 #: resources.h:472
-#, fuzzy
 msgid "Establish connection in a new tab"
-msgstr "Αδύνατη η εδραίωση σύνδεσης με τον εξυπηρετητή"
+msgstr "Εδραίωση σύνδεσης της νέας καρτέλας"
 
 #: resources.h:909
 msgid "Example: png \"c:\\program files\\viewer\\viewer.exe\" -open"
@@ -3219,7 +3229,7 @@ msgstr "Εκτ&έλεση"
 msgid "Executable"
 msgstr "Εκτελέσιμο"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2195
+#: ../../locales/../src/interface/Mainfrm.cpp:2189
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "Το εκτελέσιμο δεν περιέχει πληροφορίες έκδοσης, δεν είναι εφικτός ο έλεγχος "
@@ -3542,7 +3552,7 @@ msgstr "Aναζήτηση αρχείου"
 msgid "File transfer successful"
 msgstr "Επιτυχής μεταφορά αρχείου"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1473
+#: ../../locales/../src/interface/Mainfrm.cpp:1467
 msgid "File transfers still in progress."
 msgstr "Μεταφορά αρχείων σε πρόοδο."
 
@@ -3569,10 +3579,8 @@ msgstr ""
 "είναι όλα σωστά ρυθμισμένα."
 
 #: resources.h:471
-#, fuzzy
 msgid "FileZilla is already connected to a server."
-msgstr ""
-"Αδύνατη η επεξεργασία του αρχείου, δεν υπάρχει σύνδεση με τον εξυπηρετητή."
+msgstr "Το FileZilla συνδέθηκε ήδη με τον εξυπηρετητή."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:437
 #: ../../locales/../src/interface/sitemanager.cpp:1061
@@ -3584,7 +3592,7 @@ msgstr ""
 "Οι τύποι σύνδεσης 'Κανονικός' και 'Λογαριασμός' δεν υποστηρίζονται αυτή τη "
 "λειτουργία."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1927
+#: ../../locales/../src/interface/Mainfrm.cpp:1921
 msgid "FileZilla needs to be restarted for the language change to take effect."
 msgstr ""
 "Το FileZilla πρέπει να επανεκκινηθεί για να εφαρμοστεί η γλωσσική αλλαγή."
@@ -3749,7 +3757,7 @@ msgstr "Επιβολή &UTF-8"
 msgid "Force showing &hidden files"
 msgstr "Εμφάνιση των &κρυφών αρχείων"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:836
+#: ../../locales/../src/interface/Mainfrm.cpp:830
 msgid "Force showing hidden files"
 msgstr "Εξαναγκασμένη εμφάνιση των κρυφών αρχείων"
 
@@ -3997,7 +4005,7 @@ msgstr ""
 "Εάν κάνετε κλικ στο δοκιμή, το FileZilla θα συνδεθεί στο probe.filezilla-"
 "project.org και θα εκτελέσει κάποιες απλές δοκιμές."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1497
+#: ../../locales/../src/interface/Mainfrm.cpp:1491
 msgid "If you close FileZilla, your changes will be lost."
 msgstr "Εάν κλείσετε το FileZilla, οι αλλαγές θα χαθούν"
 
@@ -4134,7 +4142,7 @@ msgstr ""
 "Ελλιπής αλυσίδα, το κορυφαίο πιστοποιητικό δεν είναι υπογεγραμμένο "
 "πιστοποιητικό από την αρμόδια αρχή έκδοσης πιστοποιητικών"
 
-#: ../../locales/../src/interface/QueueView.cpp:1032
+#: ../../locales/../src/interface/QueueView.cpp:1043
 msgid "Incorrect password"
 msgstr "Λανθασμένος κωδικός πρόσβασης"
 
@@ -4153,8 +4161,8 @@ msgid "Interface"
 msgstr "Διεπαφή"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:165
-#: ../../locales/../src/interface/QueueView.cpp:989
-#: ../../locales/../src/interface/QueueView.cpp:1563
+#: ../../locales/../src/interface/QueueView.cpp:1000
+#: ../../locales/../src/interface/QueueView.cpp:1574
 msgid "Interrupted by user"
 msgstr "Διακόπηκε από τον χρήστη"
 
@@ -4280,7 +4288,7 @@ msgstr "Περιφέρεια ή νομαρχία δραστηριοποίηση�
 msgid "Keep directories on top"
 msgstr "Κράτησε τους φακέλους στο επάνω μέρος"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:840
+#: ../../locales/../src/interface/Mainfrm.cpp:834
 msgid ""
 "Keep in mind that not all servers support this feature and may return "
 "incorrect listings if this option is enabled. Although FileZilla performs "
@@ -4304,7 +4312,7 @@ msgstr "Χ&αμηλότερη"
 msgid "Language"
 msgstr "Γλώσσα"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1927
+#: ../../locales/../src/interface/Mainfrm.cpp:1921
 msgid "Language changed"
 msgstr "Εφαρμογή τροποποίησης γλώσσας"
 
@@ -4512,7 +4520,7 @@ msgid "Maximum simultaneous &transfers:"
 msgstr "Μέγιστος αριθμός ταυτόχρονων &μεταφορών:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:483
-#: ../../locales/../src/interface/Mainfrm.cpp:2281
+#: ../../locales/../src/interface/Mainfrm.cpp:2275
 msgid "Message log"
 msgstr "Αρχείο συμβάντων"
 
@@ -4656,7 +4664,7 @@ msgstr "Όχι"
 msgid "No category to export selected"
 msgstr "Δεν έχει επιλεχθεί καμία κατηγορία για εξαγωγή"
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2205
 msgid "No command given, aborting."
 msgstr "Δε δόθηκε καμία εντολή, ακύρωση."
 
@@ -4683,7 +4691,7 @@ msgstr "Δε δόθηκε κόμβος, παρακαλώ καταχωρίστε 
 msgid "No images available"
 msgstr "Καμία διαθέσιμη εικόνα"
 
-#: ../../locales/../src/interface/QueueView.cpp:3010
+#: ../../locales/../src/interface/QueueView.cpp:3037
 msgid "No more files in the queue!"
 msgstr "Δεν υπάρχουν άλλα αρχεία στη λίστα αναμονής!"
 
@@ -4748,7 +4756,7 @@ msgstr ""
 "επεξεργασθούν."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:234
-#: ../../locales/../src/interface/Mainfrm.cpp:3394
+#: ../../locales/../src/interface/Mainfrm.cpp:3389
 msgid "Not connected"
 msgstr "Δε συνδέθηκε"
 
@@ -4756,11 +4764,11 @@ msgstr "Δε συνδέθηκε"
 msgid "Not connected to any server"
 msgstr "Δε συνδέθηκε με κανέναν εξυπηρετητή"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:744
+#: ../../locales/../src/interface/Mainfrm.cpp:738
 msgid "Not connected to any server."
 msgstr "Δε συνδέθηκε με κανέναν εξυπηρετητή."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:838
+#: ../../locales/../src/interface/Mainfrm.cpp:832
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
 "Σημείωση: Αυτό το χαρακτηριστικό υποστηρίζεται μόνο από το πρωτόκολλο FTP."
@@ -4941,7 +4949,7 @@ msgstr "Πα&θητική (συνιστάται)"
 msgid "Package"
 msgstr "Πακέτο"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2998
+#: ../../locales/../src/interface/Mainfrm.cpp:2992
 msgid "Parameter not a valid URL"
 msgstr "Η παράμετρος δεν είναι έγκυρη URL"
 
@@ -5105,7 +5113,7 @@ msgstr ""
 msgid "Please enter a password for this server:"
 msgstr "Παρακαλώ, καταχωρίστε τον κωδικό γι' αυτό τον εξυπηρετητή:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2183
+#: ../../locales/../src/interface/QueueView.cpp:2194
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -5152,7 +5160,7 @@ msgstr ""
 "Παρακαλώ, καταχωρίστε ένα όριο ταχύτητας αποστολής που να είναι μεγαλύτερο ή "
 "ίσο με 0 KB/s."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:756
+#: ../../locales/../src/interface/Mainfrm.cpp:750
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -5237,7 +5245,7 @@ msgstr ""
 "trojan ή άλλο κακόβουλο πρόγραμμα. Αυτό μπορεί να προκαλέσει λάθος συναγερμό "
 "που εσείς πρέπει να αγνοήσετε."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:900
+#: ../../locales/../src/interface/Mainfrm.cpp:894
 msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
@@ -5358,7 +5366,7 @@ msgstr "Ταχυδρομικός κωδικός:"
 msgid "Predefined Sites"
 msgstr "Προκαθορισμένες τοποθεσίες"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:899
+#: ../../locales/../src/interface/Mainfrm.cpp:893
 msgid "Preserving file timestamps"
 msgstr "Διατήρηση των χρονικών σφραγίδων στα αρχεία"
 
@@ -5449,7 +5457,7 @@ msgstr "Αλγόριθμος δημοσίου κλειδιού:"
 msgid "Public permissions"
 msgstr "Δημόσια δικαιώματα"
 
-#: ../../locales/../src/interface/QueueView.cpp:3065
+#: ../../locales/../src/interface/QueueView.cpp:3092
 msgid "Queue has been fully processed"
 msgstr "Η λίστα αναμονής έχει υποβληθεί σε πλήρης επεξεργασία"
 
@@ -5468,7 +5476,7 @@ msgstr "Λίστα αναμονής: %s%s"
 msgid "Queue: empty"
 msgstr "Λίστα αναμονής: κενή"
 
-#: ../../locales/../src/interface/QueueView.cpp:445
+#: ../../locales/../src/interface/QueueView.cpp:448
 msgid "Queued files"
 msgstr "Αρχεία σε λίστα αναμονής"
 
@@ -5484,7 +5492,7 @@ msgstr "Ε&πανεκκίνηση συστήματος"
 msgid "R&emote directory tree"
 msgstr "&Δομή απομακρυσμένων φακέλων"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:772
+#: ../../locales/../src/interface/Mainfrm.cpp:766
 msgid "Raw FTP command"
 msgstr "Aκατέργαστη εντολή FTP "
 
@@ -5513,7 +5521,7 @@ msgstr "Ανά&γνωση"
 msgid "Read-only"
 msgstr "Μόνο-Ανάγνωση"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1428
+#: ../../locales/../src/interface/Mainfrm.cpp:1422
 msgid "Really cancel current operation?"
 msgstr "Ακύρωση τρέχουσας λειτουργίας;"
 
@@ -5548,7 +5556,7 @@ msgstr "Διαγραφή όλων το επιλεγμένων αρχείων κ�
 msgid "Reason"
 msgstr "Αιτία"
 
-#: ../../locales/../src/interface/QueueView.cpp:3073
+#: ../../locales/../src/interface/QueueView.cpp:3100
 msgid "Reboot now"
 msgstr "Επανεκκίνηση τώρα"
 
@@ -5772,11 +5780,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Αποθήκευση ρυθμίσεων;"
 
-#: ../../locales/../src/interface/QueueView.cpp:1797
+#: ../../locales/../src/interface/QueueView.cpp:1808
 msgid "Scanning for files to add to queue"
 msgstr "Ανίχνευση αρχείων για πρόσθεση στην ουρά αναμονής"
 
-#: ../../locales/../src/interface/QueueView.cpp:1799
+#: ../../locales/../src/interface/QueueView.cpp:1810
 msgid "Scanning for files to upload"
 msgstr "Ανίχνευση αρχείων προς αποστολή"
 
@@ -5980,7 +5988,7 @@ msgstr "Το επιλεγμένο αρχείο ακόμα επεξεργάζετ
 msgid "Selected filter only works for local files."
 msgstr "Το επιλεγμένο φίλτρο λειτουργεί μόνο για τα τοπικά αρχεία."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1133
+#: ../../locales/../src/interface/Mainfrm.cpp:1127
 msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
@@ -6138,7 +6146,7 @@ msgstr "Εμφάνιση της &ακατέργαστης λίστας φακέ�
 msgid "Show &welcome dialog..."
 msgstr "Εμφάνιση του διαλόγου &καλωσορίσματος..."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2745
+#: ../../locales/../src/interface/Mainfrm.cpp:2739
 msgid "Show both directory trees and continue comparing?"
 msgstr ""
 "Να εμφανιστούν οι δομές των φακέλων και να συνεχιστεί η σύγκριση μεταξύ τους;"
@@ -6147,7 +6155,7 @@ msgstr ""
 msgid "Shows this help dialog"
 msgstr "Εμφάνιση του διαλόγου βοήθειας"
 
-#: ../../locales/../src/interface/QueueView.cpp:3075
+#: ../../locales/../src/interface/QueueView.cpp:3102
 msgid "Shutdown now"
 msgstr "Τερματισμός συστήματος"
 
@@ -6230,7 +6238,7 @@ msgstr "Παράκαμψη λήψης του %s"
 msgid "Skipping upload of %s"
 msgstr "Παράκαμψη αποστολής του %s"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1496
+#: ../../locales/../src/interface/Mainfrm.cpp:1490
 msgid "Some files are still being edited or need to be uploaded."
 msgstr "Κάποια αρχεία ακόμα επεξεργάζονται ή πρέπει να αποσταλούν."
 
@@ -6305,7 +6313,7 @@ msgid "State or province:"
 msgstr "Περιφέρεια ή νομαρχία:"
 
 #: ../../locales/../src/interface/edithandler.cpp:1226
-#: ../../locales/../src/interface/QueueView.cpp:471
+#: ../../locales/../src/interface/QueueView.cpp:474
 msgid "Status"
 msgstr "Κατάσταση"
 
@@ -6373,7 +6381,7 @@ msgstr "Συντακτικό λάθος"
 #: ../../locales/../src/interface/cmdline.cpp:80
 #: ../../locales/../src/interface/cmdline.cpp:89
 #: ../../locales/../src/interface/cmdline.cpp:95
-#: ../../locales/../src/interface/Mainfrm.cpp:3000
+#: ../../locales/../src/interface/Mainfrm.cpp:2994
 msgid "Syntax error in command line"
 msgstr "Συντακτικό σφάλμα στην γραμμή εντολών"
 
@@ -6668,8 +6676,8 @@ msgstr ""
 "Η νεώτερη έκδοση έχει ληφθεί. Παρακαλώ, εγκαταστήστε την όπως κάνετε και με "
 "αυτή την έκδοση."
 
-#: ../../locales/../src/interface/QueueView.cpp:1919
-#: ../../locales/../src/interface/QueueView.cpp:1946
+#: ../../locales/../src/interface/QueueView.cpp:1930
+#: ../../locales/../src/interface/QueueView.cpp:1957
 msgid "The queue will not be saved."
 msgstr "Η λίστα αναμονής δε μπόρεσε να αποθηκευτεί."
 
@@ -6770,11 +6778,11 @@ msgstr ""
 "Οι ρυθμίσεις έχουν εισαχθεί. Επανεκκινήστε το FileZilla για να εκτελεστούν "
 "οι ρυθμίσεις."
 
-#: ../../locales/../src/interface/QueueView.cpp:3063
+#: ../../locales/../src/interface/QueueView.cpp:3090
 msgid "The system will soon reboot unless you click cancel."
 msgstr "Το σύστημα θα επανεκκίνηθεί, εκτός αν ακυρώσετε την ενέργεια αυτή."
 
-#: ../../locales/../src/interface/QueueView.cpp:3061
+#: ../../locales/../src/interface/QueueView.cpp:3088
 msgid "The system will soon shutdown unless you click cancel."
 msgstr ""
 "Το σύστημα θα τερματίσει την λειτουργία του, εκτός αν ακυρώσετε την ενέργεια "
@@ -6838,8 +6846,8 @@ msgstr "Μορφοποίηση ώρας"
 msgid "Time&out in seconds:"
 msgstr "Διακ&οπή σε δευτερόλεπτα:"
 
-#: resources.h:704 ../../locales/../src/interface/QueueView.cpp:1034
-#: ../../locales/../src/interface/QueueView.cpp:1078
+#: resources.h:704 ../../locales/../src/interface/QueueView.cpp:1045
+#: ../../locales/../src/interface/QueueView.cpp:1089
 msgid "Timeout"
 msgstr "Διακοπή"
 
@@ -6857,13 +6865,13 @@ msgstr ""
 msgid "Title:"
 msgstr "Τίτλος:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2743
+#: ../../locales/../src/interface/Mainfrm.cpp:2737
 msgid "To compare directories, both file lists have to be aligned."
 msgstr ""
 "Για να συγκρίνουν οι φάκελοι, οι δύο λίστες αρχείων πρέπει να "
 "ευθυγραμμιστούν."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2744
+#: ../../locales/../src/interface/Mainfrm.cpp:2738
 msgid "To do this, the directory trees need to be both shown or both hidden."
 msgstr ""
 "Για να γίνει αυτό, θα πρέπει και οι δύο δομές των φακέλων να είναι "
@@ -6974,7 +6982,7 @@ msgstr "Ρυθμίσεις μεταφοράς"
 msgid "Transferred data got tainted."
 msgstr "Τα δεδομένα που μεταφέρθηκαν μολύνθηκαν."
 
-#: ../../locales/../src/interface/QueueView.cpp:1457
+#: ../../locales/../src/interface/QueueView.cpp:1468
 #: ../../locales/../src/interface/statuslinectrl.cpp:215
 msgid "Transferring"
 msgstr "Μεταφορά"
@@ -6982,6 +6990,12 @@ msgstr "Μεταφορά"
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:123
 msgid "Transfers"
 msgstr "Μεταφορές"
+
+#: ../../locales/../src/interface/QueueView.cpp:3005
+#: ../../locales/../src/interface/QueueView.cpp:3008
+#, fuzzy
+msgid "Transfers finished"
+msgstr "Ρυθμίσεις μεταφοράς"
 
 #: resources.h:801
 msgid "Treat files &without extension as ASCII file"
@@ -7314,15 +7328,15 @@ msgstr "Ορατές στήλες"
 msgid "W&rite"
 msgstr "Ε&γγραφή"
 
-#: ../../locales/../src/interface/QueueView.cpp:1756
+#: ../../locales/../src/interface/QueueView.cpp:1767
 msgid "Waiting"
 msgstr "Αναμονή"
 
-#: ../../locales/../src/interface/QueueView.cpp:1364
+#: ../../locales/../src/interface/QueueView.cpp:1375
 msgid "Waiting for browsing connection"
 msgstr "Αναμονή για σύνδεση αναζήτησης"
 
-#: ../../locales/../src/interface/QueueView.cpp:1407
+#: ../../locales/../src/interface/QueueView.cpp:1418
 msgid "Waiting for password"
 msgstr "Αναμονή για κωδικό πρόσβασης"
 

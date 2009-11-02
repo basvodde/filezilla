@@ -1,12 +1,12 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Milen A. Radev <milen@radev.net>, 2005
 # Асен Генов, 07.2008
-# Стоян Димитров <stoyanster от гмаил>, Last updated: 28.10.2009
+# Стоян Димитров <stoyanster от гмаил>, Last updated: 30.10.2009
 msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-29 11:24+0100\n"
+"POT-Creation-Date: 2009-11-02 23:22+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Stoyan Dimtirov\n"
 "Language-Team: Bulgarian <dict@fsa-bg.org>\n"
@@ -79,7 +79,7 @@ msgid_plural "%d files. Total size: At least %s"
 msgstr[0] "%d файл. Обща дължина: най-малко %s"
 msgstr[1] "%d файла. Обща дължина: най-малко %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2812
+#: ../../locales/../src/interface/QueueView.cpp:2823
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d файла добавени в опашката"
@@ -330,7 +330,7 @@ msgstr "&Срив"
 msgid "&Create directory"
 msgstr "&Нова папка"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:678
+#: ../../locales/../src/interface/Mainfrm.cpp:672
 msgid "&Debug"
 msgstr "&Трасиране"
 
@@ -970,7 +970,7 @@ msgid "'Account' logontype not supported by selected protocol"
 msgstr ""
 "Типът удостоверяване \"Регистрация\" не се поддържа от избрания протокол"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:774
+#: ../../locales/../src/interface/Mainfrm.cpp:768
 msgid ""
 "'quote' is usually a local command used by commandline clients to send the "
 "arguments following 'quote' to the server. You might want to enter the raw "
@@ -1163,7 +1163,7 @@ msgstr ""
 msgid "A newer version of FileZilla is available:"
 msgstr "Налична е по-нова версия на FileZilla:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:839
+#: ../../locales/../src/interface/Mainfrm.cpp:833
 msgid ""
 "A proper server always shows all files, but some broken servers hide files "
 "from the user. Use this option to force the server to show all files."
@@ -1216,9 +1216,8 @@ msgid "ASCII"
 msgstr "A&SCII"
 
 #: resources.h:473
-#, fuzzy
 msgid "Abort previous connection and connect in current tab"
-msgstr "Сертификатите на основната връзка и на връзката за данни не съвпадат."
+msgstr "&текущия подпрозорец"
 
 #: resources.h:153
 msgid "About FileZilla"
@@ -1323,9 +1322,26 @@ msgstr "Разширени настройки:"
 msgid "Algorithm:"
 msgstr "Алгоритъм:"
 
+#: ../../locales/../src/interface/QueueView.cpp:3008
+#, fuzzy
+msgid "All files have been successfully transferred"
+msgstr "&Автоматично премахване успешните"
+
 #: resources.h:675
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Всички портове в обхвата трябва да са между 1024 и 65535."
+
+#: ../../locales/../src/interface/QueueView.cpp:3004
+#, fuzzy, c-format
+msgid "All transfers have finished. %d file could not be transferred."
+msgid_plural ""
+"All transfers have finished. %d files could not be \ttransferred."
+msgstr[0] ""
+"Никакви промени, направени в Манипулатор връзки няма да могат да бъдат "
+"запазени."
+msgstr[1] ""
+"Никакви промени, направени в Манипулатор връзки няма да могат да бъдат "
+"запазени."
 
 #: resources.h:714
 msgid "Allow &fall back to other transfer mode on failure"
@@ -1336,9 +1352,8 @@ msgid "Allow fallback to other transfer mode on failure"
 msgstr "&Отстъпване до другия режим на прехвърляне при неуспех"
 
 #: resources.h:470
-#, fuzzy
 msgid "Already connected"
-msgstr "Няма връзка"
+msgstr "Активна връзка"
 
 #: resources.h:759
 msgid ""
@@ -1532,7 +1547,7 @@ msgid "Blackboard"
 msgstr "Черна дъска"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:264
-#: ../../locales/../src/interface/Mainfrm.cpp:1133
+#: ../../locales/../src/interface/Mainfrm.cpp:1127
 #: ../../locales/../src/interface/sitemanager.cpp:390
 msgid "Bookmark"
 msgstr "Отметка"
@@ -1633,11 +1648,11 @@ msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
 "Грешка при достъп до \"%s\" - няма сложен диск или устройството не е готово."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:744
+#: ../../locales/../src/interface/Mainfrm.cpp:738
 msgid "Cannot add server to Site Manager"
 msgstr "Неуспех при добавяне към Манипулатор връзки"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:3442
+#: ../../locales/../src/interface/Mainfrm.cpp:3444
 msgid ""
 "Cannot close tab while busy.\n"
 "Cancel current operation and close tab?"
@@ -1697,11 +1712,11 @@ msgstr "Неуспешно зареждане на файл - невалиден
 msgid "Cannot load keyfile"
 msgstr "Неуспешно зареждане на файл-ключ"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:644
+#: ../../locales/../src/interface/Mainfrm.cpp:638
 msgid "Cannot load main menu from resource file"
 msgstr "Грешка при зареждане на главното меню от ресурсен файл"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1379
+#: ../../locales/../src/interface/Mainfrm.cpp:1373
 msgid "Cannot load toolbar from resource file"
 msgstr "Грешка при зареждане на лента с инструменти от ресурсен файл"
 
@@ -1799,7 +1814,7 @@ msgstr "Проверка за по-нова версия на FileZilla"
 msgid "Check for updates"
 msgstr "Проверка за актуализации"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2195
+#: ../../locales/../src/interface/Mainfrm.cpp:2189
 msgid "Check for updates failed"
 msgstr "Проверката за актуализации беше неуспешна"
 
@@ -1835,7 +1850,7 @@ msgstr "Шифър:"
 
 #: resources.h:481
 msgid "Cl&ose tab"
-msgstr "&Затваряне на подпрозорецa"
+msgstr "&Затваряне на подпрозорец"
 
 #: resources.h:829
 msgid "Classic"
@@ -1893,8 +1908,8 @@ msgstr "MAC от клиента към сървъра:"
 msgid "Client to server cipher:"
 msgstr "Шифър от клиента към сървъра:"
 
-#: resources.h:487 ../../locales/../src/interface/Mainfrm.cpp:1471
-#: ../../locales/../src/interface/Mainfrm.cpp:1494
+#: resources.h:487 ../../locales/../src/interface/Mainfrm.cpp:1465
+#: ../../locales/../src/interface/Mainfrm.cpp:1488
 msgid "Close FileZilla"
 msgstr "Затваряне на FileZilla"
 
@@ -2045,7 +2060,7 @@ msgstr "Свързване към определена връзка от Ман�
 msgid "Connected"
 msgstr "Връзката осъществена"
 
-#: ../../locales/../src/interface/QueueView.cpp:1420
+#: ../../locales/../src/interface/QueueView.cpp:1431
 msgid "Connecting"
 msgstr "Свързване"
 
@@ -2076,7 +2091,7 @@ msgstr "Свързване със сървър"
 msgid "Connection"
 msgstr "Връзка"
 
-#: ../../locales/../src/interface/QueueView.cpp:1038
+#: ../../locales/../src/interface/QueueView.cpp:1049
 msgid "Connection attempt failed"
 msgstr "Опитът за връзка неуспешен"
 
@@ -2398,8 +2413,8 @@ msgstr "Неуспешно стартирането на входно-изход
 msgid "Could not start proxy handshake: %s"
 msgstr "Неуспешно започване на прокси приветствие: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1089
-#: ../../locales/../src/interface/QueueView.cpp:1094
+#: ../../locales/../src/interface/QueueView.cpp:1100
+#: ../../locales/../src/interface/QueueView.cpp:1105
 msgid "Could not start transfer"
 msgstr "Неуспешно започване на прехвърляне"
 
@@ -2425,8 +2440,8 @@ msgid "Could not write \"%s\", the global bookmarks could no be saved: %s"
 msgstr ""
 "Нвъзможен запис в \"%s\", глобалните отметки няма да бъдат запазени: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1930
-#: ../../locales/../src/interface/QueueView.cpp:1966
+#: ../../locales/../src/interface/QueueView.cpp:1941
+#: ../../locales/../src/interface/QueueView.cpp:1977
 #, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
@@ -2454,7 +2469,7 @@ msgstr "Неуспешен запис в \"%s\": %s"
 msgid "Could not write keyfile: %s"
 msgstr "Неуспешен запис на файл-ключ: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1083
+#: ../../locales/../src/interface/QueueView.cpp:1094
 msgid "Could not write to local file"
 msgstr "Неуспешен запис в местен файл"
 
@@ -2491,7 +2506,7 @@ msgstr "Създаване нова подпапка в текущата пап�
 msgid "Create directory"
 msgstr "Нова папка"
 
-#: ../../locales/../src/interface/QueueView.cpp:1493
+#: ../../locales/../src/interface/QueueView.cpp:1504
 msgid "Creating directory"
 msgstr "Създаване на нова папка"
 
@@ -2719,7 +2734,7 @@ msgstr "Папка"
 
 #: resources.h:617 resources.h:880 resources.h:963
 #: ../../locales/../src/interface/filelistctrl.cpp:410
-#: ../../locales/../src/interface/Mainfrm.cpp:2742
+#: ../../locales/../src/interface/Mainfrm.cpp:2736
 msgid "Directory comparison"
 msgstr "Сравняване папки"
 
@@ -2761,7 +2776,7 @@ msgstr ""
 "Изключване на синхронизираното разлистване и смяна само на отдалечената "
 "папка?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:841
+#: ../../locales/../src/interface/Mainfrm.cpp:835
 msgid ""
 "Disable this option again if you will not be able to see the correct "
 "directory contents anymore."
@@ -2777,8 +2792,8 @@ msgstr "Прекъсване връзката със сървър"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:218
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:935
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:937
-#: ../../locales/../src/interface/QueueView.cpp:1036
-#: ../../locales/../src/interface/QueueView.cpp:1080
+#: ../../locales/../src/interface/QueueView.cpp:1047
+#: ../../locales/../src/interface/QueueView.cpp:1091
 msgid "Disconnected from server"
 msgstr "Връзката със сървъра прекъсната"
 
@@ -2788,7 +2803,7 @@ msgstr "Връзката със сървъра прекъсната"
 msgid "Disconnected from server: %s"
 msgstr "Прекъсната връзка със сървър: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1395
+#: ../../locales/../src/interface/QueueView.cpp:1406
 #: ../../locales/../src/interface/statuslinectrl.cpp:206
 msgid "Disconnecting from previous server"
 msgstr "Прекъсване връзка с предишен сървър"
@@ -2819,8 +2834,8 @@ msgstr ""
 "Освен ако не искате да изпробвате някои нови възможности, е по-добре да "
 "използвате стабилната версия."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1474
-#: ../../locales/../src/interface/Mainfrm.cpp:1498
+#: ../../locales/../src/interface/Mainfrm.cpp:1468
+#: ../../locales/../src/interface/Mainfrm.cpp:1492
 msgid "Do you really want to close FileZilla?"
 msgstr "Наистина ли желаете да затворите FileZilla?"
 
@@ -2841,7 +2856,7 @@ msgstr "Наистина ли желаете да изтриете този за
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Наистина ли желаете да заличите опашката?"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:775
+#: ../../locales/../src/interface/Mainfrm.cpp:769
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
 msgstr "Наистина ли желаете да изпратите \"%s\" към сървъра?"
@@ -2903,7 +2918,7 @@ msgstr "Изтегляне на резултатите"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
-#: ../../locales/../src/interface/QueueView.cpp:80
+#: ../../locales/../src/interface/QueueView.cpp:83
 #: ../../locales/../src/interface/RemoteListView.cpp:99
 #: ../../locales/../src/interface/RemoteTreeView.cpp:87
 msgid ""
@@ -2915,7 +2930,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:108
 #: ../../locales/../src/interface/LocalTreeView.cpp:110
-#: ../../locales/../src/interface/QueueView.cpp:93
+#: ../../locales/../src/interface/QueueView.cpp:96
 #: ../../locales/../src/interface/RemoteListView.cpp:105
 #: ../../locales/../src/interface/RemoteTreeView.cpp:93
 msgid "Drag&drop between different servers has not been implemented yet."
@@ -2971,7 +2986,7 @@ msgstr "Неуспешна редакция"
 msgid "Email:"
 msgstr "Email:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2205
 msgid "Empty command"
 msgstr "Празна команда"
 
@@ -3033,11 +3048,11 @@ msgstr "Прекратяване на сравняването и промяна
 msgid "Enter &custom command..."
 msgstr "&Ръчна команда"
 
-#: ../../locales/../src/interface/QueueView.cpp:2183
+#: ../../locales/../src/interface/QueueView.cpp:2194
 msgid "Enter command"
 msgstr "Въвеждане команда"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:756
+#: ../../locales/../src/interface/Mainfrm.cpp:750
 msgid "Enter custom command"
 msgstr "Въвеждане команда"
 
@@ -3125,8 +3140,8 @@ msgstr "Неуспешен импорт"
 #: ../../locales/../src/interface/import.cpp:121
 #: ../../locales/../src/interface/import.cpp:312
 #: ../../locales/../src/interface/Options.cpp:188
-#: ../../locales/../src/interface/QueueView.cpp:1920
-#: ../../locales/../src/interface/QueueView.cpp:1947
+#: ../../locales/../src/interface/QueueView.cpp:1931
+#: ../../locales/../src/interface/QueueView.cpp:1958
 #: ../../locales/../src/interface/search.cpp:1116
 #: ../../locales/../src/interface/search.cpp:1137
 #: ../../locales/../src/interface/sitemanager.cpp:728
@@ -3148,8 +3163,8 @@ msgstr "Неуспешно стартиране на програмата"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:321
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:849
-#: ../../locales/../src/interface/QueueView.cpp:1931
-#: ../../locales/../src/interface/QueueView.cpp:1967
+#: ../../locales/../src/interface/QueueView.cpp:1942
+#: ../../locales/../src/interface/QueueView.cpp:1978
 #: ../../locales/../src/interface/sitemanager.cpp:905
 #: ../../locales/../src/interface/sitemanager.cpp:2691
 #: ../../locales/../src/interface/sitemanager.cpp:2926
@@ -3171,9 +3186,8 @@ msgid "Error:"
 msgstr "Грешка:"
 
 #: resources.h:472
-#, fuzzy
 msgid "Establish connection in a new tab"
-msgstr "Неуспешно свързване със сървър"
+msgstr "&нов подпрозорец"
 
 #: resources.h:909
 msgid "Example: png \"c:\\program files\\viewer\\viewer.exe\" -open"
@@ -3191,7 +3205,7 @@ msgstr "Изпъл&нение"
 msgid "Executable"
 msgstr "Изпълним"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2195
+#: ../../locales/../src/interface/Mainfrm.cpp:2189
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 "Изпълнимият файл не съдържа информация за версията, не може да бъде "
@@ -3511,7 +3525,7 @@ msgstr "Търсене на файл"
 msgid "File transfer successful"
 msgstr "Успешно прехвърляне на файл"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1473
+#: ../../locales/../src/interface/Mainfrm.cpp:1467
 msgid "File transfers still in progress."
 msgstr "Все още се прехвърлят файлове."
 
@@ -3536,9 +3550,8 @@ msgid ""
 msgstr "Сега FileZilla ще провери настройките за грешки."
 
 #: resources.h:471
-#, fuzzy
 msgid "FileZilla is already connected to a server."
-msgstr "Невъзможна редакция на файл, няма активна връзка със сървър."
+msgstr "FileZilla е вече свързана към сървър. Установяване на новата връзка в:"
 
 #: ../../locales/../src/interface/manual_transfer.cpp:437
 #: ../../locales/../src/interface/sitemanager.cpp:1061
@@ -3550,7 +3563,7 @@ msgstr ""
 "Удостоверяване тип \"Нормално\" и \"Регистрация\" не са достъпни в този "
 "режим."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1927
+#: ../../locales/../src/interface/Mainfrm.cpp:1921
 msgid "FileZilla needs to be restarted for the language change to take effect."
 msgstr "За да влезе в сила промяната на езика е нужен е рестарт на FileZilla."
 
@@ -3712,7 +3725,7 @@ msgstr "&Налагане UTF-8"
 msgid "Force showing &hidden files"
 msgstr "П&оказване скрити файлове"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:836
+#: ../../locales/../src/interface/Mainfrm.cpp:830
 msgid "Force showing hidden files"
 msgstr "Показване скрити файлове"
 
@@ -3951,7 +3964,7 @@ msgstr ""
 "Като натиснете \"Проверка\", FileZilla ще се свърже с probe.filezilla-"
 "project.org и ще направи няколко теста."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1497
+#: ../../locales/../src/interface/Mainfrm.cpp:1491
 msgid "If you close FileZilla, your changes will be lost."
 msgstr "При затваряне на FileZilla промените ще бъдат загубени."
 
@@ -4086,7 +4099,7 @@ msgstr ""
 "Не пълна верига, главният сертификат не е самоподписан сертификат от издател "
 "на сертификати."
 
-#: ../../locales/../src/interface/QueueView.cpp:1032
+#: ../../locales/../src/interface/QueueView.cpp:1043
 msgid "Incorrect password"
 msgstr "Грешна парола"
 
@@ -4105,8 +4118,8 @@ msgid "Interface"
 msgstr "Интерфейс"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:165
-#: ../../locales/../src/interface/QueueView.cpp:989
-#: ../../locales/../src/interface/QueueView.cpp:1563
+#: ../../locales/../src/interface/QueueView.cpp:1000
+#: ../../locales/../src/interface/QueueView.cpp:1574
 msgid "Interrupted by user"
 msgstr "Прекъснато от потребителя."
 
@@ -4229,7 +4242,7 @@ msgstr "Щат или провинция по юриздикция:"
 msgid "Keep directories on top"
 msgstr "Папките - отгоре"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:840
+#: ../../locales/../src/interface/Mainfrm.cpp:834
 msgid ""
 "Keep in mind that not all servers support this feature and may return "
 "incorrect listings if this option is enabled. Although FileZilla performs "
@@ -4253,7 +4266,7 @@ msgstr "&Най-нисък"
 msgid "Language"
 msgstr "Език"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1927
+#: ../../locales/../src/interface/Mainfrm.cpp:1921
 msgid "Language changed"
 msgstr "Езикът променен"
 
@@ -4457,7 +4470,7 @@ msgid "Maximum simultaneous &transfers:"
 msgstr "&Максимален брой:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:483
-#: ../../locales/../src/interface/Mainfrm.cpp:2281
+#: ../../locales/../src/interface/Mainfrm.cpp:2275
 msgid "Message log"
 msgstr "Дневник"
 
@@ -4601,7 +4614,7 @@ msgstr "Не"
 msgid "No category to export selected"
 msgstr "Не е избрана категория за експорт"
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2205
 msgid "No command given, aborting."
 msgstr "Няма указана команда, прекратяване."
 
@@ -4627,7 +4640,7 @@ msgstr "Не е указан хост. Моля, укажете хост."
 msgid "No images available"
 msgstr "Няма налични изображения"
 
-#: ../../locales/../src/interface/QueueView.cpp:3010
+#: ../../locales/../src/interface/QueueView.cpp:3037
 msgid "No more files in the queue!"
 msgstr "Няма файлове в опашката"
 
@@ -4688,19 +4701,19 @@ msgid "Not all items could be requeued for viewing/editing."
 msgstr "Не всичко може да бъде върнато в опашката за преглед/редакция."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:234
-#: ../../locales/../src/interface/Mainfrm.cpp:3394
+#: ../../locales/../src/interface/Mainfrm.cpp:3389
 msgid "Not connected"
-msgstr "Няма връзка"
+msgstr "Без осъществена връзка"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2346
 msgid "Not connected to any server"
 msgstr "Няма осъществена връзка"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:744
+#: ../../locales/../src/interface/Mainfrm.cpp:738
 msgid "Not connected to any server."
 msgstr "Няма осъществена връзка."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:838
+#: ../../locales/../src/interface/Mainfrm.cpp:832
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr "Тази особеност се поддържа само при използване на протокола FTP."
 
@@ -4877,7 +4890,7 @@ msgstr "&Пасивен (препоръчителен)"
 msgid "Package"
 msgstr "Пакет"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2998
+#: ../../locales/../src/interface/Mainfrm.cpp:2992
 msgid "Parameter not a valid URL"
 msgstr "Параметърът е невалиден URL"
 
@@ -5037,7 +5050,7 @@ msgstr ""
 msgid "Please enter a password for this server:"
 msgstr "Моля, въведете парола за този сървър:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2183
+#: ../../locales/../src/interface/QueueView.cpp:2194
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -5080,7 +5093,7 @@ msgstr ""
 "Моля, въведете ограничение на скоростта за качване равно или по-голямо от 0 "
 "KB/s."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:756
+#: ../../locales/../src/interface/Mainfrm.cpp:750
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
@@ -5158,7 +5171,7 @@ msgstr ""
 "смята, че се използва само от вредни програми. Това може да предизвика "
 "фалшива тревога, която вие може спокойно да пренебрегнете."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:900
+#: ../../locales/../src/interface/Mainfrm.cpp:894
 msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
@@ -5276,7 +5289,7 @@ msgstr "Пощенски код:"
 msgid "Predefined Sites"
 msgstr "Предварително определени връзки"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:899
+#: ../../locales/../src/interface/Mainfrm.cpp:893
 msgid "Preserving file timestamps"
 msgstr "Запазване времената на файловете"
 
@@ -5365,7 +5378,7 @@ msgstr "Алгоритъм на публичния ключ:"
 msgid "Public permissions"
 msgstr "Публични права"
 
-#: ../../locales/../src/interface/QueueView.cpp:3065
+#: ../../locales/../src/interface/QueueView.cpp:3092
 msgid "Queue has been fully processed"
 msgstr "Опашката обработена"
 
@@ -5384,7 +5397,7 @@ msgstr "Опашка: %s%s"
 msgid "Queue: empty"
 msgstr "Опашка: празна"
 
-#: ../../locales/../src/interface/QueueView.cpp:445
+#: ../../locales/../src/interface/QueueView.cpp:448
 msgid "Queued files"
 msgstr "Опашка"
 
@@ -5400,7 +5413,7 @@ msgstr "&Презареждане на системата"
 msgid "R&emote directory tree"
 msgstr "О&тдалечени папки"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:772
+#: ../../locales/../src/interface/Mainfrm.cpp:766
 msgid "Raw FTP command"
 msgstr "Оригинална команда на FTP"
 
@@ -5428,7 +5441,7 @@ msgstr "Че&тене"
 msgid "Read-only"
 msgstr "Само четими"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1428
+#: ../../locales/../src/interface/Mainfrm.cpp:1422
 msgid "Really cancel current operation?"
 msgstr "Наистина ли желаете да прекъснете текущата операция?"
 
@@ -5463,7 +5476,7 @@ msgstr "Наистина ли желаете да изтриете всички 
 msgid "Reason"
 msgstr "Причина"
 
-#: ../../locales/../src/interface/QueueView.cpp:3073
+#: ../../locales/../src/interface/QueueView.cpp:3100
 msgid "Reboot now"
 msgstr "Рестартиране"
 
@@ -5684,11 +5697,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Запис на настройките?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1797
+#: ../../locales/../src/interface/QueueView.cpp:1808
 msgid "Scanning for files to add to queue"
 msgstr "Търсене файлове за добавяне в опашката"
 
-#: ../../locales/../src/interface/QueueView.cpp:1799
+#: ../../locales/../src/interface/QueueView.cpp:1810
 msgid "Scanning for files to upload"
 msgstr "Преглеждане за файлове за качване"
 
@@ -5894,7 +5907,7 @@ msgstr "Избраният файл все още се редактира"
 msgid "Selected filter only works for local files."
 msgstr "Избраният филтър работи само върху местните файлове."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1133
+#: ../../locales/../src/interface/Mainfrm.cpp:1127
 msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
@@ -6051,7 +6064,7 @@ msgstr "&Показване необработено съдържание на �
 msgid "Show &welcome dialog..."
 msgstr "Показване &начален диалог"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2745
+#: ../../locales/../src/interface/Mainfrm.cpp:2739
 msgid "Show both directory trees and continue comparing?"
 msgstr ""
 "Показване на местните и отдалечени папки и продължаване на сравнението?"
@@ -6060,7 +6073,7 @@ msgstr ""
 msgid "Shows this help dialog"
 msgstr "Показване този помощен диалог"
 
-#: ../../locales/../src/interface/QueueView.cpp:3075
+#: ../../locales/../src/interface/QueueView.cpp:3102
 msgid "Shutdown now"
 msgstr "Изключване"
 
@@ -6143,7 +6156,7 @@ msgstr "Прескачане на изтеглянето на %s"
 msgid "Skipping upload of %s"
 msgstr "Прескачане на качването на %s"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1496
+#: ../../locales/../src/interface/Mainfrm.cpp:1490
 msgid "Some files are still being edited or need to be uploaded."
 msgstr "Има файлове, които биват редактирани или чакат качване."
 
@@ -6216,7 +6229,7 @@ msgid "State or province:"
 msgstr "Щат или провинция:"
 
 #: ../../locales/../src/interface/edithandler.cpp:1226
-#: ../../locales/../src/interface/QueueView.cpp:471
+#: ../../locales/../src/interface/QueueView.cpp:474
 msgid "Status"
 msgstr "Статус"
 
@@ -6284,7 +6297,7 @@ msgstr "Синтактична грешка"
 #: ../../locales/../src/interface/cmdline.cpp:80
 #: ../../locales/../src/interface/cmdline.cpp:89
 #: ../../locales/../src/interface/cmdline.cpp:95
-#: ../../locales/../src/interface/Mainfrm.cpp:3000
+#: ../../locales/../src/interface/Mainfrm.cpp:2994
 msgid "Syntax error in command line"
 msgstr "Синтактична грешка в командната линия"
 
@@ -6577,8 +6590,8 @@ msgstr ""
 "Най-новата версия е изтеглена. Моля, инсталирайте я така, както сте "
 "инсталирали текущата версия."
 
-#: ../../locales/../src/interface/QueueView.cpp:1919
-#: ../../locales/../src/interface/QueueView.cpp:1946
+#: ../../locales/../src/interface/QueueView.cpp:1930
+#: ../../locales/../src/interface/QueueView.cpp:1957
 msgid "The queue will not be saved."
 msgstr "Опашката няма да бъде запазена."
 
@@ -6672,11 +6685,11 @@ msgstr ""
 "Настройките са импортирани. Трябва да рестартирате FileZilla,за да имат "
 "ефект всички настройки."
 
-#: ../../locales/../src/interface/QueueView.cpp:3063
+#: ../../locales/../src/interface/QueueView.cpp:3090
 msgid "The system will soon reboot unless you click cancel."
 msgstr "Системата ще бъде рестартирана освен ако не натиснете отказ."
 
-#: ../../locales/../src/interface/QueueView.cpp:3061
+#: ../../locales/../src/interface/QueueView.cpp:3088
 msgid "The system will soon shutdown unless you click cancel."
 msgstr "Системата ще се изключи, освен ако не изберете отказ."
 
@@ -6736,8 +6749,8 @@ msgstr "Форматиране на времето"
 msgid "Time&out in seconds:"
 msgstr "Изчакване в &секунди:"
 
-#: resources.h:704 ../../locales/../src/interface/QueueView.cpp:1034
-#: ../../locales/../src/interface/QueueView.cpp:1078
+#: resources.h:704 ../../locales/../src/interface/QueueView.cpp:1045
+#: ../../locales/../src/interface/QueueView.cpp:1089
 msgid "Timeout"
 msgstr "Време за изчакване"
 
@@ -6754,11 +6767,11 @@ msgstr ""
 msgid "Title:"
 msgstr "Заглавие:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2743
+#: ../../locales/../src/interface/Mainfrm.cpp:2737
 msgid "To compare directories, both file lists have to be aligned."
 msgstr "За да сравнявате папки двата списъка трябва да са подравнени."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2744
+#: ../../locales/../src/interface/Mainfrm.cpp:2738
 msgid "To do this, the directory trees need to be both shown or both hidden."
 msgstr ""
 "За да направите това, местните и отдалечени папки трябва да бъдат и двете "
@@ -6867,7 +6880,7 @@ msgstr "Прехвърляне"
 msgid "Transferred data got tainted."
 msgstr "Прехвърляните данни бяха замърсени."
 
-#: ../../locales/../src/interface/QueueView.cpp:1457
+#: ../../locales/../src/interface/QueueView.cpp:1468
 #: ../../locales/../src/interface/statuslinectrl.cpp:215
 msgid "Transferring"
 msgstr "Прехвърляне"
@@ -6875,6 +6888,12 @@ msgstr "Прехвърляне"
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:123
 msgid "Transfers"
 msgstr "Прехвърляния"
+
+#: ../../locales/../src/interface/QueueView.cpp:3005
+#: ../../locales/../src/interface/QueueView.cpp:3008
+#, fuzzy
+msgid "Transfers finished"
+msgstr "Прехвърляне"
 
 #: resources.h:801
 msgid "Treat files &without extension as ASCII file"
@@ -7198,15 +7217,15 @@ msgstr "Видими колони"
 msgid "W&rite"
 msgstr "З&апис"
 
-#: ../../locales/../src/interface/QueueView.cpp:1756
+#: ../../locales/../src/interface/QueueView.cpp:1767
 msgid "Waiting"
 msgstr "Изчакване"
 
-#: ../../locales/../src/interface/QueueView.cpp:1364
+#: ../../locales/../src/interface/QueueView.cpp:1375
 msgid "Waiting for browsing connection"
 msgstr "Изчакване на връзка за разлистване"
 
-#: ../../locales/../src/interface/QueueView.cpp:1407
+#: ../../locales/../src/interface/QueueView.cpp:1418
 msgid "Waiting for password"
 msgstr "Изчакване на парола"
 
@@ -7596,6 +7615,3 @@ msgstr "писане от всички"
 #: resources.h:164
 msgid "wxWidgets:"
 msgstr "wxWidgets:"
-
-#~ msgid "Break current connection?"
-#~ msgstr "Прекъсване на текущата връзка?"
