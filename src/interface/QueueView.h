@@ -76,6 +76,9 @@ class CStatusLineCtrl;
 class CFolderProcessingThread;
 class CAsyncRequestQueue;
 class CQueue;
+#if WITH_LIBDBUS
+class CDesktopNotification;
+#endif
 
 class CQueueView : public CQueueViewBase
 {
@@ -251,6 +254,10 @@ protected:
 	wxTimer m_resize_timer;
 
 	void ReleaseExclusiveEngineLock(CFileZillaEngine* pEngine);
+
+#if WITH_LIBDBUS
+	CDesktopNotification* m_desktop_notification;
+#endif
 
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);

@@ -271,6 +271,8 @@ public:
 
 	wxString GetTitle() const { return m_title; }
 
+	int GetFileCount() const { return m_fileCount; }
+
 protected:
 
 	// Gets item for given server

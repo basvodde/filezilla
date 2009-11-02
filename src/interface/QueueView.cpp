@@ -26,6 +26,9 @@
 #include "recursive_operation.h"
 #include "auto_ascii_files.h"
 #include "dragdropmanager.h"
+#if WITH_LIBDBUS
+#include "../dbus/desktop_notification.h"
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -492,6 +495,10 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 #endif
 
 	m_resize_timer.SetOwner(this);
+
+#if WITH_LIBDBUS
+	m_desktop_notification = 0;
+#endif
 }
 
 CQueueView::~CQueueView()
@@ -506,6 +513,10 @@ CQueueView::~CQueueView()
 	DeleteEngines();
 
 	m_resize_timer.Stop();
+
+#if WITH_LIBDBUS
+	delete m_desktop_notification;
+#endif
 }
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
@@ -2982,6 +2993,22 @@ bool CQueueView::IsActionAfter(enum ActionAfterState state)
 
 void CQueueView::ActionAfter(bool warned /*=false*/)
 {
+#if WITH_LIBDBUS
+	if (!m_pMainFrame->IsActive())
+	{
+		if (!m_desktop_notification)
+			m_desktop_notification = new CDesktopNotification;
+		int failed_count = m_pQueue->GetQueueView_Failed()->GetFileCount();
+		if (failed_count != 0)
+		{
+			wxString fmt = wxPLURAL("All transfers have finished. %d file could not be transferred.", "All transfers have finished. %d files could not be 	transferred.", failed_count);
+			m_desktop_notification->Notify(_("Transfers finished"), wxString::Format(fmt, failed_count), _T("transfer.error"));
+		}
+		else
+			m_desktop_notification->Notify(_("Transfers finished"), _("All files have been successfully transferred"), _T("transfer.complete"));
+	}
+#endif
+
 	switch (m_actionAfterState)
 	{
 		case ActionAfterState_Close:
