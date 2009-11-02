@@ -540,12 +540,6 @@ CMainFrame::CMainFrame()
 	pState->GetRecursiveOperationHandler()->SetQueue(m_pQueueView);
 
 	ConnectNavigationHandler(m_pStatusView);
-	ConnectNavigationHandler(m_context_controls[m_current_context_controls].pLocalListView);
-	ConnectNavigationHandler(m_context_controls[m_current_context_controls].pRemoteListView);
-	ConnectNavigationHandler(m_context_controls[m_current_context_controls].pLocalTreeView);
-	ConnectNavigationHandler(m_context_controls[m_current_context_controls].pRemoteTreeView);
-	ConnectNavigationHandler(m_context_controls[m_current_context_controls].pLocalViewHeader);
-	ConnectNavigationHandler(m_context_controls[m_current_context_controls].pRemoteViewHeader);
 	ConnectNavigationHandler(m_pQueuePane);
 
 	wxNavigationKeyEvent evt;
@@ -3393,6 +3387,13 @@ void CMainFrame::CreateContextControls(CState* pState)
 	}
 
 	context_controls.title = _("Not connected");
+
+	ConnectNavigationHandler(context_controls.pLocalListView);
+	ConnectNavigationHandler(context_controls.pRemoteListView);
+	ConnectNavigationHandler(context_controls.pLocalTreeView);
+	ConnectNavigationHandler(context_controls.pRemoteTreeView);
+	ConnectNavigationHandler(context_controls.pLocalViewHeader);
+	ConnectNavigationHandler(context_controls.pRemoteViewHeader);
 
 	if (m_tabs)
 	{
