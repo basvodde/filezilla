@@ -166,13 +166,53 @@ bool wxDBusMessage::AddArg(int type, void * value)
 	return (bool) dbus_message_iter_append_basic(&m_iter, type, value);
 }
 
+bool wxDBusMessage::AddArrayOfString(const char **value, int n_elements)
+{
+	init_add_iter();
+	DBusMessageIter sub;
+	dbus_message_iter_open_container(&m_iter, DBUS_TYPE_ARRAY, "s", &sub);
+	for (int i = 0; i < n_elements; i++)
+	{
+		if (!dbus_message_iter_append_basic(&sub, DBUS_TYPE_STRING, &(value[i])))
+			return false;
+	}
+	dbus_message_iter_close_container(&m_iter, &sub);
+
+	return true;
+}
+
 bool wxDBusMessage::AddArrayOfByte(int element_type, const void *value, int n_elements)
 {
 	init_add_iter();
 	DBusMessageIter sub;
 	dbus_message_iter_open_container(&m_iter, DBUS_TYPE_ARRAY, "y", &sub);
-	return (bool) dbus_message_iter_append_fixed_array(&sub, element_type, value, n_elements);	
+	if (!dbus_message_iter_append_fixed_array(&sub, element_type, value, n_elements))
+		return false;
 	dbus_message_iter_close_container(&m_iter, &sub);
+
+	return true;
+}
+
+bool wxDBusMessage::AddDict(const char **value, int n_elements)
+{
+	init_add_iter();
+	DBusMessageIter sub;
+	dbus_message_iter_open_container(&m_iter, DBUS_TYPE_ARRAY, 
+		DBUS_DICT_ENTRY_BEGIN_CHAR_AS_STRING DBUS_TYPE_STRING_AS_STRING DBUS_TYPE_VARIANT_AS_STRING DBUS_DICT_ENTRY_END_CHAR_AS_STRING,
+		&sub);
+	for (int i = 0; i < n_elements; i += 2)
+	{
+		if (!dbus_message_iter_append_basic(&sub, DBUS_TYPE_STRING, &(value[i])))
+			return false;
+		DBusMessageIter variant;
+		dbus_message_iter_open_container(&sub, DBUS_TYPE_VARIANT, DBUS_TYPE_STRING_AS_STRING, &variant);
+		if (!dbus_message_iter_append_basic(&variant, DBUS_TYPE_STRING, &(value[i + 1])))
+			return false;
+		dbus_message_iter_close_container(&sub, &variant);
+	}
+	dbus_message_iter_close_container(&m_iter, &sub);
+
+	return true;
 }
 
 bool wxDBusMessage::AddString(const char * value)

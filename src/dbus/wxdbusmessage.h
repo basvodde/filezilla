@@ -51,12 +51,14 @@ public:
 	//int GetArrayLength(); uses deprecated function
 	void GetFixedArray(void * value, int * n_elements);
 	bool AddArg(int type, void * value);
+	bool AddArrayOfString(const char **value, int n_elements);
 	bool AddArrayOfByte(int element_type, const void *value, int n_elements);
 	bool AddString(const char * value);
 	bool AddInt(int value);
 	bool AddUnsignedInt(unsigned int value);
 	bool AddBool(bool value);
 	bool AddObjectPath(const char* value);
+	bool AddDict(const char** value, int n_elements); // Call with null to add empty dictionary. n_elements needs to be divisible by 2
 	bool Send(wxDBusConnection * connection, unsigned int * serial);
 	
 private:
