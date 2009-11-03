@@ -3815,7 +3815,7 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 	const wxString peerIP = m_pSocket->GetPeerIP();
 	if (!IsRoutableAddress(pData->host, m_pSocket->GetAddressFamily()) && IsRoutableAddress(peerIP, m_pSocket->GetAddressFamily()))
 	{
-		if (!m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) || pData->bTriedActive)
+		if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) != 1 || pData->bTriedActive)
 		{
 			LogMessage(Status, _("Server sent passive reply with unroutable address. Using server address instead."));
 			LogMessage(Debug_Info, _T("  Reply: %s, peer: %s"), pData->host.c_str(), peerIP.c_str());
