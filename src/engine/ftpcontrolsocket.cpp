@@ -3828,6 +3828,12 @@ bool CFtpControlSocket::ParsePasvResponse(CRawTransferOpData* pData)
 			return false;
 		}
 	}
+	else if (m_pEngine->GetOptions()->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) == 2)
+	{
+		// Always use server address
+		pData->host = peerIP;
+	}
+		
 
 	return true;
 }
