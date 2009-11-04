@@ -2993,6 +2993,23 @@ bool CQueueView::IsActionAfter(enum ActionAfterState state)
 
 void CQueueView::ActionAfter(bool warned /*=false*/)
 {
+	// Need to check all contexts whether there's a recursive
+	// download operation still in progress
+	const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
+	for (unsigned int i = 0; i < pStates->size(); i++)
+	{
+		CState *pState = (*pStates)[i];
+		CRecursiveOperation *pRecursiveOperationHandler;
+		if (!pState || !(pRecursiveOperationHandler = pState->GetRecursiveOperationHandler()))
+			continue;
+
+		if (pRecursiveOperationHandler->GetOperationMode() == CRecursiveOperation::recursive_download ||
+			pRecursiveOperationHandler->GetOperationMode() == CRecursiveOperation::recursive_download_flatten)
+		{
+			return;
+		}
+	}
+
 #if WITH_LIBDBUS
 	if (!m_pMainFrame->IsActive())
 	{
