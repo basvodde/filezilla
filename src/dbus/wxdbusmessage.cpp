@@ -202,13 +202,16 @@ bool wxDBusMessage::AddDict(const char **value, int n_elements)
 		&sub);
 	for (int i = 0; i < n_elements; i += 2)
 	{
-		if (!dbus_message_iter_append_basic(&sub, DBUS_TYPE_STRING, &(value[i])))
+		DBusMessageIter dict_iter;
+		dbus_message_iter_open_container(&sub, DBUS_TYPE_DICT_ENTRY, 0, &dict_iter);
+		if (!dbus_message_iter_append_basic(&dict_iter, DBUS_TYPE_STRING, &(value[i])))
 			return false;
 		DBusMessageIter variant;
-		dbus_message_iter_open_container(&sub, DBUS_TYPE_VARIANT, DBUS_TYPE_STRING_AS_STRING, &variant);
+		dbus_message_iter_open_container(&dict_iter, DBUS_TYPE_VARIANT, DBUS_TYPE_STRING_AS_STRING, &variant);
 		if (!dbus_message_iter_append_basic(&variant, DBUS_TYPE_STRING, &(value[i + 1])))
 			return false;
-		dbus_message_iter_close_container(&sub, &variant);
+		dbus_message_iter_close_container(&dict_iter, &variant);
+		dbus_message_iter_close_container(&sub, &dict_iter);
 	}
 	dbus_message_iter_close_container(&m_iter, &sub);
 
