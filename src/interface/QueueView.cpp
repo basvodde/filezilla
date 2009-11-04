@@ -3001,7 +3001,7 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 		int failed_count = m_pQueue->GetQueueView_Failed()->GetFileCount();
 		if (failed_count != 0)
 		{
-			wxString fmt = wxPLURAL("All transfers have finished. %d file could not be transferred.", "All transfers have finished. %d files could not be 	transferred.", failed_count);
+			wxString fmt = wxPLURAL("All transfers have finished. %d file could not be transferred.", "All transfers have finished. %d files could not be transferred.", failed_count);
 			m_desktop_notification->Notify(_("Transfers finished"), wxString::Format(fmt, failed_count), _T("transfer.error"));
 		}
 		else
