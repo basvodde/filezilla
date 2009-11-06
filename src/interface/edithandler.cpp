@@ -651,7 +651,7 @@ checkmodifications_remote:
 
 		// File has changed, ask user what to do
 
-        wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
+		wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
 		if (pTopWindow && pTopWindow->IsIconized())
 		{
 			pTopWindow->RequestUserAttention(wxUSER_ATTENTION_INFO);
@@ -912,7 +912,7 @@ wxString CEditHandler::GetOpenCommand(const wxString& file, bool& program_exists
 	else if (command[0] == '1')
 	{
 		// Text editor
-		const wxString random = _T("5AC2EE515D18406aB77C2C60F1F88952.txt"); // Chosen by fair dice roll. Guaranteed to be random.
+		const wxString random = _T("5AC2EE515D18406 space aB77C2C60F1F88952.txt"); // Chosen by fair dice roll. Guaranteed to be random.
 		wxString command = GetSystemOpenCommand(random, program_exists);
 		if (command.empty() || !program_exists)
 			return command;
@@ -978,7 +978,7 @@ static bool PathExpand(wxString& cmd)
 	return true;
 }
 
-wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_exists)
+wxString CEditHandler::GetSystemOpenCommand(wxString file, bool &program_exists)
 {
 	wxFileName fn(file);
 
@@ -986,47 +986,67 @@ wxString CEditHandler::GetSystemOpenCommand(const wxString& file, bool &program_
 	if (ext == _T(""))
 		return _T("");
 
-	wxFileType* pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-	if (!pType)
-		return _T("");
-
-	wxString cmd;
-	if (!pType->GetOpenCommand(&cmd, wxFileType::MessageParameters(file)))
+	while (true)
 	{
+		wxFileType* pType = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
+		if (!pType)
+			return _T("");
+
+		wxString cmd;
+		if (!pType->GetOpenCommand(&cmd, wxFileType::MessageParameters(file)))
+		{
+			delete pType;
+			return _T("");
+		}
 		delete pType;
-		return _T("");
-	}
-	delete pType;
 
-	if (cmd.empty())
-		return wxEmptyString;
+		if (cmd.empty())
+			return wxEmptyString;
 
-	program_exists = false;
+		program_exists = false;
 
-	wxString editor;
-	if (cmd.Left(7) == _T("WX_DDE#"))
-	{
-		// See wxWidget's wxExecute in src/msw/utilsexc.cpp
-		// WX_DDE#<command>#DDE_SERVER#DDE_TOPIC#DDE_COMMAND
-		editor = cmd.Mid(7);
-		int pos = editor.Find('#');
-		if (pos < 1)
+		wxString editor;
+		if (cmd.Left(7) == _T("WX_DDE#"))
+		{
+			// See wxWidget's wxExecute in src/msw/utilsexc.cpp
+			// WX_DDE#<command>#DDE_SERVER#DDE_TOPIC#DDE_COMMAND
+			editor = cmd.Mid(7);
+			int pos = editor.Find('#');
+			if (pos < 1)
+				return cmd;
+			editor = editor.Left(pos);
+		}
+		else
+			editor = cmd;
+
+		wxString args;
+		if (!UnquoteCommand(editor, args) || editor.empty())
 			return cmd;
-		editor = editor.Left(pos);
+
+		if (!PathExpand(editor))
+			return cmd;
+
+		if (ProgramExists(editor))
+			program_exists = true;
+
+#ifdef __WXGTK__
+		int pos = args.Find(file);
+		if (pos != -1 && file.Find(' ') != -1 && file[0] != '\'' && file[0] != '"')
+		{
+			// Might need to quote filename, wxWidgets doesn't do it
+			if ((!pos || (args[pos - 1] != '\'' && args[pos - 1] != '"')) &&
+				args[pos + file.Length()] != '\'' && args[pos + file.Length()] != '"')
+			{
+				// Filename in command arguments isn't quoted. Repeat with quoted filename
+				file = _T("\"") + file + _T("\"");
+				continue;
+			}
+		}
+#endif
+		return cmd;
 	}
-	else
-		editor = cmd;
 
-	wxString args;
-	if (!UnquoteCommand(editor, args) || editor.empty())
-		return cmd;
-
-	if (!PathExpand(editor))
-		return cmd;
-
-	if (ProgramExists(editor))
-		program_exists = true;
-	return cmd;
+	return wxEmptyString;
 }
 
 wxString CEditHandler::GetCustomOpenCommand(const wxString& file, bool& program_exists)

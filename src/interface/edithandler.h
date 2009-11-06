@@ -90,7 +90,7 @@ public:
 	// Returns command to open the file. If association is set but
 	// program does not exist, program_exists is set to false.
 	wxString GetOpenCommand(const wxString& file, bool& program_exists);
-	wxString GetSystemOpenCommand(const wxString& file, bool &program_exists);
+	wxString GetSystemOpenCommand(wxString file, bool &program_exists);
 
 protected:
 	CEditHandler();
