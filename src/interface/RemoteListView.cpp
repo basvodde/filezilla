@@ -524,7 +524,7 @@ void CRemoteListView::UpdateDirectoryListing_Added(const CSharedPointer<const CD
 	if (m_pFilelistStatusBar)
 		m_pFilelistStatusBar->SetHidden(m_pDirectoryListing->GetCount() + 1 - m_indexMapping.size());
 
-	wxASSERT(m_indexMapping.size() == pDirectoryListing->GetCount() + 1);
+	wxASSERT(m_indexMapping.size() <= pDirectoryListing->GetCount() + 1);
 }
 
 void CRemoteListView::UpdateDirectoryListing_Removed(const CSharedPointer<const CDirectoryListing> &pDirectoryListing)
