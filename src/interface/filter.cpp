@@ -151,7 +151,6 @@ void CFilterDialog::SaveFilter(TiXmlElement* pElement, const CFilter& filter)
 	for (std::vector<CFilterCondition>::const_iterator conditionIter = filter.filters.begin(); conditionIter != filter.filters.end(); conditionIter++)
 	{
 		const CFilterCondition& condition = *conditionIter;
-		TiXmlElement* pCondition = pConditions->InsertEndChild(TiXmlElement("Condition"))->ToElement();
 
 		int type;
 		switch (condition.type)
@@ -173,8 +172,10 @@ void CFilterDialog::SaveFilter(TiXmlElement* pElement, const CFilter& filter)
 			break;
 		default:
 			wxFAIL_MSG(_T("Unhandled filter type"));
-			break;
+			continue;
 		}
+
+		TiXmlElement* pCondition = pConditions->LinkEndChild(new TiXmlElement("Condition"))->ToElement();
 		AddTextElement(pCondition, "Type", type);
 		AddTextElement(pCondition, "Condition", condition.condition);
 		AddTextElement(pCondition, "Value", condition.strValue);

@@ -752,7 +752,7 @@ bool CQueueView::CanStartTransfer(const CServerItem& server_item, struct t_Engin
 
 	bool browsing_on_same = false;
 	const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
-	CState* pState;
+	CState* pState = 0;
 	for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
 	{
 		pState = *iter;

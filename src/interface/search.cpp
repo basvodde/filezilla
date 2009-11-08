@@ -66,7 +66,7 @@ class CSearchSort : public CListViewSort
 {
 public:
 	CSearchSort(CSearchDialogFileList* pListCtrl, std::vector<CSearchFileData> &fileData, enum DirSortMode dirSortMode)
-		: m_pListCtrl(pListCtrl), m_fileData(fileData), m_dirSortMode(dirSortMode)
+		: m_fileData(fileData), m_dirSortMode(dirSortMode), m_pListCtrl(pListCtrl)
 	{
 	}
 
