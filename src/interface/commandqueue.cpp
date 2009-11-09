@@ -123,6 +123,9 @@ void CCommandQueue::ProcessNextCommand()
 			GrantExclusiveEngineRequest();
 		else
 			m_pState->NotifyHandlers(STATECHANGE_REMOTE_IDLE);
+
+		if (!m_pState->SuccessfulConnect())
+			m_pState->SetServer(0);
 	}
 }
 
@@ -175,8 +178,6 @@ void CCommandQueue::Finish(COperationNotification *pNotification)
 		}
 		if (pNotification->nReplyCode & FZ_REPLY_PASSWORDFAILED)
 			CLoginManager::Get().CachedPasswordFailed(*m_pState->GetServer());
-		if (!m_pState->SuccessfulConnect())
-			m_pState->SetServer(0);
 	}
 
 	if (m_exclusiveEngineLock)
