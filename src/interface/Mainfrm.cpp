@@ -3447,8 +3447,6 @@ bool CMainFrame::CloseTab(int tab)
 	if (i == m_context_controls.size())
 		return false;
 
-	m_pBottomSplitter->Freeze();
-
 	CState* pState = m_context_controls[i].pState;
 
 	if (!pState->m_pCommandQueue->Idle())
@@ -3456,9 +3454,13 @@ bool CMainFrame::CloseTab(int tab)
 		if (wxMessageBox(_("Cannot close tab while busy.\nCancel current operation and close tab?"), _T("FileZilla"), wxYES_NO | wxICON_QUESTION) != wxYES)
 			return false;
 
+		m_pBottomSplitter->Freeze();
+
 		pState->m_pCommandQueue->Cancel();
 		pState->GetRecursiveOperationHandler()->StopRecursiveOperation();
 	}
+	else
+		m_pBottomSplitter->Freeze();
 
 	if (m_tabs->GetPageCount() == 2)
 	{
