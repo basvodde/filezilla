@@ -2003,6 +2003,9 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 	{
 		for (size_t i = 0; i < m_context_controls.size(); i++)
 		{
+			if (m_context_controls[i].tab_index == -1)
+				continue;
+
 			if (!m_context_controls[i].pLocalSplitter->IsSplit())
 				continue;
 
@@ -2025,6 +2028,9 @@ void CMainFrame::ShowLocalTree()
 {
 	for (size_t i = 0; i < m_context_controls.size(); i++)
 	{
+		if (m_context_controls[i].tab_index == -1)
+			continue;
+
 		if (m_context_controls[i].pLocalSplitter->IsSplit())
 			continue;
 
@@ -2052,6 +2058,9 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 	{
 		for (size_t i = 0; i < m_context_controls.size(); i++)
 		{
+			if (m_context_controls[i].tab_index == -1)
+				continue;
+
 			if (!m_context_controls[i].pRemoteSplitter->IsSplit())
 				continue;
 
@@ -2074,6 +2083,9 @@ void CMainFrame::ShowRemoteTree()
 {
 	for (size_t i = 0; i < m_context_controls.size(); i++)
 	{
+		if (m_context_controls[i].tab_index == -1)
+			continue;
+
 		if (m_context_controls[i].pRemoteSplitter->IsSplit())
 			continue;
 
