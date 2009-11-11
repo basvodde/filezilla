@@ -25,6 +25,7 @@ protected:
 
 	DECLARE_EVENT_TABLE()
 	void OnPageChanged(wxAuiNotebookEvent& event);
+	void OnNavigationKey(wxNavigationKeyEvent& event);
 };
 
 #endif //__AUI_NOTEBOOK_EX_H__

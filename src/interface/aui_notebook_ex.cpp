@@ -300,6 +300,7 @@ protected:
 
 BEGIN_EVENT_TABLE(wxAuiNotebookEx, wxAuiNotebook)
 EVT_AUINOTEBOOK_PAGE_CHANGED(wxID_ANY, wxAuiNotebookEx::OnPageChanged)
+EVT_NAVIGATION_KEY(wxAuiNotebookEx::OnNavigationKey)
 END_EVENT_TABLE()
 
 wxAuiNotebookEx::wxAuiNotebookEx()
@@ -384,4 +385,25 @@ void wxAuiNotebookEx::OnPageChanged(wxAuiNotebookEvent& event)
 		return;
 	
 	m_highlighted[page] = false;
+}
+
+void wxAuiNotebookEx::OnNavigationKey(wxNavigationKeyEvent& event)
+{
+	if (!event.IsWindowChange())
+	{
+		event.Skip();
+		return;
+	}
+
+	int page = GetSelection();
+	if (event.GetDirection())
+		page++;
+	else
+		page--;
+	if (page >= (int)GetPageCount())
+		page = 0;
+	else if (page < 0)
+		page = GetPageCount() - 1;
+
+	SetSelection(page);
 }
