@@ -552,8 +552,6 @@ CMainFrame::CMainFrame()
 	InitToolbarState();
 
 	CAutoAsciiFiles::SettingsChanged();
-
-	pState->GetComparisonManager()->SetListings(m_context_controls[m_current_context_controls].pLocalListView, m_context_controls[m_current_context_controls].pRemoteListView);
 }
 
 CMainFrame::~CMainFrame()
@@ -2889,6 +2887,9 @@ void CMainFrame::UpdateToolbarState()
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
 	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_FIND"), pServer && idle);
 
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), pState->GetComparisonManager()->IsComparing());
+	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
+
 	bool canReconnect;
 	if (pServer || !idle)
 		canReconnect = false;
@@ -2946,6 +2947,9 @@ void CMainFrame::UpdateMenubarState()
 	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
 	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
 	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_SEARCH"), pServer && idle);
+
+	m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), pState->GetComparisonManager()->IsComparing());
+	m_pMenuBar->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 
 	bool canReconnect;
 	if (pServer || !idle)
@@ -3406,6 +3410,8 @@ void CMainFrame::CreateContextControls(CState* pState)
 	ConnectNavigationHandler(context_controls.pRemoteTreeView);
 	ConnectNavigationHandler(context_controls.pLocalViewHeader);
 	ConnectNavigationHandler(context_controls.pRemoteViewHeader);
+
+	pState->GetComparisonManager()->SetListings(context_controls.pLocalListView, context_controls.pRemoteListView);
 
 	if (m_tabs)
 	{
