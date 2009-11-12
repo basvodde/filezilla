@@ -315,8 +315,8 @@ void COptions::CreateSettingsXmlElement()
 	if (element->FirstChildElement("Settings"))
 		return;
 
-	TiXmlElement settings("Settings");
-	element->InsertEndChild(settings);
+	TiXmlElement *settings = new TiXmlElement("Settings");
+	element->LinkEndChild(settings);
 
 	for (int i = 0; i < OPTIONS_NUM; i++)
 	{
@@ -349,7 +349,7 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	TiXmlElement *settings = m_pXmlFile->GetElement()->FirstChildElement("Settings");
 	if (!settings)
 	{
-		TiXmlNode *node = m_pXmlFile->GetElement()->InsertEndChild(TiXmlElement("Settings"));
+		TiXmlNode *node = m_pXmlFile->GetElement()->LinkEndChild(new TiXmlElement("Settings"));
 		if (!node)
 		{
 			delete [] utf8;
@@ -380,18 +380,18 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 			setting->RemoveAttribute("type");
 			setting->Clear();
 			setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
-			setting->InsertEndChild(TiXmlText(utf8));
+			setting->LinkEndChild(new TiXmlText(utf8));
 
 			delete [] utf8;
 			return;
 		}
 	}
 	wxASSERT(options[nID].name[0]);
-	TiXmlElement setting("Setting");
-	setting.SetAttribute("name", options[nID].name);
-	setting.SetAttribute("type", (options[nID].type == string) ? "string" : "number");
-	setting.InsertEndChild(TiXmlText(utf8));
-	settings->InsertEndChild(setting);
+	TiXmlElement *setting = new TiXmlElement("Setting");
+	setting->SetAttribute("name", options[nID].name);
+	setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
+	setting->LinkEndChild(new TiXmlText(utf8));
+	settings->LinkEndChild(setting);
 
 	delete [] utf8;
 }
@@ -406,7 +406,7 @@ bool COptions::GetXmlValue(unsigned int nID, wxString &value, TiXmlElement *sett
 		settings = m_pXmlFile->GetElement()->FirstChildElement("Settings");
 		if (!settings)
 		{
-			TiXmlNode *node = m_pXmlFile->GetElement()->InsertEndChild(TiXmlElement("Settings"));
+			TiXmlNode *node = m_pXmlFile->GetElement()->LinkEndChild(new TiXmlElement("Settings"));
 			if (!node)
 				return false;
 			settings = node->ToElement();
@@ -562,7 +562,7 @@ void COptions::SetServer(wxString path, const CServer& server)
 			char *utf8 = ConvUTF8(sub);
 			if (!utf8)
 				return;
-			TiXmlNode *node = element->InsertEndChild(TiXmlElement(utf8));
+			TiXmlNode *node = element->LinkEndChild(new TiXmlElement(utf8));
 			delete [] utf8;
 			if (!node || !node->ToElement())
 				return;

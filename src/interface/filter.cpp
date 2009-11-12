@@ -147,7 +147,7 @@ void CFilterDialog::SaveFilter(TiXmlElement* pElement, const CFilter& filter)
 	AddTextElement(pElement, "MatchType", (filter.matchType == CFilter::any) ? _T("Any") : ((filter.matchType == CFilter::none) ? _T("None") : _T("All")));
 	AddTextElement(pElement, "MatchCase", filter.matchCase ? _T("1") : _T("0"));
 
-	TiXmlElement* pConditions = pElement->InsertEndChild(TiXmlElement("Conditions"))->ToElement();
+	TiXmlElement* pConditions = pElement->LinkEndChild(new TiXmlElement("Conditions"))->ToElement();
 	for (std::vector<CFilterCondition>::const_iterator conditionIter = filter.filters.begin(); conditionIter != filter.filters.end(); conditionIter++)
 	{
 		const CFilterCondition& condition = *conditionIter;
@@ -204,7 +204,7 @@ void CFilterDialog::SaveFilters()
 		pFilters = pDocument->FirstChildElement("Filters");
 	}
 
-	pFilters = pDocument->InsertEndChild(TiXmlElement("Filters"))->ToElement();
+	pFilters = pDocument->LinkEndChild(new TiXmlElement("Filters"))->ToElement();
 
 	for (std::vector<CFilter>::const_iterator iter = m_globalFilters.begin(); iter != m_globalFilters.end(); iter++)
 	{
@@ -222,20 +222,20 @@ void CFilterDialog::SaveFilters()
 		pSets = pDocument->FirstChildElement("Sets");
 	}
 
-	pSets = pDocument->InsertEndChild(TiXmlElement("Sets"))->ToElement();
+	pSets = pDocument->LinkEndChild(new TiXmlElement("Sets"))->ToElement();
 	SetTextAttribute(pSets, "Current", wxString::Format(_T("%d"), m_currentFilterSet));
 
 	for (std::vector<CFilterSet>::const_iterator iter = m_globalFilterSets.begin(); iter != m_globalFilterSets.end(); iter++)
 	{
 		const CFilterSet& set = *iter;
-		TiXmlElement* pSet = pSets->InsertEndChild(TiXmlElement("Set"))->ToElement();
+		TiXmlElement* pSet = pSets->LinkEndChild(new TiXmlElement("Set"))->ToElement();
 
 		if (iter != m_globalFilterSets.begin())
 			AddTextElement(pSet, "Name", set.name);
 
 		for (unsigned int i = 0; i < set.local.size(); i++)
 		{
-			TiXmlElement* pItem = pSet->InsertEndChild(TiXmlElement("Item"))->ToElement();
+			TiXmlElement* pItem = pSet->LinkEndChild(new TiXmlElement("Item"))->ToElement();
 			AddTextElement(pItem, "Local", set.local[i] ? _T("1") : _T("0"));
 			AddTextElement(pItem, "Remote", set.remote[i] ? _T("1") : _T("0"));
 		}

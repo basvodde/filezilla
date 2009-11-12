@@ -304,7 +304,7 @@ void CBookmarksDialog::SaveGlobalBookmarks()
 		CBookmarkItemData *data = (CBookmarkItemData *)m_pTree->GetItemData(child);
 		wxASSERT(data);
 
-		TiXmlElement *pBookmark = pDocument->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+		TiXmlElement *pBookmark = pDocument->LinkEndChild(new TiXmlElement("Bookmark"))->ToElement();
 		AddTextElement(pBookmark, "Name", m_pTree->GetItemText(child));
 		if (!data->m_local_dir.empty())
 			AddTextElement(pBookmark, "LocalDir", data->m_local_dir);
@@ -833,7 +833,7 @@ bool CBookmarksDialog::AddBookmark(const wxString &name, const wxString &local_d
 	if (pInsertBefore)
 		pBookmark = pDocument->InsertBeforeChild(pInsertBefore, TiXmlElement("Bookmark"))->ToElement();
 	else
-		pBookmark = pDocument->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+		pBookmark = pDocument->LinkEndChild(new TiXmlElement("Bookmark"))->ToElement();
 	AddTextElement(pBookmark, "Name", name);
 	if (!local_dir.empty())
 		AddTextElement(pBookmark, "LocalDir", local_dir);

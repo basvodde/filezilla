@@ -227,19 +227,19 @@ void CRemoteDataObject::Finalize()
 {
 	// Convert data into XML
 	TiXmlElement* pElement = m_xmlFile.CreateEmpty();
-	pElement = pElement->InsertEndChild(TiXmlElement("RemoteDataObject"))->ToElement();
+	pElement = pElement->LinkEndChild(new TiXmlElement("RemoteDataObject"))->ToElement();
 
 	AddTextElement(pElement, "ProcessId", m_processId);
 
-	TiXmlElement* pServer = pElement->InsertEndChild(TiXmlElement("Server"))->ToElement();
+	TiXmlElement* pServer = pElement->LinkEndChild(new TiXmlElement("Server"))->ToElement();
 	SetServer(pServer, m_server);
 
 	AddTextElement(pElement, "Path", m_path.GetSafePath());
 
-	TiXmlElement* pFiles = pElement->InsertEndChild(TiXmlElement("Files"))->ToElement();
+	TiXmlElement* pFiles = pElement->LinkEndChild(new TiXmlElement("Files"))->ToElement();
 	for (std::list<t_fileInfo>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++)
 	{
-		TiXmlElement* pFile = pFiles->InsertEndChild(TiXmlElement("File"))->ToElement();
+		TiXmlElement* pFile = pFiles->LinkEndChild(new TiXmlElement("File"))->ToElement();
 		AddTextElement(pFile, "Name", iter->name);
 		AddTextElement(pFile, "Dir", iter->dir ? 1 : 0);
 		AddTextElement(pFile, "Size", iter->size.ToString());

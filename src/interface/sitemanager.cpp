@@ -889,7 +889,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 			pDocument->RemoveChild(pServers);
 			pServers = pDocument->FirstChildElement("Servers");
 		}
-		pElement = pDocument->InsertEndChild(TiXmlElement("Servers"))->ToElement();
+		pElement = pDocument->LinkEndChild(new TiXmlElement("Servers"))->ToElement();
 
 		if (!pElement)
 			return true;
@@ -933,18 +933,18 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 	CSiteManagerItemData* data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(child));
 	if (!data)
 	{
-		TiXmlNode* pNode = pElement->InsertEndChild(TiXmlElement("Folder"));
+		TiXmlNode* pNode = pElement->LinkEndChild(new TiXmlElement("Folder"));
 		const bool expanded = pTree->IsExpanded(child);
 		SetTextAttribute(pNode->ToElement(), "expanded", expanded ? _T("1") : _T("0"));
 
-		pNode->InsertEndChild(TiXmlText(utf8));
+		pNode->LinkEndChild(new TiXmlText(utf8));
 
 		Save(pNode->ToElement(), child);
 	}
 	else if (data->m_type == CSiteManagerItemData::SITE)
 	{
 		CSiteManagerItemData_Site *site_data = reinterpret_cast<CSiteManagerItemData_Site* >(data);
-		TiXmlElement* pNode = pElement->InsertEndChild(TiXmlElement("Server"))->ToElement();
+		TiXmlElement* pNode = pElement->LinkEndChild(new TiXmlElement("Server"))->ToElement();
 		SetServer(pNode, site_data->m_server);
 
 		// Save comments
@@ -958,7 +958,7 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 
 		AddTextElementRaw(pNode, "SyncBrowsing", data->m_sync ? "1" : "0");
 
-		pNode->InsertEndChild(TiXmlText(utf8));
+		pNode->LinkEndChild(new TiXmlText(utf8));
 
 		Save(pNode, child);
 
@@ -973,7 +973,7 @@ bool CSiteManager::SaveChild(TiXmlElement *pElement, wxTreeItemId child)
 	}
 	else
 	{
-		TiXmlElement* pNode = pElement->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+		TiXmlElement* pNode = pElement->LinkEndChild(new TiXmlElement("Bookmark"))->ToElement();
 
 		AddTextElement(pNode, "Name", name);
 
@@ -2681,7 +2681,7 @@ void CSiteManager::OnExportSelected(wxCommandEvent& event)
 
 	TiXmlElement* exportRoot = xml.CreateEmpty();
 
-	TiXmlElement* pServers = exportRoot->InsertEndChild(TiXmlElement("Servers"))->ToElement();
+	TiXmlElement* pServers = exportRoot->LinkEndChild(new TiXmlElement("Servers"))->ToElement();
 	SaveChild(pServers, m_contextMenuItem);
 
 	wxString error;
@@ -2906,13 +2906,13 @@ wxString CSiteManager::AddServer(CServer server)
 
 	server.SetName(name);
 
-	TiXmlElement* pServer = pElement->InsertEndChild(TiXmlElement("Server"))->ToElement();
+	TiXmlElement* pServer = pElement->LinkEndChild(new TiXmlElement("Server"))->ToElement();
 	SetServer(pServer, server);
 
 	char* utf8 = ConvUTF8(name);
 	if (utf8)
 	{
-		pServer->InsertEndChild(TiXmlText(utf8));
+		pServer->LinkEndChild(new TiXmlText(utf8));
 		delete [] utf8;
 	}
 
@@ -3034,7 +3034,7 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 	if (pInsertBefore)
 		pBookmark = pChild->InsertBeforeChild(pInsertBefore, TiXmlElement("Bookmark"))->ToElement();
 	else
-		pBookmark = pChild->InsertEndChild(TiXmlElement("Bookmark"))->ToElement();
+		pBookmark = pChild->LinkEndChild(new TiXmlElement("Bookmark"))->ToElement();
 	AddTextElement(pBookmark, "Name", name);
 	if (!local_dir.empty())
 		AddTextElement(pBookmark, "LocalDir", local_dir);

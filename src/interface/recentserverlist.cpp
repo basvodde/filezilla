@@ -90,12 +90,12 @@ void CRecentServerList::SetMostRecentServer(const CServer& server)
 	
 	TiXmlElement* pElement = pDocument->FirstChildElement("RecentServers");
 	if (!pElement)
-		pElement = pDocument->InsertEndChild(TiXmlElement("RecentServers"))->ToElement();
+		pElement = pDocument->LinkEndChild(new TiXmlElement("RecentServers"))->ToElement();
 
 	pElement->Clear();
 	for (std::list<CServer>::const_iterator iter = m_mostRecentServers.begin(); iter != m_mostRecentServers.end(); iter++)
 	{
-		TiXmlElement* pServer = pElement->InsertEndChild(TiXmlElement("Server"))->ToElement();
+		TiXmlElement* pServer = pElement->LinkEndChild(new TiXmlElement("Server"))->ToElement();
 		SetServer(pServer, *iter);
 	}
 

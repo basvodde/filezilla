@@ -389,18 +389,18 @@ CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CServerPath& re
 
 void CFolderItem::SaveItem(TiXmlElement* pElement) const
 {
-	TiXmlElement file("Folder");
+	TiXmlElement *file = new TiXmlElement("Folder");
 
 	if (m_download)
-		AddTextElement(&file, "LocalFile", m_localFile);
+		AddTextElement(file, "LocalFile", m_localFile);
 	else
 	{
-		AddTextElement(&file, "RemoteFile", m_remoteFile);
-		AddTextElement(&file, "RemotePath", m_remotePath.GetSafePath());
+		AddTextElement(file, "RemoteFile", m_remoteFile);
+		AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
 	}
-	AddTextElementRaw(&file, "Download", m_download ? "1" : "0");
+	AddTextElementRaw(file, "Download", m_download ? "1" : "0");
 
-	pElement->InsertEndChild(file);
+	pElement->LinkEndChild(file);
 }
 
 void CFolderItem::SetActive(const bool active)

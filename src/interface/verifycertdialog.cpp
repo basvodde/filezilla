@@ -436,9 +436,9 @@ void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* co
 
 	TiXmlElement* pCerts = pElement->FirstChildElement("TrustedCerts");
 	if (!pCerts)
-		pCerts = pElement->InsertEndChild(TiXmlElement("TrustedCerts"))->ToElement();
+		pCerts = pElement->LinkEndChild(new TiXmlElement("TrustedCerts"))->ToElement();
 
-	TiXmlElement* pCert = pCerts->InsertEndChild(TiXmlElement("Certificate"))->ToElement();
+	TiXmlElement* pCert = pCerts->LinkEndChild(new TiXmlElement("Certificate"))->ToElement();
 
 	AddTextElement(pCert, "Data", ConvertHexToString(data, len));
 

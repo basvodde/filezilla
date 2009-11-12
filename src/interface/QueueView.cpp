@@ -2862,7 +2862,7 @@ void CQueueView::WriteToFile(TiXmlElement* pElement) const
 	TiXmlElement* pQueue = pElement->FirstChildElement("Queue");
 	if (!pQueue)
 	{
-		pQueue = pElement->InsertEndChild(TiXmlElement("Queue"))->ToElement();
+		pQueue = pElement->LinkEndChild(new TiXmlElement("Queue"))->ToElement();
 	}
 
 	wxASSERT(pQueue);
