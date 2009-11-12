@@ -500,6 +500,7 @@ bool CState::Connect(const CServer& server, const CServerPath& path /*=CServerPa
 	if (m_pEngine->IsConnected() || m_pEngine->IsBusy() || !m_pCommandQueue->Idle())
 		m_pCommandQueue->Cancel();
 	m_pRecursiveOperation->StopRecursiveOperation();
+	SetSyncBrowse(false);
 
 	m_pCommandQueue->ProcessCommand(new CConnectCommand(server));
 	m_pCommandQueue->ProcessCommand(new CListCommand(path, _T(""), LIST_FLAG_FALLBACK_CURRENT));
