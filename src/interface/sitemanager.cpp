@@ -1533,6 +1533,8 @@ bool CSiteManager::GetServer(CSiteManagerItemData_Site& data)
 			data.m_remoteDir = pData->m_remoteDir;
 		if (data.m_localDir.empty() || data.m_remoteDir.IsEmpty())
 			data.m_sync = false;
+		else
+			data.m_sync = pData->m_sync;
 	}
 	else
 		data = *(CSiteManagerItemData_Site *)pData;
