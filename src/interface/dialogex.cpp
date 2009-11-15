@@ -5,6 +5,8 @@ BEGIN_EVENT_TABLE(wxDialogEx, wxDialog)
 EVT_CHAR_HOOK(wxDialogEx::OnChar)
 END_EVENT_TABLE()
 
+int wxDialogEx::m_shown_dialogs = 0;
+
 void wxDialogEx::OnChar(wxKeyEvent& event)
 {
 	if (event.GetKeyCode() == WXK_ESCAPE)
@@ -67,7 +69,14 @@ int wxDialogEx::ShowModal()
 	// Could happen during drag&drop with notification dialogs.
 	::ReleaseCapture();
 #endif
-	return wxDialog::ShowModal();
+
+	m_shown_dialogs++;
+
+	int ret = wxDialog::ShowModal();
+
+	m_shown_dialogs--;
+
+	return ret;
 }
 
 bool wxDialogEx::ReplaceControl(wxWindow* old, wxWindow* wnd)

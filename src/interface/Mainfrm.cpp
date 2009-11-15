@@ -693,7 +693,7 @@ bool CMainFrame::CreateMenus()
 	SetMenuBar(m_pMenuBar);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (m_pUpdateWizard)
-		m_pUpdateWizard->DisplayUpdateAvailability(false, true);
+		m_pUpdateWizard->DisplayUpdateAvailability(false);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 
 	UpdateBookmarkMenu();

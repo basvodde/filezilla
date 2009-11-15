@@ -17,7 +17,7 @@ public:
 	bool Run();
 
 	void InitAutoUpdateCheck();
-	void DisplayUpdateAvailability(bool showDialog, bool forceMenu = false);
+	void DisplayUpdateAvailability(bool showDialog);
 
 protected:
 	void FailedTransfer();
@@ -70,6 +70,11 @@ protected:
 	wxString m_update_log;
 
 	wxTimer m_statusTimer;
+	
+	// If there's already another dialog shown, wait
+	// with displaying update dialog until the other
+	// dialog gets closed. Check once every second.
+	wxTimer m_busy_timer;
 
 	bool m_loaded;
 
@@ -85,6 +90,7 @@ protected:
 
 	bool m_autoUpdateCheckRunning;
 	bool m_updateShown;
+	bool m_menuUpdated;
 	bool m_start_check;
 
 	COptionsBase* m_update_options;

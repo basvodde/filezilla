@@ -11,6 +11,7 @@
 #ifdef __WXMSW__
 #include <wx/dynlib.h> // Used by GetDownloadDir
 #endif //__WXMSW__
+#include "dialogex.h"
 
 // This is ugly but does the job
 #define SHA512_STANDALONE
@@ -131,11 +132,13 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 
 	m_statusTimer.SetOwner(this);
 	m_autoCheckTimer.SetOwner(this);
+	m_busy_timer.SetOwner(this);
 
 	m_autoUpdateCheckRunning = false;
 
 	m_loaded = false;
 	m_updateShown = false;
+	m_menuUpdated = false;
 	m_start_check = false;
 }
 
@@ -822,6 +825,8 @@ void CUpdateWizard::OnTimer(wxTimerEvent& event)
 			StartUpdateCheck();
 		}
 	}
+	else if (event.GetId() == m_busy_timer.GetId())
+		DisplayUpdateAvailability(true);
 }
 
 void CUpdateWizard::SetTransferStatus(const CTransferStatus* pStatus)
@@ -968,11 +973,8 @@ void CUpdateWizard::StartUpdateCheck()
 		FailedTransfer();
 }
 
-void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*=false*/)
+void CUpdateWizard::DisplayUpdateAvailability(bool showDialog)
 {
-	if (m_updateShown && !forceMenu)
-		return;
-
 	COptions* pOptions = COptions::Get();
 
 	if (CBuildInfo::GetVersion() == _T("custom build"))
@@ -989,24 +991,35 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog, bool forceMenu /*
 		return;
 	}
 
+	if (!m_menuUpdated)
+	{
+		m_menuUpdated = true;
+
 #ifdef __WXMSW__
-	// All open menus need to be closed or app will become unresponsive.
-	::EndMenu();
+		// All open menus need to be closed or app will become unresponsive.
+		::EndMenu();
 #endif
 
-	m_updateShown = true;
+		CMainFrame* pFrame = (CMainFrame*)m_parent;
 
-	CMainFrame* pFrame = (CMainFrame*)m_parent;
-		
-	wxMenu* pMenu = new wxMenu();
-	const wxString& name = wxString::Format(_("&Version %s"), pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION).c_str());
-	pMenu->Append(XRCID("ID_CHECKFORUPDATES"), name);
-	wxMenuBar* pMenuBar = pFrame->GetMenuBar();
-	if (pMenuBar)
-		pMenuBar->Append(pMenu, _("&New version available!"));
+		wxMenu* pMenu = new wxMenu();
+		const wxString& name = wxString::Format(_("&Version %s"), pOptions->GetOption(OPTION_UPDATECHECK_NEWVERSION).c_str());
+		pMenu->Append(XRCID("ID_CHECKFORUPDATES"), name);
+		wxMenuBar* pMenuBar = pFrame->GetMenuBar();
+		if (pMenuBar)
+			pMenuBar->Append(pMenu, _("&New version available!"));
+	}
 
-	if (showDialog)
+	if (showDialog && !m_updateShown)
 	{
+		if (wxDialogEx::ShownDialogs())
+		{
+			m_busy_timer.Start(1000, true);
+			return;
+		}
+
+		m_updateShown = true;
+
 		CUpdateWizard dlg(m_parent);
 		if (dlg.Load())
 			dlg.Run();

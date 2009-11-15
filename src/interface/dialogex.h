@@ -15,10 +15,14 @@ public:
 
 	bool ReplaceControl(wxWindow* old, wxWindow* wnd);
 
+	static int ShownDialogs() { return m_shown_dialogs; }
+
 protected:
 
 	DECLARE_EVENT_TABLE();
 	virtual void OnChar(wxKeyEvent& event);
+
+	static int m_shown_dialogs;
 };
 
 #endif //__DIALOGEX_H__
