@@ -56,6 +56,11 @@
 DECLARE_EVENT_TYPE(fzEVT_TAB_CLOSING_DEFERRED, -1);
 DEFINE_EVENT_TYPE(fzEVT_TAB_CLOSING_DEFERRED);
 
+#ifdef __WXGTK__
+DECLARE_EVENT_TYPE(fzEVT_TASKBAR_CLICK_DELAYED, -1);
+DEFINE_EVENT_TYPE(fzEVT_TASKBAR_CLICK_DELAYED);
+#endif
+
 static int tab_hotkey_ids[10];
 
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
@@ -112,6 +117,9 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), CMainFrame::OnSyncBrowse)
 #ifndef __WXMAC__
 	EVT_ICONIZE(CMainFrame::OnIconize)
+#endif
+#ifdef __WXGTK__
+	EVT_COMMAND(wxID_ANY, fzEVT_TASKBAR_CLICK_DELAYED, CMainFrame::OnTaskBarClick_Delayed)
 #endif
 	EVT_TOOL(XRCID("ID_TOOLBAR_FIND"), CMainFrame::OnSearch)
 	EVT_MENU(XRCID("ID_MENU_SERVER_SEARCH"), CMainFrame::OnSearch)
@@ -316,6 +324,10 @@ CMainFrame::CMainFrame()
 #ifndef __WXMAC__
 	m_taskBarIcon = 0;
 #endif
+#ifdef __WXGTK__
+	m_taskbar_is_uniconizing = 0;
+#endif
+
 
 #ifdef __WXMSW__
 	// In order for the --close commandline argument to work,
@@ -3190,6 +3202,10 @@ void CMainFrame::OnSyncBrowse(wxCommandEvent& event)
 #ifndef __WXMAC__
 void CMainFrame::OnIconize(wxIconizeEvent& event)
 {
+#ifdef __WXGTK__
+	if (m_taskbar_is_uniconizing)
+		return;
+#endif
 	if (!event.Iconized())
 	{
 		if (m_taskBarIcon)
@@ -3226,6 +3242,12 @@ void CMainFrame::OnIconize(wxIconizeEvent& event)
 
 void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
 {
+#ifdef __WXGTK__
+	if (m_taskbar_is_uniconizing)
+		return;
+	m_taskbar_is_uniconizing = true;
+#endif
+
 	if (m_taskBarIcon)
 		m_taskBarIcon->RemoveIcon();
 
@@ -3234,7 +3256,19 @@ void CMainFrame::OnTaskBarClick(wxTaskBarIconEvent& event)
 
 	if (m_pAsyncRequestQueue)
 		m_pAsyncRequestQueue->TriggerProcessing();
+
+#ifdef __WXGTK__
+	wxCommandEvent evt(fzEVT_TASKBAR_CLICK_DELAYED);
+	AddPendingEvent(evt);
+#endif
 }
+
+#ifdef __WXGTK__
+void CMainFrame::OnTaskBarClick_Delayed(wxCommandEvent& event)
+{
+	m_taskbar_is_uniconizing = false;
+}
+#endif
 
 #endif
 

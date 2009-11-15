@@ -198,6 +198,9 @@ protected:
 	void OnIconize(wxIconizeEvent& event);
 	void OnTaskBarClick(wxTaskBarIconEvent& event);
 #endif
+#ifdef __WXGTK__
+	void OnTaskBarClick_Delayed(wxCommandEvent& event);
+#endif
 	void OnSearch(wxCommandEvent& event);
 	void OnMenuNewTab(wxCommandEvent& event);
 	void OnMenuCloseTab(wxCommandEvent& event);
@@ -220,6 +223,14 @@ protected:
 
 #ifndef __WXMAC__
 	wxTaskBarIcon* m_taskBarIcon;
+#endif
+#ifdef __WXGTK__
+	// There is a bug in KDE, causing the window to toggle iconized state
+	// several times a second after uniconizing it from taskbar icon.
+	// Set m_taskbar_is_uniconizing in OnTaskBarClick and unset the
+	// next time the pending event processing runs and calls OnTaskBarClick_Delayed.
+	// While set, ignore iconize events.
+	bool m_taskbar_is_uniconizing;
 #endif
 
 	wxAuiNotebookEx* m_tabs;
