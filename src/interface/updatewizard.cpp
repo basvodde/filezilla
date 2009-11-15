@@ -1020,6 +1020,11 @@ void CUpdateWizard::DisplayUpdateAvailability(bool showDialog)
 
 		m_updateShown = true;
 
+#ifdef __WXMSW__
+		// All open menus need to be closed or app will become unresponsive.
+		::EndMenu();
+#endif
+
 		CUpdateWizard dlg(m_parent);
 		if (dlg.Load())
 			dlg.Run();
