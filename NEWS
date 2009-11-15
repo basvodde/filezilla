@@ -10,6 +10,17 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.3.0.1 (2009-11-15)
+
++ Ctrl-Tab and Ctrl-Shift-Tab to cycle tabs now loop around if reaching the end of the tab list
+- Fix crash on showing/hiding of directory trees after closing a tab
+- Tabs no longer become unresponsive if not approving to close a busy tab
+- Directory comparison did not work properly on all but the first tab
+- Fix spurious error messages if connecting to a new site while synchronized browsing is enabled
+- *nix: Work around a bug in KDE preventing restore from minimize to notification area
+- Do not show update dialog if there is already some other dialog open
+- Fix synchronized browsing option on site-specific bookmarks
+
 3.3.0 (2009-11-09)
 
 - Aborting a previous connection attempt by establishing a new connection in the same tab no longer renders the new connection unusable
