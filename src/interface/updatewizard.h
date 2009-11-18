@@ -94,6 +94,8 @@ protected:
 	bool m_start_check;
 
 	COptionsBase* m_update_options;
+
+	bool m_successfully_downloaded;
 };
 
 #endif //FZ_MANUALUPDATECHECK

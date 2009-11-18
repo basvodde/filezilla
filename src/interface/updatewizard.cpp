@@ -140,6 +140,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	m_updateShown = false;
 	m_menuUpdated = false;
 	m_start_check = false;
+	m_successfully_downloaded = false;
 }
 
 CUpdateWizard::~CUpdateWizard()
@@ -580,6 +581,8 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 #endif
 					pText->Show();
 					RewrapPage(2);
+
+					m_successfully_downloaded = true;
 				}
 			}
 			break;
@@ -1235,7 +1238,7 @@ void CUpdateWizard::OnCancel(wxWizardEvent& event)
 {
 	delete m_pEngine;
 	m_pEngine = 0;
-	if (m_localFile != _T(""))
+	if (m_localFile != _T("") && !m_successfully_downloaded)
 		wxRemoveFile(m_localFile);
 }
 
