@@ -1114,3 +1114,14 @@ CServerPath CState::GetSynchronizedDirectory(CLocalPath local_path)
 
 	return remote_path;
 }
+
+bool CState::RefreshRemote()
+{
+	if (!m_pCommandQueue)
+		return false;
+	
+	if (!IsRemoteConnected() || !IsRemoteIdle())
+		return false;
+
+	return ChangeRemoteDir(GetRemotePath(), _T(""), LIST_FLAG_REFRESH);
+}

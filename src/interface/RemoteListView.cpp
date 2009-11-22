@@ -337,6 +337,7 @@ BEGIN_EVENT_TABLE(CRemoteListView, CFileListCtrl<CGenericFileData>)
 	EVT_MENU(XRCID("ID_EDIT"), CRemoteListView::OnMenuEdit)
 	EVT_MENU(XRCID("ID_ENTER"), CRemoteListView::OnMenuEnter)
 	EVT_MENU(XRCID("ID_GETURL"), CRemoteListView::OnMenuGeturl)
+	EVT_MENU(XRCID("ID_CONTEXT_REFRESH"), CRemoteListView::OnMenuRefresh)
 END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* pQueue)
@@ -1376,6 +1377,7 @@ void CRemoteListView::OnContextMenu(wxContextMenuEvent& event)
 		pMenu->Enable(XRCID("ID_CHMOD"), false);
 		pMenu->Enable(XRCID("ID_EDIT"), false);
 		pMenu->Enable(XRCID("ID_GETURL"), false);
+		pMenu->Enable(XRCID("ID_CONTEXT_REFRESH"), false);
 	}
 	else if ((GetItemCount() && GetItemState(0, wxLIST_STATE_SELECTED)))
 	{
@@ -3149,3 +3151,9 @@ int CRemoteListView::GetOverlayIndex(int item)
 	return 0;
 }
 #endif
+
+void CRemoteListView::OnMenuRefresh(wxCommandEvent& event)
+{
+	if (m_pState)
+		m_pState->RefreshRemote();
+}

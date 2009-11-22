@@ -105,6 +105,7 @@ protected:
 	void OnVolumesEnumerated(wxCommandEvent& event);
 	CVolumeDescriptionEnumeratorThread* m_pVolumeEnumeratorThread;
 #endif
+	void OnMenuRefresh(wxCommandEvent& event);
 };
 
 #endif

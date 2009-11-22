@@ -1685,9 +1685,7 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 	if (!pState)
 		return;
 
-	if (pState->m_pCommandQueue && pState->IsRemoteConnected() && pState->IsRemoteIdle())
-		pState->ChangeRemoteDir(pState->GetRemotePath(), _T(""), LIST_FLAG_REFRESH);
-
+	pState->RefreshRemote();
 	pState->RefreshLocal();
 }
 

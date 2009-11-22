@@ -248,6 +248,7 @@ BEGIN_EVENT_TABLE(CLocalListView, CFileListCtrl<CLocalFileData>)
 	EVT_COMMAND(-1, fzEVT_VOLUMESENUMERATED, CLocalListView::OnVolumesEnumerated)
 	EVT_COMMAND(-1, fzEVT_VOLUMEENUMERATED, CLocalListView::OnVolumesEnumerated)
 #endif
+	EVT_MENU(XRCID("ID_CONTEXT_REFRESH"), CLocalListView::OnMenuRefresh)
 END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
@@ -2489,3 +2490,8 @@ void CLocalListView::OnVolumesEnumerated(wxCommandEvent& event)
 }
 
 #endif
+
+void CLocalListView::OnMenuRefresh(wxCommandEvent& event)
+{
+	m_pState->RefreshLocal();
+}

@@ -117,6 +117,7 @@ protected:
 	void OnMenuEdit(wxCommandEvent& event);
 	void OnMenuEnter(wxCommandEvent& event);
 	void OnMenuGeturl(wxCommandEvent& event);
+	void OnMenuRefresh(wxCommandEvent& event);
 };
 
 #endif

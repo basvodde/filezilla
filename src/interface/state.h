@@ -116,6 +116,8 @@ public:
 	void RefreshLocalFile(wxString file);
 	void LocalDirCreated(const CLocalPath& path);
 
+	bool RefreshRemote();
+
 	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool blockable = true);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 
