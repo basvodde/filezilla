@@ -92,11 +92,15 @@ if test "$buildmain" = "yes"; then
   AM_OPTIONS_WXCONFIG
 
   MIN_WX_VERSION="2.8.9"
-  AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [aui,xrc,adv,core,xml,net,base])
+  AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [aui,xrc,adv,core,xml,net,base], [--unicode=yes, --universal=no])
   if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
         	wxWidgets must be installed on your system
-		but wx-config script couldn't be found.
+		but either the wx-config script couldn't be found or
+		no compatible wxWidgets configuration has been insalled.
+
+		Compatible wxWidgets configurations are the unicode builds
+		of wxGTK, wxMac and wxMSW.
 
 		Please check that wx-config is in path, the directory
 		where wxWidgets libraries are installed (returned by
