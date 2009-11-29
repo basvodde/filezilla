@@ -16,8 +16,8 @@ END_EVENT_TABLE()
 bool COptionsPageUpdateCheck::LoadPage()
 {
 	bool failure = false;
-	SetCheck(XRCID("ID_UPDATECHECK"), m_pOptions->GetOptionVal(OPTION_UPDATECHECK) != 0, failure);
-	SetCheck(XRCID("ID_CHECKBETA"), m_pOptions->GetOptionVal(OPTION_UPDATECHECK_CHECKBETA) != 0, failure);
+	SetCheckFromOption(XRCID("ID_UPDATECHECK"), OPTION_UPDATECHECK, failure);
+	SetCheckFromOption(XRCID("ID_CHECKBETA"), OPTION_UPDATECHECK_CHECKBETA, failure);
 	SetTextFromOption(XRCID("ID_DAYS"), OPTION_UPDATECHECK_INTERVAL, failure);
 
 	return !failure;
@@ -25,7 +25,8 @@ bool COptionsPageUpdateCheck::LoadPage()
 
 bool COptionsPageUpdateCheck::SavePage()
 {
-	m_pOptions->SetOption(OPTION_UPDATECHECK, GetCheck(XRCID("ID_UPDATECHECK")) ? 1 : 0);
+	SetOptionFromCheck(XRCID("ID_UPDATECHECK"), OPTION_UPDATECHECK);
+	SetOptionFromCheck(XRCID("ID_CHECKBETA"), OPTION_UPDATECHECK_CHECKBETA);
 	SetOptionFromText(XRCID("ID_DAYS"), OPTION_UPDATECHECK_INTERVAL);
 
 	return true;
@@ -62,10 +63,7 @@ void COptionsPageUpdateCheck::OnCheckBeta(wxCommandEvent& event)
 			XRCCTRL(*this, "ID_CHECKBETA", wxCheckBox)->SetValue(0);
 			return;
 		}
-		COptions::Get()->SetOption(OPTION_UPDATECHECK_CHECKBETA, 1);
 	}
-	else
-		COptions::Get()->SetOption(OPTION_UPDATECHECK_CHECKBETA, 0);
 }
 
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK

@@ -8,15 +8,16 @@ bool COptionsPageConnectionPassive::LoadPage()
 {
 	bool failure = false;
 
-	SetRCheck(XRCID("ID_PASSIVE_FALLBACK1"), m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) == 0, failure);
-	SetRCheck(XRCID("ID_PASSIVE_FALLBACK2"), m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE) != 0, failure);
+	const int pasv_fallback = m_pOptions->GetOptionVal(OPTION_PASVREPLYFALLBACKMODE);
+	SetRCheck(XRCID("ID_PASSIVE_FALLBACK1"), pasv_fallback == 0, failure);
+	SetRCheck(XRCID("ID_PASSIVE_FALLBACK2"), pasv_fallback != 0, failure);
 
 	return !failure;
 }
 
 bool COptionsPageConnectionPassive::SavePage()
 {
-	m_pOptions->SetOption(OPTION_PASVREPLYFALLBACKMODE, XRCCTRL(*this, "ID_PASSIVE_FALLBACK1", wxRadioButton)->GetValue() ? 0 : 1);
+	m_pOptions->SetOption(OPTION_PASVREPLYFALLBACKMODE, GetRCheck(XRCID("ID_PASSIVE_FALLBACK1")) ? 0 : 1);
 
 	return true;
 }

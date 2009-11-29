@@ -8,17 +8,17 @@ bool COptionsPageDebug::LoadPage()
 {
 	bool failure = false;
 
-	SetCheck(XRCID("ID_DEBUGMENU"), m_pOptions->GetOptionVal(OPTION_DEBUG_MENU) ? true : false, failure);
+	SetCheckFromOption(XRCID("ID_DEBUGMENU"), OPTION_DEBUG_MENU, failure);
+	SetCheckFromOption(XRCID("ID_RAWLISTING"), OPTION_LOGGING_RAWLISTING, failure);
 	SetChoice(XRCID("ID_DEBUGLEVEL"), m_pOptions->GetOptionVal(OPTION_LOGGING_DEBUGLEVEL), failure);
-	SetCheck(XRCID("ID_RAWLISTING"), m_pOptions->GetOptionVal(OPTION_LOGGING_RAWLISTING) ? true : false, failure);
 
 	return !failure;
 }
 
 bool COptionsPageDebug::SavePage()
 {
-	m_pOptions->SetOption(OPTION_DEBUG_MENU, GetCheck(XRCID("ID_DEBUGMENU")) ? 1 : 0);
-	m_pOptions->SetOption(OPTION_LOGGING_RAWLISTING, GetCheck(XRCID("ID_RAWLISTING")) ? 1 : 0);
+	SetOptionFromCheck(XRCID("ID_DEBUGMENU"), OPTION_DEBUG_MENU);
+	SetOptionFromCheck(XRCID("ID_RAWLISTING"), OPTION_LOGGING_RAWLISTING);
 	m_pOptions->SetOption(OPTION_LOGGING_DEBUGLEVEL, GetChoice(XRCID("ID_DEBUGLEVEL")));
 
 	return true;

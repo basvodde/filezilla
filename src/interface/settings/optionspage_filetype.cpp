@@ -16,8 +16,8 @@ bool COptionsPageFiletype::LoadPage()
 {
 	bool failure = false;
 	
-	SetCheck(XRCID("ID_ASCIIWITHOUT"), m_pOptions->GetOptionVal(OPTION_ASCIINOEXT) != 0, failure);
-	SetCheck(XRCID("ID_ASCIIDOTFILE"), m_pOptions->GetOptionVal(OPTION_ASCIIDOTFILE) != 0, failure);
+	SetCheckFromOption(XRCID("ID_ASCIIWITHOUT"), OPTION_ASCIINOEXT, failure);
+	SetCheckFromOption(XRCID("ID_ASCIIDOTFILE"), OPTION_ASCIIDOTFILE, failure);
 
 	if (failure)
 		return false;
@@ -79,8 +79,8 @@ bool COptionsPageFiletype::LoadPage()
 
 bool COptionsPageFiletype::SavePage()
 {
-	m_pOptions->SetOption(OPTION_ASCIINOEXT, GetCheck(XRCID("ID_ASCIIWITHOUT")));
-	m_pOptions->SetOption(OPTION_ASCIIDOTFILE, GetCheck(XRCID("ID_ASCIIDOTFILE")));
+	SetOptionFromCheck(XRCID("ID_ASCIIWITHOUT"), OPTION_ASCIINOEXT);
+	SetOptionFromCheck(XRCID("ID_ASCIIDOTFILE"), OPTION_ASCIIDOTFILE);
 
 	int mode;
 	if (GetRCheck(XRCID("ID_TYPE_ASCII")))

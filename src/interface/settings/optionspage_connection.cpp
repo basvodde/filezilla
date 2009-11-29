@@ -20,9 +20,8 @@ bool COptionsPageConnection::LoadPage()
 
 bool COptionsPageConnection::SavePage()
 {
-	long tmp;
-	GetText(XRCID("ID_RETRIES")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTCOUNT, tmp);
-	GetText(XRCID("ID_RETRYDELAY")).ToLong(&tmp); m_pOptions->SetOption(OPTION_RECONNECTDELAY, tmp);
+	SetIntOptionFromText(XRCID("ID_RETRIES"), OPTION_RECONNECTCOUNT);
+	SetIntOptionFromText(XRCID("ID_RETRYDELAY"), OPTION_RECONNECTDELAY);
 	SetOptionFromText(XRCID("ID_TIMEOUT"), OPTION_TIMEOUT);
 	return true;
 }

@@ -35,6 +35,7 @@ public:
 	int GetChoice(int id);
 
 	void SetOptionFromText(int ctrlId, int optionId);
+	void SetIntOptionFromText(int ctrlId, int optionId); // There's no corresponding GetTextFromIntOption as COptions::GetOption is smart enough to convert
 	void SetOptionFromCheck(int control_id, int option_id);
 
 	void ReloadSettings();

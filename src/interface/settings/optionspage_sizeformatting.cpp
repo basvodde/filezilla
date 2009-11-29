@@ -32,7 +32,7 @@ bool COptionsPageSizeFormatting::LoadPage()
 		break;
 	}
 
-	SetCheck(XRCID("ID_SIZEFORMAT_SEPARATE_THOUTHANDS"), m_pOptions->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, failure);
+	SetCheckFromOption(XRCID("ID_SIZEFORMAT_SEPARATE_THOUTHANDS"), OPTION_SIZE_USETHOUSANDSEP, failure);
 
 	XRCCTRL(*this, "ID_SIZEFORMAT_DECIMALPLACES", wxSpinCtrl)->SetValue(m_pOptions->GetOptionVal(OPTION_SIZE_DECIMALPLACES));
 
@@ -46,7 +46,7 @@ bool COptionsPageSizeFormatting::SavePage()
 {
 	m_pOptions->SetOption(OPTION_SIZE_FORMAT, GetFormat());
 
-	m_pOptions->SetOption(OPTION_SIZE_USETHOUSANDSEP, GetCheck(XRCID("ID_SIZEFORMAT_SEPARATE_THOUTHANDS")) ? 1 : 0);
+	SetOptionFromCheck(XRCID("ID_SIZEFORMAT_SEPARATE_THOUTHANDS"), OPTION_SIZE_USETHOUSANDSEP);
 
 	m_pOptions->SetOption(OPTION_SIZE_DECIMALPLACES, XRCCTRL(*this, "ID_SIZEFORMAT_DECIMALPLACES", wxSpinCtrl)->GetValue());
 
