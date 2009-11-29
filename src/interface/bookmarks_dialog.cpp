@@ -273,6 +273,8 @@ int CBookmarksDialog::ShowModal(const wxString &local_path, const CServerPath &r
 	SetMinSize(GetSizer()->GetMinSize() + size - clientSize);
 	SetClientSize(minSize);
 
+	m_pTree->SelectItem(m_bookmarks_global);
+
 	return wxDialogEx::ShowModal();
 }
 
