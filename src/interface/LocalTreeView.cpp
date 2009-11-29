@@ -198,9 +198,9 @@ protected:
 	wxDataObjectComposite* m_pDataObject;
 };
 
-IMPLEMENT_CLASS(CLocalTreeView, wxTreeCtrl)
+IMPLEMENT_CLASS(CLocalTreeView, wxTreeCtrlEx)
 
-BEGIN_EVENT_TABLE(CLocalTreeView, wxTreeCtrl)
+BEGIN_EVENT_TABLE(CLocalTreeView, wxTreeCtrlEx)
 EVT_TREE_ITEM_EXPANDING(wxID_ANY, CLocalTreeView::OnItemExpanding)
 #ifdef __WXMSW__
 EVT_TREE_SEL_CHANGING(wxID_ANY, CLocalTreeView::OnSelectionChanging)
@@ -215,7 +215,7 @@ EVT_COMMAND(-1, fzEVT_VOLUMEENUMERATED, CLocalTreeView::OnVolumesEnumerated)
 #endif //__WXMSW__
 EVT_TREE_ITEM_MENU(wxID_ANY, CLocalTreeView::OnContextMenu)
 EVT_MENU(XRCID("ID_UPLOAD"), CLocalTreeView::OnMenuUpload)
-EVT_MENU(XRCID("ID_ADDTOQUEUE"), CLocalTreeView::OnMenuUpload)
+EVT_MENU(XRCID("ID_ADDTO	QUEUE"), CLocalTreeView::OnMenuUpload)
 EVT_MENU(XRCID("ID_DELETE"), CLocalTreeView::OnMenuDelete)
 EVT_MENU(XRCID("ID_RENAME"), CLocalTreeView::OnMenuRename)
 EVT_MENU(XRCID("ID_MKDIR"), CLocalTreeView::OnMenuMkdir)
@@ -226,7 +226,7 @@ EVT_MENU(XRCID("ID_OPEN"), CLocalTreeView::OnMenuOpen)
 END_EVENT_TABLE()
 
 CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, CQueueView *pQueueView)
-	: wxTreeCtrl(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxTR_EDIT_LABELS | wxTR_LINES_AT_ROOT | wxTR_HAS_BUTTONS | wxNO_BORDER),
+	: wxTreeCtrlEx(parent, id, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxTR_EDIT_LABELS | wxTR_LINES_AT_ROOT | wxTR_HAS_BUTTONS | wxNO_BORDER),
 	CSystemImageList(16),
 	CStateEventHandler(pState),
 	m_pQueueView(pQueueView)
@@ -237,8 +237,6 @@ CLocalTreeView::CLocalTreeView(wxWindow* parent, wxWindowID id, CState *pState, 
 
 	pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
 	pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
-
-	m_setSelection = false;
 
 	SetImageList(GetSystemImageList());
 
@@ -278,9 +276,7 @@ void CLocalTreeView::SetDir(wxString localDir)
 	{
 		// TODO: UNC path, don't display it yet
 		m_currentDir = _T("");
-		m_setSelection = true;
-		SelectItem(wxTreeItemId());
-		m_setSelection = false;
+		SafeSelectItem(wxTreeItemId());
 		return;
 	}
 	m_currentDir = localDir;
@@ -288,9 +284,7 @@ void CLocalTreeView::SetDir(wxString localDir)
 #ifdef __WXMSW__
 	if (localDir == _T("\\"))
 	{
-		m_setSelection = true;
-		SelectItem(m_drives);
-		m_setSelection = false;
+		SafeSelectItem(m_drives);
 		return;
 	}
 #endif
@@ -299,9 +293,7 @@ void CLocalTreeView::SetDir(wxString localDir)
 	wxTreeItemId parent = GetNearestParent(subDirs);
 	if (!parent)
 	{
-		m_setSelection = true;
-		SelectItem(wxTreeItemId());
-		m_setSelection = false;
+		SafeSelectItem(wxTreeItemId());
 		return;
 	}
 
@@ -314,22 +306,14 @@ void CLocalTreeView::SetDir(wxString localDir)
 		//if (child && GetItemText(child) == _T(""))
 		//	DisplayDir(parent, localDir);
 
-		m_setSelection = true;
-		SelectItem(parent);
-		m_setSelection = false;
-		if (parent != GetRootItem())
-			Expand(GetItemParent(parent));
+		SafeSelectItem(parent);
 		return;
 	}
 	wxTreeItemId item = MakeSubdirs(parent, localDir.Left(localDir.Length() - subDirs.Length()), subDirs);
 	if (!item)
 		return;
 
-	m_setSelection = true;
-	SelectItem(item);
-	m_setSelection = false;
-	if (item != GetRootItem())
-		Expand(GetItemParent(item));
+	SafeSelectItem(item);
 }
 
 wxTreeItemId CLocalTreeView::GetNearestParent(wxString& localDir)
