@@ -138,10 +138,12 @@ protected:
 	void OnChangedFileEvent(wxCommandEvent& event);
 };
 
+class CWindowStateManager;
 class CEditHandlerStatusDialog : protected wxDialogEx
 {
 public:
 	CEditHandlerStatusDialog(wxWindow* parent);
+	virtual ~CEditHandlerStatusDialog();
 
 	virtual int ShowModal();
 
@@ -151,6 +153,8 @@ protected:
 	CEditHandler::t_fileData* GetDataFromItem(int item, CEditHandler::fileType &type);
 
 	wxWindow* m_pParent;
+
+	CWindowStateManager* m_pWindowStateManager;
 
 	DECLARE_EVENT_TABLE()
 	void OnSelectionChanged(wxListEvent& event);

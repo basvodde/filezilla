@@ -4,6 +4,7 @@
 #include "filezillaapp.h"
 #include "queue.h"
 #include "Options.h"
+#include "window_state_manager.h"
 
 // Defined in optionspage_edit.cpp
 bool UnquoteCommand(wxString& command, wxString& arguments);
@@ -1219,6 +1220,16 @@ END_EVENT_TABLE()
 CEditHandlerStatusDialog::CEditHandlerStatusDialog(wxWindow* parent)
 	: m_pParent(parent)
 {
+	m_pWindowStateManager = 0;
+}
+
+CEditHandlerStatusDialog::~CEditHandlerStatusDialog()
+{
+	if (m_pWindowStateManager)
+	{
+		m_pWindowStateManager->Remember(OPTION_EDITSTATUSDIALOG_SIZE);
+		delete m_pWindowStateManager;
+	}
 }
 
 int CEditHandlerStatusDialog::ShowModal()
@@ -1314,6 +1325,9 @@ int CEditHandlerStatusDialog::ShowModal()
 		pListCtrl->SetColumnWidth(i, wxLIST_AUTOSIZE);
 	pListCtrl->SetMinSize(wxSize(pListCtrl->GetColumnWidth(0) + pListCtrl->GetColumnWidth(1) + pListCtrl->GetColumnWidth(2) + pListCtrl->GetColumnWidth(3) + 10, pListCtrl->GetMinSize().GetHeight()));
 	GetSizer()->Fit(this);
+
+	m_pWindowStateManager = new CWindowStateManager(this);
+	m_pWindowStateManager->Restore(OPTION_EDITSTATUSDIALOG_SIZE, GetSize());
 
 	SetCtrlState();
 
