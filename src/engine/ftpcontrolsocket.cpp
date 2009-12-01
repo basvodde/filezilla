@@ -2923,6 +2923,12 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 			CCertificateNotification* pCertificateNotification = reinterpret_cast<CCertificateNotification *>(pNotification);
 			m_pTlsSocket->TrustCurrentCert(pCertificateNotification->m_trusted);
 
+			if (!pCertificateNotification->m_trusted)
+			{
+				DoClose(FZ_REPLY_CRITICALERROR);
+				return false;
+			}
+
 			if (m_pCurOpData && m_pCurOpData->opId == cmd_connect &&
 				m_pCurOpData->opState == LOGON_AUTH_WAIT)
 			{
