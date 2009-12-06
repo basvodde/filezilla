@@ -18,7 +18,7 @@ public:
 	CDirentry entry;
 };
 
-class CSearchDialogFileList : public CFileListCtrl<CSearchFileData>, public CSystemImageList
+class CSearchDialogFileList : public CFileListCtrl<CSearchFileData>
 {
 	friend class CSearchDialog;
 	friend class CSearchSortType;
@@ -367,7 +367,7 @@ extern wxString StripVMSRevision(const wxString& name);
 
 CSearchDialogFileList::CSearchDialogFileList(CSearchDialog* pParent, CState* pState, CQueueView* pQueue)
 	: CFileListCtrl<CSearchFileData>(pParent, pState, pQueue, true),
-	CSystemImageList(16), m_searchDialog(pParent)
+	m_searchDialog(pParent)
 {
 	m_hasParent = false;
 
@@ -379,9 +379,8 @@ CSearchDialogFileList::CSearchDialogFileList(CSearchDialog* pParent, CState* pSt
 
 	InitSort(OPTION_SEARCH_SORTORDER);
 
-#ifdef __WXMSW__
 	InitHeaderImageList();
-#endif
+
 	const unsigned long widths[7] = { 130, 130, 75, 80, 120, 80, 80 };
 
 	AddColumn(_("Filename"), wxLIST_FORMAT_LEFT, widths[0]);

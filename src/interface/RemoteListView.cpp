@@ -342,7 +342,6 @@ END_EVENT_TABLE()
 
 CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* pQueue)
 	: CFileListCtrl<CGenericFileData>(pParent, pState, pQueue),
-	CSystemImageList(16),
 	CStateEventHandler(pState)
 {
 	pState->RegisterHandler(this, STATECHANGE_REMOTE_DIR);
@@ -370,9 +369,7 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	m_dirIcon = GetIconIndex(dir);
 	SetImageList(GetSystemImageList(), wxIMAGE_LIST_SMALL);
 
-#ifdef __WXMSW__
 	InitHeaderImageList();
-#endif
 
 	SetDirectoryListing(0);
 

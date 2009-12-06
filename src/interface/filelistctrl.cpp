@@ -154,11 +154,13 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 
 template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pParent, CState* pState, CQueueView* pQueue, bool border /*=false*/)
 : wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxLC_EDIT_LABELS | (border ? wxBORDER_SUNKEN : wxNO_BORDER)),
-	CComparableListing(this)
+	CComparableListing(this), CSystemImageList(16)
 {
 #ifdef __WXMSW__
 	m_pHeaderImageList = 0;
 #endif
+	m_header_icon_index.down = m_header_icon_index.up = -1;
+
 	m_pQueue = pQueue;
 
 	m_sortColumn = 0;
@@ -205,9 +207,9 @@ template<class CFileData> CFileListCtrl<CFileData>::~CFileListCtrl()
 #endif
 }
 
-#ifdef __WXMSW__
 template<class CFileData> void CFileListCtrl<CFileData>::InitHeaderImageList()
 {
+#ifdef __WXMSW__
 	// Initialize imagelist for list header
 	m_pHeaderImageList = new wxImageListEx(8, 8, true, 3);
 
@@ -242,21 +244,38 @@ template<class CFileData> void CFileListCtrl<CFileData>::InitHeaderImageList()
 	SendMessage(header, HDM_GETITEM, 0, (LPARAM)&item);
 
 	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
+
+	m_header_icon_index.up = 0;
+	m_header_icon_index.down = 1;
+#else
+
+	wxColour colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+
+	wxString lightness;
+	if (colour.Red() + colour.Green() + colour.Blue() > 3 * 128)
+		lightness = _T("DARK");
+	else
+		lightness = _T("LIGHT");
+
+	wxBitmap bmp;
+
+	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_UP_") + lightness,  wxART_OTHER, wxSize(16, 16));
+	m_header_icon_index.up = m_pImageList->Add(bmp);
+	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_DOWN_") + lightness,  wxART_OTHER, wxSize(16, 16));
+	m_header_icon_index.down = m_pImageList->Add(bmp);
+#endif
 }
-#endif //__WXMSW__
 
 template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=-1*/, int direction /*=-1*/, bool updateSelections /*=true*/)
 {
 	if (column != -1)
 	{
-#ifdef __WXMSW__
-		if (column != m_sortColumn && m_pHeaderImageList)
+		if (column != m_sortColumn)
 		{
 			const int oldVisibleColumn = GetColumnVisibleIndex(m_sortColumn);
 			if (oldVisibleColumn != -1)
 				SetHeaderIconIndex(oldVisibleColumn, -1);
 		}
-#endif
 	}
 	else
 		column = m_sortColumn;
@@ -271,10 +290,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 		column = 0;
 	}
 
-#ifdef __WXMSW__
-	if (m_pHeaderImageList)
-		SetHeaderIconIndex(newVisibleColumn, direction ? 1 : 0);
-#endif
+	SetHeaderIconIndex(newVisibleColumn, direction ? m_header_icon_index.down : m_header_icon_index.up);
 
 	// Remember which files are selected
 	bool *selected = 0;
@@ -285,7 +301,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 		memset(selected, 0, sizeof(bool) * m_fileData.size());
 
 #ifndef __WXMSW__
-	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+		// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
 		if (GetSelectedItemCount())		
 #endif
 		{

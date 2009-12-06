@@ -24,7 +24,7 @@ public:
 	int attributes;
 };
 
-class CLocalListView : public CFileListCtrl<CLocalFileData>, CSystemImageList, CStateEventHandler
+class CLocalListView : public CFileListCtrl<CLocalFileData>, CStateEventHandler
 {
 	friend class CLocalListViewDropTarget;
 	friend class CLocalListViewSortType;

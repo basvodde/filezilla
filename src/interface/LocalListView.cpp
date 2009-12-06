@@ -253,7 +253,7 @@ END_EVENT_TABLE()
 
 CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQueue)
 	: CFileListCtrl<CLocalFileData>(pParent, pState, pQueue),
-	CSystemImageList(16), CStateEventHandler(pState)
+	CStateEventHandler(pState)
 {
 	m_pState->RegisterHandler(this, STATECHANGE_LOCAL_DIR);
 	m_pState->RegisterHandler(this, STATECHANGE_APPLYFILTER);
@@ -275,9 +275,9 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 
 #ifdef __WXMSW__
 	m_pVolumeEnumeratorThread = 0;
+#endif
 
 	InitHeaderImageList();
-#endif
 
 	SetDropTarget(new CLocalListViewDropTarget(this));
 

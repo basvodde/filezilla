@@ -592,9 +592,7 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 			info.order++;
 	}
 
-#ifdef __WXMSW__
 	int icon = -1;
-#endif
 
 	t_columnInfo& info = m_columnInfo[col];
 	if (info.shown)
@@ -609,9 +607,7 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 				m_pVisibleColumnMapping[j - 1] = m_pVisibleColumnMapping[j];
 			info.width = GetColumnWidth(i);
 
-#ifdef __WXMSW__
 			icon = GetHeaderIconIndex(i);
-#endif
 			DeleteColumn(i);
 
 			break;
@@ -633,9 +629,7 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 
 		InsertColumn(pos, info.name, info.align, info.width);
 
-#ifdef __WXMSW__
 		SetHeaderIconIndex(pos, icon);
-#endif
 	}
 	m_columnInfo[col].order = before;
 }
@@ -807,12 +801,12 @@ int wxListCtrlEx::GetColumnVisibleIndex(int col)
 	return -1;
 }
 
-#ifdef __WXMSW__
 int wxListCtrlEx::GetHeaderIconIndex(int col)
 {
 	if (col < 0 || col >= GetColumnCount())
 		return -1;
 
+#ifdef __WXMSW__
 	HWND hWnd = (HWND)GetHandle();
 	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
 
@@ -824,6 +818,13 @@ int wxListCtrlEx::GetHeaderIconIndex(int col)
 		return -1;
 
 	return item.iImage;
+#else
+	wxListItem item;
+	if (!GetColumn(col, item))
+		return -1;
+
+	return item.GetImage();
+#endif
 }
 
 void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
@@ -831,6 +832,7 @@ void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
 	if (col < 0 || col >= GetColumnCount())
 		return;
 
+#ifdef __WXMSW__
 	HWND hWnd = (HWND)GetHandle();
 	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
 
@@ -849,8 +851,15 @@ void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
 	else
 		item.fmt &= ~(HDF_IMAGE | HDF_BITMAP_ON_RIGHT);
 	SendMessage(header, HDM_SETITEM, col, (LPARAM)&item);
+#else
+	wxListItem item;
+	if (!GetColumn(col, item))
+		return;
+
+	item.SetImage(icon);
+	SetColumn(col, item);
+#endif
 }
-#endif //__WXMSW__
 
 void wxListCtrlEx::RefreshListOnly(bool eraseBackground /*=true*/)
 {

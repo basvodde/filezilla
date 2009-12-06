@@ -35,7 +35,7 @@ public:
 	virtual ~CListViewSort() { } // Without this empty destructor GCC complains
 };
 
-template<class CFileData> class CFileListCtrl : public wxListCtrlEx, public CComparableListing
+template<class CFileData> class CFileListCtrl : public wxListCtrlEx, public CComparableListing, public CSystemImageList
 {
 public:
 	CFileListCtrl(wxWindow* pParent, CState *pState, CQueueView *pQueue, bool border = false);
@@ -79,11 +79,16 @@ protected:
 
 	std::map<wxString, wxString> m_fileTypeMap;
 
-#ifdef __WXMSW__
 	// Has to be set after settings the image list for the items
 	void InitHeaderImageList();
+#ifdef __WXMSW__
 	wxImageListEx *m_pHeaderImageList;
 #endif
+	struct _header_icon_index
+	{
+		int up;
+		int down;
+	} m_header_icon_index;
 
 	// The .. item
 	bool m_hasParent;

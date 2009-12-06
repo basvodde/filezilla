@@ -10,7 +10,7 @@ class CChmodDialog;
 class CInfoText;
 class CRemoteListViewDropTarget;
 
-class CRemoteListView : public CFileListCtrl<CGenericFileData>, CSystemImageList, CStateEventHandler
+class CRemoteListView : public CFileListCtrl<CGenericFileData>, CStateEventHandler
 {
 	friend class CRemoteListViewDropTarget;
 	friend class CRemoteListViewSortType;
