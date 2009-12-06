@@ -55,7 +55,7 @@ static inline void AlphaComposite_Over_Inplace(wxAlphaPixelData::Iterator &a, wx
 		return;
 	}
 
-	int new_alpha = a.Alpha() + b.Alpha() - a.Alpha() * b.Alpha() / 255; // Could only get 0 if both alphas were 0, cathced that already.
+	int new_alpha = a.Alpha() + b.Alpha() - a.Alpha() * b.Alpha() / 255; // Could only get 0 if both alphas were 0, catched that already.
 	a.Red() = ((int)a.Red() * (255 - b.Alpha()) * a.Alpha() / 255 + (int)b.Red() * b.Alpha()) / new_alpha;
 	a.Green() = ((int)a.Green() * (255 - b.Alpha()) * a.Alpha() / 255 + (int)b.Green() * b.Alpha()) / new_alpha;
 	a.Blue() = ((int)a.Blue() * (255 - b.Alpha()) * a.Alpha() / 255 + (int)b.Blue() * b.Alpha()) / new_alpha;
@@ -64,7 +64,7 @@ static inline void AlphaComposite_Over_Inplace(wxAlphaPixelData::Iterator &a, wx
 
 static void OverlaySymlink(wxBitmap& bmp)
 {
-	// This is ugly, but appareantly needed so that the data is _realla_ in the right internal format
+	// This is ugly, but appareantly needed so that the data is _really_ in the right internal format
 	bmp = bmp.ConvertToImage();
 	wxBitmap symlink = wxArtProvider::GetBitmap(_T("ART_SYMLINK"),  wxART_OTHER, wxSize(bmp.GetWidth(), bmp.GetHeight())).ConvertToImage();
 
