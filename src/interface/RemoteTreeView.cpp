@@ -111,7 +111,7 @@ public:
 					dir.AddSegment(info.name);
 					if (dir == path || dir.IsParentOf(path, false))
 					{
-						wxMessageBox(_("A directory cannot be dragged into one if its subdirectories."));
+						wxMessageBox(_("A directory cannot be dragged into one of its subdirectories."));
 						return wxDragNone;
 					}
 				}
