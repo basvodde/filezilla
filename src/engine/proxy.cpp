@@ -521,17 +521,61 @@ void CProxySocket::OnReceive()
 				{
 					const wxWX2MBbuf host = m_host.mb_str(wxConvUTF8);
 					const int hostlen = strlen(host);
-					m_sendBufferLen = 7 + hostlen;
+					int addrlen = wxMin(hostlen, 16);
 
-					m_pSendBuffer = new char[m_sendBufferLen];
+					m_pSendBuffer = new char[7 + hostlen];
 					m_pSendBuffer[0] = 5;
 					m_pSendBuffer[1] = 1; // CONNECT
 					m_pSendBuffer[2] = 0; // Reserved
-					m_pSendBuffer[3] = 3; // Domain name
-					m_pSendBuffer[4] = hostlen;
-					memcpy(m_pSendBuffer + 5, (const char*)host, hostlen);
-					m_pSendBuffer[hostlen + 5] = (m_port >> 8) & 0xFF; // Port in network order
-					m_pSendBuffer[hostlen + 6] = m_port & 0xFF;
+
+					if (IsIpAddress(m_host))
+					{
+						// Quite ugly
+						wxString ipv6 = GetIPV6LongForm(m_host);
+						if (!ipv6.empty())
+						{
+							ipv6.Replace(_T(":"), _T(""));
+							addrlen = 16;
+							for (int i = 0; i < 16; i++)
+								m_pSendBuffer[4 + i] = (DigitHexToDecNum(ipv6[i * 2]) << 4) + DigitHexToDecNum(ipv6[i * 2 + 1]);
+
+							m_pSendBuffer[3] = 4; // IPv6
+						}
+						else
+						{
+							unsigned char *buf = (unsigned char*)m_pSendBuffer + 4;
+							int i = 0;
+							memset(buf, 0, 4);
+							for (const wxChar* p = m_host.c_str(); *p; p++)
+							{
+								const wxChar& c = *p;
+								if (c == '.')
+								{
+									i++;
+									continue;
+								}
+								buf[i] *= 10;
+								buf[i] += c - '0';
+							}
+
+							addrlen = 4;
+
+							m_pSendBuffer[3] = 1; // IPv4
+						}
+					}
+					else
+					{
+						m_pSendBuffer[3] = 3; // Domain name
+						m_pSendBuffer[4] = addrlen;
+						memcpy(m_pSendBuffer + 5, (const char*)host, hostlen);
+						addrlen = hostlen + 1;
+					}
+
+
+					m_pSendBuffer[addrlen + 4] = (m_port >> 8) & 0xFF; // Port in network order
+					m_pSendBuffer[addrlen + 5] = m_port & 0xFF;
+					
+					m_sendBufferLen = 6 + addrlen;
 					m_recvBufferLen = 2;
 				}
 				break;

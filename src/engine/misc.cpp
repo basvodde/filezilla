@@ -154,10 +154,12 @@ wxString GetIPV6LongForm(wxString short_address)
 	return buffer;
 }
 
-static int DigitHexToDecNum(wxChar c)
+int DigitHexToDecNum(wxChar c)
 {
 	if (c >= 'a')
 		return c - 'a' + 10;
+	if (c >= 'A')
+		return c - 'A' + 10;
 	else
 		return c - '0';
 }
