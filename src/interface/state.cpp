@@ -32,11 +32,6 @@ CState* CContextManager::CreateState(CMainFrame* pMainFrame)
 	m_contexts.push_back(pState);
 
 	NotifyHandlers(pState, STATECHANGE_NEWCONTEXT, _T(""), 0, false);
-	if (m_current_context == -1)
-	{
-		m_current_context = 0;
-		NotifyHandlers(pState, STATECHANGE_CHANGEDCONTEXT, _T(""), 0, false);
-	}
 
 	return pState;
 }

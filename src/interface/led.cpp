@@ -31,8 +31,6 @@ CLed::CLed(wxWindow *parent, unsigned int index)
 
 	m_loaded = false;
 
-	m_pEngine = 0;
-
 	wxImage image;
 	if (!image.LoadFile(wxGetApp().GetResourceDir() + _T("leds.png"), wxBITMAP_TYPE_PNG))
 		return;
@@ -87,7 +85,7 @@ void CLed::OnTimer(wxTimerEvent& event)
 		return;
 	}
 
-	if (!m_pEngine || !m_pEngine->IsActive((enum CFileZillaEngine::_direction)m_index))
+	if (!CFileZillaEngine::IsActive((enum CFileZillaEngine::_direction)m_index))
 	{
 		Unset();
 		m_timer.Stop();
@@ -113,8 +111,3 @@ void CLed::OnEraseBackground(wxEraseEvent& event)
 {
 }
 #endif
-
-void CLed::SetEngine(CFileZillaEngine *pEngine)
-{
-	m_pEngine = pEngine;
-}
