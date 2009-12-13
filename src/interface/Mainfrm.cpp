@@ -126,6 +126,8 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_MENU(XRCID("ID_MENU_FILE_NEWTAB"), CMainFrame::OnMenuNewTab)
 	EVT_MENU(XRCID("ID_MENU_FILE_CLOSETAB"), CMainFrame::OnMenuCloseTab)
 	EVT_COMMAND(wxID_ANY, fzEVT_TAB_CLOSING_DEFERRED, CMainFrame::OnTabClosing_Deferred)
+	EVT_MENU(XRCID("ID_TABCONTEXT_REFRESH"), CMainFrame::OnTabRefresh)
+	EVT_MENU(XRCID("ID_TABCONTEXT_CLOSE"), CMainFrame::OnTabContextClose)
 END_EVENT_TABLE()
 
 class CMainFrameStateEventHandler : public CStateEventHandler
@@ -362,6 +364,7 @@ CMainFrame::CMainFrame()
 	m_pStatusView = 0;
 	m_current_context_controls = 0;
 	m_tabs = 0;
+	m_right_clicked_tab = -1;
 
 	m_pThemeProvider = new CThemeProvider();
 	CState* pState = CContextManager::Get()->CreateState(this);
@@ -3322,6 +3325,7 @@ void CMainFrame::CreateContextControls(CState* pState)
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_BG_DCLICK, wxAuiNotebookEventHandler(CMainFrame::OnTabBgDoubleclick), 0, this);
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_MIDDLE_UP, wxAuiNotebookEventHandler(CMainFrame::OnTabClosing), 0, this);
+			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_TAB_RIGHT_UP, wxAuiNotebookEventHandler(CMainFrame::OnTabRightclick), 0, this);
 		}
 
 		RememberSplitterPositions();
@@ -3705,4 +3709,54 @@ bool CMainFrame::Connect(const CServer &server, const CServerPath &path /*=CServ
 void CMainFrame::OnTabBgDoubleclick(wxAuiNotebookEvent& event)
 {
 	CreateTab();
+}
+
+void CMainFrame::OnTabRightclick(wxAuiNotebookEvent& event)
+{
+	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_TABCONTEXT"));
+	if (!pMenu)
+	{
+		wxBell();
+		return;
+	}
+
+	if (!m_tabs || m_tabs->GetPageCount() < 2)
+	{
+		pMenu->Enable(XRCID("ID_TABCONTEXT_CLOSE"), false);
+		pMenu->Enable(XRCID("ID_TABCONTEXT_CLOSEOTHERS"), false);
+	}
+
+	m_right_clicked_tab = event.GetSelection();
+
+	PopupMenu(pMenu);
+
+	delete pMenu;
+}
+
+void CMainFrame::OnTabRefresh(wxCommandEvent& event)
+{
+	if (m_right_clicked_tab == -1)
+		return;
+
+	for (size_t j = 0; j < m_context_controls.size(); j++)
+	{
+		if (m_context_controls[j].tab_index != m_right_clicked_tab)
+			continue;
+
+		m_context_controls[j].pState->RefreshLocal();
+		m_context_controls[j].pState->RefreshRemote();
+
+		break;
+	}
+}
+
+void CMainFrame::OnTabContextClose(wxCommandEvent& event)
+{
+	if (m_right_clicked_tab == -1)
+		return;
+
+	// Need to defer event, wxAUI would write to free'd memory
+	// if we'd actually delete tab and potenially the notebook with it
+	wxCommandEvent evt(fzEVT_TAB_CLOSING_DEFERRED, m_right_clicked_tab);
+	AddPendingEvent(evt);
 }

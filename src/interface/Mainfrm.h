@@ -208,6 +208,9 @@ protected:
 	void OnTabClosing(wxAuiNotebookEvent& event);
 	void OnTabClosing_Deferred(wxCommandEvent& event);
 	void OnTabBgDoubleclick(wxAuiNotebookEvent& event);
+	void OnTabRightclick(wxAuiNotebookEvent& event);
+	void OnTabRefresh(wxCommandEvent& event);
+	void OnTabContextClose(wxCommandEvent& event);
 
 	bool m_bInitDone;
 	bool m_bQuit;
@@ -234,6 +237,7 @@ protected:
 #endif
 
 	wxAuiNotebookEx* m_tabs;
+	int m_right_clicked_tab;
 };
 
 #endif
