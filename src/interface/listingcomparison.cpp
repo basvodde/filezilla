@@ -267,8 +267,10 @@ void CComparisonManager::SetListings(CComparableListing* pLeft, CComparableListi
 	m_pLeft = pLeft;
 	m_pRight = pRight;
 
-	m_pLeft->SetOther(m_pRight);
-	m_pRight->SetOther(m_pLeft);
+	if (m_pLeft)
+		m_pLeft->SetOther(m_pRight);
+	if (m_pRight)
+		m_pRight->SetOther(m_pLeft);
 }
 
 void CComparisonManager::ExitComparisonMode()
