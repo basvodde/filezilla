@@ -178,10 +178,10 @@ void CTlsSocket::LogError(int code)
 #else
 		wxString str(error);
 #endif
-		m_pOwner->LogMessage(::Debug_Warning, _T("GnuTLS error %d: %s"), code, str.c_str());
+		m_pOwner->LogMessage(::Error, _T("GnuTLS error %d: %s"), code, str.c_str());
 	}
 	else
-		m_pOwner->LogMessage(::Debug_Warning, _T("GnuTLS error %d"), code);
+		m_pOwner->LogMessage(::Error, _T("GnuTLS error %d"), code);
 }
 
 void CTlsSocket::PrintAlert()
@@ -366,7 +366,7 @@ void CTlsSocket::OnRead()
 		return;
 
 	if (m_tlsState == handshake)
-		Handshake();
+		ContinueHandshake();
 	if (m_tlsState == closing)
 		ContinueShutdown();
 	else if (m_tlsState == conn)
@@ -390,7 +390,7 @@ void CTlsSocket::OnSend()
 		return;
 
 	if (m_tlsState == handshake)
-		Handshake();
+		ContinueHandshake();
 	else if (m_tlsState == closing)
 		ContinueShutdown();
 	else if (m_tlsState == conn)
@@ -462,6 +462,15 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/, bool try_resu
 			CopySessionData(pPrimarySocket);
 	}
 
+	return ContinueHandshake();
+}
+
+int CTlsSocket::ContinueHandshake()
+{
+	m_pOwner->LogMessage(Debug_Verbose, _T("CTlsSocket::ContinueHandshake()"));
+	wxASSERT(m_session);
+	wxASSERT(m_tlsState == handshake);
+
 	int res = gnutls_handshake(m_session);
 	if (!res)
 	{
@@ -494,7 +503,7 @@ int CTlsSocket::Handshake(const CTlsSocket* pPrimarySocket /*=0*/, bool try_resu
 	else if (res == GNUTLS_E_AGAIN || res == GNUTLS_E_INTERRUPTED)
 		return FZ_REPLY_WOULDBLOCK;
 
-	Failure(res, 0);
+	Failure(res, ECONNABORTED);
 
 	return FZ_REPLY_ERROR;
 }

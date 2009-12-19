@@ -51,6 +51,7 @@ protected:
 
 	virtual void OnRateAvailable(enum CRateLimiter::rate_direction direction);
 
+	int ContinueHandshake();
 	void ContinueShutdown();
 	
 	int VerifyCertificate();
