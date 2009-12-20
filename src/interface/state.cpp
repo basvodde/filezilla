@@ -144,6 +144,12 @@ void CContextManager::UnregisterHandler(CStateEventHandler* pHandler, enum t_sta
 	}
 }
 
+size_t CContextManager::HandlerCount(t_statechange_notifications notification) const
+{
+	wxASSERT(notification != STATECHANGE_NONE && notification != STATECHANGE_MAX);
+	return m_handlers[notification].size();
+}
+
 void CContextManager::NotifyHandlers(CState* pState, t_statechange_notifications notification, const wxString& data, const void* data2, bool blocked)
 {
 	wxASSERT(notification != STATECHANGE_NONE && notification != STATECHANGE_MAX);

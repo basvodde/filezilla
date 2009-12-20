@@ -69,9 +69,10 @@ protected:
 
 public:
 	std::vector<struct _context_controls> m_context_controls;
-	size_t m_current_context_controls;
 
 protected:
+	int m_current_context_controls;
+
 	wxAuiNotebookEx* m_tabs;
 	int m_right_clicked_tab;
 	CMainFrame* m_pMainFrame;

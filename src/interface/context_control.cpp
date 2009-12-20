@@ -28,9 +28,11 @@ CContextControl::CContextControl(CMainFrame* pMainFrame, wxWindow *parent)
 	CStateEventHandler(0),
 	m_tabs(0), m_right_clicked_tab(-1), m_pMainFrame(pMainFrame)
 {
-	m_current_context_controls = 0;
+	m_current_context_controls = -1;
 	m_tabs = 0;
 
+	wxASSERT(!CContextManager::Get()->HandlerCount(STATECHANGE_CHANGEDCONTEXT));
+	CContextManager::Get()->RegisterHandler(this, STATECHANGE_CHANGEDCONTEXT, false, false);
 	CContextManager::Get()->RegisterHandler(this, STATECHANGE_SERVER, false, false);
 }
 
@@ -56,7 +58,7 @@ void CContextControl::CreateTab()
 
 		pState = m_context_controls[i].pState;
 		m_context_controls.erase(m_context_controls.begin() + i);
-		if (m_current_context_controls > i)
+		if (m_current_context_controls > (int)i)
 			m_current_context_controls--;
 		break;
 	}
@@ -502,10 +504,30 @@ bool CContextControl::SelectTab(int i)
 
 void CContextControl::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
 {
-	if (!m_tabs)
-		return;
+	if (notification == STATECHANGE_CHANGEDCONTEXT)
+	{
+		if (!pState)
+		{
+			m_current_context_controls = 0;
+			return;
+		}
 
-	CContextControl::_context_controls* controls = GetControlsFromState(pState);
-	if (controls && controls->tab_index != -1)
-		m_tabs->SetPageText(controls->tab_index, controls->pState->GetTitle());
+		// Get current controls for new current context
+		for (m_current_context_controls = 0; m_current_context_controls < (int)m_context_controls.size(); m_current_context_controls++)
+		{
+			if (m_context_controls[m_current_context_controls].pState == pState)
+				break;
+		}
+		if (m_current_context_controls == m_context_controls.size())
+			m_current_context_controls = -1;
+	}
+	else if (notification == STATECHANGE_SERVER)
+	{
+		if (!m_tabs)
+			return;
+
+		CContextControl::_context_controls* controls = GetControlsFromState(pState);
+		if (controls && controls->tab_index != -1)
+			m_tabs->SetPageText(controls->tab_index, controls->pState->GetTitle());
+	}
 }

@@ -160,30 +160,10 @@ protected:
 		}
 		else if (notification == STATECHANGE_CHANGEDCONTEXT)
 		{
-			if (!pState)
-			{
-				m_pMainFrame->m_pContextControl->m_current_context_controls = 0;
-				m_pMainFrame->UpdateMenubarState();
-				m_pMainFrame->UpdateToolbarState();
-				m_pMainFrame->UpdateBookmarkMenu();
-				return;
-			}
-
-			// Get current controls for new current context
-			for (m_pMainFrame->m_pContextControl->m_current_context_controls = 0; m_pMainFrame->m_pContextControl->m_current_context_controls < m_pMainFrame->m_pContextControl->m_context_controls.size(); m_pMainFrame->m_pContextControl->m_current_context_controls++)
-			{
-				if (m_pMainFrame->m_pContextControl->m_context_controls[m_pMainFrame->m_pContextControl->m_current_context_controls].pState == pState)
-					break;
-			}
-			if (m_pMainFrame->m_pContextControl->m_current_context_controls == m_pMainFrame->m_pContextControl->m_context_controls.size())
-			{
-				m_pMainFrame->m_pContextControl->m_current_context_controls = 0;
-				m_pMainFrame->UpdateMenubarState();
-				m_pMainFrame->UpdateToolbarState();
-				m_pMainFrame->UpdateBookmarkMenu();
-				return;
-			}
-
+			m_pMainFrame->UpdateMenubarState();
+			m_pMainFrame->UpdateToolbarState();
+			m_pMainFrame->UpdateBookmarkMenu();
+	
 			// Update window title
 			const CServer* pServer = pState ? pState->GetServer() : 0;
 			if (!pServer)
@@ -198,10 +178,6 @@ protected:
 				pStatusBar->DisplayDataType(pServer);
 				pStatusBar->DisplayEncrypted(pServer);
 			}
-
-			m_pMainFrame->UpdateMenubarState();
-			m_pMainFrame->UpdateToolbarState();
-			m_pMainFrame->UpdateBookmarkMenu();
 
 			return;
 		}
@@ -339,7 +315,6 @@ CMainFrame::CMainFrame()
 	m_pStatusView = 0;
 
 	m_pThemeProvider = new CThemeProvider();
-	m_pStateEventHandler = new CMainFrameStateEventHandler(this);
 
 	CPowerManagement::Create(this);
 
@@ -404,7 +379,11 @@ CMainFrame::CMainFrame()
 
 	m_pQueueView = m_pQueuePane->GetQueueView();
 
+	// It's important that the context control gets created before our own state handler
+	// so that contextchange events can be processed in the right order.
 	m_pContextControl = new CContextControl(this, m_pBottomSplitter);
+
+	m_pStateEventHandler = new CMainFrameStateEventHandler(this);
 
 	m_pContextControl->CreateTab();
 
@@ -541,9 +520,6 @@ CMainFrame::~CMainFrame()
 #ifndef __WXMAC__
 	delete m_taskBarIcon;
 #endif
-
-	for (size_t i = 0; i < m_pContextControl->m_context_controls.size(); i++)
-		m_pContextControl->m_context_controls[i].site_bookmarks.clear();
 }
 
 void CMainFrame::HandleResize()
@@ -3292,15 +3268,19 @@ void CMainFrame::OnMenuCloseTab(wxCommandEvent& event)
 
 void CMainFrame::SetBookmarksFromPath(const wxString& path)
 {
+	if (!m_pContextControl)
+		return;
+
 	CSharedPointer<CContextControl::_context_controls::_site_bookmarks> site_bookmarks;
-	for (size_t i = 0; i < m_pContextControl->m_context_controls.size(); i++)
+	for (int i = 0; i < m_pContextControl->GetTabCount(); i++)
 	{
-		if (i == m_pContextControl->m_current_context_controls)
+		CContextControl::_context_controls *controls = m_pContextControl->GetControlsFromTabIndex(i);
+		if (i == m_pContextControl->GetCurrentTab())
 			continue;
-		if (m_pContextControl->m_context_controls[i].site_bookmarks->path != path)
+		if (controls->site_bookmarks->path != path)
 			continue;
 
-		site_bookmarks = m_pContextControl->m_context_controls[i].site_bookmarks;
+		site_bookmarks = controls->site_bookmarks;
 		site_bookmarks->bookmarks.clear();
 	}
 	if (!site_bookmarks)
@@ -3309,9 +3289,12 @@ void CMainFrame::SetBookmarksFromPath(const wxString& path)
 		site_bookmarks->path = path;
 	}
 
-	m_pContextControl->m_context_controls[m_pContextControl->m_current_context_controls].site_bookmarks = site_bookmarks;
-	CSiteManager::GetBookmarks(m_pContextControl->m_context_controls[m_pContextControl->m_current_context_controls].site_bookmarks->path,
-		m_pContextControl->m_context_controls[m_pContextControl->m_current_context_controls].site_bookmarks->bookmarks);
+	CContextControl::_context_controls *controls = m_pContextControl->GetCurrentControls();
+	if (controls)
+	{
+		controls->site_bookmarks = site_bookmarks;
+		CSiteManager::GetBookmarks(controls->site_bookmarks->path, controls->site_bookmarks->bookmarks);
+	}
 }
 
 bool CMainFrame::Connect(const CServer &server, const CServerPath &path /*=CServerPath()*/)

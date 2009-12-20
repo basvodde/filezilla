@@ -53,6 +53,8 @@ public:
 	void RegisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification, bool current_only, bool blockable);
 	void UnregisterHandler(CStateEventHandler* pHandler, enum t_statechange_notifications notification);
 
+	size_t HandlerCount(enum t_statechange_notifications notification) const;
+
 	CState* CreateState(CMainFrame* pMainFrame);
 	void DestroyState(CState* pState);
 	void DestroyAllStates();
