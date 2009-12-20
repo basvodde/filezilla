@@ -112,7 +112,7 @@ void CContextControl::CreateContextControls(CState* pState)
 
 			m_context_controls[m_current_context_controls].pViewSplitter->Reparent(m_tabs);
 
-			m_tabs->AddPage(m_context_controls[m_current_context_controls].pViewSplitter, m_context_controls[m_current_context_controls].title);
+			m_tabs->AddPage(m_context_controls[m_current_context_controls].pViewSplitter, m_context_controls[m_current_context_controls].pState->GetTitle());
 			ReplaceWindow(m_context_controls[m_current_context_controls].pViewSplitter, m_tabs);
 
 			m_tabs->Connect(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler(CContextControl::OnTabChanged), 0, this);
@@ -232,8 +232,6 @@ void CContextControl::CreateContextControls(CState* pState)
 			context_controls.pLocalSplitter->SetSashGravity(1.0);
 	}
 
-	context_controls.title = _("Not connected");
-
 	m_pMainFrame->ConnectNavigationHandler(context_controls.pLocalListView);
 	m_pMainFrame->ConnectNavigationHandler(context_controls.pRemoteListView);
 	m_pMainFrame->ConnectNavigationHandler(context_controls.pLocalTreeView);
@@ -246,7 +244,7 @@ void CContextControl::CreateContextControls(CState* pState)
 	if (m_tabs)
 	{
 		context_controls.tab_index = m_tabs->GetPageCount();
-		m_tabs->AddPage(context_controls.pViewSplitter, context_controls.title);
+		m_tabs->AddPage(context_controls.pViewSplitter, pState->GetTitle());
 
 		// Copy reconnect and bookmark information
 		pState->SetLastServer(
@@ -281,6 +279,14 @@ void CContextControl::OnTabRefresh(wxCommandEvent& event)
 
 		break;
 	}
+}
+
+struct CContextControl::_context_controls* CContextControl::GetCurrentControls()
+{
+	if (m_current_context_controls == -1)
+		return 0;
+
+	return &m_context_controls[m_current_context_controls];
 }
 
 struct CContextControl::_context_controls* CContextControl::GetControlsFromState(CState* pState)
@@ -496,12 +502,10 @@ bool CContextControl::SelectTab(int i)
 
 void CContextControl::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
 {
-	// Was registered after handler in main frame that does update the title.
-
 	if (!m_tabs)
 		return;
 
 	CContextControl::_context_controls* controls = GetControlsFromState(pState);
 	if (controls && controls->tab_index != -1)
-		m_tabs->SetPageText(controls->tab_index, controls->title);
+		m_tabs->SetPageText(controls->tab_index, controls->pState->GetTitle());
 }

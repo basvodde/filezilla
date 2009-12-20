@@ -38,8 +38,6 @@ public:
 
 		CState* pState;
 
-		wxString title;
-
 		int tab_index;
 
 		struct _site_bookmarks
@@ -56,6 +54,7 @@ public:
 	void CreateTab();
 	bool CloseTab(int tab);
 
+	struct _context_controls* GetCurrentControls();
 	struct _context_controls* GetControlsFromState(CState* pState);
 	
 	int GetCurrentTab() const;

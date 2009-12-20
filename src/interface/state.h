@@ -111,6 +111,7 @@ public:
 	const CServerPath GetRemotePath() const;
 
 	const CServer* GetServer() const;
+	wxString GetTitle() const;
 
 	void RefreshLocal();
 	void RefreshLocalFile(wxString file);
@@ -163,6 +164,7 @@ protected:
 	CSharedPointer<const CDirectoryListing> m_pDirectoryListing;
 
 	CServer* m_pServer;
+	wxString m_title;
 	bool m_successful_connect;
 
 	CServer m_last_server;

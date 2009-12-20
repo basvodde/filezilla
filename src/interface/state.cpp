@@ -190,6 +190,7 @@ CState::CState(CMainFrame* pMainFrame)
 
 	m_pDirectoryListing = 0;
 	m_pServer = 0;
+	m_title = _("Not connected");
 	m_successful_connect = 0;
 
 	m_pEngine = 0;
@@ -474,9 +475,18 @@ void CState::SetServer(const CServer* server)
 		m_last_server = *server;
 
 		m_pServer = new CServer(*server);
+
+		const wxString& name = server->GetName();
+		if (!name.IsEmpty())
+			m_title = name + _T(" - ") + server->FormatServer();
+		else
+			m_title = server->FormatServer();
 	}
 	else
+	{
 		m_pServer = 0;
+		m_title = _("Not connected");
+	}
 
 	m_successful_connect = false;
 
@@ -486,6 +496,11 @@ void CState::SetServer(const CServer* server)
 const CServer* CState::GetServer() const
 {
 	return m_pServer;
+}
+
+wxString CState::GetTitle() const
+{
+	return m_title;
 }
 
 bool CState::Connect(const CServer& server, const CServerPath& path /*=CServerPath()*/)
