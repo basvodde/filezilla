@@ -361,6 +361,7 @@ bool CContextControl::CloseTab(int tab)
 		m_tabs = 0;
 
 		m_context_controls[i].tab_index = -1;
+		m_context_controls[i].site_bookmarks.clear();
 
 		CContextManager::Get()->SetCurrentContext(m_context_controls[j].pState);
 
@@ -388,6 +389,7 @@ bool CContextControl::CloseTab(int tab)
 				m_context_controls[j].tab_index--;
 		}
 		m_context_controls[i].tab_index = -1;
+		m_context_controls[i].site_bookmarks.clear();
 		m_tabs->DeletePage(tab);
 	}
 

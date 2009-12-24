@@ -67,10 +67,7 @@ protected:
 	
 	void CreateContextControls(CState* pState);
 
-public:
 	std::vector<struct _context_controls> m_context_controls;
-
-protected:
 	int m_current_context_controls;
 
 	wxAuiNotebookEx* m_tabs;
