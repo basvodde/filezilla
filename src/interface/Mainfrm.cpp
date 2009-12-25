@@ -987,7 +987,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			int sel = i - 1;
 			if (sel < 0)
 				sel = 9;
-			m_pContextControl->SelectTab(i);
+			m_pContextControl->SelectTab(sel);
 
 			return;
 		}
