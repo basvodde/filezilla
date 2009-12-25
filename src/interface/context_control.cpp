@@ -21,6 +21,7 @@ BEGIN_EVENT_TABLE(CContextControl, wxSplitterWindow)
 EVT_MENU(XRCID("ID_TABCONTEXT_REFRESH"), CContextControl::OnTabRefresh)
 EVT_COMMAND(wxID_ANY, fzEVT_TAB_CLOSING_DEFERRED, CContextControl::OnTabClosing_Deferred)
 EVT_MENU(XRCID("ID_TABCONTEXT_CLOSE"), CContextControl::OnTabContextClose)
+EVT_MENU(XRCID("ID_TABCONTEXT_CLOSEOTHERS"), CContextControl::OnTabContextCloseOthers)
 END_EVENT_TABLE()
 
 CContextControl::CContextControl(CMainFrame* pMainFrame, wxWindow *parent)
@@ -438,9 +439,26 @@ void CContextControl::OnTabContextClose(wxCommandEvent& event)
 	AddPendingEvent(evt);
 }
 
+void CContextControl::OnTabContextCloseOthers(wxCommandEvent& event)
+{
+	wxCommandEvent evt(fzEVT_TAB_CLOSING_DEFERRED, -m_right_clicked_tab);
+	AddPendingEvent(evt);
+}
+
 void CContextControl::OnTabClosing_Deferred(wxCommandEvent& event)
 {
-	CloseTab(event.GetId());
+	int tab = event.GetId();
+	if (tab < 0)
+	{
+		int count = GetTabCount();
+		for (int i = count - 1; i >= 0; i--)
+		{
+			if (i != -tab)
+				CloseTab(i);
+		}
+	}
+	else
+		CloseTab(tab);
 }
 
 
