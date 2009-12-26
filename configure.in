@@ -447,6 +447,14 @@ if test "$buildmain" = "yes"; then
   AC_MSG_CHECKING([D-Bus support])
   AC_MSG_RESULT([$with_dbus])
 
+  # We want xdg-open on *nix
+  if echo "$WX_CPPFLAGS" | grep __WXGTK__; then
+
+    AC_PATH_PROG(xdgopen, xdg-open)
+    if test -z "$xdgopen"; then
+      AC_MSG_ERROR([xdg-open not found. This program is the preferred way to launch the default browser. Please install the xdg-utils.])
+    fi
+  fi
 
   # Some more obscure platforms (e.g. HP-UX) don't have setenv which is required by POSIX
   AC_CHECK_FUNC(setenv, [AC_DEFINE([HAVE_SETENV], [1], [Define to 1 if setenv function is available.])], [])
