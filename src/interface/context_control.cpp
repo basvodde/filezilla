@@ -538,7 +538,7 @@ void CContextControl::OnStateChange(CState* pState, enum t_statechange_notificat
 			if (m_context_controls[m_current_context_controls].pState == pState)
 				break;
 		}
-		if (m_current_context_controls == m_context_controls.size())
+		if (m_current_context_controls == (int)m_context_controls.size())
 			m_current_context_controls = -1;
 	}
 	else if (notification == STATECHANGE_SERVER)
