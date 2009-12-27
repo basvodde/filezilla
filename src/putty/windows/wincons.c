@@ -37,10 +37,6 @@ void set_busy_status(void *frontend, int status)
 {
 }
 
-void notify_remote_exit(void *frontend)
-{
-}
-
 void timer_change_notify(long next)
 {
 }

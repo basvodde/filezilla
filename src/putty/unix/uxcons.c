@@ -64,10 +64,6 @@ void update_specials_menu(void *frontend)
 {
 }
 
-void notify_remote_exit(void *frontend)
-{
-}
-
 void timer_change_notify(long next)
 {
 }
