@@ -84,6 +84,7 @@ protected:
 	void OnTabRightclick(wxAuiNotebookEvent& event);
 	void OnTabContextClose(wxCommandEvent& event);
 	void OnTabContextCloseOthers(wxCommandEvent& event);
+	void OnTabContextNew(wxCommandEvent& event);
 
 	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2);
 };

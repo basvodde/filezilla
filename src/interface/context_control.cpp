@@ -22,6 +22,7 @@ EVT_MENU(XRCID("ID_TABCONTEXT_REFRESH"), CContextControl::OnTabRefresh)
 EVT_COMMAND(wxID_ANY, fzEVT_TAB_CLOSING_DEFERRED, CContextControl::OnTabClosing_Deferred)
 EVT_MENU(XRCID("ID_TABCONTEXT_CLOSE"), CContextControl::OnTabContextClose)
 EVT_MENU(XRCID("ID_TABCONTEXT_CLOSEOTHERS"), CContextControl::OnTabContextCloseOthers)
+EVT_MENU(XRCID("ID_TABCONTEXT_NEW"), CContextControl::OnTabContextNew)
 END_EVENT_TABLE()
 
 CContextControl::CContextControl(CMainFrame* pMainFrame, wxWindow *parent)
@@ -557,4 +558,9 @@ void CContextControl::OnStateChange(CState* pState, enum t_statechange_notificat
 		if (controls && controls->tab_index != -1)
 			m_tabs->SetPageText(controls->tab_index, controls->pState->GetTitle());
 	}
+}
+
+void CContextControl::OnTabContextNew(wxCommandEvent& event)
+{
+	CreateTab();
 }
