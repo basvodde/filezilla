@@ -449,7 +449,7 @@ void CContextControl::OnTabContextClose(wxCommandEvent& event)
 
 void CContextControl::OnTabContextCloseOthers(wxCommandEvent& event)
 {
-	wxCommandEvent evt(fzEVT_TAB_CLOSING_DEFERRED, -m_right_clicked_tab);
+	wxCommandEvent evt(fzEVT_TAB_CLOSING_DEFERRED, -m_right_clicked_tab - 1);
 	AddPendingEvent(evt);
 }
 
@@ -458,6 +458,7 @@ void CContextControl::OnTabClosing_Deferred(wxCommandEvent& event)
 	int tab = event.GetId();
 	if (tab < 0)
 	{
+		tab++;
 		int count = GetTabCount();
 		for (int i = count - 1; i >= 0; i--)
 		{
