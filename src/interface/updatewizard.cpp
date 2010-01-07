@@ -576,9 +576,9 @@ void CUpdateWizard::OnEngineEvent(wxEvent& event)
 #ifdef __WXMSW__
 					pText->SetLabel(_("The most recent version has been downloaded. Click on Finish to close FileZilla and to start the installation."));
 #else
-					pText->SetLabel(_("The most recent version has been downloaded. Please install like you did install this version."));
-
+					pText->SetLabel(_("The most recent version has been downloaded. Please install it the same way you installed this version."));
 #endif
+
 					pText->Show();
 					RewrapPage(2);
 
