@@ -277,16 +277,15 @@ class CInfoText : public wxWindow
 public:
 	CInfoText(wxWindow* parent, const wxString& text)
 		: wxWindow(parent, wxID_ANY, wxPoint(0, 60), wxDefaultSize),
-		m_text(_T("<") + text + _T(">"))
+		m_text(text)
 	{
 		SetForegroundColour(parent->GetForegroundColour());
 		SetBackgroundColour(parent->GetBackgroundColour());
 		GetTextExtent(m_text, &m_textSize.x, &m_textSize.y);
 	}
 
-	void SetText(wxString text)
+	void SetText(const wxString &text)
 	{
-		text = _T("<") + text + _T(">");
 		if (text == m_text)
 			return;
 
