@@ -678,6 +678,17 @@ protected:
 			return false;
 		}
 
+		// If state isn't connecting, Close() was called.
+		// If m_pHost is set, Close() was called and Connect()
+		// afterwards, state is back at connecting.
+		// In either case, we need to abort this connection attempt.
+		if (m_pSocket->m_state != CSocket::connecting || m_pHost)
+		{
+			if (!res && addressList)
+				freeaddrinfo(addressList);
+			return false;
+		}
+
 		if (res)
 		{
 #ifdef __WXMSW__
