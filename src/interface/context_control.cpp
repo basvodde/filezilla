@@ -523,12 +523,28 @@ bool CContextControl::SelectTab(int i)
 	if (i < 0)
 		return false;
 
+	if (!m_tabs)
+	{
+		if (i != 0)
+			return false;
+
+		return true;
+	}
+
 	if ((int)m_tabs->GetPageCount() <= i)
 		return false;
 
 	m_tabs->SetSelection(i);
 
 	return true;
+}
+
+void CContextControl::AdvanceTab(bool forward)
+{
+	if (!m_tabs)
+		return;
+
+	m_tabs->AdvanceTab(forward);
 }
 
 void CContextControl::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)

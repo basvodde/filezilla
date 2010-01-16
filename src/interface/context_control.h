@@ -62,6 +62,7 @@ public:
 	struct _context_controls* GetControlsFromTabIndex(int i);
 
 	bool SelectTab(int i);
+	void AdvanceTab(bool forward);
 
 protected:
 	

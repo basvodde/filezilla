@@ -2441,6 +2441,13 @@ void CMainFrame::ConnectNavigationHandler(wxEvtHandler* handler)
 
 void CMainFrame::OnNavigationKeyEvent(wxNavigationKeyEvent& event)
 {
+	if (wxGetKeyState(WXK_CONTROL))
+	{
+		if (m_pContextControl)
+			m_pContextControl->AdvanceTab(event.GetDirection());
+		return;
+	}
+
 	std::list<wxWindow*> windowOrder;
 	if (m_pQuickconnectBar)
 		windowOrder.push_back(m_pQuickconnectBar);

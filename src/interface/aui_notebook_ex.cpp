@@ -395,8 +395,13 @@ void wxAuiNotebookEx::OnNavigationKey(wxNavigationKeyEvent& event)
 		return;
 	}
 
+	AdvanceTab(event.GetDirection());
+}
+
+void wxAuiNotebookEx::AdvanceTab(bool forward)
+{
 	int page = GetSelection();
-	if (event.GetDirection())
+	if (forward)
 		page++;
 	else
 		page--;
