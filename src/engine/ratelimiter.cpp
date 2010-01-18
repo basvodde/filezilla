@@ -53,13 +53,24 @@ void CRateLimiter::Free()
 		m_usageCount--;
 }
 
+wxLongLong CRateLimiter::GetLimit(enum rate_direction direction) const
+{
+	wxLongLong ret;
+	if (m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0)
+	{
+		ret = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + direction) * 1024;
+	}
+
+	return ret;
+}
+
 void CRateLimiter::AddObject(CRateLimiterObject* pObject)
 {
 	m_objectList.push_back(pObject);
 
 	for (int i = 0; i < 2; i++)
 	{
-		wxLongLong limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i) * 1024;
+		wxLongLong limit = GetLimit((enum rate_direction)i);
 		if (limit > 0)
 		{
 			wxLongLong tokens = limit / (1000 / tickDelay);
@@ -101,8 +112,8 @@ void CRateLimiter::RemoveObject(CRateLimiterObject* pObject)
 				// If an object already used up some of its assigned tokens, add them to m_tokenDebt,
 				// so that newly created objects get less initial tokens.
 				// That ensures that rapidly adding and removing objects does not exceed the rate
-				int limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i) * 1024;
-				int tokens = limit / (1000 / tickDelay);
+				wxLongLong limit = GetLimit((enum rate_direction)i);
+				wxLongLong tokens = limit / (1000 / tickDelay);
 				tokens /= m_objectList.size();
 				if ((*iter)->m_bytesAvailable[i] < tokens)
 					m_tokenDebt[i] += tokens - (*iter)->m_bytesAvailable[i];
@@ -136,7 +147,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 		if (!m_objectList.size())
 			continue;
 
-		wxLongLong limit = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND + i);
+		wxLongLong limit = GetLimit((enum rate_direction)i);
 		if (limit == 0)
 		{
 			for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); iter++)

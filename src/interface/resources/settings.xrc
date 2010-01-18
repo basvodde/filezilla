@@ -859,9 +859,14 @@
           <label>Speed limits</label>
           <orient>wxVERTICAL</orient>
           <object class="sizeritem">
+            <object class="wxCheckBox" name="ID_ENABLE_SPEEDLIMITS">
+              <label>&amp;Enable speed limits</label>
+            </object>
+            <flag>wxLEFT|wxRIGHT|wxTOP</flag>
+            <border>4</border>
+          </object>
+          <object class="sizeritem">
             <object class="wxFlexGridSizer">
-              <vgap>5</vgap>
-              <hgap>5</hgap>
               <object class="sizeritem">
                 <object class="wxStaticText">
                   <label>Download &amp;limit:</label>
@@ -917,8 +922,10 @@
                 </object>
               </object>
               <cols>3</cols>
+              <vgap>5</vgap>
+              <hgap>5</hgap>
             </object>
-            <flag>wxBOTTOM|wxLEFT|wxRIGHT</flag>
+            <flag>wxALL</flag>
             <border>4</border>
           </object>
         </object>
@@ -932,7 +939,7 @@
             <object class="wxFlexGridSizer">
               <object class="sizeritem">
                 <object class="wxCheckBox" name="ID_ENABLE_REPLACE">
-                  <label>Enable invalid character filtering</label>
+                  <label>Enable invalid character &amp;filtering</label>
                 </object>
               </object>
               <object class="sizeritem">
@@ -945,7 +952,7 @@
                   <orient>wxHORIZONTAL</orient>
                   <object class="sizeritem">
                     <object class="wxStaticText">
-                      <label>Replace invalid characters with:</label>
+                      <label>&amp;Replace invalid characters with:</label>
                     </object>
                     <flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
                     <border>5</border>

@@ -4,26 +4,44 @@
 #include "optionspage.h"
 #include "optionspage_transfer.h"
 
+BEGIN_EVENT_TABLE(COptionsPageTransfer, COptionsPage)
+EVT_CHECKBOX(XRCID("ID_ENABLE_SPEEDLIMITS"), COptionsPageTransfer::OnToggleSpeedLimitEnable)
+END_EVENT_TABLE()
+
+void COptionsPageTransfer::OnToggleSpeedLimitEnable(wxCommandEvent& event)
+{
+	bool enable_speedlimits = GetCheck(XRCID("ID_ENABLE_SPEEDLIMITS"));
+	XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl)->Enable(enable_speedlimits);
+	XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl)->Enable(enable_speedlimits);
+	XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice)->Enable(enable_speedlimits);
+}
+
 bool COptionsPageTransfer::LoadPage()
 {
 	bool failure = false;
+
+	bool enable_speedlimits = m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
+	SetCheck(XRCID("ID_ENABLE_SPEEDLIMITS"), enable_speedlimits, failure);
 
 	wxTextCtrl* pTextCtrl = XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl);
 	if (!pTextCtrl)
 		return false;
 	pTextCtrl->SetMaxLength(9);
 	pTextCtrl->ChangeValue(m_pOptions->GetOption(OPTION_SPEEDLIMIT_INBOUND));
+	pTextCtrl->Enable(enable_speedlimits);
 
 	pTextCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
 	if (!pTextCtrl)
 		return false;
 	pTextCtrl->SetMaxLength(9);
 	pTextCtrl->ChangeValue(m_pOptions->GetOption(OPTION_SPEEDLIMIT_OUTBOUND));
+	pTextCtrl->Enable(enable_speedlimits);
 
 	SetTextFromOption(XRCID("ID_NUMTRANSFERS"), OPTION_NUMTRANSFERS, failure);
 	SetTextFromOption(XRCID("ID_NUMDOWNLOADS"), OPTION_CONCURRENTDOWNLOADLIMIT, failure);
 	SetTextFromOption(XRCID("ID_NUMUPLOADS"), OPTION_CONCURRENTUPLOADLIMIT, failure);
 	SetChoice(XRCID("ID_BURSTTOLERANCE"), m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE), failure);
+	XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice)->Enable(enable_speedlimits);
 
 	pTextCtrl = XRCCTRL(*this, "ID_REPLACE", wxTextCtrl);
 	pTextCtrl->SetMaxLength(1);
@@ -45,6 +63,7 @@ bool COptionsPageTransfer::LoadPage()
 
 bool COptionsPageTransfer::SavePage()
 {
+	SetOptionFromCheck(XRCID("ID_ENABLE_SPEEDLIMITS"), OPTION_SPEEDLIMIT_ENABLE);
 	SetOptionFromText(XRCID("ID_NUMTRANSFERS"), OPTION_NUMTRANSFERS);
 	SetOptionFromText(XRCID("ID_NUMDOWNLOADS"), OPTION_CONCURRENTDOWNLOADLIMIT);
 	SetOptionFromText(XRCID("ID_NUMUPLOADS"), OPTION_CONCURRENTUPLOADLIMIT);
