@@ -3457,6 +3457,6 @@ void notify_remote_exit(void *frontend)
 {
     int exitcode = back->exitcode(backhandle);
 
-    if (exitcode > 0)
+    if (exitcode > 0 && exitcode != INT_MAX)
 	connection_fatal(frontend, "Connection closed by server with exitcode %d", exitcode);
 }
