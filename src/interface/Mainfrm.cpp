@@ -49,6 +49,7 @@
 #include "power_management.h"
 #include "welcome_dialog.h"
 #include "context_control.h"
+#include "speedlimits_dialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -973,6 +974,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		CWelcomeDialog dlg;
 		dlg.Run(this, true);
+	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_SPEEDLIMITS"))
+	{
+		CSpeedLimitsDialog dlg;
+		dlg.Run(this);
 	}
 	else
 	{

@@ -4738,4 +4738,119 @@
       </object>
     </object>
   </object>
+  <object class="wxDialog" name="ID_SPEEDLIMITS">
+    <object class="wxBoxSizer">
+      <object class="sizeritem">
+        <object class="wxFlexGridSizer">
+          
+          
+          
+          
+          
+          
+          
+          
+          <cols>1</cols>
+          <vgap>5</vgap>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxStaticBitmap">
+                  <size>48,48</size>
+                  <bitmap stock_id="ART_SPEEDLIMITS"/>
+                </object>
+              </object>
+              <object class="spacer">
+                <size>5,-1</size>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxCheckBox" name="ID_ENABLE_SPEEDLIMITS">
+                      <label>&amp;Enable speed limits</label>
+                    </object>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>Download &amp;limit:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_DOWNLOADLIMIT">
+                          <size>60,-1</size>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>(in KB/s)</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>U&amp;pload limit:</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="ID_UPLOADLIMIT">
+                          <size>60,-1</size>
+                        </object>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label>(in KB/s)</label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+              
+              
+              
+                      <cols>3</cols>
+                      <vgap>5</vgap>
+                      <hgap>5</hgap>
+                    </object>
+                  </object>
+                  <cols>1</cols>
+                  <rows>2</rows>
+                  <vgap>5</vgap>
+                </object>
+              </object>
+              <cols>3</cols>
+              <hgap>5</hgap>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticLine"/>
+            <flag>wxGROW</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_OK">
+                  <label>OK</label>
+                  <default>1</default>
+                </object>
+              </object>
+              <object class="sizeritem">
+                <object class="wxButton" name="wxID_CANCEL">
+                  <label>&amp;Cancel</label>
+                </object>
+              </object>
+              <cols>2</cols>
+              <hgap>5</hgap>
+            </object>
+            <flag>wxALIGN_RIGHT</flag>
+          </object>
+        </object>
+        <flag>wxALL</flag>
+        <border>5</border>
+      </object>
+      <orient>wxVERTICAL</orient>
+    </object>
+    <title>Speed Limits</title>
+  </object>
 </resource>
