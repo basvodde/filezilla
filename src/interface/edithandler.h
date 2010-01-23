@@ -118,6 +118,7 @@ protected:
 	CQueueView* m_pQueue;
 
 	wxTimer m_timer;
+	wxTimer m_busyTimer;
 	
 	void RemoveTemporaryFiles(const wxString& temp);
 

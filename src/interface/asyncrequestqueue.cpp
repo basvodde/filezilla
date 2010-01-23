@@ -14,6 +14,7 @@ DEFINE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE)
 
 BEGIN_EVENT_TABLE(CAsyncRequestQueue, wxEvtHandler)
 EVT_COMMAND(wxID_ANY, fzEVT_PROCESSASYNCREQUESTQUEUE, CAsyncRequestQueue::OnProcessQueue)
+EVT_TIMER(wxID_ANY, CAsyncRequestQueue::OnTimer)
 END_EVENT_TABLE()
 
 CAsyncRequestQueue::CAsyncRequestQueue(CMainFrame *pMainFrame)
@@ -22,6 +23,7 @@ CAsyncRequestQueue::CAsyncRequestQueue(CMainFrame *pMainFrame)
 	m_pQueueView = 0;
 	m_pVerifyCertDlg = new CVerifyCertDialog;
 	m_inside_request = false;
+	m_timer.SetOwner(this);
 }
 
 CAsyncRequestQueue::~CAsyncRequestQueue()
@@ -434,6 +436,14 @@ void CAsyncRequestQueue::TriggerProcessing()
 
 bool CAsyncRequestQueue::CheckWindowState()
 {
+	m_timer.Stop();
+	wxMouseState mouseState = wxGetMouseState();
+	if (mouseState.LeftDown() || mouseState.MiddleDown() || mouseState.RightDown())
+	{
+		m_timer.Start(1000, true);
+		return false;
+	}
+
 #ifndef __WXMAC__
 	if (m_pMainFrame->IsIconized())
 	{
@@ -454,3 +464,9 @@ bool CAsyncRequestQueue::CheckWindowState()
 
 	return true;
 }
+
+void CAsyncRequestQueue::OnTimer(wxTimerEvent& event)
+{
+	TriggerProcessing();
+}
+

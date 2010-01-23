@@ -49,6 +49,7 @@ CEditHandler::CEditHandler()
 	m_pQueue = 0;
 
 	m_timer.SetOwner(this);
+	m_busyTimer.SetOwner(this);
 
 #ifdef __WXMSW__
 	m_lockfile_handle = INVALID_HANDLE_VALUE;
@@ -188,6 +189,8 @@ void CEditHandler::Release()
 {
 	if (m_timer.IsRunning())
 		m_timer.Stop();
+	if (m_busyTimer.IsRunning())
+		m_busyTimer.Stop();
 
 	if (m_localDir != _T(""))
 	{
@@ -622,126 +625,90 @@ void CEditHandler::CheckForModifications(bool emitEvent)
 
 	insideCheckForModifications = true;
 
-checkmodifications_remote:
-	for (std::list<t_fileData>::iterator iter = m_fileDataList[remote].begin(); iter != m_fileDataList[remote].end(); iter++)
+	for (int i = 0; i < 2; i++)
 	{
-		if (iter->state != edit)
-			continue;
-
-		wxFileName fn(iter->file);
-		if (!fn.FileExists())
+checkmodifications_loopbegin:
+		for (std::list<t_fileData>::iterator iter = m_fileDataList[i].begin(); iter != m_fileDataList[i].end(); iter++)
 		{
-			m_fileDataList[remote].erase(iter);
+			if (iter->state != edit)
+				continue;
 
-			// Evil goto. Imo the next C++ standard needs a comefrom keyword.
-			goto checkmodifications_remote;
-		}
-
-		wxDateTime mtime;
-
-		{
-			wxLogNull log; // If GetModificationTime fails wx spams error messages
-			mtime = fn.GetModificationTime();
-		}
-
-		if (!mtime.IsValid())
-			continue;
-
-		if (iter->modificationTime.IsValid() && iter->modificationTime == mtime)
-			continue;
-
-		// File has changed, ask user what to do
-
-		wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
-		if (pTopWindow && pTopWindow->IsIconized())
-		{
-			pTopWindow->RequestUserAttention(wxUSER_ATTENTION_INFO);
-			insideCheckForModifications = false;
-			return;
-		}
-
-		bool remove;
-		int res = DisplayChangeNotification(remote, iter, remove);
-		if (res == -1)
-			continue;
-
-		if (res == wxID_YES)
-		{
-			UploadFile(remote, iter, remove);
-			goto checkmodifications_remote;
-		}
-		else if (remove)
-		{
-			if (!fn.FileExists() || wxRemoveFile(fn.GetFullPath()))
+			wxFileName fn(iter->file);
+			if (!fn.FileExists())
 			{
-				m_fileDataList[remote].erase(iter);
-				goto checkmodifications_remote;
+				m_fileDataList[i].erase(iter);
+
+				// Evil goto. Imo the next C++ standard needs a comefrom keyword.
+				goto checkmodifications_loopbegin;
 			}
 
-			iter->state = removing;
+			wxDateTime mtime;
+
+			{
+				wxLogNull log; // If GetModificationTime fails wx spams error messages
+				mtime = fn.GetModificationTime();
+			}
+
+			if (!mtime.IsValid())
+				continue;
+
+			if (iter->modificationTime.IsValid() && iter->modificationTime == mtime)
+				continue;
+
+			// File has changed, ask user what to do
+
+			m_busyTimer.Stop();
+			wxMouseState mouseState = wxGetMouseState();
+			if (mouseState.LeftDown() || mouseState.MiddleDown() || mouseState.RightDown())
+			{
+				m_busyTimer.Start(1000, true);
+				insideCheckForModifications = false;
+				return;
+			}
+
+			wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
+			if (pTopWindow && pTopWindow->IsIconized())
+			{
+				pTopWindow->RequestUserAttention(wxUSER_ATTENTION_INFO);
+				insideCheckForModifications = false;
+				return;
+			}
+
+			bool remove;
+			int res = DisplayChangeNotification(CEditHandler::fileType(i), iter, remove);
+			if (res == -1)
+				continue;
+
+			if (res == wxID_YES)
+			{
+				UploadFile(CEditHandler::fileType(i), iter, remove);
+				goto checkmodifications_loopbegin;
+			}
+			else if (remove)
+			{
+				if (i == remote)
+				{
+					if (!fn.FileExists() || wxRemoveFile(fn.GetFullPath()))
+					{
+						m_fileDataList[i].erase(iter);
+						goto checkmodifications_loopbegin;
+					}
+					iter->state = removing;
+				}
+				else
+				{
+					m_fileDataList[i].erase(iter);
+					goto checkmodifications_loopbegin;
+				}
+			}
+			else if (!fn.FileExists())
+			{
+				m_fileDataList[i].erase(iter);
+				goto checkmodifications_loopbegin;
+			}
+			else
+				iter->modificationTime = mtime;
 		}
-		else if (!fn.FileExists())
-		{
-			m_fileDataList[remote].erase(iter);
-			goto checkmodifications_remote;
-		}
-		else
-			iter->modificationTime = mtime;
-	}
-
-checkmodifications_local:
-	for (std::list<t_fileData>::iterator iter = m_fileDataList[local].begin(); iter != m_fileDataList[local].end(); iter++)
-	{
-		if (iter->state != edit)
-			continue;
-
-		wxFileName fn(iter->file);
-		if (!fn.FileExists())
-		{
-			m_fileDataList[local].erase(iter);
-
-			// Evil goto. Imo the next C++ standard needs a comefrom keyword.
-			goto checkmodifications_local;
-		}
-
-		wxDateTime mtime;
-
-		{
-			wxLogNull log; // If GetModificationTime fails wx spams error messages
-			mtime = fn.GetModificationTime();
-		}
-
-		if (!mtime.IsValid())
-			continue;
-
-		if (iter->modificationTime.IsValid() && iter->modificationTime == mtime)
-			continue;
-
-		// File has changed, ask user what to do
-
-		wxTopLevelWindow* pTopWindow = (wxTopLevelWindow*)wxTheApp->GetTopWindow();
-		if (pTopWindow && pTopWindow->IsIconized())
-		{
-			pTopWindow->RequestUserAttention(wxUSER_ATTENTION_INFO);
-			insideCheckForModifications = false;
-			return;
-		}
-
-		bool remove;
-		int res = DisplayChangeNotification(local, iter, remove);
-
-		if (res == wxID_YES)
-			UploadFile(local, iter, remove);
-		else if (remove)
-			m_fileDataList[local].erase(iter);
-		else if (!fn.FileExists())
-		{
-			m_fileDataList[remote].erase(iter);
-			goto checkmodifications_remote;
-		}
-		else
-			iter->modificationTime = mtime;
-		goto checkmodifications_local;
 	}
 
 	SetTimerState();

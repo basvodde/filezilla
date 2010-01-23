@@ -41,9 +41,12 @@ protected:
 
 	DECLARE_EVENT_TABLE();
 	void OnProcessQueue(wxCommandEvent &event);
+	void OnTimer(wxTimerEvent& event);
 
 	// Reentrancy guard
 	bool m_inside_request;
+
+	wxTimer m_timer;
 };
 
 #endif //__ASYNCREQUESTQUEUE_H__
