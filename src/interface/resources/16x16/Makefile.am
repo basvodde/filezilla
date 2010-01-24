@@ -19,6 +19,7 @@ dist_resources_DATA = ascii.png \
 		sort_down_light.png \
 		sort_up_dark.png \
 		sort_up_light.png \
+		speedlimits.png \
 		symlink.png \
 		synchronize.png \
 		unknown.png upload.png uploadadd.png
