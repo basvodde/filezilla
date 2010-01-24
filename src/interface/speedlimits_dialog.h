@@ -14,6 +14,7 @@ public:
 protected:
 	DECLARE_EVENT_TABLE();
 	void OnToggleEnable(wxCommandEvent& event);
+	void OnOK(wxCommandEvent& event);
 };
 
 #endif //__SPEEDLIMITS_DIALOG_H__
