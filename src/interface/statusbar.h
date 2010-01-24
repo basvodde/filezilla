@@ -1,21 +1,22 @@
 #ifndef __STATUSBAR_H__
 #define __STATUSBAR_H__
 
+enum widgets
+{
+	widget_led_send,
+	widget_led_recv,
+	widget_speedlimit,
+	widget_datatype,
+	widget_encryption,
+
+	WIDGET_COUNT
+};
+
 class wxStatusBarEx : public wxStatusBar
 {
 public:
 	wxStatusBarEx(wxTopLevelWindow* parent);
 	virtual ~wxStatusBarEx();
-
-	// Adds a child window that gets repositioned on window resize
-	// field >= 0: Actual field
-	// -1 = last field, -2 = second-last field and so on
-	//
-	// cx is the horizontal offset inside the field.
-	// Children are always centered vertically.
-	void AddChild(int field, wxWindow* pChild, int cx);
-	
-	void RemoveChild(int field, wxWindow* pChild);
 
 	// We override these for two reasons:
 	// - wxWidgets does not provide a function to get the field widths back
@@ -27,6 +28,8 @@ public:
 
 	void SetFieldWidth(int field, int width);
 
+	int GetGripperWidth();
+
 #ifdef __WXGTK__
 	// Basically identical to the wx one, but not calling Update
 	virtual void SetStatusText(const wxString& text, int number = 0);
@@ -34,15 +37,6 @@ public:
 
 protected:
 	int GetFieldIndex(int field);
-
-	struct t_statbar_child
-	{
-		int field;
-		wxWindow* pChild;
-		int cx;
-	};
-
-	std::list<struct t_statbar_child> m_children;
 
 	wxTopLevelWindow* m_pParent;
 #ifdef __WXMSW__
@@ -53,13 +47,40 @@ protected:
 
 	int* m_columnWidths;
 
-	void PositionChild(const struct t_statbar_child& data);
+	DECLARE_EVENT_TABLE();
+	void OnSize(wxSizeEvent& event);
+};
+
+class CWidgetsStatusBar : public wxStatusBarEx
+{
+public:
+	CWidgetsStatusBar(wxTopLevelWindow* parent);
+	virtual ~CWidgetsStatusBar();
+
+	// Adds a child window that gets repositioned on window resize
+	// Positioned in the field given in the constructor,
+	// right aligned and in reverse order.
+	void AddChild(int field, int idx, wxWindow* pChild);
+	
+	void RemoveChild(int idx);
+
+protected:
+
+	struct t_statbar_child
+	{
+		int field;
+		wxWindow* pChild;
+	};
+
+	std::map<int, struct t_statbar_child> m_children;
+
+	void PositionChildren(int field);
 
 	DECLARE_EVENT_TABLE();
 	void OnSize(wxSizeEvent& event);
 };
 
-class CStatusBar : public wxStatusBarEx
+class CStatusBar : public CWidgetsStatusBar
 {
 public:
 	CStatusBar(wxTopLevelWindow* parent);

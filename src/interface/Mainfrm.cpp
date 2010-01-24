@@ -325,8 +325,8 @@ CMainFrame::CMainFrame()
 		m_pActivityLed[0] = new CLed(m_pStatusBar, 0);
 		m_pActivityLed[1] = new CLed(m_pStatusBar, 1);
 
-		m_pStatusBar->AddChild(-1, m_pActivityLed[1], 2);
-		m_pStatusBar->AddChild(-1, m_pActivityLed[0], 16);
+		m_pStatusBar->AddChild(-1, widget_led_recv, m_pActivityLed[1]);
+		m_pStatusBar->AddChild(-1, widget_led_send, m_pActivityLed[0]);
 
 		SetStatusBar(m_pStatusBar);
 	}

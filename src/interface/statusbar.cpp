@@ -4,10 +4,10 @@
 #include "verifycertdialog.h"
 #include "sftp_crypt_info_dlg.h"
 
-static const int statbarWidths[5] = {
-	-3, 40, 20, 0, 35
+static const int statbarWidths[3] = {
+	-3, 0, 35
 };
-#define FIELD_QUEUESIZE 3
+#define FIELD_QUEUESIZE 1
 
 BEGIN_EVENT_TABLE(wxStatusBarEx, wxStatusBar)
 EVT_SIZE(wxStatusBarEx::OnSize)
@@ -122,45 +122,6 @@ int wxStatusBarEx::GetFieldIndex(int field)
 	return field;
 }
 
-void wxStatusBarEx::AddChild(int field, wxWindow* pChild, int cx)
-{
-	t_statbar_child data;
-	data.field = GetFieldIndex(field);
-	data.pChild = pChild;
-	data.cx = cx;
-
-	m_children.push_back(data);
-
-	PositionChild(data);
-}
-
-void wxStatusBarEx::RemoveChild(int field, wxWindow* pChild)
-{
-	field = GetFieldIndex(field);
-
-	for (std::list<struct t_statbar_child>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
-	{
-		if (pChild != iter->pChild)
-			continue;
-
-		if (field != iter->field)
-			continue;
-
-		m_children.erase(iter);
-		break;
-	}
-}
-
-void wxStatusBarEx::PositionChild(const struct wxStatusBarEx::t_statbar_child& data)
-{
-	const wxSize size = data.pChild->GetSize();
-
-	wxRect rect;
-	GetFieldRect(data.field, rect);
-
-	data.pChild->SetSize(rect.x + data.cx, rect.GetTop() + (rect.GetHeight() - size.x + 1) / 2, -1, -1);
-}
-
 void wxStatusBarEx::OnSize(wxSizeEvent& event)
 {
 #ifdef __WXMSW__
@@ -183,14 +144,6 @@ void wxStatusBarEx::OnSize(wxSizeEvent& event)
 		}
 	}
 #endif
-
-	for (std::list<struct t_statbar_child>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
-		PositionChild(*iter);
-
-#ifdef __WXMSW__
-	if (GetLayoutDirection() != wxLayout_RightToLeft)
-		Update();
-#endif
 }
 
 #ifdef __WXGTK__
@@ -209,6 +162,96 @@ void wxStatusBarEx::SetStatusText(const wxString& text, int number /*=0*/)
 	}
 }
 #endif
+
+int wxStatusBarEx::GetGripperWidth()
+{
+#if defined(__WXMSW__)
+	return m_pParent->IsMaximized() ? 0 : 6;
+#elif defined(__WXGTK__)
+	return 15;
+#else
+	return 0;
+#endif
+}
+
+
+
+BEGIN_EVENT_TABLE(CWidgetsStatusBar, wxStatusBarEx)
+EVT_SIZE(CWidgetsStatusBar::OnSize)
+END_EVENT_TABLE()
+
+CWidgetsStatusBar::CWidgetsStatusBar(wxTopLevelWindow* parent)
+	: wxStatusBarEx(parent)
+{
+}
+
+CWidgetsStatusBar::~CWidgetsStatusBar()
+{
+}
+
+void CWidgetsStatusBar::OnSize(wxSizeEvent& event)
+{
+	wxStatusBarEx::OnSize(event);
+
+	for (int i = 0; i < GetFieldsCount(); i++)
+		PositionChildren(i);
+
+#ifdef __WXMSW__
+	if (GetLayoutDirection() != wxLayout_RightToLeft)
+		Update();
+#endif
+}
+
+void CWidgetsStatusBar::AddChild(int field, int idx, wxWindow* pChild)
+{
+	field = GetFieldIndex(field);
+
+	t_statbar_child data;
+	data.field = field;
+	data.pChild = pChild;
+
+	m_children[idx] = data;
+
+	PositionChildren(field);
+}
+
+void CWidgetsStatusBar::RemoveChild(int idx)
+{
+	std::map<int, struct t_statbar_child>::iterator iter = m_children.find(idx);
+	if (iter != m_children.end())
+	{
+		int field = iter->second.field;
+		m_children.erase(iter);
+		PositionChildren(field);
+	}
+}
+
+void CWidgetsStatusBar::PositionChildren(int field)
+{
+	wxRect rect;
+	GetFieldRect(field, rect);
+	
+	int offset = 2;
+
+	if (field + 1 == GetFieldsCount())
+	{
+		rect.SetWidth(m_columnWidths[field]);	
+		offset += 5 + GetGripperWidth();
+	}
+
+	for (std::map<int, struct t_statbar_child>::iterator iter = m_children.begin(); iter != m_children.end(); iter++)
+	{
+		if (iter->second.field != field)
+			continue;
+
+		const wxSize size = iter->second.pChild->GetSize();
+		int position = rect.GetRight() - size.x - offset;
+
+		iter->second.pChild->SetSize(position, rect.GetTop() + (rect.GetHeight() - size.y + 1) / 2, -1, -1);
+
+		offset += size.x + 3;
+	}
+}
 
 #ifdef __WXMSW__
 class wxStaticBitmapEx : public wxStaticBitmap
@@ -272,7 +315,7 @@ EVT_RIGHT_UP(CIndicator::OnRightMouseUp)
 END_EVENT_TABLE()
 
 CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
-	: wxStatusBarEx(pParent)
+	: CWidgetsStatusBar(pParent)
 {
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
@@ -282,13 +325,12 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	m_size = 0;
 	m_hasUnknownFiles = false;
 
-	const int count = 5;
+	const int count = 3;
 	SetFieldsCount(count);
 	int array[count];
-	for (int i = 0; i < count - 2; i++)
-		array[i] = wxSB_FLAT;
-	array[count - 2] = wxSB_NORMAL;
-	array[count - 1] = wxSB_FLAT;
+	array[0] = wxSB_FLAT;
+	array[1] = wxSB_NORMAL;
+	array[2] = wxSB_FLAT;
 	SetStatusStyles(count, array);
 
 	SetStatusWidths(count, statbarWidths);
@@ -328,15 +370,9 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 	{
 		if (m_pDataTypeIndicator)
 		{
-			RemoveChild(-4, m_pDataTypeIndicator);
+			RemoveChild(widget_datatype);
 			m_pDataTypeIndicator->Destroy();
 			m_pDataTypeIndicator = 0;
-
-			if (m_pEncryptionIndicator)
-			{
-				RemoveChild(-4, m_pEncryptionIndicator);
-				AddChild(-4, m_pEncryptionIndicator, 22);
-			}
 		}
 	}
 	else
@@ -365,13 +401,7 @@ void CStatusBar::DisplayDataType(const CServer* const pServer)
 		if (!m_pDataTypeIndicator)
 		{
 			m_pDataTypeIndicator = new CIndicator(this, bmp);
-			AddChild(-4, m_pDataTypeIndicator, 22);
-
-			if (m_pEncryptionIndicator)
-			{
-				RemoveChild(-4, m_pEncryptionIndicator);
-				AddChild(-4, m_pEncryptionIndicator, 2);
-			}
+			AddChild(0, widget_datatype, m_pDataTypeIndicator);
 		}
 		else
 			m_pDataTypeIndicator->SetBitmap(bmp);
@@ -395,7 +425,7 @@ void CStatusBar::MeasureQueueSizeWidth()
 	}
 	s.IncTo(dc.GetTextExtent(wxString::Format(_("Queue: %s MiB"), tmp.c_str())));
 
-	SetFieldWidth(-2, s.x + 10);
+	SetFieldWidth(FIELD_QUEUESIZE, s.x + 10);
 }
 
 void CStatusBar::DisplayEncrypted(const CServer* const pServer)
@@ -408,7 +438,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 	{
 		if (m_pEncryptionIndicator)
 		{
-			RemoveChild(-4, m_pEncryptionIndicator);
+			RemoveChild(widget_encryption);
 			m_pEncryptionIndicator->Destroy();
 			m_pEncryptionIndicator = 0;
 		}
@@ -419,7 +449,7 @@ void CStatusBar::DisplayEncrypted(const CServer* const pServer)
 			return;
 		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER, wxSize(16, 16));
 		m_pEncryptionIndicator = new CIndicator(this, bmp);
-		AddChild(-4, m_pEncryptionIndicator, m_pDataTypeIndicator ? 2 : 22);
+		AddChild(0, widget_encryption, m_pEncryptionIndicator);
 
 		m_pEncryptionIndicator->SetToolTip(_("The connection is encrypted. Click icon for details."));
 	}
