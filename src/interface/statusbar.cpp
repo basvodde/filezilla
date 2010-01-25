@@ -3,6 +3,7 @@
 #include "Options.h"
 #include "verifycertdialog.h"
 #include "sftp_crypt_info_dlg.h"
+#include "speedlimits_dialog.h"
 
 static const int statbarWidths[3] = {
 	-3, 0, 35
@@ -321,6 +322,7 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	m_pEncryptionIndicator = 0;
 	m_pCertificate = 0;
 	m_pSftpEncryptionInfo = 0;
+	m_pSpeedLimitsIndicator = 0;
 
 	m_size = 0;
 	m_hasUnknownFiles = false;
@@ -473,21 +475,27 @@ void CStatusBar::UpdateSizeFormat()
 
 void CStatusBar::OnHandleLeftClick(wxWindow* pWnd)
 {
-	if (pWnd != m_pEncryptionIndicator)
-		return;
-
-	if (m_pCertificate)
+	if (pWnd == m_pEncryptionIndicator)
 	{
-		CVerifyCertDialog dlg;
-		dlg.ShowVerificationDialog(m_pCertificate, true);
+		if (m_pCertificate)
+		{
+			CVerifyCertDialog dlg;
+			dlg.ShowVerificationDialog(m_pCertificate, true);
+		}
+		else if (m_pSftpEncryptionInfo)
+		{
+			CSftpEncryptioInfoDialog dlg;
+			dlg.ShowDialog(m_pSftpEncryptionInfo);
+		}
+		else
+			wxMessageBox(_("Certificate and session data are not available yet."), _("Security information"));
 	}
-	else if (m_pSftpEncryptionInfo)
+	else if (pWnd == m_pSpeedLimitsIndicator)
 	{
-		CSftpEncryptioInfoDialog dlg;
-		dlg.ShowDialog(m_pSftpEncryptionInfo);
+		CSpeedLimitsDialog dlg;
+		dlg.Run(m_pParent);
+		UpdateSpeedLimitsIcon();
 	}
-	else
-		wxMessageBox(_("Certificate and session data are not available yet."), _("Security information"));
 }
 
 void CStatusBar::OnHandleRightClick(wxWindow* pWnd)
@@ -539,4 +547,54 @@ void CStatusBar::SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncry
 		m_pSftpEncryptionInfo = new CSftpEncryptionNotification(*pEncryptionInfo);
 	else
 		m_pSftpEncryptionInfo = 0;
+}
+
+// defined in LocalListView.cpp
+// TODO: Find a better place for this
+extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
+
+void CStatusBar::UpdateSpeedLimitsIcon()
+{
+	bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
+
+	wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_SPEEDLIMITS"), wxART_OTHER, wxSize(16, 16));
+	wxString tooltip;
+
+	int downloadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);
+	int uploadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_OUTBOUND);
+	if (!enable || (!downloadLimit && !uploadLimit))
+	{
+		wxImage img = bmp.ConvertToImage();
+		img = img.ConvertToGreyscale();
+		bmp = wxBitmap(img);
+		tooltip = _("Speedlimits are disabled, click to change.");
+	}
+	else
+	{
+		int fmt = m_sizeFormat;
+		if (fmt == 3)
+			fmt = 1;
+		tooltip = _("Speedlimits are enabled, click to change.");
+		tooltip += _T("\n");
+		if (downloadLimit)
+			tooltip += wxString::Format(_("Download limit: %s."), FormatSize(downloadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
+		else
+			tooltip += _("Downloads unlimited.");
+		tooltip += _T("\n");
+		if (uploadLimit)
+			tooltip += wxString::Format(_("Upload limit: %s."), FormatSize(uploadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
+		else
+			tooltip += _("Uploads unlimited.");
+	}
+	
+	if (!m_pSpeedLimitsIndicator)
+	{
+		m_pSpeedLimitsIndicator = new CIndicator(this, bmp);
+		AddChild(0, widget_speedlimit, m_pSpeedLimitsIndicator);
+	}
+	else
+	{
+		m_pSpeedLimitsIndicator->SetBitmap(bmp);
+	}
+	m_pSpeedLimitsIndicator->SetToolTip(tooltip);
 }

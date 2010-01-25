@@ -91,6 +91,7 @@ public:
 
 	void DisplayDataType(const CServer* const pServer);
 	void DisplayEncrypted(const CServer* const pServer);
+	void UpdateSpeedLimitsIcon();
 	void SetCertificate(CCertificateNotification* pCertificate);
 	void SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo);
 
@@ -108,6 +109,7 @@ protected:
 
 	wxStaticBitmap* m_pDataTypeIndicator;
 	wxStaticBitmap* m_pEncryptionIndicator;
+	wxStaticBitmap* m_pSpeedLimitsIndicator;
 
 	CCertificateNotification* m_pCertificate;
 	CSftpEncryptionNotification* m_pSftpEncryptionInfo;
