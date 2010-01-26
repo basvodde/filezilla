@@ -521,9 +521,9 @@ void CProxySocket::OnReceive()
 				{
 					const wxWX2MBbuf host = m_host.mb_str(wxConvUTF8);
 					const int hostlen = strlen(host);
-					int addrlen = wxMin(hostlen, 16);
+					int addrlen = wxMax(hostlen, 16);
 
-					m_pSendBuffer = new char[7 + hostlen];
+					m_pSendBuffer = new char[7 + addrlen];
 					m_pSendBuffer[0] = 5;
 					m_pSendBuffer[1] = 1; // CONNECT
 					m_pSendBuffer[2] = 0; // Reserved
@@ -566,7 +566,7 @@ void CProxySocket::OnReceive()
 					else
 					{
 						m_pSendBuffer[3] = 3; // Domain name
-						m_pSendBuffer[4] = addrlen;
+						m_pSendBuffer[4] = hostlen;
 						memcpy(m_pSendBuffer + 5, (const char*)host, hostlen);
 						addrlen = hostlen + 1;
 					}
