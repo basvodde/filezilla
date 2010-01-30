@@ -1192,8 +1192,8 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 					m_pQueueView->ProcessNotification(pNotification);
 				else
 				{
-					if (pAsyncRequest->GetRequestID() == reqId_certificate && m_pStatusBar)
-						m_pStatusBar->SetCertificate((CCertificateNotification*)pNotification);
+					if (pAsyncRequest->GetRequestID() == reqId_certificate)
+						pState->SetSecurityInfo(*(CCertificateNotification*)pNotification);
 					m_pAsyncRequestQueue->AddRequest(pState->m_pEngine, pAsyncRequest);
 				}
 			}
@@ -1222,8 +1222,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			break;
 		case nId_sftp_encryption:
 			{
-				if (m_pStatusBar)
-					m_pStatusBar->SetSftpEncryptionInfo(reinterpret_cast<CSftpEncryptionNotification*>(pNotification));
+				pState->SetSecurityInfo(*reinterpret_cast<CSftpEncryptionNotification*>(pNotification));
 				delete pNotification;
 			}
 			break;

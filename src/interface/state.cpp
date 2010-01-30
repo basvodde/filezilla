@@ -209,11 +209,17 @@ CState::CState(CMainFrame* pMainFrame)
 	m_sync_browse.compare = false;
 
 	m_localDir.SetPath(CLocalPath::path_separator);
+
+	m_pCertificate = 0;
+	m_pSftpEncryptionInfo = 0;
 }
 
 CState::~CState()
 {
 	delete m_pServer;
+	
+	delete m_pCertificate;
+	delete m_pSftpEncryptionInfo;
 
 	delete m_pComparisonManager;
 	delete m_pCommandQueue;
@@ -473,6 +479,10 @@ void CState::SetServer(const CServer* server)
 
 		SetRemoteDir(0);
 		delete m_pServer;
+		delete m_pCertificate;
+		m_pCertificate = 0;
+		delete m_pSftpEncryptionInfo;
+		m_pSftpEncryptionInfo = 0;
 	}
 	if (server)
 	{
@@ -1140,4 +1150,34 @@ bool CState::RefreshRemote()
 		return false;
 
 	return ChangeRemoteDir(GetRemotePath(), _T(""), LIST_FLAG_REFRESH);
+}
+
+bool CState::GetSecurityInfo(CCertificateNotification *& pInfo)
+{
+	pInfo = m_pCertificate;
+	return m_pCertificate != 0;
+}
+
+bool CState::GetSecurityInfo(CSftpEncryptionNotification *& pInfo)
+{
+	pInfo = m_pSftpEncryptionInfo;
+	return m_pSftpEncryptionInfo != 0;
+}
+
+void CState::SetSecurityInfo(CCertificateNotification const& info)
+{
+	delete m_pCertificate;
+	m_pCertificate = 0;
+	delete m_pSftpEncryptionInfo;
+	m_pSftpEncryptionInfo = 0;
+	m_pCertificate = new CCertificateNotification(info);
+}
+
+void CState::SetSecurityInfo(CSftpEncryptionNotification const& info)
+{
+	delete m_pCertificate;
+	m_pCertificate = 0;
+	delete m_pSftpEncryptionInfo;
+	m_pSftpEncryptionInfo = 0;
+	m_pSftpEncryptionInfo = new CSftpEncryptionNotification(info);
 }

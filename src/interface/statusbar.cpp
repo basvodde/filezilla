@@ -335,8 +335,6 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
-	m_pCertificate = 0;
-	m_pSftpEncryptionInfo = 0;
 	m_pSpeedLimitsIndicator = 0;
 
 	m_size = 0;
@@ -361,8 +359,6 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 
 CStatusBar::~CStatusBar()
 {
-	delete m_pCertificate;
-	delete m_pSftpEncryptionInfo;
 }
 
 // Defined in LocalListView.cpp
@@ -461,10 +457,6 @@ void CStatusBar::DisplayEncrypted()
 	if (pState)
 		pServer = pState->GetServer();
 
-	delete m_pCertificate;
-	m_pCertificate = 0;
-	delete m_pSftpEncryptionInfo;
-	m_pSftpEncryptionInfo = 0;
 	if (!pServer || (pServer->GetProtocol() != FTPS && pServer->GetProtocol() != FTPES && pServer->GetProtocol() != SFTP))
 	{
 		if (m_pEncryptionIndicator)
@@ -506,15 +498,18 @@ void CStatusBar::OnHandleLeftClick(wxWindow* pWnd)
 {
 	if (pWnd == m_pEncryptionIndicator)
 	{
-		if (m_pCertificate)
+		CState* pState = CContextManager::Get()->GetCurrentContext();
+		CCertificateNotification *pCertificateNotification = 0;
+		CSftpEncryptionNotification *pSftpEncryptionNotification = 0;
+		if (pState->GetSecurityInfo(pCertificateNotification))
 		{
 			CVerifyCertDialog dlg;
-			dlg.ShowVerificationDialog(m_pCertificate, true);
+			dlg.ShowVerificationDialog(pCertificateNotification, true);
 		}
-		else if (m_pSftpEncryptionInfo)
+		else if (pState->GetSecurityInfo(pSftpEncryptionNotification))
 		{
 			CSftpEncryptioInfoDialog dlg;
-			dlg.ShowDialog(m_pSftpEncryptionInfo);
+			dlg.ShowDialog(pSftpEncryptionNotification);
 		}
 		else
 			wxMessageBox(_("Certificate and session data are not available yet."), _("Security information"));
@@ -552,30 +547,6 @@ void CStatusBar::OnHandleRightClick(wxWindow* pWnd)
 
 	PopupMenu(pMenu);
 	delete pMenu;
-}
-
-void CStatusBar::SetCertificate(CCertificateNotification* pCertificate)
-{
-	delete m_pSftpEncryptionInfo;
-	m_pSftpEncryptionInfo = 0;
-
-	delete m_pCertificate;
-	if (pCertificate)
-		m_pCertificate = new CCertificateNotification(*pCertificate);
-	else
-		m_pCertificate = 0;
-}
-
-void CStatusBar::SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo)
-{
-	delete m_pCertificate;
-	m_pCertificate = 0;
-
-	delete m_pSftpEncryptionInfo;
-	if (pEncryptionInfo)
-		m_pSftpEncryptionInfo = new CSftpEncryptionNotification(*pEncryptionInfo);
-	else
-		m_pSftpEncryptionInfo = 0;
 }
 
 // defined in LocalListView.cpp

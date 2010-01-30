@@ -159,6 +159,10 @@ public:
 	void SetLastServer(const CServer& server, const CServerPath& path)
 	{ m_last_server = server; m_last_path = path; }
 
+	bool GetSecurityInfo(CCertificateNotification *& pInfo);
+	bool GetSecurityInfo(CSftpEncryptionNotification *& pInfo);
+	void SetSecurityInfo(CCertificateNotification const& info);
+	void SetSecurityInfo(CSftpEncryptionNotification const& info);
 protected:
 	void SetServer(const CServer* server);
 
@@ -196,6 +200,9 @@ protected:
 		bool is_changing;
 		bool compare;
 	} m_sync_browse;
+
+	CCertificateNotification* m_pCertificate;
+	CSftpEncryptionNotification* m_pSftpEncryptionInfo;
 };
 
 class CStateEventHandler

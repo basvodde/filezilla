@@ -91,9 +91,6 @@ public:
 
 	void DisplayQueueSize(wxLongLong totalSize, bool hasUnknown);
 
-	void SetCertificate(CCertificateNotification* pCertificate);
-	void SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo);
-
 	void OnHandleLeftClick(wxWindow* wnd);
 	void OnHandleRightClick(wxWindow* wnd);
 
@@ -117,9 +114,6 @@ protected:
 	wxStaticBitmap* m_pDataTypeIndicator;
 	wxStaticBitmap* m_pEncryptionIndicator;
 	wxStaticBitmap* m_pSpeedLimitsIndicator;
-
-	CCertificateNotification* m_pCertificate;
-	CSftpEncryptionNotification* m_pSftpEncryptionInfo;
 };
 
 #endif //__STATUSBAR_H__
