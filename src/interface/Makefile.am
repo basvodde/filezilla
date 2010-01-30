@@ -50,6 +50,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		Mainfrm.cpp \
 		manual_transfer.cpp \
 		netconfwizard.cpp \
+		option_change_event_handler.cpp \
 		Options.cpp \
 		power_management.cpp \
 		queue.cpp \
@@ -151,6 +152,7 @@ noinst_HEADERS = aboutdialog.h \
 		 Mainfrm.h \
 		 manual_transfer.h \
 		 netconfwizard.h \
+		 option_change_event_handler.h \
 		 Options.h \
 		 power_management.h \
 		 prefix.h \

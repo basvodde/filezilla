@@ -318,6 +318,10 @@ END_EVENT_TABLE()
 CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	: CWidgetsStatusBar(pParent)
 {
+	RegisterOption(OPTION_SPEEDLIMIT_ENABLE);
+	RegisterOption(OPTION_SPEEDLIMIT_INBOUND);
+	RegisterOption(OPTION_SPEEDLIMIT_OUTBOUND);
+
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
 	m_pCertificate = 0;
@@ -338,6 +342,8 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	SetStatusWidths(count, statbarWidths);
 
 	UpdateSizeFormat();
+
+	UpdateSpeedLimitsIcon();
 }
 
 CStatusBar::~CStatusBar()
@@ -597,4 +603,16 @@ void CStatusBar::UpdateSpeedLimitsIcon()
 		m_pSpeedLimitsIndicator->SetBitmap(bmp);
 	}
 	m_pSpeedLimitsIndicator->SetToolTip(tooltip);
+}
+
+void CStatusBar::OnOptionChanged(int option)
+{
+	switch (option)
+	{
+	case OPTION_SPEEDLIMIT_ENABLE:
+	case OPTION_SPEEDLIMIT_INBOUND:
+	case OPTION_SPEEDLIMIT_OUTBOUND:
+		UpdateSpeedLimitsIcon();
+		break;
+	}
 }

@@ -1,6 +1,8 @@
 #ifndef __STATUSBAR_H__
 #define __STATUSBAR_H__
 
+#include "option_change_event_handler.h"
+
 enum widgets
 {
 	widget_led_send,
@@ -80,7 +82,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 };
 
-class CStatusBar : public CWidgetsStatusBar
+class CStatusBar : public CWidgetsStatusBar, protected COptionChangeEventHandler
 {
 public:
 	CStatusBar(wxTopLevelWindow* parent);
@@ -100,6 +102,8 @@ public:
 
 protected:
 	void MeasureQueueSizeWidth();
+
+	virtual void OnOptionChanged(int option);
 
 	int m_sizeFormat;
 	bool m_sizeFormatThousandsSep;

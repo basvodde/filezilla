@@ -4,6 +4,7 @@
 #include "filezillaapp.h"
 #include <wx/tokenzr.h>
 #include "ipcmutex.h"
+#include "option_change_event_handler.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -199,6 +200,8 @@ COptions::COptions()
 
 COptions::~COptions()
 {
+	COptionChangeEventHandler::UnregisterAll();
+
 	delete m_pLastServer;
 	delete m_pXmlFile;
 }
@@ -263,6 +266,12 @@ bool COptions::SetOption(unsigned int nID, int value)
 
 	value = Validate(nID, value);
 
+	if (m_optionsCache[nID].cached && m_optionsCache[nID].numValue == value)
+	{
+		// Nothing to do
+		return true;
+	}
+
 	m_optionsCache[nID].cached = true;
 	m_optionsCache[nID].numValue = value;
 
@@ -273,6 +282,8 @@ bool COptions::SetOption(unsigned int nID, int value)
 		if (!m_save_timer.IsRunning())
 			m_save_timer.Start(15000, true);
 	}
+
+	COptionChangeEventHandler::DoNotify(nID);
 
 	return true;
 }
@@ -293,8 +304,11 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 
 	Validate(nID, value);
 
-	m_optionsCache[nID].cached = true;
-	m_optionsCache[nID].strValue = value;
+	if (m_optionsCache[nID].cached && m_optionsCache[nID].strValue == value)
+	{
+		// Nothing to do
+		return true;
+	}
 
 	if (m_pXmlFile && !options[nID].internal)
 	{
@@ -304,6 +318,7 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 			m_save_timer.Start(15000, true);
 	}
 
+	COptionChangeEventHandler::DoNotify(nID);
 
 	return true;
 }

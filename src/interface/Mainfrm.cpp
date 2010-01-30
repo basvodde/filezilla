@@ -327,7 +327,6 @@ CMainFrame::CMainFrame()
 
 		m_pStatusBar->AddChild(-1, widget_led_recv, m_pActivityLed[1]);
 		m_pStatusBar->AddChild(-1, widget_led_send, m_pActivityLed[0]);
-		m_pStatusBar->UpdateSpeedLimitsIcon();
 
 		SetStatusBar(m_pStatusBar);
 	}
@@ -980,8 +979,6 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		CSpeedLimitsDialog dlg;
 		dlg.Run(this);
-		if (m_pStatusBar)
-			m_pStatusBar->UpdateSpeedLimitsIcon();
 	}
 	else
 	{
