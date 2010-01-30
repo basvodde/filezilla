@@ -73,16 +73,12 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	wxString pass = m_pPass->GetValue();
 	wxString port = m_pPort->GetValue();
 	
-	long numericPort = 0;
-	if (port != _T(""))
-		port.ToLong(&numericPort);
-	
 	CServer server;
 
 	wxString error;
 
 	CServerPath path;
-	if (!server.ParseUrl(host, numericPort, user, pass, error, path))
+	if (!server.ParseUrl(host, port, user, pass, error, path))
 	{
 		wxString msg = _("Could not parse server address:");
 		msg += _T("\n");

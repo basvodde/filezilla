@@ -37,6 +37,22 @@ CServer::CServer()
 	Initialize();
 }
 
+bool CServer::ParseUrl(wxString host, const wxString& port, wxString user, wxString pass, wxString &error, CServerPath &path)
+{
+	unsigned long nPort = 0;
+	if (!port.empty())
+	{
+		if (port.size() > 5 || !port.ToULong(&nPort) || !nPort || nPort > 65535)
+		{
+			error = _("Invalid port given. The port has to be a value from 1 to 65535.");
+			error += _T("\n");
+			error += _("You can leave the port field empty to use the default port.");
+			return false;
+		}
+	}
+	return ParseUrl(host, nPort, user, pass, error, path);
+}
+
 bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString pass, wxString &error, CServerPath &path)
 {
 	m_type = DEFAULT;

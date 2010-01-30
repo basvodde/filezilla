@@ -1069,8 +1069,7 @@ bool CSiteManager::Verify()
 		if (protocol != UNKNOWN)
 			server.SetProtocol(protocol);
 
-		unsigned long port;
-		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
+		wxString port = XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue();
 		CServerPath path;
 		wxString error;
 		if (!server.ParseUrl(host, port, _T(""), _T(""), error, path))

@@ -446,11 +446,9 @@ bool CManualTransfer::VerifyServer()
 	if (protocol != UNKNOWN)
 		server.SetProtocol(protocol);
 
-	unsigned long port;
-	XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue().ToULong(&port);
 	CServerPath path;
 	wxString error;
-	if (!server.ParseUrl(host, port, _T(""), _T(""), error, path))
+	if (!server.ParseUrl(host, XRCCTRL(*this, "ID_PORT", wxTextCtrl)->GetValue(), _T(""), _T(""), error, path))
 	{
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetFocus();
 		wxMessageBox(error);

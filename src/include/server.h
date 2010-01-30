@@ -84,7 +84,8 @@ public:
 	
 	// Return true if URL could be parsed correctly, false otherwise.
 	// If parsing fails, pError is filled with the reason and the CServer instance may be left an undefined state.
-	bool ParseUrl(wxString host, unsigned int, wxString user, wxString pass, wxString &error, CServerPath &path);
+	bool ParseUrl(wxString host, unsigned int port, wxString user, wxString pass, wxString &error, CServerPath &path);
+	bool ParseUrl(wxString host, const wxString& port, wxString user, wxString pass, wxString &error, CServerPath &path);
 	
 	void SetProtocol(enum ServerProtocol serverProtocol);
 	bool SetHost(wxString Host, unsigned int port);
