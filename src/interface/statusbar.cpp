@@ -524,29 +524,35 @@ void CStatusBar::OnHandleLeftClick(wxWindow* pWnd)
 
 void CStatusBar::OnHandleRightClick(wxWindow* pWnd)
 {
-	if (pWnd != m_pDataTypeIndicator)
-		return;
-
-	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_TRANSFER_TYPE_CONTEXT"));
-	if (!pMenu)
-		return;
-	
-	const int type = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
-	switch (type)
+	if (pWnd == m_pDataTypeIndicator)
 	{
-	case 1:
-		pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"), true);
-		break;
-	case 2:
-		pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"), true);
-		break;
-	default:
-		pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"), true);
-		break;
-	}
+		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_TRANSFER_TYPE_CONTEXT"));
+		if (!pMenu)
+			return;
+	
+		const int type = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
+		switch (type)
+		{
+		case 1:
+			pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"), true);
+			break;
+		case 2:
+			pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"), true);
+			break;
+		default:
+			pMenu->Check(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"), true);
+			break;
+		}
 
-	PopupMenu(pMenu);
-	delete pMenu;
+		PopupMenu(pMenu);
+		delete pMenu;
+	}
+	else if (pWnd == m_pSpeedLimitsIndicator)
+	{
+		CSpeedLimitsDialog dlg;
+		dlg.Run(m_pParent);
+		UpdateSpeedLimitsIcon();
+	}
 }
 
 // defined in LocalListView.cpp
