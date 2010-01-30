@@ -316,11 +316,22 @@ EVT_RIGHT_UP(CIndicator::OnRightMouseUp)
 END_EVENT_TABLE()
 
 CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
-	: CWidgetsStatusBar(pParent)
+	: CWidgetsStatusBar(pParent), CStateEventHandler(0)
 {
+	// Speedlimits
 	RegisterOption(OPTION_SPEEDLIMIT_ENABLE);
 	RegisterOption(OPTION_SPEEDLIMIT_INBOUND);
 	RegisterOption(OPTION_SPEEDLIMIT_OUTBOUND);
+
+	// Size format
+	RegisterOption(OPTION_SIZE_FORMAT);
+	RegisterOption(OPTION_SIZE_USETHOUSANDSEP);
+	RegisterOption(OPTION_SIZE_DECIMALPLACES);
+
+	RegisterOption(OPTION_ASCIIBINARY);
+
+	CContextManager::Get()->RegisterHandler(this, STATECHANGE_SERVER, true, false);
+	CContextManager::Get()->RegisterHandler(this, STATECHANGE_CHANGEDCONTEXT, false, false);
 
 	m_pDataTypeIndicator = 0;
 	m_pEncryptionIndicator = 0;
@@ -344,6 +355,8 @@ CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	UpdateSizeFormat();
 
 	UpdateSpeedLimitsIcon();
+	DisplayDataType();
+	DisplayEncrypted();
 }
 
 CStatusBar::~CStatusBar()
@@ -372,8 +385,13 @@ void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 	SetStatusText(queueSize, FIELD_QUEUESIZE);
 }
 
-void CStatusBar::DisplayDataType(const CServer* const pServer)
+void CStatusBar::DisplayDataType()
 {
+	const CServer* pServer = 0;
+	const CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (pState)
+		pServer = pState->GetServer();
+
 	if (!pServer || !CServer::ProtocolHasDataTypeConcept(pServer->GetProtocol()))
 	{
 		if (m_pDataTypeIndicator)
@@ -436,8 +454,13 @@ void CStatusBar::MeasureQueueSizeWidth()
 	SetFieldWidth(FIELD_QUEUESIZE, s.x + 10);
 }
 
-void CStatusBar::DisplayEncrypted(const CServer* const pServer)
+void CStatusBar::DisplayEncrypted()
 {
+	const CServer* pServer = 0;
+	const CState* pState = CContextManager::Get()->GetCurrentContext();
+	if (pState)
+		pServer = pState->GetServer();
+
 	delete m_pCertificate;
 	m_pCertificate = 0;
 	delete m_pSftpEncryptionInfo;
@@ -614,5 +637,24 @@ void CStatusBar::OnOptionChanged(int option)
 	case OPTION_SPEEDLIMIT_OUTBOUND:
 		UpdateSpeedLimitsIcon();
 		break;
+	case OPTION_SIZE_FORMAT:
+	case OPTION_SIZE_USETHOUSANDSEP:
+	case OPTION_SIZE_DECIMALPLACES:
+		UpdateSizeFormat();
+		break;
+	case OPTION_ASCIIBINARY:
+		DisplayDataType();
+		break;
+	default:
+		break;
+	}
+}
+
+void CStatusBar::OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
+{
+	if (notification == STATECHANGE_SERVER || notification == STATECHANGE_CHANGEDCONTEXT)
+	{
+		DisplayDataType();
+		DisplayEncrypted();
 	}
 }

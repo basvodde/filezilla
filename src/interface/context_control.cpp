@@ -25,9 +25,8 @@ EVT_MENU(XRCID("ID_TABCONTEXT_CLOSEOTHERS"), CContextControl::OnTabContextCloseO
 EVT_MENU(XRCID("ID_TABCONTEXT_NEW"), CContextControl::OnTabContextNew)
 END_EVENT_TABLE()
 
-CContextControl::CContextControl(CMainFrame* pMainFrame, wxWindow *parent)
-	: wxSplitterWindow(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER),
-	CStateEventHandler(0),
+CContextControl::CContextControl(CMainFrame* pMainFrame)
+	: CStateEventHandler(0),
 	m_tabs(0), m_right_clicked_tab(-1), m_pMainFrame(pMainFrame)
 {
 	m_current_context_controls = -1;
@@ -40,6 +39,11 @@ CContextControl::CContextControl(CMainFrame* pMainFrame, wxWindow *parent)
 
 CContextControl::~CContextControl()
 {
+}
+
+void CContextControl::Create(wxWindow *parent)
+{
+	wxSplitterWindow::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NOBORDER);
 }
 
 void CContextControl::CreateTab()

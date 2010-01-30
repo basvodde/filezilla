@@ -48,8 +48,10 @@ public:
 		CSharedPointer<struct _site_bookmarks> site_bookmarks;
 	};
 
-	CContextControl(CMainFrame* pMainFrame, wxWindow* parent);
+	CContextControl(CMainFrame* pMainFrame);
 	virtual ~CContextControl();
+
+	void Create(wxWindow* parent);
 
 	void CreateTab();
 	bool CloseTab(int tab);

@@ -2,6 +2,7 @@
 #define __STATUSBAR_H__
 
 #include "option_change_event_handler.h"
+#include "state.h"
 
 enum widgets
 {
@@ -82,18 +83,14 @@ protected:
 	void OnSize(wxSizeEvent& event);
 };
 
-class CStatusBar : public CWidgetsStatusBar, protected COptionChangeEventHandler
+class CStatusBar : public CWidgetsStatusBar, protected COptionChangeEventHandler, protected CStateEventHandler
 {
 public:
 	CStatusBar(wxTopLevelWindow* parent);
 	virtual ~CStatusBar();
 
 	void DisplayQueueSize(wxLongLong totalSize, bool hasUnknown);
-	void UpdateSizeFormat();
 
-	void DisplayDataType(const CServer* const pServer);
-	void DisplayEncrypted(const CServer* const pServer);
-	void UpdateSpeedLimitsIcon();
 	void SetCertificate(CCertificateNotification* pCertificate);
 	void SetSftpEncryptionInfo(const CSftpEncryptionNotification* pEncryptionInfo);
 
@@ -101,9 +98,15 @@ public:
 	void OnHandleRightClick(wxWindow* wnd);
 
 protected:
+	void UpdateSizeFormat();
+	void DisplayDataType();
+	void DisplayEncrypted();
+	void UpdateSpeedLimitsIcon();
+
 	void MeasureQueueSizeWidth();
 
 	virtual void OnOptionChanged(int option);
+	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2);
 
 	int m_sizeFormat;
 	bool m_sizeFormatThousandsSep;

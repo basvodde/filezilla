@@ -172,14 +172,6 @@ protected:
 			else
 				m_pMainFrame->SetTitle(pState->GetTitle() + _T(" - FileZilla"));
 
-			// Update UI state
-			CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
-			if (pStatusBar)
-			{
-				pStatusBar->DisplayDataType(pServer);
-				pStatusBar->DisplayEncrypted(pServer);
-			}
-
 			return;
 		}
 
@@ -219,13 +211,6 @@ protected:
 
 			if (pState == CContextManager::Get()->GetCurrentContext())
 			{
-				CStatusBar* const pStatusBar = m_pMainFrame->GetStatusBar();
-				if (pStatusBar)
-				{
-					pStatusBar->DisplayDataType(pServer);
-					pStatusBar->DisplayEncrypted(pServer);
-				}
-
 				m_pMainFrame->UpdateMenubarState();
 				m_pMainFrame->UpdateToolbarState();
 			}
@@ -319,6 +304,10 @@ CMainFrame::CMainFrame()
 
 	CPowerManagement::Create(this);
 
+	// It's important that the context control gets created before our own state handler
+	// so that contextchange events can be processed in the right order.
+	m_pContextControl = new CContextControl(this);
+
 	m_pStatusBar = new CStatusBar(this);
 	if (m_pStatusBar)
 	{
@@ -380,9 +369,7 @@ CMainFrame::CMainFrame()
 
 	m_pQueueView = m_pQueuePane->GetQueueView();
 
-	// It's important that the context control gets created before our own state handler
-	// so that contextchange events can be processed in the right order.
-	m_pContextControl = new CContextControl(this, m_pBottomSplitter);
+	m_pContextControl->Create(m_pBottomSplitter);
 
 	m_pStateEventHandler = new CMainFrameStateEventHandler(this);
 
@@ -804,25 +791,16 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
-		CState* pState = CContextManager::Get()->GetCurrentContext();
-		if (m_pStatusBar && pState)
-			m_pStatusBar->DisplayDataType(pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 1);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
-		CState* pState = CContextManager::Get()->GetCurrentContext();
-		if (m_pStatusBar && pState)
-			m_pStatusBar->DisplayDataType(pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
 		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
-		CState* pState = CContextManager::Get()->GetCurrentContext();
-		if (m_pStatusBar && pState)
-			m_pStatusBar->DisplayDataType(pState->GetServer());
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))
 	{
@@ -1869,13 +1847,6 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	}
 
 	CheckChangedSettings();
-
-	CState* pState = CContextManager::Get()->GetCurrentContext();
-	if (m_pStatusBar && pState)
-	{
-		m_pStatusBar->DisplayDataType(pState->GetServer());
-		m_pStatusBar->UpdateSizeFormat();
-	}
 }
 
 void CMainFrame::OnToggleLogView(wxCommandEvent& event)
