@@ -33,7 +33,6 @@
 #include "edithandler.h"
 #include "inputdialog.h"
 #include "window_state_manager.h"
-#include "xh_toolb_ex.h"
 #include "statusbar.h"
 #include "cmdline.h"
 #include "buildinfo.h"
@@ -50,6 +49,7 @@
 #include "welcome_dialog.h"
 #include "context_control.h"
 #include "speedlimits_dialog.h"
+#include "toolbar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -150,10 +150,6 @@ protected:
 		{
 			const bool check = m_pMainFrame->GetQueue() && m_pMainFrame->GetQueue()->IsActive() != 0;
 
-			wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
-			if (pToolBar)
-				pToolBar->ToggleTool(XRCID("ID_TOOLBAR_PROCESSQUEUE"), check);
-
 			wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
 			if (pMenuBar)
 				pMenuBar->Check(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), check);
@@ -162,7 +158,6 @@ protected:
 		else if (notification == STATECHANGE_CHANGEDCONTEXT)
 		{
 			m_pMainFrame->UpdateMenubarState();
-			m_pMainFrame->UpdateToolbarState();
 			m_pMainFrame->UpdateBookmarkMenu();
 	
 			// Update window title
@@ -210,10 +205,7 @@ protected:
 			}
 
 			if (pState == CContextManager::Get()->GetCurrentContext())
-			{
 				m_pMainFrame->UpdateMenubarState();
-				m_pMainFrame->UpdateToolbarState();
-			}
 			return;
 		}
 
@@ -222,8 +214,6 @@ protected:
 
 		if (notification == STATECHANGE_SYNC_BROWSE)
 		{
-			if (m_pMainFrame->GetToolBar())
-				m_pMainFrame->GetToolBar()->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 			if (m_pMainFrame->GetMenuBar())
 				m_pMainFrame->GetMenuBar()->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 			return;
@@ -231,9 +221,6 @@ protected:
 		else if (notification == STATECHANGE_COMPARISON)
 		{
 			bool is_comparing = pState->GetComparisonManager()->IsComparing();
-			wxToolBar* pToolBar = m_pMainFrame->GetToolBar();
-			if (pToolBar)
-				pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), is_comparing);
 
 			wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
 			if (pMenuBar)
@@ -242,7 +229,6 @@ protected:
 		}
 
 		m_pMainFrame->UpdateMenubarState();
-		m_pMainFrame->UpdateToolbarState();
 	}
 
 	CMainFrame* m_pMainFrame;
@@ -480,7 +466,6 @@ CMainFrame::CMainFrame()
 	CEditHandler::Create()->SetQueue(m_pQueueView);
 
 	InitMenubarState();
-	InitToolbarState();
 
 	CAutoAsciiFiles::SettingsChanged();
 }
@@ -745,7 +730,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		pDlg->Delete();
 
 		UpdateMenubarState();
-		UpdateToolbarState();
+		m_pToolBar->UpdateToolbarState();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_VIEWHIDDEN"))
 	{
@@ -1243,26 +1228,6 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 	}
 }
 
-#if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
-void CMainFrame::MakeDropdownTool(wxToolBar* pToolBar, int id)
-{
-	wxToolBarToolBase* pOldTool = pToolBar->FindById(id);
-	if (!pOldTool)
-		return;
-
-	wxToolBarToolBase* pTool = new wxToolBarToolBase(0, id,
-		pOldTool->GetLabel(), pOldTool->GetNormalBitmap(), pOldTool->GetDisabledBitmap(),
-		wxITEM_DROPDOWN, NULL, pOldTool->GetShortHelp(), pOldTool->GetLongHelp());
-
-	int pos = pToolBar->GetToolPos(id);
-	wxASSERT(pos != wxNOT_FOUND);
-
-	pToolBar->DeleteToolByPos(pos);
-	pToolBar->InsertTool(pos, pTool);
-	pToolBar->Realize();
-}
-#endif
-
 bool CMainFrame::CreateToolBar()
 {
 	if (m_pToolBar)
@@ -1271,53 +1236,16 @@ bool CMainFrame::CreateToolBar()
 		delete m_pToolBar;
 	}
 
-	{
-		wxSize iconSize(16, 16);
-		wxString str = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
-		int pos = str.Find('x');
-		if (CThemeProvider::ThemeHasSize(COptions::Get()->GetOption(OPTION_THEME), str) && pos > 0 && pos < (int)str.Len() - 1)
-		{
-			long width = 0;
-			long height = 0;
-			if (str.Left(pos).ToLong(&width) &&
-				str.Mid(pos + 1).ToLong(&height) &&
-				width > 0 && height > 0)
-				iconSize = wxSize(width, height);
-		}
-
-		wxToolBarXmlHandlerEx::SetIconSize(iconSize);
-	}
-
-	m_pToolBar = wxXmlResource::Get()->LoadToolBar(this, _T("ID_TOOLBAR"));
+	m_pToolBar = CToolBar::Load(this);
 	if (!m_pToolBar)
 	{
 		wxLogError(_("Cannot load toolbar from resource file"));
 		return false;
 	}
-
-#if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
-	MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_SITEMANAGER"));
-	//MakeDropdownTool(m_pToolBar, XRCID("ID_TOOLBAR_COMPARISON"));
-#endif
-
-#ifdef __WXMSW__
-	int majorVersion, minorVersion;
-	wxGetOsVersion(& majorVersion, & minorVersion);
-	if (majorVersion < 6)
-		m_pToolBar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-#endif
-
-	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
-		m_pToolBar->DeleteTool(XRCID("ID_TOOLBAR_LOGVIEW"));
-
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
 	SetToolBar(m_pToolBar);
 
 	if (m_pQuickconnectBar)
 		m_pQuickconnectBar->Refresh();
-
-	InitToolbarState();
-	UpdateToolbarState();
 
 	return true;
 }
@@ -1901,8 +1829,6 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 
 	if (m_pMenuBar)
 		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), shown);
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), shown);
 }
 
 void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
@@ -1935,8 +1861,6 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 
 	if (m_pMenuBar)
 		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), show);
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), show);
 }
 
 void CMainFrame::ShowLocalTree()
@@ -1996,8 +1920,6 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 
 	if (m_pMenuBar)
 		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), show);
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), show);
 }
 
 void CMainFrame::ShowRemoteTree()
@@ -2080,8 +2002,6 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 
 	if (m_pMenuBar)
 		m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), shown);
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_QUEUEVIEW"), shown);
 }
 
 void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
@@ -2808,52 +2728,6 @@ void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
 	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
 		pComparisonManager->CompareListings();
-}
-
-void CMainFrame::InitToolbarState()
-{
-	if (!m_pToolBar)
-		return;
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), m_pStatusView && m_pStatusView->IsShown());
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_QUEUEVIEW"), m_pQueuePane && m_pQueuePane->IsShown());
-	CContextControl::_context_controls* controls = m_pContextControl ? m_pContextControl->GetCurrentControls() : 0;
-	if (controls)
-	{
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), controls->pLocalSplitter && controls->pLocalSplitter->IsSplit());
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), controls->pRemoteSplitter && controls->pRemoteSplitter->IsSplit());
-	}
-}
-
-void CMainFrame::UpdateToolbarState()
-{
-	if (!m_pToolBar)
-		return;
-
-	CState* pState = CContextManager::Get()->GetCurrentContext();
-	if (!pState)
-		return;
-
-	const CServer* pServer = pState->GetServer();
-	const bool idle = pState->IsRemoteIdle();
-
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_DISCONNECT"), pServer && idle);
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_CANCEL"), pServer && !idle);
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_FIND"), pServer && idle);
-
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), pState->GetComparisonManager()->IsComparing());
-	m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
-
-	bool canReconnect;
-	if (pServer || !idle)
-		canReconnect = false;
-	else
-	{
-		CServer tmp;
-		canReconnect = pState->GetLastServer().GetHost() != _T("");
-	}
-	m_pToolBar->EnableTool(XRCID("ID_TOOLBAR_RECONNECT"), canReconnect);
 }
 
 void CMainFrame::InitMenubarState()

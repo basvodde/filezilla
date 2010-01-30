@@ -22,6 +22,7 @@ class CStatusBar;
 class CMainFrameStateEventHandler;
 class CSplitterWindowEx;
 class CContextControl;
+class CToolBar;
 
 class CMainFrame : public wxFrame
 {
@@ -50,7 +51,6 @@ public:
 
 	CStatusBar* GetStatusBar() { return m_pStatusBar; }
 
-	void UpdateToolbarState();
 	void UpdateMenubarState();
 
 	void ProcessCommandLine();
@@ -68,7 +68,6 @@ protected:
 	void SetProgress(const CTransferStatus* pStatus);
 	bool ConnectToSite(CSiteManagerItemData_Site* const pData);
 	void OpenSiteManager(const CServer* pServer = 0);
-	void InitToolbarState();
 	void InitMenubarState();
 
 	void FocusNextEnabled(std::list<wxWindow*>& windowOrder, std::list<wxWindow*>::iterator iter, bool skipFirst, bool forward);
@@ -82,7 +81,7 @@ protected:
 
 	CStatusBar* m_pStatusBar;
 	wxMenuBar* m_pMenuBar;
-	wxToolBar* m_pToolBar;
+	CToolBar* m_pToolBar;
 	CQuickconnectBar* m_pQuickconnectBar;
 
 	CSplitterWindowEx* m_pTopSplitter; // If log position is 0, splits message log from rest of panes
@@ -103,9 +102,6 @@ protected:
 	void ShowLocalTree();
 	void ShowRemoteTree();
 
-#if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
-	void MakeDropdownTool(wxToolBar* pToolBar, int id);
-#endif
 	void ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandEvent& event);
 
 #ifdef __WXMSW__

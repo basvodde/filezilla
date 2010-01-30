@@ -4,6 +4,7 @@
 #include <set>
 #include "dndobjects.h"
 #include <wx/progdlg.h>
+#include "queue.h"
 
 class CFolderProcessingEntry
 {
