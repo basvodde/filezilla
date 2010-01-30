@@ -38,6 +38,7 @@
 #include "xh_toolb_ex.h"
 #ifdef __WXMSW__
 #include <wx/socket.h>
+#include <wx/dynlib.h>
 #endif
 #ifdef WITH_LIBDBUS
 #include <../dbus/session_manager.h>
@@ -151,6 +152,30 @@ bool CheckForWin2003FirewallBug()
 
 	return true;
 }
+
+extern "C" 
+{
+	typedef HRESULT (WINAPI *t_SetCurrentProcessExplicitAppUserModelID)(PCWSTR AppID);
+}
+
+static void SetAppId()
+{
+	wxDynamicLibrary dll;
+	if (!dll.Load(_T("shell32.dll")))
+		return;
+
+	if (!dll.HasSymbol(_T("SetCurrentProcessExplicitAppUserModelID")))
+		return;
+
+	t_SetCurrentProcessExplicitAppUserModelID pSetCurrentProcessExplicitAppUserModelID =
+		(t_SetCurrentProcessExplicitAppUserModelID)dll.GetSymbol(_T("SetCurrentProcessExplicitAppUserModelID"));
+
+	if (!pSetCurrentProcessExplicitAppUserModelID)
+		return;
+
+	pSetCurrentProcessExplicitAppUserModelID(_T("FileZilla.Client.AppID"));
+}
+
 #endif //__WXMSW__
 
 bool CFileZillaApp::OnInit()
@@ -164,6 +189,8 @@ bool CFileZillaApp::OnInit()
 #ifdef __WXMSW__
 	// Need to call WSAStartup. Let wx do that for us
 	wxSocketBase::Initialize();
+
+	SetAppId();
 #endif
 
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
