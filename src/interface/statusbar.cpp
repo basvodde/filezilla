@@ -577,14 +577,14 @@ void CStatusBar::UpdateSpeedLimitsIcon()
 		tooltip = _("Speedlimits are enabled, click to change.");
 		tooltip += _T("\n");
 		if (downloadLimit)
-			tooltip += wxString::Format(_("Download limit: %s."), FormatSize(downloadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
+			tooltip += wxString::Format(_("Download limit: %s/s."), FormatSize(downloadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
 		else
-			tooltip += _("Downloads unlimited.");
+			tooltip += _("Download limit: none");
 		tooltip += _T("\n");
 		if (uploadLimit)
-			tooltip += wxString::Format(_("Upload limit: %s."), FormatSize(uploadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
+			tooltip += wxString::Format(_("Upload limit: %s/s."), FormatSize(uploadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
 		else
-			tooltip += _("Uploads unlimited.");
+			tooltip += _("Upload limit: none");
 	}
 	
 	if (!m_pSpeedLimitsIndicator)
