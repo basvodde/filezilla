@@ -14,6 +14,12 @@ CToolBar::CToolBar()
 {
 }
 
+CToolBar::~CToolBar()
+{
+	for (std::map<int, wxToolBarToolBase*>::iterator iter = m_hidden_tools.begin(); iter != m_hidden_tools.end(); iter++)
+		delete iter->second;
+}
+
 CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 {
 	{
@@ -43,6 +49,7 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 	CContextManager::Get()->RegisterHandler(toolbar, STATECHANGE_SERVER, true, true);
 	CContextManager::Get()->RegisterHandler(toolbar, STATECHANGE_SYNC_BROWSE, true, true);
 	CContextManager::Get()->RegisterHandler(toolbar, STATECHANGE_COMPARISON, true, true);
+	CContextManager::Get()->RegisterHandler(toolbar, STATECHANGE_APPLYFILTER, true, false);
 
 	CContextManager::Get()->RegisterHandler(toolbar, STATECHANGE_QUEUEPROCESSING, false, false);
 	CContextManager::Get()->RegisterHandler(toolbar, STATECHANGE_CHANGEDCONTEXT, false, false);
@@ -51,6 +58,7 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 	toolbar->RegisterOption(OPTION_SHOW_QUEUE);
 	toolbar->RegisterOption(OPTION_SHOW_TREE_LOCAL);
 	toolbar->RegisterOption(OPTION_SHOW_TREE_REMOTE);
+	toolbar->RegisterOption(OPTION_MESSAGELOG_POSITION);
 
 #if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
 	toolbar->MakeDropdownTool(XRCID("ID_TOOLBAR_SITEMANAGER"));
@@ -64,7 +72,7 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 #endif
 
 	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
-		toolbar->DeleteTool(XRCID("ID_TOOLBAR_LOGVIEW"));
+		toolbar->HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
 
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG) != 0);
@@ -101,6 +109,11 @@ void CToolBar::OnStateChange(CState* pState, enum t_statechange_notifications no
 			bool is_comparing = pState && pState->GetComparisonManager()->IsComparing();
 			ToggleTool(XRCID("ID_TOOLBAR_COMPARISON"), is_comparing);
 		}
+		break;
+	case STATECHANGE_APPLYFILTER:
+		ToggleTool(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
+		break;
+	default:
 		break;
 	}
 }
@@ -150,6 +163,12 @@ void CToolBar::OnOptionChanged(int option)
 	case OPTION_SHOW_TREE_REMOTE:
 		ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE) != 0);
 		break;
+	case OPTION_MESSAGELOG_POSITION:
+		if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
+			HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
+		else
+			ShowTool(XRCID("ID_TOOLBAR_LOGVIEW"));
+		break;
 	default:
 		break;
 	}
@@ -174,3 +193,49 @@ void CToolBar::MakeDropdownTool(int id)
 	Realize();
 }
 #endif
+
+bool CToolBar::ShowTool(int id)
+{
+	int offset = 0;
+
+	std::map<int, wxToolBarToolBase*>::iterator iter;
+	for (iter = m_hidden_tools.begin(); iter != m_hidden_tools.end(); iter++)
+	{
+		if (iter->second->GetId() != id)
+		{
+			offset++;
+			continue;
+		}
+
+		InsertTool(iter->first - offset, iter->second);
+		Realize();
+		m_hidden_tools.erase(iter);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool CToolBar::HideTool(int id)
+{
+	int pos = GetToolPos(id);
+	if (id == -1)
+		return false;
+
+	wxToolBarToolBase* tool = RemoveTool(id);
+	if (!tool)
+		return false;
+
+	for (std::map<int, wxToolBarToolBase*>::iterator iter = m_hidden_tools.begin(); iter != m_hidden_tools.end(); iter++)
+	{
+		if (iter->first > pos)
+			break;
+		
+		pos++;
+	}
+	
+	m_hidden_tools[pos] = tool;
+
+	return true;
+}

@@ -2022,12 +2022,8 @@ void CMainFrame::OnFilter(wxCommandEvent& event)
 	}
 
 	CFilterDialog dlg;
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	dlg.Create(this);
 	dlg.ShowModal();
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), dlg.HasActiveFilters());
 	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_APPLYFILTER);
 }
 
@@ -2125,14 +2121,8 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 			}
 		}
 
-		bool has_messagelog_button = m_pToolBar && m_pToolBar->FindById(XRCID("ID_TOOLBAR_LOGVIEW"));
-		if (final && 
-			((has_messagelog_button && messagelog_position == 2) ||
-			 (!has_messagelog_button && messagelog_position != 2)))
-		{
+		if (final)
 			CreateMenus();
-			CreateToolBar();
-		}
 	}
 
 	// Now the other panes
@@ -2865,8 +2855,6 @@ void CMainFrame::OnFilterRightclicked(wxCommandEvent& event)
 		return;
 
 	CContextManager::Get()->NotifyAllHandlers(STATECHANGE_APPLYFILTER);
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), !active);
 }
 
 #ifdef __WXMSW__

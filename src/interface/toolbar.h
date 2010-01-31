@@ -10,10 +10,14 @@ class CToolBar : public wxToolBar, public CStateEventHandler, public COptionChan
 {
 public:
 	CToolBar();
+	virtual ~CToolBar();
 
 	void UpdateToolbarState();
 
 	static CToolBar* Load(CMainFrame* pMainFrame);
+
+	bool ShowTool(int id);
+	bool HideTool(int id);
 
 protected:
 #if defined(EVT_TOOL_DROPDOWN) && defined(__WXMSW__)
@@ -24,6 +28,8 @@ protected:
 	virtual void OnOptionChanged(int option);
 
 	CMainFrame* m_pMainFrame;
+
+	std::map<int, wxToolBarToolBase*> m_hidden_tools;
 
 	DECLARE_DYNAMIC_CLASS(CToolBar);
 };
