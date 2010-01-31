@@ -16,11 +16,15 @@ void CSpeedLimitsDialog::Run(wxWindow* parent)
 
 	XRCCTRL(*this, "ID_ENABLE_SPEEDLIMITS", wxCheckBox)->SetValue(enable);
 
-	XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl)->Enable(enable);
-	XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl)->Enable(enable);
+	wxTextCtrl* pCtrl = XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl);
+	pCtrl->Enable(enable);
+	pCtrl->SetMaxLength(9);
+	pCtrl->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_INBOUND));
 
-	XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl)->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_INBOUND));
-	XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl)->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_OUTBOUND));
+	pCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
+	pCtrl->Enable(enable);
+	pCtrl->SetMaxLength(9);
+	pCtrl->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_OUTBOUND));
 
 	ShowModal();
 }
