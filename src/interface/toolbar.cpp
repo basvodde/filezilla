@@ -1,7 +1,7 @@
 #include "FileZilla.h"
 #include "filter.h"
 #include "listingcomparison.h"
-#include "MainFrm.h"
+#include "Mainfrm.h"
 #include "QueueView.h"
 #include "themeprovider.h"
 #include "toolbar.h"
@@ -71,14 +71,14 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 		toolbar->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 #endif
 
-	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
-		toolbar->HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
-
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG) != 0);
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_QUEUEVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_QUEUE) != 0);
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL) != 0);
 	toolbar->ToggleTool(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE) != 0);
+
+	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
+		toolbar->HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
 
 	return toolbar;
 }
