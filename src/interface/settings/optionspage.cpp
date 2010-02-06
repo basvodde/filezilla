@@ -47,7 +47,7 @@ void COptionsPage::SetCheckFromOption(int control_id, int option_id, bool& failu
 	SetCheck(control_id, m_pOptions->GetOptionVal(option_id) != 0, failure);
 }
 
-bool COptionsPage::GetCheck(int id)
+bool COptionsPage::GetCheck(int id) const
 {
 	wxCheckBox* pCheckBox = wxDynamicCast(FindWindow(id), wxCheckBox);
 	wxASSERT(pCheckBox);
@@ -79,7 +79,7 @@ void COptionsPage::SetTextFromOption(int ctrlId, int optionId, bool& failure)
 	pTextCtrl->ChangeValue(text);
 }
 
-wxString COptionsPage::GetText(int id)
+wxString COptionsPage::GetText(int id) const
 {
 	wxTextCtrl* pTextCtrl = wxDynamicCast(FindWindow(id), wxTextCtrl);
 	wxASSERT(pTextCtrl);
@@ -113,7 +113,7 @@ void COptionsPage::SetRCheck(int id, bool checked, bool& failure)
 	pRadioButton->SetValue(checked);
 }
 
-bool COptionsPage::GetRCheck(int id)
+bool COptionsPage::GetRCheck(int id) const
 {
 	wxRadioButton* pRadioButton = wxDynamicCast(FindWindow(id), wxRadioButton);
 	wxASSERT(pRadioButton);
@@ -133,7 +133,7 @@ void COptionsPage::SetStaticText(int id, const wxString& text, bool& failure)
 	pStaticText->SetLabel(text);
 }
 
-wxString COptionsPage::GetStaticText(int id)
+wxString COptionsPage::GetStaticText(int id) const
 {
 	wxStaticText* pStaticText = wxDynamicCast(FindWindow(id), wxStaticText);
 	wxASSERT(pStaticText);
@@ -186,7 +186,7 @@ void COptionsPage::SetChoice(int id, int selection, bool& failure)
 	pChoice->SetSelection(selection);
 }
 
-int COptionsPage::GetChoice(int id)
+int COptionsPage::GetChoice(int id) const
 {
 	wxChoice* pChoice = wxDynamicCast(FindWindow(id), wxChoice);
 	wxASSERT(pChoice);

@@ -24,15 +24,15 @@ public:
 	void SetTextFromOption(int ctrlId, int optionId, bool& failure);
 	void SetStaticText(int id, const wxString& text, bool& failure);
 	void SetChoice(int id, int selection, bool& failure);
+	bool SetText(int id, const wxString& text, bool& failure);
 
 	// The GetXXX functions do never return an error since the controls were 
 	// checked to exist while loading the dialog.
-	bool GetCheck(int id);
-	bool GetRCheck(int id);
-	wxString GetText(int id);
-	bool SetText(int id, const wxString& text, bool& failure);
-	wxString GetStaticText(int id);
-	int GetChoice(int id);
+	bool GetCheck(int id) const;
+	bool GetRCheck(int id) const;
+	wxString GetText(int id) const;
+	wxString GetStaticText(int id) const;
+	int GetChoice(int id) const;
 
 	void SetOptionFromText(int ctrlId, int optionId);
 	void SetIntOptionFromText(int ctrlId, int optionId); // There's no corresponding GetTextFromIntOption as COptions::GetOption is smart enough to convert
