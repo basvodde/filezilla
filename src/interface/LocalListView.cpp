@@ -14,13 +14,12 @@
 #include "lm.h"
 #include <wx/msw/registry.h>
 #include "volume_enumerator.h"
-#else
-#include <langinfo.h>
 #endif
 #include "edithandler.h"
 #include "dragdropmanager.h"
 #include "local_filesys.h"
 #include "filelist_statusbar.h"
+#include "sizeformatting.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -454,206 +453,6 @@ regular_dir:
 	RefreshListOnly();
 
 	return true;
-}
-
-wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places)
-{
-	if (!format)
-	{
-		static wxString sep;
-		static bool separator_initialized = false;
-		if (!separator_initialized)
-		{
-			separator_initialized = true;
-#ifdef __WXMSW__
-			wxChar tmp[5];
-			int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, tmp, 5);
-			if (count)
-				sep = tmp;
-#else
-			char* chr = nl_langinfo(THOUSEP);
-			if (chr && *chr)
-			{
-#if wxUSE_UNICODE
-				sep = wxString(chr, wxConvLibc);
-#else
-				sep = chr;
-#endif
-			}
-#endif
-		}
-
-		wxString tmp = size.ToString();
-		const int len = tmp.Len();
-		if (len <= 3 || !thousands_separator || sep.empty())
-		{
-			if (!add_bytes_suffix)
-				return tmp;
-			else
-			{
-				const int last = (size % 1000000).GetLo();
-				return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), tmp.c_str());
-			}
-		}
-
-		wxString result;
-		int i = (len - 1) % 3 + 1;
-		result = tmp.Left(i);
-		while (i < len)
-		{
-			result += sep + tmp.Mid(i, 3);
-			i += 3;
-		}
-		if (!add_bytes_suffix)
-			return result;
-		else
-		{
-			const int last = (size % 1000000).GetLo();
-			return wxString::Format(wxPLURAL("%s byte", "%s bytes", last), result.c_str());
-		}
-	}
-
-	wxString places;
-
-	int divider;
-	if (format == 3)
-		divider = 1000;
-	else
-		divider = 1024;
-
-	// Exponent (2^(10p) or 10^(3p) depending on option
-	int p = 0;
-
-	wxLongLong r = size;
-	int remainder = 0;
-	bool clipped = false;
-	while (r > divider && p < 6)
-	{
-		const wxLongLong rr = r / divider;
-		if (remainder != 0)
-			clipped = true;
-		remainder = (r - rr * divider).GetLo();
-		r = rr;
-		p++;
-	}
-	if (!num_decimal_places)
-	{
-		if (remainder != 0 || clipped)
-			r++;
-	}
-	else if (p) // Don't add decimal places on exact bytes
-	{
-		if (format != 3)
-		{
-			// Binary, need to convert 1024 into range from 1-1000
-			if (clipped)
-			{
-				remainder++;
-				clipped = false;
-			}
-			remainder = (int)ceil((double)remainder * 1000 / 1024);
-		}
-
-		int max;
-		switch (num_decimal_places)
-		{
-		default:
-		case 1:
-			max = 9;
-			divider = 100;
-			break;
-		case 2:
-			max = 99;
-			divider = 10;
-			break;
-		case 3:
-			max = 999;
-			break;
-		}
-
-		if (num_decimal_places != 3)
-		{
-			if (remainder % divider)
-				clipped = true;
-			remainder /= divider;
-		}
-
-		if (clipped)
-			remainder++;
-		if (remainder > max)
-		{
-			r++;
-			remainder = 0;
-		}
-
-		places.Printf(_T("%d"), remainder);
-		const int len = places.Len();
-		for (int i = len; i < num_decimal_places; i++)
-			places = _T("0") + places;
-	}
-
-	wxString result = r.ToString();
-	if (places != _T(""))
-	{
-#ifdef __WXMSW__
-		wxChar sep[5];
-		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SDECIMAL, sep, 5);
-		if (!count)
-		{
-			sep[0] = '.';
-			sep[1] = 0;
-		}
-#else
-		wxString sep;
-		char* chr = nl_langinfo(RADIXCHAR);
-		if (!chr || !*chr)
-			sep = _T(".");
-		else
-		{
-#if wxUSE_UNICODE
-			sep = wxString(chr, wxConvLibc);
-#else
-			sep = chr;
-#endif
-		}
-#endif
-
-		result += sep;
-		result += places;
-	}
-	result += ' ';
-
-	static wxChar byte_unit = 0;
-	if (!byte_unit)
-	{
-		wxString t = _("B <Unit symbol for bytes. Only translate first letter>");
-		byte_unit = t[0];
-	}
-
-	if (!p)
-		return result + byte_unit;
-
-	// We stop at Exa. If someone has files bigger than that, he can afford to
-	// make a donation to have this changed ;)
-	wxChar prefix[] = { ' ', 'K', 'M', 'G', 'T', 'P', 'E' };
-
-	result += prefix[p];
-	if (format == 1)
-		result += 'i';
-
-	result += byte_unit;
-
-	return result;
-}
-
-wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false)
-{
-	COptions* const pOptions = COptions::Get();
-	const int format = pOptions->GetOptionVal(OPTION_SIZE_FORMAT);
-	const bool thousands_separator = pOptions->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0;
-	const int num_decimal_places = pOptions->GetOptionVal(OPTION_SIZE_DECIMALPLACES);
-
-	return FormatSize(size, add_bytes_suffix, format, thousands_separator, num_decimal_places);
 }
 
 // See comment to OnGetItemText
@@ -2180,7 +1979,7 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 		if (data->size < 0)
 			return _T("");
 		else
-			return FormatSize(data->size);
+			return CSizeFormat::Format(data->size);
 	}
 	else if (column == 2)
 	{

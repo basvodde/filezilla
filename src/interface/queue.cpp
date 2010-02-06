@@ -1,8 +1,9 @@
 #include "FileZilla.h"
+#include "Options.h"
 #include "queue.h"
 #include "queueview_failed.h"
 #include "queueview_successful.h"
-#include "Options.h"
+#include "sizeformatting.h"
 
 CQueueItem::CQueueItem()
 {
@@ -831,9 +832,6 @@ void CQueueViewBase::OnEraseBackground(wxEraseEvent& event)
 		event.Skip();
 }
 
-// Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false);
-
 wxString CQueueViewBase::OnGetItemText(long item, long column) const
 {
 	CQueueViewBase* pThis = const_cast<CQueueViewBase*>(this);
@@ -876,7 +874,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 				{
 					const wxLongLong& size = pFileItem->GetSize();
 					if (size >= 0)
-						return FormatSize(size);
+						return CSizeFormat::Format(size);
 					else
 						return _T("?");
 				}

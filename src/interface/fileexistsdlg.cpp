@@ -1,6 +1,7 @@
 #include "FileZilla.h"
 #include "fileexistsdlg.h"
 #include "Options.h"
+#include "sizeformatting.h"
 
 #include <wx/display.h>
 
@@ -31,9 +32,6 @@ bool CFileExistsDlg::Create(wxWindow* parent)
 	return true;
 }
 
-// Defined in LocalListView.cpp
-wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
-
 void CFileExistsDlg::CreateControls()
 {
 	wxXmlResource::Get()->LoadDialog(this, GetParent(), _T("ID_FILEEXISTSDLG"));
@@ -58,13 +56,13 @@ void CFileExistsDlg::CreateControls()
 
 	wxString localSize;
 	if (m_pNotification->localSize != -1)
-		localSize = FormatSize(m_pNotification->localSize, false, 0, thousands_separator, 0) + _T(" ") + _("bytes");
+		localSize = CSizeFormat::Format(m_pNotification->localSize, true, CSizeFormat::bytes, thousands_separator, 0);
 	else
 		localSize = _("Size unknown");
 
 	wxString remoteSize;
 	if (m_pNotification->remoteSize != -1)
-		remoteSize = FormatSize(m_pNotification->remoteSize, false, 0, thousands_separator, 0) + _T(" ") + _("bytes");
+		remoteSize = CSizeFormat::Format(m_pNotification->remoteSize, true, CSizeFormat::bytes, thousands_separator, 0);
 	else
 		remoteSize = _("Size unknown");
 

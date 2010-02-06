@@ -3,9 +3,7 @@
 #include "statuslinectrl.h"
 #include <wx/dcbuffer.h>
 #include "Options.h"
-#ifndef __WXMSW__
-#include <langinfo.h>
-#endif
+#include "sizeformatting.h"
 
 BEGIN_EVENT_TABLE(CStatusLineCtrl, wxWindow)
 EVT_PAINT(CStatusLineCtrl::OnPaint)
@@ -75,53 +73,6 @@ CStatusLineCtrl::~CStatusLineCtrl()
 	delete m_pStatus;
 }
 
-wxString FormatBytes(const wxLongLong& size)
-{
-	if (!COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP))
-		return size.ToString();
-
-	static wxString sep;
-	static bool separator_initialized = false;
-	if (!separator_initialized)
-	{
-		separator_initialized = true;
-#ifdef __WXMSW__
-		wxChar tmp[5];
-		int count = ::GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_STHOUSAND, tmp, 5);
-		if (count)
-			sep = tmp;
-#else
-		char* chr = nl_langinfo(THOUSEP);
-		if (chr && *chr)
-		{
-#if wxUSE_UNICODE
-			sep = wxString(chr, wxConvLibc);
-#else
-			sep = chr;
-#endif
-		}
-#endif
-	}
-	if (sep.empty())
-		return size.ToString();
-
-	wxString tmp = size.ToString();
-	const int len = tmp.Len();
-	if (len <= 3)
-		return tmp;
-
-	wxString result;
-	int i = (len - 1) % 3 + 1;
-	result = tmp.Left(i);
-	while (i < len)
-	{
-		result += sep + tmp.Mid(i, 3);
-		i += 3;
-	}
-
-	return result;
-}
-
 void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 {
 	wxAutoBufferedPaintDC dc(this);
@@ -157,7 +108,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	else
 		elapsedSeconds = 0;
 
-	const wxString bytes = FormatBytes(m_pStatus->currentOffset);
+	const wxString bytes = CSizeFormat::Format(m_pStatus->currentOffset, true, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
 	if (elapsedSeconds)
 	{
 		wxFileOffset rate = GetSpeed(elapsedSeconds);

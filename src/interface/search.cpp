@@ -2,13 +2,14 @@
 
 #include "FileZilla.h"
 #include "search.h"
-#include "filelistctrl.h"
-#include "recursive_operation.h"
 #include "commandqueue.h"
-#include "Options.h"
-#include "window_state_manager.h"
-#include "queue.h"
+#include "filelistctrl.h"
 #include "ipcmutex.h"
+#include "Options.h"
+#include "queue.h"
+#include "recursive_operation.h"
+#include "sizeformatting.h"
+#include "window_state_manager.h"
 
 class CSearchFileData : public CGenericFileData
 {
@@ -359,9 +360,6 @@ typedef CReverseSort<CSearchSortOwnerGroup> CSearchSortOwnerGroup_Reverse;
 // Search dialog file list
 // -----------------------
 
-// Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false);
-
 // Defined in RemoteListView.cpp
 extern wxString StripVMSRevision(const wxString& name);
 
@@ -459,7 +457,7 @@ wxString CSearchDialogFileList::GetItemText(int item, unsigned int column)
 		if (entry.dir || entry.size < 0)
 			return _T("");
 		else
-			return FormatSize(entry.size);
+			return CSizeFormat::Format(entry.size);
 	}
 	else if (column == 3)
 	{

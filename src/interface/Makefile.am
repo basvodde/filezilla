@@ -89,6 +89,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		settings/settingsdialog.cpp \
 		sftp_crypt_info_dlg.cpp \
 		sitemanager.cpp \
+		sizeformatting.cpp \
 		speedlimits_dialog.cpp \
 		splitter.cpp \
 		state.cpp \
@@ -194,6 +195,7 @@ noinst_HEADERS = aboutdialog.h \
 		 settings/settingsdialog.h \
 		 sftp_crypt_info_dlg.h \
 		 sitemanager.h \
+		 sizeformatting.h \
 		 speedlimits_dialog.h \
 		 splitter.h \
 		 state.h \

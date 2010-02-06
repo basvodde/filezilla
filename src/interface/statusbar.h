@@ -2,6 +2,7 @@
 #define __STATUSBAR_H__
 
 #include "option_change_event_handler.h"
+#include "sizeformatting.h"
 #include "state.h"
 
 enum widgets
@@ -105,7 +106,7 @@ protected:
 	virtual void OnOptionChanged(int option);
 	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2);
 
-	int m_sizeFormat;
+	CSizeFormat::_format m_sizeFormat;
 	bool m_sizeFormatThousandsSep;
 	int m_sizeFormatDecimalPlaces;
 	wxLongLong m_size;

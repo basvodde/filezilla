@@ -1,9 +1,10 @@
 #include "FileZilla.h"
-#include "statusbar.h"
 #include "Options.h"
-#include "verifycertdialog.h"
 #include "sftp_crypt_info_dlg.h"
+#include "sizeformatting.h"
 #include "speedlimits_dialog.h"
+#include "statusbar.h"
+#include "verifycertdialog.h"
 
 static const int statbarWidths[3] = {
 	-3, 0, 35
@@ -361,9 +362,6 @@ CStatusBar::~CStatusBar()
 {
 }
 
-// Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
-
 void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 {
 	m_size = totalSize;
@@ -376,7 +374,7 @@ void CStatusBar::DisplayQueueSize(wxLongLong totalSize, bool hasUnknown)
 	}
 
 	wxString queueSize = wxString::Format(_("Queue: %s%s"), hasUnknown ? _T(">") : _T(""),
-			FormatSize(totalSize, true, m_sizeFormat, m_sizeFormatThousandsSep, m_sizeFormatDecimalPlaces).c_str());
+		CSizeFormat::Format(totalSize, true, m_sizeFormat, m_sizeFormatThousandsSep, m_sizeFormatDecimalPlaces).c_str());
 
 	SetStatusText(queueSize, FIELD_QUEUESIZE);
 }
@@ -482,9 +480,9 @@ void CStatusBar::UpdateSizeFormat()
 {
 	// 0 equals bytes, however just use IEC binary prefixes instead, 
 	// exact byte counts for queue make no sense.
-	m_sizeFormat = COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT);
+	m_sizeFormat = CSizeFormat::_format(COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT));
 	if (!m_sizeFormat)
-		m_sizeFormat = 1;
+		m_sizeFormat = CSizeFormat::iec;
 
 	m_sizeFormatThousandsSep = COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0;
 	m_sizeFormatDecimalPlaces = COptions::Get()->GetOptionVal(OPTION_SIZE_DECIMALPLACES);
@@ -555,10 +553,6 @@ void CStatusBar::OnHandleRightClick(wxWindow* pWnd)
 	}
 }
 
-// defined in LocalListView.cpp
-// TODO: Find a better place for this
-extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix, int format, bool thousands_separator, int num_decimal_places);
-
 void CStatusBar::UpdateSpeedLimitsIcon()
 {
 	bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
@@ -577,18 +571,15 @@ void CStatusBar::UpdateSpeedLimitsIcon()
 	}
 	else
 	{
-		int fmt = m_sizeFormat;
-		if (fmt == 3)
-			fmt = 1;
 		tooltip = _("Speedlimits are enabled, click to change.");
 		tooltip += _T("\n");
 		if (downloadLimit)
-			tooltip += wxString::Format(_("Download limit: %s/s."), FormatSize(downloadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
+			tooltip += wxString::Format(_("Download limit: %s/s"), CSizeFormat::FormatUnit(downloadLimit, CSizeFormat::kilo).c_str());
 		else
 			tooltip += _("Download limit: none");
 		tooltip += _T("\n");
 		if (uploadLimit)
-			tooltip += wxString::Format(_("Upload limit: %s/s."), FormatSize(uploadLimit * 1024, false, fmt, m_sizeFormatThousandsSep, 0).c_str());
+			tooltip += wxString::Format(_("Upload limit: %s/s"), CSizeFormat::FormatUnit(uploadLimit, CSizeFormat::kilo).c_str());
 		else
 			tooltip += _("Upload limit: none");
 	}

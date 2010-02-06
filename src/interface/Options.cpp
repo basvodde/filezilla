@@ -5,6 +5,7 @@
 #include <wx/tokenzr.h>
 #include "ipcmutex.h"
 #include "option_change_event_handler.h"
+#include "sizeformatting.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -527,6 +528,10 @@ int COptions::Validate(unsigned int nID, int value)
 	case OPTION_DOUBLECLICK_ACTION_FILE:
 	case OPTION_DOUBLECLICK_ACTION_DIRECTORY:
 		if (value < 0 || value > 3)
+			value = 0;
+		break;
+	case OPTION_SIZE_FORMAT:
+		if (value < 0 || value >= CSizeFormat::formats_count)
 			value = 0;
 		break;
 	}

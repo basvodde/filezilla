@@ -16,7 +16,7 @@
 #include "edithandler.h"
 #include "dragdropmanager.h"
 #include <wx/clipbrd.h>
-
+#include "sizeformatting.h"
 #ifdef __WXMSW__
 #include "shellapi.h"
 #include "commctrl.h"
@@ -2898,9 +2898,6 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 	return 0;
 }
 
-// Defined in LocalListView.cpp
-extern wxString FormatSize(const wxLongLong& size, bool add_bytes_suffix = false);
-
 // Filenames on VMS systems have a revision suffix, e.g.
 // foo.bar;1
 // foo.bar;2
@@ -2953,7 +2950,7 @@ wxString CRemoteListView::GetItemText(int item, unsigned int column)
 		if (entry.dir || entry.size < 0)
 			return _T("");
 		else
-			return FormatSize(entry.size);
+			return CSizeFormat::Format(entry.size);
 	}
 	else if (column == 2)
 	{
