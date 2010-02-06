@@ -1037,7 +1037,7 @@ bool CSiteManager::Verify()
 		if (host == _T(""))
 		{
 			XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetFocus();
-			wxMessageBox(_("You have to enter a hostname."));
+			wxMessageBox(_("You have to enter a hostname."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this); 
 			return false;
 		}
 
@@ -1049,7 +1049,7 @@ bool CSiteManager::Verify()
 			logon_type == ACCOUNT)
 		{
 			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
-			wxMessageBox(_("'Account' logontype not supported by selected protocol"));
+			wxMessageBox(_("'Account' logontype not supported by selected protocol"), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -1058,7 +1058,7 @@ bool CSiteManager::Verify()
 			(logon_type == ACCOUNT || logon_type == NORMAL))
 		{
 			XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();
-			wxMessageBox(_("FileZilla is running in kiosk mode.\n'Normal' and 'Account' logontypes are not available in this mode."));
+			wxMessageBox(_("FileZilla is running in kiosk mode.\n'Normal' and 'Account' logontypes are not available in this mode."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -1075,7 +1075,7 @@ bool CSiteManager::Verify()
 		if (!server.ParseUrl(host, port, _T(""), _T(""), error, path))
 		{
 			XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetFocus();
-			wxMessageBox(error);
+			wxMessageBox(error, _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -1092,7 +1092,7 @@ bool CSiteManager::Verify()
 			if (XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->GetValue() == _T(""))
 			{
 				XRCCTRL(*this, "ID_ENCODING", wxTextCtrl)->SetFocus();
-				wxMessageBox(_("Need to specify a character encoding"));
+				wxMessageBox(_("Need to specify a character encoding"), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
@@ -1105,7 +1105,7 @@ bool CSiteManager::Verify()
 			user == _T(""))
 		{
 			XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetFocus();
-			wxMessageBox(_("You have to specify a user name"));
+			wxMessageBox(_("You have to specify a user name"), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -1124,7 +1124,7 @@ bool CSiteManager::Verify()
 			if (space_only)
 			{
 				XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetFocus();
-				wxMessageBox(_("Username cannot be a series of spaces"));
+				wxMessageBox(_("Username cannot be a series of spaces"), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
@@ -1134,7 +1134,7 @@ bool CSiteManager::Verify()
 			XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->GetValue() == _T(""))
 		{
 			XRCCTRL(*this, "ID_ACCOUNT", wxTextCtrl)->SetFocus();
-			wxMessageBox(_("You have to enter an account name"));
+			wxMessageBox(_("You have to enter an account name"), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -1148,7 +1148,7 @@ bool CSiteManager::Verify()
 			if (!remotePath.SetPath(remotePathRaw))
 			{
 				XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
-				wxMessageBox(_("Default remote path cannot be parsed. Make sure it is valid and is supported by the selected servertype."));
+				wxMessageBox(_("Default remote path cannot be parsed. Make sure it is valid and is supported by the selected servertype."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
@@ -1159,7 +1159,7 @@ bool CSiteManager::Verify()
 			if (remotePathRaw.empty() || localPath.empty())
 			{
 				XRCCTRL(*this, "ID_SYNC", wxCheckBox)->SetFocus();
-				wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this site."));
+				wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this site."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
@@ -1184,7 +1184,7 @@ bool CSiteManager::Verify()
 					msg = wxString::Format(_("Remote path cannot be parsed. Make sure it is a valid absolute path and is supported by the servertype (%s) selected on the parent site."), CServer::GetNameFromServerType(pServer->m_server.GetType()).c_str());
 				else
 					msg = _("Remote path cannot be parsed. Make sure it is a valid absolute path.");
-				wxMessageBox(msg);
+				wxMessageBox(msg, _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
@@ -1194,7 +1194,7 @@ bool CSiteManager::Verify()
 		if (remotePathRaw.empty() && localPath.empty())
 		{
 			XRCCTRL(*this, "ID_BOOKMARK_LOCALDIR", wxTextCtrl)->SetFocus();
-			wxMessageBox(_("You need to enter at least one path, empty bookmarks are not supported."));
+			wxMessageBox(_("You need to enter at least one path, empty bookmarks are not supported."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 			return false;
 		}
 
@@ -1203,7 +1203,7 @@ bool CSiteManager::Verify()
 			if (remotePathRaw.empty() || localPath.empty())
 			{
 				XRCCTRL(*this, "ID_BOOKMARK_SYNC", wxCheckBox)->SetFocus();
-				wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this bookmark."));
+				wxMessageBox(_("You need to enter both a local and a remote path to enable synchronized browsing for this bookmark."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
