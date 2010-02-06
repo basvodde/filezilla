@@ -125,7 +125,7 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 	if (event.GetId() == 1)
 		server.SetBypassProxy(true);
 
-	if (!m_pMainFrame->Connect(server, path))
+	if (!m_pMainFrame->ConnectToServer(server, path))
 		return;
 
 	CRecentServerList::SetMostRecentServer(server);
@@ -190,7 +190,7 @@ void CQuickconnectBar::OnMenu(wxCommandEvent& event)
 		return;
 	}
 
-	m_pMainFrame->Connect(server);
+	m_pMainFrame->ConnectToServer(server);
 }
 
 void CQuickconnectBar::ClearFields()

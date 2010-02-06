@@ -50,6 +50,7 @@
 #include "context_control.h"
 #include "speedlimits_dialog.h"
 #include "toolbar.h"
+#include "menu_bar.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -65,7 +66,6 @@ static int tab_hotkey_ids[10];
 BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_SIZE(CMainFrame::OnSize)
 	EVT_MENU(wxID_ANY, CMainFrame::OnMenuHandler)
-	EVT_MENU_OPEN(CMainFrame::OnMenuOpenHandler)
 	EVT_FZ_NOTIFICATION(wxID_ANY, CMainFrame::OnEngineEvent)
 	EVT_TOOL(XRCID("ID_TOOLBAR_DISCONNECT"), CMainFrame::OnDisconnect)
 	EVT_MENU(XRCID("ID_MENU_SERVER_DISCONNECT"), CMainFrame::OnDisconnect)
@@ -136,30 +136,15 @@ public:
 
 		CContextManager::Get()->RegisterHandler(this, STATECHANGE_REMOTE_IDLE, false, true);
 		CContextManager::Get()->RegisterHandler(this, STATECHANGE_SERVER, false, true);
-		CContextManager::Get()->RegisterHandler(this, STATECHANGE_SYNC_BROWSE, true, true);
-		CContextManager::Get()->RegisterHandler(this, STATECHANGE_COMPARISON, true, true);
 
-		CContextManager::Get()->RegisterHandler(this, STATECHANGE_QUEUEPROCESSING, false, false);
 		CContextManager::Get()->RegisterHandler(this, STATECHANGE_CHANGEDCONTEXT, false, false);
 	}
 
 protected:
 	virtual void OnStateChange(CState* pState, enum t_statechange_notifications notification, const wxString& data, const void* data2)
 	{
-		if (notification == STATECHANGE_QUEUEPROCESSING)
+		if (notification == STATECHANGE_CHANGEDCONTEXT)
 		{
-			const bool check = m_pMainFrame->GetQueue() && m_pMainFrame->GetQueue()->IsActive() != 0;
-
-			wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
-			if (pMenuBar)
-				pMenuBar->Check(XRCID("ID_MENU_TRANSFER_PROCESSQUEUE"), check);
-			return;
-		}
-		else if (notification == STATECHANGE_CHANGEDCONTEXT)
-		{
-			m_pMainFrame->UpdateMenubarState();
-			m_pMainFrame->UpdateBookmarkMenu();
-	
 			// Update window title
 			const CServer* pServer = pState ? pState->GetServer() : 0;
 			if (!pServer)
@@ -199,36 +184,15 @@ protected:
 					if (pServer->GetName() == _T(""))
 					{
 						// Can only happen through quickconnect bar
-						m_pMainFrame->ClearBookmarks();
+						CMenuBar* pMenuBar = wxDynamicCast(m_pMainFrame->GetMenuBar(), CMenuBar);
+						if (pMenuBar)
+							pMenuBar->ClearBookmarks();
 					}
 				}
 			}
 
-			if (pState == CContextManager::Get()->GetCurrentContext())
-				m_pMainFrame->UpdateMenubarState();
 			return;
 		}
-
-		if (pState != CContextManager::Get()->GetCurrentContext())
-			return;
-
-		if (notification == STATECHANGE_SYNC_BROWSE)
-		{
-			if (m_pMainFrame->GetMenuBar())
-				m_pMainFrame->GetMenuBar()->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
-			return;
-		}
-		else if (notification == STATECHANGE_COMPARISON)
-		{
-			bool is_comparing = pState->GetComparisonManager()->IsComparing();
-
-			wxMenuBar* pMenuBar = m_pMainFrame->GetMenuBar();
-			if (pMenuBar)
-				pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), is_comparing);
-			return;
-		}
-
-		m_pMainFrame->UpdateMenubarState();
 	}
 
 	CMainFrame* m_pMainFrame;
@@ -368,7 +332,6 @@ CMainFrame::CMainFrame()
 		CSiteManager::GetBookmarks(controls->site_bookmarks->path,
 								   controls->site_bookmarks->bookmarks);
 	}
-	UpdateBookmarkMenu();
 
 	switch (message_log_position)
 	{
@@ -465,8 +428,6 @@ CMainFrame::CMainFrame()
 
 	CEditHandler::Create()->SetQueue(m_pQueueView);
 
-	InitMenubarState();
-
 	CAutoAsciiFiles::SettingsChanged();
 }
 
@@ -540,67 +501,17 @@ bool CMainFrame::CreateMenus()
 	{
 		SetMenuBar(0);
 		delete m_pMenuBar;
-		m_bookmark_menu_id_map_global.clear();
-		m_bookmark_menu_id_map_site.clear();
 	}
-	m_pMenuBar = wxXmlResource::Get()->LoadMenuBar(_T("ID_MENUBAR"));
+	m_pMenuBar = CMenuBar::Load(this);
+	
 	if (!m_pMenuBar)
-	{
-		wxLogError(_("Cannot load main menu from resource file"));
-	}
-
-#if FZ_MANUALUPDATECHECK
-	if (COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK))
-#endif
-	{
-		if (m_pMenuBar)
-		{
-			wxMenu *helpMenu;
-
-			wxMenuItem* pUpdateItem = m_pMenuBar->FindItem(XRCID("ID_CHECKFORUPDATES"), &helpMenu);
-			if (pUpdateItem)
-			{
-				// Get rid of separator
-				unsigned int count = helpMenu->GetMenuItemCount();
-				for (unsigned int i = 0; i < count - 1; i++)
-				{
-					if (helpMenu->FindItemByPosition(i) == pUpdateItem)
-					{
-						helpMenu->Delete(helpMenu->FindItemByPosition(i + 1));
-						break;
-					}
-				}
-
-				helpMenu->Delete(pUpdateItem);
-			}
-		}
-	}
-
-	if (COptions::Get()->GetOptionVal(OPTION_DEBUG_MENU) && m_pMenuBar)
-	{
-		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_DEBUG"));
-		if (pMenu)
-			m_pMenuBar->Append(pMenu, _("&Debug"));
-	}
-
-	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
-	{
-		wxMenu* pMenu;
-		wxMenuItem* pItem = m_pMenuBar->FindItem(XRCID("ID_VIEW_MESSAGELOG"), &pMenu);
-		if (pItem)
-			pMenu->Delete(pItem);
-	}
+		return false;
 
 	SetMenuBar(m_pMenuBar);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	if (m_pUpdateWizard)
 		m_pUpdateWizard->DisplayUpdateAvailability(false);
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-
-	UpdateBookmarkMenu();
-
-	InitMenubarState();
-	UpdateMenubarState();
 
 	return true;
 }
@@ -729,7 +640,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		pDlg->Show();
 		pDlg->Delete();
 
-		UpdateMenubarState();
+		m_pMenuBar->UpdateMenubarState();
 		m_pToolBar->UpdateToolbarState();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_VIEWHIDDEN"))
@@ -775,17 +686,14 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
-		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 1);
-		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))
 	{
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 2);
-		m_pMenuBar->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))
 	{
@@ -873,7 +781,6 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			m_pTopSplitter->SetSize(0, 0, clientSize.GetWidth(), clientSize.GetHeight());
 		}
 		COptions::Get()->SetOption(OPTION_SHOW_QUICKCONNECT, m_pQuickconnectBar != 0);
-		m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_MANUAL"))
 	{
@@ -909,7 +816,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			{
 				controls->site_bookmarks->path.clear();
 				controls->site_bookmarks->bookmarks.clear();
-				UpdateBookmarkMenu();
+				if (m_pMenuBar)
+					m_pMenuBar->UpdateBookmarkMenu();
 			}
 		}
 
@@ -930,7 +838,8 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			controls->site_bookmarks->bookmarks.clear();
 			CSiteManager::GetBookmarks(controls->site_bookmarks->path, controls->site_bookmarks->bookmarks);
-			UpdateBookmarkMenu();
+			if (m_pMenuBar)
+				m_pMenuBar->UpdateBookmarkMenu();
 		}	
 	}
 	else if (event.GetId() == XRCID("ID_MENU_HELP_WELCOME"))
@@ -949,7 +858,7 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		{
 			if (event.GetId() != tab_hotkey_ids[i])
 				continue;
-			
+
 			if (!m_pContextControl)
 				return;
 
@@ -959,94 +868,6 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 			m_pContextControl->SelectTab(sel);
 
 			return;
-		}
-		CState* pState = CContextManager::Get()->GetCurrentContext();
-
-		std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.find(event.GetId());
-		if (iter != m_bookmark_menu_id_map_site.end())
-		{
-			// We hit a site-specific bookmark
-			CContextControl::_context_controls* controls = m_pContextControl->GetCurrentControls();
-			if (!controls)
-				return;
-			if (controls->site_bookmarks->path.empty())
-				return;
-
-			wxString name = iter->second;
-			name.Replace(_T("\\"), _T("\\\\"));
-			name.Replace(_T("/"), _T("\\/"));
-			name = controls->site_bookmarks->path + _T("/") + name;
-
-			CSiteManagerItemData_Site *pData = CSiteManager::GetSiteByPath(name);
-			if (!pData)
-				return;
-
-			if (!pState)
-				return;
-
-			pState->SetSyncBrowse(false);
-			if (!pData->m_remoteDir.IsEmpty() && pState->IsRemoteIdle())
-			{
-				const CServer* pServer = pState->GetServer();
-				if (!pServer || *pServer != pData->m_server)
-				{
-					ConnectToSite(pData);
-					pData->m_localDir.clear(); // So not to set again below
-				}
-				else
-					pState->ChangeRemoteDir(pData->m_remoteDir);
-			}
-			if (!pData->m_localDir.empty())
-			{
-				bool set = pState->SetLocalDir(pData->m_localDir);
-
-				if (set && pData->m_sync)
-				{
-					wxASSERT(!pData->m_remoteDir.IsEmpty());
-					pState->SetSyncBrowse(true, pData->m_remoteDir);
-				}
-			}
-
-			delete pData;
-
-			return;
-		}
-
-		std::map<int, wxString>::const_iterator iter2 = m_bookmark_menu_id_map_global.find(event.GetId());
-		if (iter2 != m_bookmark_menu_id_map_global.end())
-		{
-			// We hit a global bookmark
-			wxString local_dir;
-			CServerPath remote_dir;
-			bool sync;
-			if (!CBookmarksDialog::GetBookmark(iter2->second, local_dir, remote_dir, sync))
-				return;
-
-			pState->SetSyncBrowse(false);
-			if (!remote_dir.IsEmpty() && pState->IsRemoteIdle())
-			{
-				const CServer* pServer = pState->GetServer();
-				if (pServer)
-				{
-					CServerPath current_remote_path = pState->GetRemotePath();
-					if (!current_remote_path.IsEmpty() && current_remote_path.GetType() != remote_dir.GetType())
-					{
-						wxMessageBox(_("Selected global bookmark and current server use a different server type.\nUse site-specific bookmarks for this server."), _("Bookmark"), wxICON_EXCLAMATION, this);
-						return;
-					}
-					pState->ChangeRemoteDir(remote_dir);
-				}
-			}
-			if (!local_dir.empty())
-			{
-				bool set = pState->SetLocalDir(local_dir);
-
-				if (set && sync)
-				{
-					wxASSERT(!remote_dir.IsEmpty());
-					pState->SetSyncBrowse(true, remote_dir);
-				}
-			}
 		}
 
 		wxString path;
@@ -1065,47 +886,11 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		}
 
 		SetBookmarksFromPath(path);
-		UpdateBookmarkMenu();
+		if (m_pMenuBar)
+			m_pMenuBar->UpdateBookmarkMenu();
 
 		delete pData;
 	}
-}
-
-void CMainFrame::OnMenuOpenHandler(wxMenuEvent& event)
-{
-	wxMenu* pMenu = event.GetMenu();
-	if (!pMenu)
-		return;
-	wxMenuItem* pItem = pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE"));
-	if (!pItem)
-		return;
-
-	const CServer* pServer = 0;
-	CState* pState = CContextManager::Get()->GetCurrentContext();
-	if (pState)
-		pServer = pState->GetServer();
-
-	if (!pServer || CServer::ProtocolHasDataTypeConcept(pServer->GetProtocol()))
-	{
-		pItem->Enable(true);
-		int mode = COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY);
-		switch (mode)
-		{
-		case 1:
-			pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_ASCII"))->Check();
-			break;
-		case 2:
-			pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_BINARY"))->Check();
-			break;
-		default:
-			pMenu->FindItem(XRCID("ID_MENU_TRANSFER_TYPE_AUTO"))->Check();
-			break;
-		}
-	}
-	else
-		pItem->Enable(false);
-
-	pMenu->FindItem(XRCID("ID_MENU_TRANSFER_PRESERVETIMES"))->Check(COptions::Get()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) ? true : false);
 }
 
 void CMainFrame::OnEngineEvent(wxEvent &event)
@@ -1510,7 +1295,7 @@ void CMainFrame::OnReconnect(wxCommandEvent &event)
 	}
 
 	CServerPath path = pState->GetLastServerPath();
-	Connect(server, path);
+	ConnectToServer(server, path);
 }
 
 void CMainFrame::OnRefresh(wxCommandEvent &event)
@@ -1688,7 +1473,8 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 		}
 	}
 
-	UpdateBookmarkMenu();
+	if (m_pMenuBar)
+		m_pMenuBar->UpdateBookmarkMenu();
 }
 
 void CMainFrame::OnSiteManager(wxCommandEvent& event)
@@ -1826,9 +1612,6 @@ void CMainFrame::OnToggleLogView(wxCommandEvent& event)
 	
 	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
 		COptions::Get()->SetOption(OPTION_SHOW_MESSAGELOG, shown);
-
-	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), shown);
 }
 
 void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
@@ -1858,9 +1641,6 @@ void CMainFrame::OnToggleLocalTreeView(wxCommandEvent& event)
 		ShowLocalTree();
 
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_LOCAL, show);
-
-	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), show);
 }
 
 void CMainFrame::ShowLocalTree()
@@ -1917,9 +1697,6 @@ void CMainFrame::OnToggleRemoteTreeView(wxCommandEvent& event)
 		ShowRemoteTree();
 
 	COptions::Get()->SetOption(OPTION_SHOW_TREE_REMOTE, show);
-
-	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), show);
 }
 
 void CMainFrame::ShowRemoteTree()
@@ -1999,9 +1776,6 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 	}
 
 	COptions::Get()->SetOption(OPTION_SHOW_QUEUE, shown);
-
-	if (m_pMenuBar)
-		m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), shown);
 }
 
 void CMainFrame::OnMenuHelpAbout(wxCommandEvent& event)
@@ -2120,9 +1894,6 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 				break;
 			}
 		}
-
-		if (final)
-			CreateMenus();
 	}
 
 	// Now the other panes
@@ -2262,7 +2033,7 @@ bool CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 			return false;
 	}
 
-	if (!Connect(pData->m_server, pData->m_remoteDir))
+	if (!ConnectToServer(pData->m_server, pData->m_remoteDir))
 		return false;
 
 	if (pData->m_localDir != _T(""))
@@ -2686,14 +2457,6 @@ void CMainFrame::OnDropdownComparisonMode(wxCommandEvent& event)
 	int new_mode = (event.GetId() == XRCID("ID_COMPARE_SIZE")) ? 0 : 1;
 	COptions::Get()->SetOption(OPTION_COMPARISONMODE, new_mode);
 
-	if (m_pMenuBar)
-	{
-		if (new_mode != 1)
-			m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
-		else
-			m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
-	}
-
 	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
 		pComparisonManager->CompareListings();
@@ -2710,76 +2473,9 @@ void CMainFrame::OnDropdownComparisonHide(wxCommandEvent& event)
 
 	COptions::Get()->SetOption(OPTION_COMPARE_HIDEIDENTICAL, new_mode ? 1 : 0);
 
-	if (m_pMenuBar)
-	{
-		m_pMenuBar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), new_mode);
-	}
-
 	CComparisonManager* pComparisonManager = pState->GetComparisonManager();
 	if (old_mode != new_mode && pComparisonManager && pComparisonManager->IsComparing())
 		pComparisonManager->CompareListings();
-}
-
-void CMainFrame::InitMenubarState()
-{
-	if (!m_pMenuBar)
-		return;
-
-	m_pMenuBar->Check(XRCID("ID_MENU_SERVER_VIEWHIDDEN"), COptions::Get()->GetOptionVal(OPTION_VIEW_HIDDEN_FILES) ? true : false);
-
-	int mode = COptions::Get()->GetOptionVal(OPTION_COMPARISONMODE);
-	if (mode != 1)
-		m_pMenuBar->Check(XRCID("ID_COMPARE_SIZE"), true);
-	else
-		m_pMenuBar->Check(XRCID("ID_COMPARE_DATE"), true);
-
-	m_pMenuBar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0);
-
-	m_pMenuBar->Check(XRCID("ID_VIEW_QUICKCONNECT"), m_pQuickconnectBar != 0);
-	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) != 2)
-		m_pMenuBar->Check(XRCID("ID_VIEW_MESSAGELOG"), m_pStatusView && m_pStatusView->IsShown());
-	CContextControl::_context_controls* controls = m_pContextControl ? m_pContextControl->GetCurrentControls() : 0;
-	if (controls)
-	{
-		m_pMenuBar->Check(XRCID("ID_VIEW_LOCALTREE"), controls->pLocalSplitter && controls->pLocalSplitter->IsSplit());
-		m_pMenuBar->Check(XRCID("ID_VIEW_REMOTETREE"), controls->pRemoteSplitter && controls->pRemoteSplitter->IsSplit());
-		m_pMenuBar->Check(XRCID("ID_VIEW_QUEUE"), m_pQueuePane && m_pQueuePane->IsShown());
-		m_pMenuBar->Check(XRCID("ID_MENU_VIEW_FILELISTSTATUSBAR"), COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0);
-	}
-}
-
-void CMainFrame::UpdateMenubarState()
-{
-	if (!m_pMenuBar)
-		return;
-
-	CState* pState = CContextManager::Get()->GetCurrentContext();
-	if (!pState)
-		return;
-
-	const CServer* const pServer = pState->GetServer();
-	const bool idle = pState->IsRemoteIdle();
-
-	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_DISCONNECT"), pServer && idle);
-	m_pMenuBar->Enable(XRCID("ID_CANCEL"), pServer && !idle);
-	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_CMD"), pServer && idle);
-	m_pMenuBar->Enable(XRCID("ID_MENU_FILE_COPYSITEMANAGER"), pServer != 0);
-	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_COMPARISON"), pServer != 0);
-	m_pMenuBar->Enable(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pServer != 0);
-	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_SEARCH"), pServer && idle);
-
-	m_pMenuBar->Check(XRCID("ID_TOOLBAR_COMPARISON"), pState->GetComparisonManager()->IsComparing());
-	m_pMenuBar->Check(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
-
-	bool canReconnect;
-	if (pServer || !idle)
-		canReconnect = false;
-	else
-	{
-		CServer tmp;
-		canReconnect = pState->GetLastServer().GetHost() != _T("");
-	}
-	m_pMenuBar->Enable(XRCID("ID_MENU_SERVER_RECONNECT"), canReconnect);
 }
 
 void CMainFrame::ProcessCommandLine()
@@ -2803,7 +2499,8 @@ void CMainFrame::ProcessCommandLine()
             if (ConnectToSite(pData))
 			{
 				SetBookmarksFromPath(site);
-				UpdateBookmarkMenu();
+				if (m_pMenuBar)
+					m_pMenuBar->UpdateBookmarkMenu();
 			}
 			delete pData;
 		}
@@ -2841,7 +2538,7 @@ void CMainFrame::ProcessCommandLine()
 		if (!pState)
 			return;
 
-		Connect(server, path);
+		ConnectToServer(server, path);
 	}
 }
 
@@ -2903,100 +2600,6 @@ WXLRESULT CMainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lPara
 }
 #endif
 
-void CMainFrame::UpdateBookmarkMenu()
-{
-	if (!m_pMenuBar)
-		return;
-
-	wxMenu* pMenu;
-	if (!m_pMenuBar->FindItem(XRCID("ID_BOOKMARK_ADD"), &pMenu))
-		return;
-
-	// Delete old bookmarks
-	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_global.begin(); iter != m_bookmark_menu_id_map_global.end(); iter++)
-	{
-		pMenu->Delete(iter->first);
-	}
-	m_bookmark_menu_id_map_global.clear();
-
-	for (std::map<int, wxString>::const_iterator iter = m_bookmark_menu_id_map_site.begin(); iter != m_bookmark_menu_id_map_site.end(); iter++)
-	{
-		pMenu->Delete(iter->first);
-	}
-	m_bookmark_menu_id_map_site.clear();
-
-	// Delete the separators
-	while (pMenu->GetMenuItemCount() > 2)
-	{
-		wxMenuItem* pSeparator = pMenu->FindItemByPosition(2);
-		if (pSeparator)
-			pMenu->Delete(pSeparator);
-	}
-
-	std::list<int>::iterator ids = m_bookmark_menu_ids.begin();
-
-	// Insert global bookmarks
-	std::list<wxString> global_bookmarks;
-	if (CBookmarksDialog::GetBookmarks(global_bookmarks) && !global_bookmarks.empty())
-	{
-		pMenu->AppendSeparator();
-
-		for (std::list<wxString>::const_iterator iter = global_bookmarks.begin(); iter != global_bookmarks.end(); iter++)
-		{
-			int id;
-			if (ids == m_bookmark_menu_ids.end())
-			{
-				id = wxNewId();
-				m_bookmark_menu_ids.push_back(id);
-			}
-			else
-			{
-				id = *ids;
-				ids++;
-			}
-			pMenu->Append(id, *iter);
-
-			m_bookmark_menu_id_map_global[id] = *iter;
-		}
-	}
-
-	// Insert site-specific bookmarks
-	CContextControl::_context_controls* controls = m_pContextControl ? m_pContextControl->GetCurrentControls() : 0;
-	if (!controls)
-		return;
-
-	if (!controls->site_bookmarks || controls->site_bookmarks->bookmarks.empty())
-		return;
-
-	pMenu->AppendSeparator();
-
-	for (std::list<wxString>::const_iterator iter = controls->site_bookmarks->bookmarks.begin(); iter != controls->site_bookmarks->bookmarks.end(); iter++)
-	{
-		int id;
-		if (ids == m_bookmark_menu_ids.end())
-		{
-			id = wxNewId();
-			m_bookmark_menu_ids.push_back(id);
-		}
-		else
-		{
-			id = *ids;
-			ids++;
-		}
-		pMenu->Append(id, *iter);
-
-		m_bookmark_menu_id_map_site[id] = *iter;
-	}
-}
-
-void CMainFrame::ClearBookmarks()
-{
-	CContextControl::_context_controls* controls = m_pContextControl ? m_pContextControl->GetCurrentControls() : 0;
-	if (!controls)
-		controls->site_bookmarks = new CContextControl::_context_controls::_site_bookmarks;
-	UpdateBookmarkMenu();
-}
-
 void CMainFrame::OnSyncBrowse(wxCommandEvent& event)
 {
 	CState* pState = CContextManager::Get()->GetCurrentContext();
@@ -3004,9 +2607,6 @@ void CMainFrame::OnSyncBrowse(wxCommandEvent& event)
 		return;
 
 	pState->SetSyncBrowse(!pState->GetSyncBrowse());
-
-	if (m_pToolBar)
-		m_pToolBar->ToggleTool(XRCID("ID_TOOLBAR_SYNCHRONIZED_BROWSING"), pState->GetSyncBrowse());
 }
 
 #ifndef __WXMAC__
@@ -3154,7 +2754,7 @@ void CMainFrame::SetBookmarksFromPath(const wxString& path)
 	}
 }
 
-bool CMainFrame::Connect(const CServer &server, const CServerPath &path /*=CServerPath()*/)
+bool CMainFrame::ConnectToServer(const CServer &server, const CServerPath &path /*=CServerPath()*/)
 {
 	CState* pState = CContextManager::Get()->GetCurrentContext();
 	if (!pState)

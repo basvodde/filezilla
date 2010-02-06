@@ -167,7 +167,10 @@ void CToolBar::OnOptionChanged(int option)
 		if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
 			HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
 		else
+		{
 			ShowTool(XRCID("ID_TOOLBAR_LOGVIEW"));
+			ToggleTool(XRCID("ID_TOOLBAR_LOGVIEW"), COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG) != 0);
+		}
 		break;
 	default:
 		break;
@@ -220,7 +223,7 @@ bool CToolBar::ShowTool(int id)
 bool CToolBar::HideTool(int id)
 {
 	int pos = GetToolPos(id);
-	if (id == -1)
+	if (pos == -1)
 		return false;
 
 	wxToolBarToolBase* tool = RemoveTool(id);

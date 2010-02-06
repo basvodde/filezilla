@@ -1078,7 +1078,10 @@ bool CState::SetSyncBrowse(bool enable, const CServerPath& assumed_remote_root /
 	}
 
 	if (!m_pDirectoryListing && assumed_remote_root.IsEmpty())
+	{
+		NotifyHandlers(STATECHANGE_SYNC_BROWSE);
 		return false;
+	}
 
 	m_sync_browse.is_changing = false;
 	m_sync_browse.local_root = m_localDir;

@@ -49,6 +49,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		loginmanager.cpp \
 		Mainfrm.cpp \
 		manual_transfer.cpp \
+		menu_bar.cpp \
 		netconfwizard.cpp \
 		option_change_event_handler.cpp \
 		Options.cpp \
@@ -152,6 +153,7 @@ noinst_HEADERS = aboutdialog.h \
 		 loginmanager.h \
 		 Mainfrm.h \
 		 manual_transfer.h \
+		 menu_bar.h \
 		 netconfwizard.h \
 		 option_change_event_handler.h \
 		 Options.h \
