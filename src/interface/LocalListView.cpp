@@ -1,6 +1,7 @@
+#include <filezilla.h>
+
 #define FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION
 
-#include <filezilla.h>
 #include "LocalListView.h"
 #include "queue.h"
 #include "filezillaapp.h"

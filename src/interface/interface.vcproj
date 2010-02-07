@@ -56,9 +56,9 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="true"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough="FileZilla.h"
-				PrecompiledHeaderFile=".\Debug Unicode/FileZilla.pch"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="filezilla.h"
+				PrecompiledHeaderFile=".\Debug Unicode/filezilla.pch"
 				AssemblerListingLocation=".\Debug Unicode/"
 				ObjectFile=".\Debug Unicode/"
 				ProgramDataBaseFileName=".\Debug Unicode/"
@@ -314,10 +314,26 @@
 			<File
 				RelativePath=".\filelistctrl.cpp"
 				>
+				<FileConfiguration
+					Name="Debug Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="FileZilla.cpp"
 				>
+				<FileConfiguration
+					Name="Debug Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\filter.cpp"

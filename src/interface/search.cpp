@@ -1,6 +1,7 @@
+#include <filezilla.h>
+
 #define FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION
 
-#include <filezilla.h>
 #include "search.h"
 #include "commandqueue.h"
 #include "filelistctrl.h"

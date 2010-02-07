@@ -1,4 +1,7 @@
 #include <filezilla.h>
+#ifdef _MSC_VER
+#pragma hdrstop
+#endif
 #include "filezillaapp.h"
 #include "Mainfrm.h"
 #include "Options.h"
