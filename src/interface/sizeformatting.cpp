@@ -152,8 +152,6 @@ wxString CSizeFormat::Format(const wxLongLong& size, bool add_bytes_suffix /*=fa
 
 wxString CSizeFormat::FormatUnit(const wxLongLong& size, CSizeFormat::_unit unit, int base /*=1024*/)
 {
-	const bool thousands_separator = COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0;
-
 	_format format = _format(COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT));
 	if (base == 1000)
 		format = si1000;
