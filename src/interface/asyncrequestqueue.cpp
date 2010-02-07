@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 
 #include "asyncrequestqueue.h"
 #include "defaultfileexistsdlg.h"

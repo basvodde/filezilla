@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 
 #include "backend.h"
 #include "socket.h"

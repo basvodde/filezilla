@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "filter.h"
 #include "filteredit.h"
 #include "ipcmutex.h"

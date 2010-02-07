@@ -1,6 +1,6 @@
 #ifndef FILELISTCTRL_INCLUDE_TEMPLATE_DEFINITION
 // This works around a bug in GCC, appears to be [Bug pch/12707]
-#include "filezilla.h"
+#include <filezilla.h>
 #endif
 #include "filelistctrl.h"
 #include "filezillaapp.h"

@@ -55,7 +55,7 @@ noinst_HEADERS = backend.h \
 
 dist_noinst_DATA = engine.vcproj
 
-CLEANFILES = $(srcdir)/filezilla.h.gch
+CLEANFILES = filezilla.h.gch
 
 if ENABLE_PRECOMP
 
@@ -64,7 +64,7 @@ BUILT_SOURCES = filezilla.h.gch
 include ./$(DEPDIR)/filezilla.Po
 
 filezilla.h.gch: filezilla.h
-	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libengine_a_CPPFLAGS) $(CPPFLAGS) $(libengine_a_CXXFLAGS) $(CXXFLAGS) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o "$(srcdir)/$@" $<; \
+	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libengine_a_CPPFLAGS) $(CPPFLAGS) $(libengine_a_CXXFLAGS) $(CXXFLAGS) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
 	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
 
 endif

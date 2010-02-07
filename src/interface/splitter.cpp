@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "splitter.h"
 
 IMPLEMENT_CLASS(CSplitterWindowEx, wxSplitterWindow);

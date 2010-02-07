@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "local_path.h"
 #ifndef __WXMSW__
 #include <errno.h>

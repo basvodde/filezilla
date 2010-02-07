@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "welcome_dialog.h"
 #include "buildinfo.h"
 #include <wx/hyperlink.h>

@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 
 struct t_protocolInfo
 {

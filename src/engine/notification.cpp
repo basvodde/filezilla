@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 
 const wxEventType fzEVT_NOTIFICATION = wxNewEventType();
 

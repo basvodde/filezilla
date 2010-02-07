@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "externalipresolver.h"
 #include "wx/regex.h"
 #include "socket.h"

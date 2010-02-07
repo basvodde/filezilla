@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "themeprovider.h"
 #include "filezillaapp.h"
 #include "Options.h"

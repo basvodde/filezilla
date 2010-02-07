@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 
 #include "aboutdialog.h"
 #include "buildinfo.h"

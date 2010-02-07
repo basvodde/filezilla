@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "cmdline.h"
 
 CCommandLine::CCommandLine(int argc, wxChar** argv)

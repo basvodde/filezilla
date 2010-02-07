@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "LocalTreeView.h"
 #include "LocalListView.h"
 #include "RemoteTreeView.h"

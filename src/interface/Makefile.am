@@ -268,7 +268,7 @@ $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	$(MAKE) -C resources mac-copy-resources
 	cp -f filezilla $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla
 
-CLEANFILES = $(srcdir)/filezilla.h.gch
+CLEANFILES = filezilla.h.gch
 
 if ENABLE_PRECOMP
 
@@ -277,7 +277,7 @@ BUILT_SOURCES = filezilla.h.gch
 include ./$(DEPDIR)/filezilla.Po
 
 filezilla.h.gch: filezilla.h
-	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(filezilla_CPPFLAGS) $(CPPFLAGS) $(filezilla_CXXFLAGS) $(CXXFLAGS) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o "$(srcdir)/$@" $<; \
+	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(filezilla_CPPFLAGS) $(CPPFLAGS) $(filezilla_CXXFLAGS) $(CXXFLAGS) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o "$@" $<; \
 	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
 
 endif

@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "listingcomparison.h"
 #include "filter.h"
 #include "Options.h"

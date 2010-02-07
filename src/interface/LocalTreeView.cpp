@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "LocalTreeView.h"
 #include "queue.h"
 #include "filezillaapp.h"

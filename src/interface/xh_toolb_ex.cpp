@@ -1,6 +1,6 @@
 // Based upon src/xrc/xh_toolb.cpp from wxWidgets
 
-#include "filezilla.h"
+#include <filezilla.h>
 #include "xh_toolb_ex.h"
 
 wxSize wxToolBarXmlHandlerEx::m_iconSize(-1, -1);

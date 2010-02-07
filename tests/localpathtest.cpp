@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include <filezilla.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include "local_path.h"
 

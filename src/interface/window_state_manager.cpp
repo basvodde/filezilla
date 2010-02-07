@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "window_state_manager.h"
 #include "Options.h"
 #if wxUSE_DISPLAY

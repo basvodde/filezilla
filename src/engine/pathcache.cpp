@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "pathcache.h"
 
 CPathCache::tCache CPathCache::m_cache;

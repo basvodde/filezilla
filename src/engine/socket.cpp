@@ -12,7 +12,7 @@
   #include <winsock2.h>
   #include <ws2tcpip.h>
 #endif
-#include "filezilla.h"
+#include <filezilla.h>
 #include "socket.h"
 #include "threadex.h"
 #include <errno.h>

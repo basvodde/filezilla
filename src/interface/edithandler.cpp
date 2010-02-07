@@ -1,4 +1,4 @@
-#include "filezilla.h"
+#include <filezilla.h>
 #include "edithandler.h"
 #include "dialogex.h"
 #include "filezillaapp.h"
