@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "volume_enumerator.h"
 
 #ifdef __WXMSW__

@@ -318,6 +318,7 @@ if test "$buildmain" = "yes"; then
     fi
   fi
   if test "x$use_precomp" = "xyes"; then
+    CPPFLAGS="$CPPFLAGS -fpch-preprocess"
     AC_MSG_RESULT([yes])
   else
     AC_MSG_RESULT([no])

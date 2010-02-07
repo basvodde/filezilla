@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "inputdialog.h"
 
 BEGIN_EVENT_TABLE(CInputDialog, wxDialogEx)

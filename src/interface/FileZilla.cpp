@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "filezillaapp.h"
 #include "Mainfrm.h"
 #include "Options.h"

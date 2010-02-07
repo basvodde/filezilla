@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "dragdropmanager.h"
 
 CDragDropManager* CDragDropManager::m_pDragDropManager = 0;

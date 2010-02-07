@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "ControlSocket.h"
 #include "ftpcontrolsocket.h"
 #include "sftpcontrolsocket.h"

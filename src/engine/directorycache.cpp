@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "directorycache.h"
 
 int CDirectoryCache::m_nRefCount = 0;

@@ -1,4 +1,5 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
 #include "backend.h"
 #include "socket.h"
 #include <errno.h>

@@ -1,5 +1,9 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
 #include "local_filesys.h"
+
+#include <wx/dir.h>
+#include <wx/msgdlg.h>
 
 #ifdef __WXMSW__
 const wxChar CLocalFileSystem::path_separator = '\\';

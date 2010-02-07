@@ -1,6 +1,10 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
 #include "aboutdialog.h"
 #include "buildinfo.h"
+
+#include <misc.h>
+
 #include <wx/hyperlink.h>
 #include <wx/clipbrd.h>
 

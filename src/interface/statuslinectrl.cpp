@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "queue.h"
 #include "statuslinectrl.h"
 #include <wx/dcbuffer.h>

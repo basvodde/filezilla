@@ -1,10 +1,13 @@
 #ifndef __QUEUEVIEW_H__
 #define __QUEUEVIEW_H__
 
-#include <set>
 #include "dndobjects.h"
-#include <wx/progdlg.h>
 #include "queue.h"
+
+#include <libfilezilla.h>
+
+#include <set>
+#include <wx/progdlg.h>
 
 class CFolderProcessingEntry
 {

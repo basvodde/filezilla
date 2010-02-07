@@ -1,5 +1,8 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
 #include "logging_private.h"
+
+#include <wx/log.h>
 
 #include <errno.h>
 

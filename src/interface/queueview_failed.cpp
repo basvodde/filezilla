@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "queue.h"
 #include "queueview_failed.h"
 #include "edithandler.h"

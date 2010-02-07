@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "auto_ascii_files.h"
 #include "Options.h"
 #include "local_filesys.h"

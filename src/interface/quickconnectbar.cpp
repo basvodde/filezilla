@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "quickconnectbar.h"
 #include "recentserverlist.h"
 #include "commandqueue.h"

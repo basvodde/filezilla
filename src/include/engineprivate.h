@@ -1,6 +1,8 @@
 #ifndef __FILEZILLAENGINEPRIVATE_H__
 #define __FILEZILLAENGINEPRIVATE_H__
 
+#include "timeex.h"
+
 enum EngineNotificationType
 {
 	engineCancel,

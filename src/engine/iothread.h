@@ -1,6 +1,8 @@
 #ifndef __IOTHREAD_H__
 #define __IOTHREAD_H__
 
+#include <wx/file.h>
+
 #define BUFFERCOUNT 3
 #define BUFFERSIZE 65536
 

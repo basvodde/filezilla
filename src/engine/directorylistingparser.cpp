@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "directorylistingparser.h"
 #include "ControlSocket.h"
 

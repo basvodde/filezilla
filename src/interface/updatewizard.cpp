@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 
 #if FZ_MANUALUPDATECHECK
 
@@ -12,6 +12,8 @@
 #include <wx/dynlib.h> // Used by GetDownloadDir
 #endif //__WXMSW__
 #include "dialogex.h"
+
+#include <wx/gauge.h>
 
 // This is ugly but does the job
 #define SHA512_STANDALONE

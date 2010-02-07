@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "import.h"
 #include "xmlfunctions.h"
 #include "ipcmutex.h"

@@ -1,11 +1,13 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "wrapengine.h"
-#include <wx/wizard.h>
 #include "filezillaapp.h"
 #include "ipcmutex.h"
 #include "xmlfunctions.h"
 #include "buildinfo.h"
 #include "Options.h"
+
+#include <wx/statbox.h>
+#include <wx/wizard.h>
 
 bool CWrapEngine::m_use_cache = true;
 

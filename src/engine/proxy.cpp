@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "proxy.h"
 #include <errno.h>
 #include "ControlSocket.h"

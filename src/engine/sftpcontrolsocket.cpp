@@ -1,14 +1,18 @@
-#include "FileZilla.h"
-#include "sftpcontrolsocket.h"
-#include <wx/process.h>
-#include <wx/txtstrm.h>
+#include "filezilla.h"
+
 #include "directorycache.h"
 #include "directorylistingparser.h"
 #include "pathcache.h"
-#include "servercapabilities.h"
-#include <wx/tokenzr.h>
 #include "local_filesys.h"
 #include "proxy.h"
+#include "servercapabilities.h"
+#include "sftpcontrolsocket.h"
+#include "threadex.h"
+
+#include <wx/filename.h>
+#include <wx/process.h>
+#include <wx/tokenzr.h>
+#include <wx/txtstrm.h>
 
 class CSftpFileTransferOpData : public CFileTransferOpData
 {

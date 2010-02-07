@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "state.h"
 #include "commandqueue.h"
 #include "FileZillaEngine.h"

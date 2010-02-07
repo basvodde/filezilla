@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "StatusView.h"
 #include <wx/wupdlock.h>
 #include "Options.h"

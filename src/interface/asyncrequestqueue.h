@@ -1,10 +1,10 @@
 #ifndef __ASYNCREQUESTQUEUE_H__
-
 #define __ASYNCREQUESTQUEUE_H__
 
 class CMainFrame;
 class CQueueView;
 class CVerifyCertDialog;
+
 class CAsyncRequestQueue : public wxEvtHandler
 {
 public:

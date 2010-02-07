@@ -6,6 +6,8 @@
  * an extended time class in wich Now() never returns the same value.
  */
 
+#include <wx/timer.h>
+
 class CTimeEx
 {
 public:

@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "systemimagelist.h"
 #ifdef __WXMSW__
 #include "shlobj.h"

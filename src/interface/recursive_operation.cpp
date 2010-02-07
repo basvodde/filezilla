@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "recursive_operation.h"
 #include "commandqueue.h"
 #include "chmoddialog.h"

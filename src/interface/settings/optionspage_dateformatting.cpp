@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 
 #include "../Options.h"
 #include "settingsdialog.h"

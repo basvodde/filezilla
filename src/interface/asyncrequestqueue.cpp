@@ -1,13 +1,14 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
 #include "asyncrequestqueue.h"
-#include "fileexistsdlg.h"
-#include "Mainfrm.h"
 #include "defaultfileexistsdlg.h"
+#include "fileexistsdlg.h"
+#include "loginmanager.h"
+#include "Mainfrm.h"
 #include "Options.h"
 #include "queue.h"
 #include "verifycertdialog.h"
 #include "verifyhostkeydialog.h"
-#include "loginmanager.h"
 
 DECLARE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE, -1)
 DEFINE_EVENT_TYPE(fzEVT_PROCESSASYNCREQUESTQUEUE)

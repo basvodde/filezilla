@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "conditionaldialog.h"
 #include "filezillaapp.h"
 #include "wrapengine.h"

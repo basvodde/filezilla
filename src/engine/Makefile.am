@@ -8,13 +8,17 @@ libengine_a_CPPFLAGS = $(LIBGNUTLS_CFLAGS) $(WX_CPPFLAGS)
 libengine_a_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 libengine_a_CFLAGS = $(WX_CFLAGS_ONLY)
 
-
 libengine_a_SOURCES = \
 		backend.cpp \
-		commands.cpp ControlSocket.cpp \
-		directorycache.cpp directorylisting.cpp directorylistingparser.cpp \
-		engineprivate.cpp externalipresolver.cpp \
-		FileZillaEngine.cpp ftpcontrolsocket.cpp \
+		commands.cpp \
+		ControlSocket.cpp \
+		directorycache.cpp \
+		directorylisting.cpp \
+		directorylistingparser.cpp \
+		engineprivate.cpp \
+		externalipresolver.cpp \
+		FileZillaEngine.cpp \
+		ftpcontrolsocket.cpp \
 		httpcontrolsocket.cpp \
 		iothread.cpp \
 		local_filesys.cpp \
@@ -29,7 +33,9 @@ libengine_a_SOURCES = \
 		sftpcontrolsocket.cpp \
 		socket.cpp \
 		tlssocket.cpp \
-		threadex.cpp timeex.cpp transfersocket.cpp
+		threadex.cpp \
+		timeex.cpp \
+		transfersocket.cpp
 
 noinst_HEADERS = backend.h \
 		ControlSocket.h directorycache.h \
@@ -45,3 +51,18 @@ noinst_HEADERS = backend.h \
 		transfersocket.h
 
 dist_noinst_DATA = engine.vcproj
+
+CLEANFILES = $(srcdir)/filezilla.h.gch
+
+if ENABLE_PRECOMP
+
+BUILT_SOURCES = filezilla.h.gch
+
+include ./$(DEPDIR)/filezilla.Po
+
+filezilla.h.gch: filezilla.h
+	if $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libengine_a_CPPFLAGS) $(CPPFLAGS) $(libengine_a_CXXFLAGS) $(CXXFLAGS) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o "$(srcdir)/$@" $<; \
+	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Po"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
+
+endif
+

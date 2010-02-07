@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "ratelimiter.h"
 
 static const int tickDelay = 250;

@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "listctrlex.h"
 #include <wx/renderer.h>
 #include <wx/tokenzr.h>

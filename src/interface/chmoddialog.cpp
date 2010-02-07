@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "chmoddialog.h"
 
 BEGIN_EVENT_TABLE(CChmodDialog, wxDialogEx)

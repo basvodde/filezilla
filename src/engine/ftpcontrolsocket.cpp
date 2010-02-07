@@ -1,19 +1,24 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
+#include "directorycache.h"
+#include "directorylistingparser.h"
+#include "externalipresolver.h"
 #include "ftpcontrolsocket.h"
 #include "transfersocket.h"
-#include "directorylistingparser.h"
-#include "directorycache.h"
 #include "iothread.h"
-#include <wx/regex.h>
-#include "externalipresolver.h"
 #include "servercapabilities.h"
 #include "tlssocket.h"
 #include "pathcache.h"
-#include <algorithm>
-#include <wx/tokenzr.h>
 #include "local_filesys.h"
-#include <errno.h>
 #include "proxy.h"
+
+#include <wx/filename.h>
+#include <wx/log.h>
+#include <wx/regex.h>
+#include <wx/tokenzr.h>
+
+#include <algorithm>
+#include <errno.h>
 
 #define LOGON_WELCOME	0
 #define LOGON_AUTH_TLS	1

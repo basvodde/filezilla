@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "context_control.h"
 #include "bookmarks_dialog.h"
 #include "filter.h"

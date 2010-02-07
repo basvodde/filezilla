@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "RemoteTreeView.h"
 #include "commandqueue.h"
 #include <wx/dnd.h>

@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "bookmarks_dialog.h"
 #include "sitemanager.h"
 #include "ipcmutex.h"

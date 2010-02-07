@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "buildinfo.h"
 
 wxString CBuildInfo::GetVersion()

@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "dialogex.h"
 
 BEGIN_EVENT_TABLE(wxDialogEx, wxDialog)

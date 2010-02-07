@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 
 struct t_protocolInfo
 {

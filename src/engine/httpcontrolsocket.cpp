@@ -1,8 +1,12 @@
-#include "FileZilla.h"
+#include "filezilla.h"
+
 #include "ControlSocket.h"
 #include "httpcontrolsocket.h"
-#include <errno.h>
 #include "tlssocket.h"
+
+#include <wx/file.h>
+
+#include <errno.h>
 
 #define FZ_REPLY_REDIRECTED FZ_REPLY_ALREADYCONNECTED
 

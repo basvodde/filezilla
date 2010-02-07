@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "speedlimits_dialog.h"
 #include "Options.h"
 

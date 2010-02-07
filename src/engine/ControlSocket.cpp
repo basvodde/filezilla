@@ -1,16 +1,21 @@
-#include "FileZilla.h"
-#include "logging_private.h"
+#include "filezilla.h"
 #include "ControlSocket.h"
+#include "directorycache.h"
+#include "local_filesys.h"
+#include "local_path.h"
+#include "logging_private.h"
+#include "proxy.h"
+#include "servercapabilities.h"
+
+#include <wx/file.h>
+#include <wx/filename.h>
+
 #include <idna.h>
 extern "C" {
 #include <idn-free.h>
 }
-#include "directorycache.h"
-#include "servercapabilities.h"
-#include "local_filesys.h"
-#include "local_path.h"
+
 #include <errno.h>
-#include "proxy.h"
 
 DECLARE_EVENT_TYPE(fzOBTAINLOCK, -1)
 DEFINE_EVENT_TYPE(fzOBTAINLOCK)

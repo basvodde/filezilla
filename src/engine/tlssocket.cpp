@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "tlssocket.h"
 #include "ControlSocket.h"
 

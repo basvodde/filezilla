@@ -1,10 +1,12 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "viewheader.h"
 #include "commandqueue.h"
 
 #ifdef __WXMSW__
 #include "wx/msw/uxtheme.h"
 #endif //__WXMSW__
+
+#include <wx/combobox.h>
 
 #ifdef __WXMSW__
 const int border_offset = 0;

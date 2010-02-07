@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "filelist_statusbar.h"
 #include "sizeformatting.h"
 

@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "filter_conditions_dialog.h"
 #include "customheightlistctrl.h"
 
