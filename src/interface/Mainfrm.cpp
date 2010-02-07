@@ -2565,7 +2565,7 @@ WXLRESULT CMainFrame::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lPara
 	if (nMsg == WM_DEVICECHANGE)
 	{
 		// Let tree control handle device change message
-		// They get sent by Window on adding or removing drive
+		// They get sent by Windows on adding or removing drive
 		// letters
 
 		if (!m_pContextControl)
