@@ -138,6 +138,7 @@ noinst_HEADERS = aboutdialog.h \
 		 fileexistsdlg.h \
 		 filelistctrl.h \
 		 filelist_statusbar.h \
+		 filezilla.h \
 		 filezillaapp.h \
 		 filter.h \
 		 filter_conditions_dialog.h \

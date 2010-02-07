@@ -38,8 +38,11 @@ libengine_a_SOURCES = \
 		transfersocket.cpp
 
 noinst_HEADERS = backend.h \
-		ControlSocket.h directorycache.h \
-		directorylistingparser.h ftpcontrolsocket.h \
+		ControlSocket.h \
+		directorycache.h \
+		directorylistingparser.h \
+		filezilla.h \
+		ftpcontrolsocket.h \
 		httpcontrolsocket.h iothread.h \
 		logging_private.h \
 		pathcache.h \

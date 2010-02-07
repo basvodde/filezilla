@@ -1,4 +1,4 @@
-#include "FileZilla.h"
+#include "filezilla.h"
 #include "sizeformatting.h"
 #include "Options.h"
 #ifndef __WXMSW__
