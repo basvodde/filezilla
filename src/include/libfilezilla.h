@@ -14,6 +14,10 @@
 // Include after defs.h so that __WXFOO__ is properly defined
 #include "setup.h"
 
+#ifdef __WXMSW__
+#include <windows.h>
+#endif
+
 #include <wx/datetime.h>
 #include <wx/event.h>
 #include <wx/string.h>

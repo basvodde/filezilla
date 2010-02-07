@@ -43,14 +43,14 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../include/"
+				AdditionalIncludeDirectories=".;../include/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;ENGINE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				BufferSecurityCheck="true"
-				UsePrecompiledHeader="0"
-				PrecompiledHeaderThrough="FileZilla.h"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="filezilla.h"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
@@ -113,11 +113,13 @@
 				Optimization="2"
 				InlineFunctionExpansion="0"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../include/"
+				AdditionalIncludeDirectories=".;../include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="filezilla.h"
+				PrecompiledHeaderFile="$(IntDir)\filezilla.pch"
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="0"
@@ -195,6 +197,22 @@
 			<File
 				RelativePath=".\FileZillaEngine.cpp"
 				>
+				<FileConfiguration
+					Name="Debug Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ftpcontrolsocket.cpp"
@@ -259,10 +277,42 @@
 			<File
 				RelativePath=".\socket.cpp"
 				>
+				<FileConfiguration
+					Name="Debug Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\threadex.cpp"
 				>
+				<FileConfiguration
+					Name="Debug Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="0"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\timeex.cpp"
@@ -323,7 +373,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\FileZilla.h"
+				RelativePath=".\filezilla.h"
 				>
 			</File>
 			<File
@@ -340,6 +390,10 @@
 			</File>
 			<File
 				RelativePath=".\iothread.h"
+				>
+			</File>
+			<File
+				RelativePath="..\include\libfilezilla.h"
 				>
 			</File>
 			<File

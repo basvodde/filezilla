@@ -1,6 +1,8 @@
 #ifndef __VOLUME_ENUMERATOR_H__
 #define __VOLUME_ENUMERATOR_H__
 
+#include <threadex.h>
+
 // Class to enumerate volume labels of volumes assigned
 // a drive letter under MSW.
 // Also gets the full UNC path for drive-mapped network

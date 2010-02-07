@@ -1,4 +1,5 @@
 #include <filezilla.h>
+
 #include "LocalTreeView.h"
 #include "LocalListView.h"
 #include "RemoteTreeView.h"
@@ -41,9 +42,6 @@
 #include "auto_ascii_files.h"
 #include "splitter.h"
 #include "bookmarks_dialog.h"
-#ifndef __WXMAC__
-#include <wx/taskbar.h>
-#endif
 #include "search.h"
 #include "power_management.h"
 #include "welcome_dialog.h"
@@ -51,6 +49,13 @@
 #include "speedlimits_dialog.h"
 #include "toolbar.h"
 #include "menu_bar.h"
+
+#ifdef __WXMSW__
+#include <wx/module.h>
+#endif
+#ifndef __WXMAC__
+#include <wx/taskbar.h>
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

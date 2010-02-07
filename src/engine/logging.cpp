@@ -2,6 +2,9 @@
 
 #include "logging_private.h"
 
+#ifdef __WXMSW__
+#include <wx/filename.h>
+#endif
 #include <wx/log.h>
 
 #include <errno.h>

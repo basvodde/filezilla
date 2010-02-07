@@ -1,9 +1,12 @@
 #include <filezilla.h>
+
 #include "../Options.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_themes.h"
 #include "../themeprovider.h"
+
+#include <wx/scrolwin.h>
 
 BEGIN_EVENT_TABLE(COptionsPageThemes, COptionsPage)
 EVT_CHOICE(XRCID("ID_THEME"), COptionsPageThemes::OnThemeChange)
