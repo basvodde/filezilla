@@ -215,7 +215,7 @@ EVT_COMMAND(-1, fzEVT_VOLUMEENUMERATED, CLocalTreeView::OnVolumesEnumerated)
 #endif //__WXMSW__
 EVT_TREE_ITEM_MENU(wxID_ANY, CLocalTreeView::OnContextMenu)
 EVT_MENU(XRCID("ID_UPLOAD"), CLocalTreeView::OnMenuUpload)
-EVT_MENU(XRCID("ID_ADDTO	QUEUE"), CLocalTreeView::OnMenuUpload)
+EVT_MENU(XRCID("ID_ADDTOQUEUE"), CLocalTreeView::OnMenuUpload)
 EVT_MENU(XRCID("ID_DELETE"), CLocalTreeView::OnMenuDelete)
 EVT_MENU(XRCID("ID_RENAME"), CLocalTreeView::OnMenuRename)
 EVT_MENU(XRCID("ID_MKDIR"), CLocalTreeView::OnMenuMkdir)
