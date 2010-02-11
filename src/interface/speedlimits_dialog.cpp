@@ -13,27 +13,33 @@ void CSpeedLimitsDialog::Run(wxWindow* parent)
 	if (!Load(parent, _T("ID_SPEEDLIMITS")))
 		return;
 
+	int downloadlimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);
+	int uploadlimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_OUTBOUND);
 	bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
+	if (!downloadlimit && !uploadlimit)
+		enable = false;
 
 	XRCCTRL(*this, "ID_ENABLE_SPEEDLIMITS", wxCheckBox)->SetValue(enable);
 
 	wxTextCtrl* pCtrl = XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl);
 	pCtrl->Enable(enable);
 	pCtrl->SetMaxLength(9);
-	pCtrl->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_INBOUND));
+	pCtrl->ChangeValue(wxString::Format(_T("%d"), downloadlimit));
 
 	pCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
 	pCtrl->Enable(enable);
 	pCtrl->SetMaxLength(9);
-	pCtrl->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_OUTBOUND));
+	pCtrl->ChangeValue(wxString::Format(_T("%d"), uploadlimit));
+
+	const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
 
 	wxStaticText* pUnit = XRCCTRL(*this, "ID_DOWNLOADLIMIT_UNIT", wxStaticText);
 	if (pUnit)
-		pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024).c_str()));
+		pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), unit.c_str()));
 
 	pUnit = XRCCTRL(*this, "ID_UPLOADLIMIT_UNIT", wxStaticText);
 	if (pUnit)
-		pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024).c_str()));
+		pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), unit.c_str()));
 
 	ShowModal();
 }
@@ -44,21 +50,24 @@ void CSpeedLimitsDialog::OnOK(wxCommandEvent& event)
 	wxTextCtrl* pCtrl = XRCCTRL(*this, "ID_DOWNLOADLIMIT", wxTextCtrl);
 	if (!pCtrl->GetValue().ToLong(&download) || (download < 0))
 	{
-		wxMessageBox(_("Please enter a download speedlimit greater or equal to 0 KB/s."), _("Speed Limits"), wxOK, this);
+		const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
+		wxMessageBox(wxString::Format(_("Please enter a download speedlimit greater or equal to 0 %s/s."), unit.c_str()), _("Speed Limits"), wxOK, this);
 		return;
 	}
 
 	pCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
 	if (!pCtrl->GetValue().ToLong(&upload) || (upload < 0))
 	{
-		wxMessageBox(_("Please enter a upload speedlimit greater or equal to 0 KB/s."), _("Speed Limits"), wxOK, this);
+		const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
+		wxMessageBox(wxString::Format(_("Please enter a upload speedlimit greater or equal to 0 %s/s."), unit.c_str()), _("Speed Limits"), wxOK, this);
 		return;
 	}
 
 	COptions::Get()->SetOption(OPTION_SPEEDLIMIT_INBOUND, download);
 	COptions::Get()->SetOption(OPTION_SPEEDLIMIT_OUTBOUND, upload);
 
-	COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, XRCCTRL(*this, "ID_ENABLE_SPEEDLIMITS", wxCheckBox)->GetValue() ? 1 : 0);
+	bool enable = XRCCTRL(*this, "ID_ENABLE_SPEEDLIMITS", wxCheckBox)->GetValue() ? 1 : 0;
+	COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, enable && (download || upload));
 
 	EndDialog(wxID_OK);
 }

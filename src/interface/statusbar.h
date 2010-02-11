@@ -115,6 +115,10 @@ protected:
 	wxStaticBitmap* m_pDataTypeIndicator;
 	wxStaticBitmap* m_pEncryptionIndicator;
 	wxStaticBitmap* m_pSpeedLimitsIndicator;
+
+	DECLARE_EVENT_TABLE();
+	void OnSpeedLimitsEnable(wxCommandEvent& event);
+	void OnSpeedLimitsConfigure(wxCommandEvent& event);
 };
 
 #endif //__STATUSBAR_H__

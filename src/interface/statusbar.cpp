@@ -316,6 +316,11 @@ EVT_LEFT_UP(CIndicator::OnLeftMouseUp)
 EVT_RIGHT_UP(CIndicator::OnRightMouseUp)
 END_EVENT_TABLE()
 
+BEGIN_EVENT_TABLE(CStatusBar, CWidgetsStatusBar)
+EVT_MENU(XRCID("ID_SPEEDLIMITCONTEXT_ENABLE"), CStatusBar::OnSpeedLimitsEnable)
+EVT_MENU(XRCID("ID_SPEEDLIMITCONTEXT_CONFIGURE"), CStatusBar::OnSpeedLimitsConfigure)
+END_EVENT_TABLE()
+
 CStatusBar::CStatusBar(wxTopLevelWindow* pParent)
 	: CWidgetsStatusBar(pParent), CStateEventHandler(0)
 {
@@ -516,7 +521,6 @@ void CStatusBar::OnHandleLeftClick(wxWindow* pWnd)
 	{
 		CSpeedLimitsDialog dlg;
 		dlg.Run(m_pParent);
-		UpdateSpeedLimitsIcon();
 	}
 }
 
@@ -547,9 +551,19 @@ void CStatusBar::OnHandleRightClick(wxWindow* pWnd)
 	}
 	else if (pWnd == m_pSpeedLimitsIndicator)
 	{
-		CSpeedLimitsDialog dlg;
-		dlg.Run(m_pParent);
-		UpdateSpeedLimitsIcon();
+		wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_SPEEDLIMITCONTEXT"));
+		if (!pMenu)
+			return;
+
+		int downloadlimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);
+		int uploadlimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_OUTBOUND);
+		bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
+		if (!downloadlimit && !uploadlimit)
+			enable = false;
+		pMenu->Check(XRCID("ID_SPEEDLIMITCONTEXT_ENABLE"), enable);
+
+		PopupMenu(pMenu);
+		delete pMenu;
 	}
 }
 
@@ -625,4 +639,29 @@ void CStatusBar::OnStateChange(CState* pState, enum t_statechange_notifications 
 		DisplayDataType();
 		DisplayEncrypted();
 	}
+}
+
+void CStatusBar::OnSpeedLimitsEnable(wxCommandEvent& event)
+{
+	int downloadlimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);
+	int uploadlimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_OUTBOUND);
+	bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) == 0;
+	if (enable)
+	{
+		if (!downloadlimit && !uploadlimit)
+		{
+			CSpeedLimitsDialog dlg;
+			dlg.Run(m_pParent);
+		}
+		else
+			COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, 1);
+	}
+	else
+		COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, 1);
+}
+
+void CStatusBar::OnSpeedLimitsConfigure(wxCommandEvent& event)
+{
+	CSpeedLimitsDialog dlg;
+	dlg.Run(m_pParent);
 }
