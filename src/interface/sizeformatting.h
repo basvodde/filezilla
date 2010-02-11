@@ -29,6 +29,7 @@ public:
 
 	static wxString FormatNumber(const wxLongLong& size, bool* thousands_separator = 0);
 
+	static wxString GetUnitWithBase(_unit unit, int base);
 	static wxString GetUnit(_unit unit, enum _format = formats_count);
 	static wxString FormatUnit(const wxLongLong& size, _unit unit, int base = 1024);
 

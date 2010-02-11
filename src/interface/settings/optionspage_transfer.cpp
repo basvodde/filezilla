@@ -1,5 +1,6 @@
 #include <filezilla.h>
 #include "../Options.h"
+#include "../sizeformatting.h"
 #include "settingsdialog.h"
 #include "optionspage.h"
 #include "optionspage_transfer.h"
@@ -42,6 +43,16 @@ bool COptionsPageTransfer::LoadPage()
 	SetTextFromOption(XRCID("ID_NUMUPLOADS"), OPTION_CONCURRENTUPLOADLIMIT, failure);
 	SetChoice(XRCID("ID_BURSTTOLERANCE"), m_pOptions->GetOptionVal(OPTION_SPEEDLIMIT_BURSTTOLERANCE), failure);
 	XRCCTRL(*this, "ID_BURSTTOLERANCE", wxChoice)->Enable(enable_speedlimits);
+
+	wxStaticText* pUnit = XRCCTRL(*this, "ID_DOWNLOADLIMIT_UNIT", wxStaticText);
+	if (!pUnit)
+		return false;
+	pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024).c_str()));
+
+	pUnit = XRCCTRL(*this, "ID_UPLOADLIMIT_UNIT", wxStaticText);
+	if (!pUnit)
+		return false;
+	pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024).c_str()));
 
 	pTextCtrl = XRCCTRL(*this, "ID_REPLACE", wxTextCtrl);
 	pTextCtrl->SetMaxLength(1);

@@ -1,4 +1,5 @@
 #include <filezilla.h>
+#include "sizeformatting.h"
 #include "speedlimits_dialog.h"
 #include "Options.h"
 
@@ -25,6 +26,14 @@ void CSpeedLimitsDialog::Run(wxWindow* parent)
 	pCtrl->Enable(enable);
 	pCtrl->SetMaxLength(9);
 	pCtrl->ChangeValue(COptions::Get()->GetOption(OPTION_SPEEDLIMIT_OUTBOUND));
+
+	wxStaticText* pUnit = XRCCTRL(*this, "ID_DOWNLOADLIMIT_UNIT", wxStaticText);
+	if (pUnit)
+		pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024).c_str()));
+
+	pUnit = XRCCTRL(*this, "ID_UPLOADLIMIT_UNIT", wxStaticText);
+	if (pUnit)
+		pUnit->SetLabel(wxString::Format(pUnit->GetLabel(), CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024).c_str()));
 
 	ShowModal();
 }

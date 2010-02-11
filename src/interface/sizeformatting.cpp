@@ -160,6 +160,16 @@ wxString CSizeFormat::FormatUnit(const wxLongLong& size, CSizeFormat::_unit unit
 	return wxString::Format(_T("%s %s"), FormatNumber(size).c_str(), GetUnit(unit, format).c_str());
 }
 
+wxString CSizeFormat::GetUnitWithBase(_unit unit, int base)
+{
+	_format format = _format(COptions::Get()->GetOptionVal(OPTION_SIZE_FORMAT));
+	if (base == 1000)
+		format = si1000;
+	else if (format != si1024)
+		format = iec;
+	return GetUnit(unit, format);
+}
+
 wxString CSizeFormat::GetUnit(_unit unit, CSizeFormat::_format format /*=formats_count*/)
 {
 	wxString ret;
