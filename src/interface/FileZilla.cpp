@@ -39,6 +39,7 @@
 #include <wx/xrc/xh_tree.h>
 #include <wx/xrc/xh_hyperlink.h>
 #include "xh_toolb_ex.h"
+#include "xh_menu_ex.h"
 #ifdef __WXMSW__
 #include <wx/socket.h>
 #include <wx/dynlib.h>
@@ -496,7 +497,7 @@ bool CFileZillaApp::LoadResourceFiles()
 #endif
 
 	pResource->AddHandler(new wxMenuXmlHandler);
-	pResource->AddHandler(new wxMenuBarXmlHandler);
+	pResource->AddHandler(new wxMenuBarXmlHandlerEx);
 	pResource->AddHandler(new wxDialogXmlHandler);
 	pResource->AddHandler(new wxPanelXmlHandler);
 	pResource->AddHandler(new wxSizerXmlHandler);
