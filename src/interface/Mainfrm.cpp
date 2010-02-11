@@ -981,19 +981,7 @@ void CMainFrame::OnEngineEvent(wxEvent &event)
 			}
 			break;
 		case nId_transferstatus:
-			{
-				m_pQueueView->ProcessNotification(pNotification);
-				/*
-				CTransferStatusNotification *pTransferStatusNotification = reinterpret_cast<CTransferStatusNotification *>(pNotification);
-				const CTransferStatus *pStatus = pTransferStatusNotification ? pTransferStatusNotification->GetStatus() : 0;
-				if (pStatus && !m_transferStatusTimer.IsRunning())
-					m_transferStatusTimer.Start(100);
-				else if (!pStatus && m_transferStatusTimer.IsRunning())
-					m_transferStatusTimer.Stop();
-
-				SetProgress(pStatus);
-				delete pNotification;*/
-			}
+			m_pQueueView->ProcessNotification(pNotification);
 			break;
 		case nId_sftp_encryption:
 			{
@@ -1315,28 +1303,6 @@ void CMainFrame::OnRefresh(wxCommandEvent &event)
 
 void CMainFrame::OnTimer(wxTimerEvent& event)
 {
-	/*
-	if (m_transferStatusTimer.IsRunning() && event.GetId() == m_transferStatusTimer.GetId())
-	{
-		if (!m_pState->m_pEngine)
-		{
-			m_transferStatusTimer.Stop();
-			return;
-		}
-
-		bool changed;
-		CTransferStatus status;
-		if (!m_pState->m_pEngine->GetTransferStatus(status, changed))
-		{
-			SetProgress(0);
-			m_transferStatusTimer.Stop();
-		}
-		else if (changed)
-			SetProgress(&status);
-		else
-			m_transferStatusTimer.Stop();
-	}
-	else */
 	if (event.GetId() == m_closeEventTimer.GetId())
 	{
 		if (m_closeEvent == 0)
@@ -1348,55 +1314,6 @@ void CMainFrame::OnTimer(wxTimerEvent& event)
 		evt.SetCanVeto(false);
 		AddPendingEvent(evt);
 	}
-}
-
-void CMainFrame::SetProgress(const CTransferStatus *pStatus)
-{
-	return;
-
-	/* TODO: If called during primary transfer, relay to queue, else relay to remote file list statusbar.
-	if (!m_pStatusBar)
-		return;
-
-	if (!pStatus)
-	{
-		m_pStatusBar->SetStatusText(_T(""), 1);
-		m_pStatusBar->SetStatusText(_T(""), 2);
-		m_pStatusBar->SetStatusText(_T(""), 3);
-		return;
-	}
-
-	wxTimeSpan elapsed = wxDateTime::Now().Subtract(pStatus->started);
-	m_pStatusBar->SetStatusText(elapsed.Format(_("%H:%M:%S elapsed")), 1);
-
-	int elapsedSeconds = elapsed.GetSeconds().GetLo(); // Assume GetHi is always 0
-	if (elapsedSeconds)
-	{
-		wxFileOffset rate = (pStatus->currentOffset - pStatus->startOffset) / elapsedSeconds;
-
-        if (rate > (1000*1000))
-			m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (%d.%d MB/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10)), 4);
-		else if (rate > 1000)
-			m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (%d.%d KB/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)(rate / 1000), (int)((rate / 100) % 10)), 4);
-		else
-			m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (%d B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str(), (int)rate), 4);
-
-		if (pStatus->totalSize > 0 && rate > 0)
-		{
-			int left = ((pStatus->totalSize - pStatus->startOffset) / rate) - elapsedSeconds;
-			if (left < 0)
-				left = 0;
-			wxTimeSpan timeLeft(0, 0, left);
-			m_pStatusBar->SetStatusText(timeLeft.Format(_("%H:%M:%S left")), 2);
-		}
-		else
-		{
-			m_pStatusBar->SetStatusText(_("--:--:-- left"), 2);
-		}
-	}
-	else
-		m_pStatusBar->SetStatusText(wxString::Format(_("%s bytes (? B/s)"), wxLongLong(pStatus->currentOffset).ToString().c_str()), 4);
-	*/
 }
 
 void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
