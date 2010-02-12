@@ -48,9 +48,18 @@ typedef struct fz_tagNMLVODSTATECHANGE
 } fzNMLVODSTATECHANGE;
 #pragma pack(pop)
 
+// MinGW lacks these constants and macros
 #ifndef LVN_MARQUEEBEGIN
-// MinGW lacks this constant
 #define LVN_MARQUEEBEGIN        (LVN_FIRST-56)
+#endif
+#ifndef APPCOMMAND_BROWSER_FORWARD
+#define APPCOMMAND_BROWSER_FORWARD 2
+#endif
+#ifndef APPCOMMAND_BROWSER_BACKWARD
+#define APPCOMMAND_BROWSER_BACKWARD 1
+#endif
+#ifndef GET_APPCOMMAND_LPARAM
+#define GET_APPCOMMAND_LPARAM(x) (HIWORD(x)&~0xF000)
 #endif
 
 template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
