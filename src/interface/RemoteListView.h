@@ -68,6 +68,8 @@ protected:
 	void ValidateIndexMapping();
 #endif
 
+	virtual void OnNavigationEvent(bool forward);
+
 	CSharedPointer <const CDirectoryListing> m_pDirectoryListing;
 
 	// Caller is responsible to check selection is valid!

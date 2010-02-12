@@ -135,6 +135,8 @@ protected:
 	virtual int GetOverlayIndex(int item) { return 0; }
 #endif
 
+	virtual void OnNavigationEvent(bool forward) {}
+
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
 

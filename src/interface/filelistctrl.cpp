@@ -63,7 +63,23 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 	}
 	CFileListCtrl<CFileData>* pFileListCtrl = (CFileListCtrl<CFileData>*)iter->second;
 
-	if (uMsg != WM_NOTIFY)
+	if (uMsg == WM_APPCOMMAND)
+	{
+		DWORD cmd = GET_APPCOMMAND_LPARAM(lParam);
+		if (cmd == APPCOMMAND_BROWSER_FORWARD)
+		{
+			pFileListCtrl->OnNavigationEvent(true);
+			return true;
+		}
+		else if (cmd == APPCOMMAND_BROWSER_BACKWARD)
+		{
+			pFileListCtrl->OnNavigationEvent(false);
+			return true;
+		}
+
+		return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
+	}
+	else if (uMsg != WM_NOTIFY)
         return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
 
 	if (!pFileListCtrl->m_pFilelistStatusBar)
@@ -946,6 +962,10 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnKeyDown(wxKeyEvent& e
 			SetSelection(0, false);
 		if (m_pFilelistStatusBar)
 			m_pFilelistStatusBar->SelectAll();
+	}
+	else if (code == WXK_BACK)
+	{
+		OnNavigationEvent(false);
 	}
 	else
 		event.Skip();

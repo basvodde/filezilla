@@ -1779,22 +1779,6 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 		wxCommandEvent tmp;
 		OnMenuRename(tmp);
 	}
-	else if (code == WXK_BACK)
-	{
-		if (!m_pState->IsRemoteIdle())
-		{
-			wxBell();
-			return;
-		}
-
-		if (!m_pDirectoryListing)
-		{
-			wxBell();
-			return;
-		}
-
-		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
-	}
 	else
 		event.Skip();
 }
@@ -3150,4 +3134,24 @@ void CRemoteListView::OnMenuRefresh(wxCommandEvent& event)
 {
 	if (m_pState)
 		m_pState->RefreshRemote();
+}
+
+void CRemoteListView::OnNavigationEvent(bool forward)
+{
+	if (!forward)
+	{
+		if (!m_pState->IsRemoteIdle())
+		{
+			wxBell();
+			return;
+		}
+
+		if (!m_pDirectoryListing)
+		{
+			wxBell();
+			return;
+		}
+
+		m_pState->ChangeRemoteDir(m_pDirectoryListing->path, _T(".."));
+	}
 }

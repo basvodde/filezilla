@@ -79,6 +79,8 @@ protected:
 
 	void RefreshFile(const wxString& file);
 
+	virtual void OnNavigationEvent(bool forward);
+
 	wxString m_dir;
 
 	wxDropTarget* m_pDropTarget;

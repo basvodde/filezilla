@@ -1291,23 +1291,6 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 		wxCommandEvent tmp;
 		OnMenuRename(tmp);
 	}
-	else if (code == WXK_BACK)
-	{
-		if (!m_hasParent)
-		{
-			wxBell();
-			return;
-		}
-
-		wxString error;
-		if (!m_pState->SetLocalDir(_T(".."), &error))
-		{
-			if (error != _T(""))
-				wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
-			else
-				wxBell();
-		}
-	}
 	else
 		event.Skip();
 }
@@ -2294,4 +2277,25 @@ void CLocalListView::OnVolumesEnumerated(wxCommandEvent& event)
 void CLocalListView::OnMenuRefresh(wxCommandEvent& event)
 {
 	m_pState->RefreshLocal();
+}
+
+void CLocalListView::OnNavigationEvent(bool forward)
+{
+	if (!forward)
+	{
+		if (!m_hasParent)
+		{
+			wxBell();
+			return;
+		}
+
+		wxString error;
+		if (!m_pState->SetLocalDir(_T(".."), &error))
+		{
+			if (error != _T(""))
+				wxMessageBox(error, _("Failed to change directory"), wxICON_INFORMATION);
+			else
+				wxBell();
+		}
+	}
 }
