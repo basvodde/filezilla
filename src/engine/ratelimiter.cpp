@@ -159,7 +159,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 			continue;
 		}
 
-		wxLongLong tokens = limit * (tickDelay * 1024 / 1000);
+		wxLongLong tokens = (limit * tickDelay) / 1000;
 		wxLongLong maxTokens = tokens * GetBucketSize();
 
 		// Get amount of tokens for each object
