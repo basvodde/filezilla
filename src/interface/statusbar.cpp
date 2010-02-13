@@ -657,7 +657,7 @@ void CStatusBar::OnSpeedLimitsEnable(wxCommandEvent& event)
 			COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, 1);
 	}
 	else
-		COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, 1);
+		COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, 0);
 }
 
 void CStatusBar::OnSpeedLimitsConfigure(wxCommandEvent& event)
