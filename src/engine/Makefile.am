@@ -31,6 +31,7 @@ libengine_a_SOURCES = \
 		server.cpp serverpath.cpp\
 		servercapabilities.cpp \
 		sftpcontrolsocket.cpp \
+		sizeformatting_base.cpp \
 		socket.cpp \
 		tlssocket.cpp \
 		threadex.cpp \

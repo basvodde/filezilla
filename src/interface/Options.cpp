@@ -73,6 +73,9 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Logging file", string, _T(""), false },
 	{ "Logging filesize limit", number, _T("10"), false },
 	{ "Trusted root certificate", string, _T(""), true },
+	{ "Size format", number, _T("0"), false },
+	{ "Size thousands separator", number, _T("1"), false },
+	{ "Size decimal places", number, _T("0"), false },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2"), false },
@@ -114,8 +117,6 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Date Format", string, _T(""), false },
 	{ "Show message log", number, _T("1"), false },
 	{ "Show queue", number, _T("1"), false },
-	{ "Size format", number, _T("0"), false },
-	{ "Size thousands separator", number, _T("1"), false },
 	{ "Default editor", string, _T(""), false },
 	{ "Always use default editor", number, _T("0"), false },
 	{ "Inherit system associations", number, _T("1"), false },
@@ -132,7 +133,6 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Remote filelist column order", string, _T(""), false },
 	{ "Filelist status bar", number, _T("1"), false },
 	{ "Filter toggle state", number, _T("0"), false },
-	{ "Size decimal places", number, _T("0"), false },
 	{ "Show quickconnect bar", number, _T("1"), false },
 	{ "Messagelog position", number, _T("0"), false },
 	{ "Last connected site", string, _T(""), false },
