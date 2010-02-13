@@ -1,7 +1,6 @@
 #include <filezilla.h>
 #include "context_control.h"
 #include "bookmarks_dialog.h"
-#include "filter.h"
 #include "listingcomparison.h"
 #include "Mainfrm.h"
 #include "menu_bar.h"
@@ -113,7 +112,6 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 	CContextManager::Get()->RegisterHandler(menubar, STATECHANGE_SERVER, true, true);
 	CContextManager::Get()->RegisterHandler(menubar, STATECHANGE_SYNC_BROWSE, true, true);
 	CContextManager::Get()->RegisterHandler(menubar, STATECHANGE_COMPARISON, true, true);
-	CContextManager::Get()->RegisterHandler(menubar, STATECHANGE_APPLYFILTER, true, false);
 
 	CContextManager::Get()->RegisterHandler(menubar, STATECHANGE_QUEUEPROCESSING, false, false);
 	CContextManager::Get()->RegisterHandler(menubar, STATECHANGE_CHANGEDCONTEXT, false, false);
@@ -349,9 +347,6 @@ void CMenuBar::OnStateChange(CState* pState, enum t_statechange_notifications no
 			bool is_comparing = pState && pState->GetComparisonManager()->IsComparing();
 			Check(XRCID("ID_TOOLBAR_COMPARISON"), is_comparing);
 		}
-		break;
-	case STATECHANGE_APPLYFILTER:
-		Check(XRCID("ID_TOOLBAR_FILTER"), CFilterManager::HasActiveFilters());
 		break;
 	default:
 		break;
