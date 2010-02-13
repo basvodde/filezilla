@@ -6,6 +6,7 @@
 #include "logging_private.h"
 #include "proxy.h"
 #include "servercapabilities.h"
+#include "sizeformatting_base.h"
 
 #include <wx/file.h>
 #include <wx/filename.h>
@@ -91,6 +92,53 @@ enum Command CControlSocket::GetCurrentCommandId() const
 	return m_pEngine->GetCurrentCommandId();
 }
 
+void CControlSocket::LogTransferResultMessage(int nErrorCode, CFileTransferOpData *pData)
+{
+	if (m_pTransferStatus && (nErrorCode == FZ_REPLY_OK || m_pTransferStatus->madeProgress))
+	{
+		int elapsed = wxTimeSpan(wxDateTime::Now() - m_pTransferStatus->started).GetSeconds().GetLo();
+		if (elapsed <= 0)
+			elapsed = 1;
+		wxString time = wxString::Format(
+			wxPLURAL("%d second", "%d seconds", elapsed),
+			elapsed);
+		
+		wxLongLong transferred = m_pTransferStatus->currentOffset - m_pTransferStatus->startOffset;
+		wxString size = CSizeFormatBase::Format(m_pEngine->GetOptions(), transferred, true);
+
+		MessageType msgType = ::Error;
+		wxString msg;
+		if (nErrorCode == FZ_REPLY_OK)
+		{
+			msgType = Status;
+			msg = _("File transfer successful, transferred %s in %s");
+		}
+		else if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
+			msg = _("File transfer aborted by user after transferring %s in %s");
+		else if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
+			msg = _("Critical File transfer error after transferring %s in %s");
+		else
+			msg = _("File transfer failed after transferring %s in %s");
+		LogMessage(msgType, msg, size.c_str(), time.c_str());
+	}
+	else
+	{
+		if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
+			LogMessage(::Error, _("File transfer aborted by user"));
+		else if (nErrorCode == FZ_REPLY_OK)
+		{
+			if (pData->transferInitiated)
+				LogMessage(Status, _("File transfer successful"));
+			else
+				LogMessage(Status, _("File transfer skipped"));
+		}
+		else if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
+			LogMessage(::Error, _("Critical file transfer error"));
+		else
+			LogMessage(::Error, _("File transfer failed"));
+	}
+}
+
 int CControlSocket::ResetOperation(int nErrorCode)
 {
 	LogMessage(Debug_Verbose, _T("CControlSocket::ResetOperation(%d)"), nErrorCode);
@@ -119,8 +167,11 @@ int CControlSocket::ResetOperation(int nErrorCode)
 			return ResetOperation(nErrorCode);
 	}
 
-	if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
+	if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR &&
+		(!m_pCurOpData || m_pCurOpData->opId != cmd_transfer))
+	{
 		LogMessage(::Error, _("Critical error"));
+	}
 
 	if (m_pCurOpData)
 	{
@@ -159,10 +210,7 @@ int CControlSocket::ResetOperation(int nErrorCode)
 							m_pEngine->SendDirectoryListingNotification(pData->remotePath, false, true, false);
 					}
 				}
-				if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
-					LogMessage(::Error, _("Transfer aborted by user"));
-				else if (nErrorCode == FZ_REPLY_OK)
-					LogMessage(Status, _("File transfer successful"));
+				LogTransferResultMessage(nErrorCode, pData);
 			}
 			break;
 		default:

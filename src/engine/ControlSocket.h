@@ -182,6 +182,8 @@ protected:
 
 	virtual int SendNextCommand();
 
+	void LogTransferResultMessage(int nErrorCode, CFileTransferOpData *pData);
+
 	// Called by ResetOperation if there's a queued operation
 	virtual int ParseSubcommandResult(int prevResult);
 	
