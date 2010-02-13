@@ -126,6 +126,9 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 	menubar->RegisterOption(OPTION_MESSAGELOG_POSITION);
 	menubar->RegisterOption(OPTION_COMPARISONMODE);
 	menubar->RegisterOption(OPTION_COMPARE_HIDEIDENTICAL);
+	menubar->RegisterOption(OPTION_SPEEDLIMIT_ENABLE);
+	menubar->RegisterOption(OPTION_SPEEDLIMIT_INBOUND);
+	menubar->RegisterOption(OPTION_SPEEDLIMIT_OUTBOUND);
 
 	return menubar;
 }
@@ -405,6 +408,21 @@ void CMenuBar::OnOptionChanged(int option)
 		{
 			ShowItem(XRCID("ID_VIEW_MESSAGELOG"));
 			Check(XRCID("ID_VIEW_MESSAGELOG"), COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG) != 0);
+		}
+		break;
+	case OPTION_SPEEDLIMIT_ENABLE:
+	case OPTION_SPEEDLIMIT_INBOUND:
+	case OPTION_SPEEDLIMIT_OUTBOUND:
+		{
+			bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
+
+			int downloadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);
+			int uploadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_OUTBOUND);
+
+			if (!downloadLimit && !uploadLimit)
+				enable = false;
+
+			Check(XRCID("ID_MENU_TRANSFER_SPEEDLIMITS_ENABLE"), enable);
 		}
 		break;
 	default:

@@ -150,8 +150,15 @@
         <checkable>1</checkable>
         <accel>CTRL+U</accel>
       </object>
-      <object class="wxMenuItem" name="ID_MENU_TRANSFER_SPEEDLIMITS">
-        <label>&amp;Speed limits...</label>
+      <object class="wxMenu">
+        <object class="wxMenuItem" name="ID_MENU_TRANSFER_SPEEDLIMITS_ENABLE">
+          <label>&amp;Enable</label>
+          <checkable>1</checkable>
+        </object>
+        <object class="wxMenuItem" name="ID_MENU_TRANSFER_SPEEDLIMITS_CONFIGURE">
+          <label>&amp;Configure...</label>
+        </object>
+        <label>&amp;Speed limits</label>
       </object>
       <object class="separator"/>
       <object class="wxMenuItem" name="ID_MENU_TRANSFER_MANUAL">

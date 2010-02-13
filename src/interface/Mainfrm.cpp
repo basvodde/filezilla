@@ -852,7 +852,21 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		CWelcomeDialog dlg;
 		dlg.Run(this, true);
 	}
-	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_SPEEDLIMITS"))
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_SPEEDLIMITS_ENABLE"))
+	{
+		bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) == 0;
+
+		const int downloadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);
+		const int uploadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_OUTBOUND);
+		if (enable && !downloadLimit && !uploadLimit)
+		{
+			CSpeedLimitsDialog dlg;
+			dlg.Run(this);
+		}
+		else
+			COptions::Get()->SetOption(OPTION_SPEEDLIMIT_ENABLE, enable ? 1 : 0);
+	}
+	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_SPEEDLIMITS_CONFIGURE"))
 	{
 		CSpeedLimitsDialog dlg;
 		dlg.Run(this);
