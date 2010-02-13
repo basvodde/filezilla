@@ -51,7 +51,7 @@ void CSpeedLimitsDialog::OnOK(wxCommandEvent& event)
 	if (!pCtrl->GetValue().ToLong(&download) || (download < 0))
 	{
 		const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
-		wxMessageBox(wxString::Format(_("Please enter a download speedlimit greater or equal to 0 %s/s."), unit.c_str()), _("Speed Limits"), wxOK, this);
+		wxMessageBox(wxString::Format(_("Please enter a download speed limit greater or equal to 0 %s/s."), unit.c_str()), _("Speed Limits"), wxOK, this);
 		return;
 	}
 
@@ -59,7 +59,7 @@ void CSpeedLimitsDialog::OnOK(wxCommandEvent& event)
 	if (!pCtrl->GetValue().ToLong(&upload) || (upload < 0))
 	{
 		const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
-		wxMessageBox(wxString::Format(_("Please enter a upload speedlimit greater or equal to 0 %s/s."), unit.c_str()), _("Speed Limits"), wxOK, this);
+		wxMessageBox(wxString::Format(_("Please enter an upload speed limit greater or equal to 0 %s/s."), unit.c_str()), _("Speed Limits"), wxOK, this);
 		return;
 	}
 

@@ -108,14 +108,14 @@ bool COptionsPageTransfer::Validate()
 	if (!pCtrl->GetValue().ToLong(&tmp) || (tmp < 0))
 	{
 		const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
-		return DisplayError(pCtrl, wxString::Format(_("Please enter a download speedlimit greater or equal to 0 %s/s."), unit.c_str()));
+		return DisplayError(pCtrl, wxString::Format(_("Please enter a download speed limit greater or equal to 0 %s/s."), unit.c_str()));
 	}
 
 	pCtrl = XRCCTRL(*this, "ID_UPLOADLIMIT", wxTextCtrl);
 	if (!pCtrl->GetValue().ToLong(&tmp) || (tmp < 0))
 	{
 		const wxString unit = CSizeFormat::GetUnitWithBase(CSizeFormat::kilo, 1024);
-		return DisplayError(pCtrl, wxString::Format(_("Please enter a upload speedlimit greater or equal to 0 %s/s."), unit.c_str()));
+		return DisplayError(pCtrl, wxString::Format(_("Please enter an upload speed limit greater or equal to 0 %s/s."), unit.c_str()));
 	}
 
 	pCtrl = XRCCTRL(*this, "ID_REPLACE", wxTextCtrl);

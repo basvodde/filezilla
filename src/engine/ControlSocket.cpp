@@ -117,7 +117,7 @@ void CControlSocket::LogTransferResultMessage(int nErrorCode, CFileTransferOpDat
 		else if ((nErrorCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
 			msg = _("File transfer aborted by user after transferring %s in %s");
 		else if ((nErrorCode & FZ_REPLY_CRITICALERROR) == FZ_REPLY_CRITICALERROR)
-			msg = _("Critical File transfer error after transferring %s in %s");
+			msg = _("Critical file transfer error after transferring %s in %s");
 		else
 			msg = _("File transfer failed after transferring %s in %s");
 		LogMessage(msgType, msg, size.c_str(), time.c_str());

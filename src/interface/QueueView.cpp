@@ -3102,7 +3102,7 @@ void CQueueView::ActionAfterWarnUser(bool shutdown)
 
 	wxString message;
 	if (shutdown)
-		message = _("The system will soon shutdown unless you click Cancel.");
+		message = _("The system will soon shut down unless you click Cancel.");
 	else
 		message = _("The system will soon reboot unless you click Cancel.");
 
