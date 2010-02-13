@@ -16,7 +16,7 @@ noinst_HEADERS = commands.h \
 		 server.h \
 		 serverpath.h \
 		 setup.h \
-		 sizeformat_base.h \
+		 sizeformatting_base.h \
 		 socket.h \
 		 threadex.h \
 		 timeex.h
