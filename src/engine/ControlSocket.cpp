@@ -54,6 +54,7 @@ CControlSocket::CControlSocket(CFileZillaEnginePrivate *pEngine)
 {
 	m_pEngine = pEngine;
 	m_pCurOpData = 0;
+	m_nOpState = 0;
 	m_pCurrentServer = 0;
 	m_pTransferStatus = 0;
 	m_transferStatusSendState = 0;
@@ -512,9 +513,10 @@ int CControlSocket::CheckOverwriteFile()
 	return FZ_REPLY_WOULDBLOCK;
 }
 
-CFileTransferOpData::CFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path) :
+CFileTransferOpData::CFileTransferOpData(bool is_download, const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path) :
 	COpData(cmd_transfer),
  	localFile(local_file), remoteFile(remote_file), remotePath(remote_path),
+	download(is_download),
 	localFileSize(-1), remoteFileSize(-1),
 	tryAbsolutePath(false), resume(false), transferInitiated(false)
 {
@@ -716,7 +718,7 @@ int CControlSocket::ParseSubcommandResult(int prevResult)
 const std::list<CControlSocket::t_lockInfo>::iterator CControlSocket::GetLockStatus()
 {
 	std::list<t_lockInfo>::iterator iter;
-	for (iter = m_lockInfoList.begin(); iter != m_lockInfoList.end(); iter++)
+	for (iter = m_lockInfoList.begin(); iter != m_lockInfoList.end(); ++iter)
 		if (iter->pControlSocket == this)
 			break;
 
@@ -760,7 +762,7 @@ bool CControlSocket::TryLockCache(enum locking_reason reason, const CServerPath&
 	m_pCurOpData->holdsLock = true;
 
 	// Try to find other instance holding the lock
-	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
+	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; ++iter)
 	{
 		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
 			continue;
@@ -787,7 +789,7 @@ bool CControlSocket::IsLocked(enum locking_reason reason, const CServerPath& dir
 		return true;
 
 	// Try to find other instance holding the lock
-	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
+	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; ++iter)
 	{
 		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
 			continue;
@@ -833,7 +835,7 @@ void CControlSocket::UnlockCache()
 		LogMessage(Debug_Warning, _T("UnlockCache called with !m_pCurrentServer"));
 		return;
 	}
-	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != m_lockInfoList.end(); iter++)
+	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != m_lockInfoList.end(); ++iter)
 	{
 		if (!iter->pControlSocket->m_pCurrentServer)
 		{
@@ -869,7 +871,7 @@ enum CControlSocket::locking_reason CControlSocket::ObtainLockFromEvent()
 	if (!own->waiting)
 		return lock_unknown;
 
-	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; iter++)
+	for (std::list<t_lockInfo>::const_iterator iter = m_lockInfoList.begin(); iter != own; ++iter)
 	{
 		if (*m_pCurrentServer != *iter->pControlSocket->m_pCurrentServer)
 			continue;
@@ -1141,8 +1143,7 @@ int CRealControlSocket::Connect(const CServer &server)
 	if (server.GetEncodingType() == ENCODING_CUSTOM)
 		m_pCSConv = new wxCSConv(server.GetCustomEncoding());
 
-	if (m_pCurrentServer)
-		delete m_pCurrentServer;
+	delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
 	// International domain names
@@ -1183,7 +1184,7 @@ int CRealControlSocket::ContinueConnect()
 	{
 		if (m_pCurOpData && m_pCurOpData->opId == cmd_connect)
 		{
-			CConnectOpData* pData = (CConnectOpData*)m_pCurOpData;
+			CConnectOpData* pData(static_cast<CConnectOpData*>(m_pCurOpData));
 			host = ConvertDomainName(pData->host);
 			port = pData->port;
 		}
@@ -1411,7 +1412,7 @@ void CControlSocket::CreateLocalDir(const wxString &local_file)
 	}
 
 	CLocalPath last_successful;
-	for (std::list<wxString>::const_iterator iter = segments.begin(); iter != segments.end(); iter++)
+	for (std::list<wxString>::const_iterator iter = segments.begin(); iter != segments.end(); ++iter)
 	{
 		local_path.AddSegment(*iter);
 

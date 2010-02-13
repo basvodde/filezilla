@@ -17,7 +17,7 @@ CDirectoryCache::~CDirectoryCache()
 	if (m_nRefCount)
 		return;
 
-	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); iter++)
+	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); ++iter)
 		delete *iter;
 }
 
@@ -27,7 +27,7 @@ void CDirectoryCache::Store(const CDirectoryListing &listing, const CServer &ser
 	wxASSERT(pServerEntry);
 
 	// First check for existing entry in cache and update if it neccessary
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		CCacheEntry &entry = *iter;
 		if (entry.listing.path != listing.path)
@@ -68,7 +68,7 @@ bool CDirectoryCache::Lookup(tCacheIter &cacheIter, const CServer &server, const
 	if (!pServerEntry)
 		return false;
 
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		const CCacheEntry &entry = *iter;
 
@@ -92,7 +92,7 @@ bool CDirectoryCache::DoesExist(const CServer &server, const CServerPath &path, 
 	if (!pServerEntry)
 		return false;
 
-	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		const CCacheEntry &entry = *iter;
 
@@ -115,7 +115,7 @@ bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const 
 		return false;
 	}
 
-	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		const CCacheEntry &cacheEntry = *iter;
 
@@ -170,7 +170,7 @@ bool CDirectoryCache::InvalidateFile(const CServer &server, const CServerPath &p
 	if (!pServerEntry)
 		return true;
 
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		CCacheEntry &entry = *iter;
 		if (path.CmpNoCase(entry.listing.path))
@@ -203,7 +203,7 @@ bool CDirectoryCache::UpdateFile(const CServer &server, const CServerPath &path,
 
 	bool updated = false;
 
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		CCacheEntry &entry = *iter;
 		const CCacheEntry &cEntry = *iter;
@@ -275,7 +275,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 	if (!pServerEntry)
 		return true;
 
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		const CCacheEntry &entry = *iter;
 		if (path.CmpNoCase(entry.listing.path))
@@ -318,7 +318,7 @@ bool CDirectoryCache::RemoveFile(const CServer &server, const CServerPath &path,
 
 void CDirectoryCache::InvalidateServer(const CServer& server)
 {
-	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); iter++)
+	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); ++iter)
 	{
 		if ((*iter)->server != server)
 			continue;
@@ -335,7 +335,7 @@ bool CDirectoryCache::GetChangeTime(CTimeEx& time, const CServer &server, const 
 	if (!pServerEntry)
 		return false;
 
-	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheConstIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		const CCacheEntry &entry = *iter;
 
@@ -363,7 +363,7 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 		absolutePath.Clear();
 
 	std::list<CCacheEntry> newList;
-	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); iter++)
+	for (tCacheIter iter = pServerEntry->cacheList.begin(); iter != pServerEntry->cacheList.end(); ++iter)
 	{
 		CCacheEntry &entry = *iter;
 		// Delete exact matches and subdirs
@@ -444,7 +444,7 @@ void CDirectoryCache::Rename(const CServer& server, const CServerPath& pathFrom,
 
 CDirectoryCache::CServerEntry* CDirectoryCache::CreateServerEntry(const CServer& server)
 {
-	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); iter++)
+	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); ++iter)
 	{
 		if ((*iter)->server == server)
 			return *iter;
@@ -458,7 +458,7 @@ CDirectoryCache::CServerEntry* CDirectoryCache::CreateServerEntry(const CServer&
 
 CDirectoryCache::CServerEntry* CDirectoryCache::GetServerEntry(const CServer& server)
 {
-	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); iter++)
+	for (std::list<CServerEntry*>::iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); ++iter)
 	{
 		if ((*iter)->server == server)
 			return *iter;
@@ -468,7 +468,7 @@ CDirectoryCache::CServerEntry* CDirectoryCache::GetServerEntry(const CServer& se
 
 const CDirectoryCache::CServerEntry* CDirectoryCache::GetServerEntry(const CServer& server) const
 {
-	for (std::list<CServerEntry*>::const_iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); iter++)
+	for (std::list<CServerEntry*>::const_iterator iter = m_ServerList.begin(); iter != m_ServerList.end(); ++iter)
 	{
 		if ((*iter)->server == server)
 			return *iter;

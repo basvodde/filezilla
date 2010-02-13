@@ -55,8 +55,8 @@ CFtpTransferOpData::CFtpTransferOpData()
 	binary = true;
 }
 
-CFtpFileTransferOpData::CFtpFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path)
-	: CFileTransferOpData(local_file, remote_file, remote_path)
+CFtpFileTransferOpData::CFtpFileTransferOpData(bool is_download, const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path)
+	: CFileTransferOpData(is_download, local_file, remote_file, remote_path)
 {
 	pIOThread = 0;
 	fileDidExist = true;
@@ -2218,10 +2218,9 @@ int CFtpControlSocket::FileTransfer(const wxString localFile, const CServerPath 
 		delete m_pCurOpData;
 	}
 
-	CFtpFileTransferOpData *pData = new CFtpFileTransferOpData(localFile, remoteFile, remotePath);
+	CFtpFileTransferOpData *pData = new CFtpFileTransferOpData(download, localFile, remoteFile, remotePath);
 	m_pCurOpData = pData;
 
-	pData->download = download;
 	pData->transferSettings = transferSettings;
 	pData->binary = transferSettings.binary;
 

@@ -170,7 +170,7 @@ public:
 class CFtpFileTransferOpData : public CFileTransferOpData, public CFtpTransferOpData
 {
 public:
-	CFtpFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path);
+	CFtpFileTransferOpData(bool is_download, const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path);
 	virtual ~CFtpFileTransferOpData();
 
 	CIOThread *pIOThread;

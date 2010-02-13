@@ -81,8 +81,8 @@ public:
 class CHttpFileTransferOpData : public CFileTransferOpData, public CHttpOpData
 {
 public:
-	CHttpFileTransferOpData(const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path)
-		: CFileTransferOpData(local_file, remote_file, remote_path), CHttpOpData(this)
+	CHttpFileTransferOpData(bool is_download, const wxString& local_file, const wxString& remote_file, const CServerPath& remote_path)
+		: CFileTransferOpData(is_download, local_file, remote_file, remote_path), CHttpOpData(this)
 	{
 		pFile = 0;
 	}
@@ -369,11 +369,9 @@ int CHttpControlSocket::FileTransfer(const wxString localFile, const CServerPath
 		delete m_pCurOpData;
 	}
 
-	CHttpFileTransferOpData *pData = new CHttpFileTransferOpData(localFile, remoteFile, remotePath);
+	CHttpFileTransferOpData *pData = new CHttpFileTransferOpData(download, localFile, remoteFile, remotePath);
 	m_pCurOpData = pData;
 	m_pHttpOpData = pData;
-
-	pData->download = download;
 
 	if (localFile != _T(""))
 	{
