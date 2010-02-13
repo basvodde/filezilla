@@ -10,6 +10,20 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.3.2-rc1 (2010-02-13)
+
++ Speed limits can be quickly set using the menu and a new indicator in the status bar
++ Display number of bytes transferred and duration of transfer in log
++ MSW: React to back button of mouse in file lists
++ Updated blukis icon set
+- Refactored large parts of the toolbar and menubar code
+- A race condition in the socket code could lead to crashes
+- Fix connecting to addresses longer than 15 characters if using SOCKS proxy
+- Get add to queue in local directory tree context menu working again
+- Do not open request dialogs if user is holding a mouse button
+- Forward all Ctrl+Tab key events to tab bar
+- Do not report SFTP exitcodes that do not originate from the server
+
 3.3.1 (2010-01-03)
 
 - Implement missing tab creation from context menu
