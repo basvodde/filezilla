@@ -319,8 +319,10 @@ bool CSessionManagerImpl::Unregister()
 		"UnregisterClient");
 	call->AddObjectPath(m_client_object_path);
 
-	if (call->Call(m_pConnection, 1000))
+	wxDBusMessage *result = call->Call(m_pConnection, 1000);
+	if (result)
 	{
+		delete result;
 		if (m_debug)
 			printf("wxD-Bus: Unregistered\n");
 	}
