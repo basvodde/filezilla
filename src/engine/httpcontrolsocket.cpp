@@ -12,11 +12,11 @@
 
 // Connect is special for HTTP: It is done on a per-command basis, so we need
 // to establish a connection before each command.
-class CHttpConnectOpData : public COpData
+class CHttpConnectOpData : public CConnectOpData
 {
 public:
 	CHttpConnectOpData()
-		: COpData(cmd_connect)
+		: tls(false)
 	{
 	}
 
@@ -24,8 +24,6 @@ public:
 	{
 	}
 
-	wxString host;
-	unsigned int port;
 	bool tls;
 };
 
@@ -99,7 +97,9 @@ CHttpControlSocket::CHttpControlSocket(CFileZillaEnginePrivate *pEngine)
 	: CRealControlSocket(pEngine)
 {
 	m_pRecvBuffer = 0;
+	m_recvBufferPos = 0;
 	m_pTlsSocket = 0;
+	m_pHttpOpData = 0;
 }
 
 CHttpControlSocket::~CHttpControlSocket()
@@ -513,8 +513,7 @@ int CHttpControlSocket::DoInternalConnect()
 
 	CHttpConnectOpData *pData = static_cast<CHttpConnectOpData *>(m_pCurOpData);
 
-	if (m_pBackend)
-		delete m_pBackend;
+	delete m_pBackend;
 	m_pBackend = new CSocketBackend(this, m_pSocket);
 
 	int res = m_pSocket->Connect(pData->host, pData->port);
