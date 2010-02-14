@@ -581,11 +581,11 @@ void CStatusBar::UpdateSpeedLimitsIcon()
 		wxImage img = bmp.ConvertToImage();
 		img = img.ConvertToGreyscale();
 		bmp = wxBitmap(img);
-		tooltip = _("Speedlimits are disabled, click to change.");
+		tooltip = _("Speed limits are disabled, click to change.");
 	}
 	else
 	{
-		tooltip = _("Speedlimits are enabled, click to change.");
+		tooltip = _("Speed limits are enabled, click to change.");
 		tooltip += _T("\n");
 		if (downloadLimit)
 			tooltip += wxString::Format(_("Download limit: %s/s"), CSizeFormat::FormatUnit(downloadLimit, CSizeFormat::kilo).c_str());
