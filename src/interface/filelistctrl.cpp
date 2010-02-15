@@ -8,6 +8,9 @@
 #include "conditionaldialog.h"
 #include <algorithm>
 #include "filelist_statusbar.h"
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
 
 #ifndef __WXMSW__
 DECLARE_EVENT_TYPE(fz_EVT_FILELIST_FOCUSCHANGE, -1)
@@ -40,17 +43,17 @@ template<class CFileData> std::map<HWND, char*> CFileListCtrl<CFileData>::m_hwnd
 #pragma pack(push, 1)
 typedef struct fz_tagNMLVODSTATECHANGE
 {
-    NMHDR hdr;
-    int iFrom;
-    int iTo;
-    UINT uNewState;
-    UINT uOldState;
+	NMHDR hdr;
+	int iFrom;
+	int iTo;
+	UINT uNewState;
+	UINT uOldState;
 } fzNMLVODSTATECHANGE;
 #pragma pack(pop)
 
 // MinGW lacks these constants and macros
 #ifndef LVN_MARQUEEBEGIN
-#define LVN_MARQUEEBEGIN        (LVN_FIRST-56)
+#define LVN_MARQUEEBEGIN (LVN_FIRST-56)
 #endif
 #ifndef APPCOMMAND_BROWSER_FORWARD
 #define APPCOMMAND_BROWSER_FORWARD 2
@@ -68,7 +71,7 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 	if (iter == m_hwnd_map.end())
 	{
 		// This shouldn't happen
-        return 0;
+		return 0;
 	}
 	CFileListCtrl<CFileData>* pFileListCtrl = (CFileListCtrl<CFileData>*)iter->second;
 
@@ -89,7 +92,7 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 		return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
 	}
 	else if (uMsg != WM_NOTIFY)
-        return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
+		return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
 
 	if (!pFileListCtrl->m_pFilelistStatusBar)
 		return CallWindowProc(pFileListCtrl->m_prevWndproc, hWnd, uMsg, wParam, lParam);
@@ -177,6 +180,46 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 }
 #endif
 
+#ifdef __WXGTK__
+// Need to call a member function of a C++ template class
+// from a C function.
+// Sadly template functions with C linkage aren't possible,
+// so use some proxy object.
+class CGtkEventCallbackProxyBase
+{
+public:
+	virtual void OnNavigationEvent(bool forward) = 0;
+};
+
+template <class CFileData> class CGtkEventCallbackProxy : public CGtkEventCallbackProxyBase
+{
+public:
+	CGtkEventCallbackProxy(CFileListCtrl<CFileData> *pData) : m_pData(pData) {}
+
+	virtual void OnNavigationEvent(bool forward)
+	{
+		m_pData->OnNavigationEvent(forward);
+	}
+protected:
+	CFileListCtrl<CFileData> *m_pData;
+};
+
+extern "C" {
+static gboolean gtk_button_release_event(GtkWidget*, void *gdk_event, CGtkEventCallbackProxyBase *proxy)
+{
+	GdkEventButton* button_event = (GdkEventButton*)gdk_event;
+
+	// 8 is back, 9 is forward.
+	if (button_event->button != 8 && button_event->button != 9)
+		return FALSE;
+
+	proxy->OnNavigationEvent(button_event->button == 9);
+
+	return FALSE;
+}
+}
+#endif
+
 template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pParent, CState* pState, CQueueView* pQueue, bool border /*=false*/)
 : wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxLC_EDIT_LABELS | (border ? wxBORDER_SUNKEN : wxNO_BORDER)),
 	CComparableListing(this), CSystemImageList(16)
@@ -213,6 +256,13 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 #else
 	m_pending_focus_processing = 0;
 	m_focusItem = -1;
+#endif
+
+#ifdef __WXGTK__
+	m_gtkEventCallbackProxy = new CGtkEventCallbackProxy<CFileData>(this);
+
+	GtkWidget* widget = GetMainWindow()->GetConnectWidget();
+	g_signal_connect(widget, "button_release_event", G_CALLBACK(gtk_button_release_event), m_gtkEventCallbackProxy.Value());
 #endif
 }
 

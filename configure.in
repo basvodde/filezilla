@@ -455,6 +455,13 @@ if test "$buildmain" = "yes"; then
     if test -z "$xdgopen"; then
       AC_MSG_ERROR([xdg-open not found. This program is the preferred way to launch the default browser. Please install the xdg-utils.])
     fi
+
+    PKG_CHECK_MODULES(LIBGTK, gtk+-2.0,, [
+      AC_MSG_ERROR([gtk+-2.0 was not found, even though the used version of wxWidgets depends on it. Are you missing the gtk+2.0 development files?])
+    ])
+
+    AC_SUBST(LIBGTK_LIBS)
+    AC_SUBST(LIBGTK_CFLAGS)
   fi
 
   # Some more obscure platforms (e.g. HP-UX) don't have setenv which is required by POSIX

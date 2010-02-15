@@ -9,6 +9,9 @@ class CQueueView;
 class CFileListCtrl_SortComparisonObject;
 class CState;
 class CFilelistStatusBar;
+#ifdef __WXGTK__
+class CGtkEventCallbackProxyBase;
+#endif
 
 class CGenericFileData
 {
@@ -66,6 +69,8 @@ public:
 	CFilelistStatusBar* GetFilelistStatusBar() { return m_pFilelistStatusBar; }
 
 	void ClearSelection();
+
+	virtual void OnNavigationEvent(bool forward) {}
 
 protected:
 	CQueueView *m_pQueue;
@@ -135,8 +140,6 @@ protected:
 	virtual int GetOverlayIndex(int item) { return 0; }
 #endif
 
-	virtual void OnNavigationEvent(bool forward) {}
-
 private:
 	void SortList_UpdateSelections(bool* selections, int focus);
 
@@ -152,6 +155,10 @@ private:
 	int m_focusItem;
 	std::vector<bool> m_selections;
 	int m_pending_focus_processing;
+#endif
+
+#ifdef __WXGTK__
+	CSharedPointer<CGtkEventCallbackProxyBase> m_gtkEventCallbackProxy;
 #endif
 
 	DECLARE_EVENT_TABLE()

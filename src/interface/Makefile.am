@@ -248,6 +248,10 @@ if MINGW
 filezilla_LDFLAGS += -lole32 -luuid -lnetapi32 -lmpr
 endif
 
+# GTK+ libs, empty if not using wxGTK
+filezilla_CPPFLAGS += $(LIBGTK_CFLAGS)
+filezilla_LDFLAGS += $(LIBGTK_LIBS)
+
 if MINGW
 filezilla_DEPENDENCIES += resources/filezilla.o
 endif
