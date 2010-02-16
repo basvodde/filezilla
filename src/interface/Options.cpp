@@ -310,6 +310,8 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 		// Nothing to do
 		return true;
 	}
+	m_optionsCache[nID].cached = true;
+	m_optionsCache[nID].strValue = value;
 
 	if (m_pXmlFile && !options[nID].internal)
 	{
