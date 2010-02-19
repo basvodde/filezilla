@@ -874,13 +874,21 @@
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
               <object class="sizeritem">
-                <object class="wxTextCtrl" name="ID_DOWNLOADLIMIT">
-                  <size>60,-1</size>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticText" name="ID_DOWNLOADLIMIT_UNIT">
-                  <label>(in %s/s)</label>
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_DOWNLOADLIMIT">
+                      <size>60,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_DOWNLOADLIMIT_UNIT">
+                      <label>(in %s/s)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
                 </object>
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
@@ -891,13 +899,21 @@
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
               <object class="sizeritem">
-                <object class="wxTextCtrl" name="ID_UPLOADLIMIT">
-                  <size>60,-1</size>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <object class="wxStaticText" name="ID_UPLOADLIMIT_UNIT">
-                  <label>(in %s/s)</label>
+                <object class="wxFlexGridSizer">
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="ID_UPLOADLIMIT">
+                      <size>60,-1</size>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText" name="ID_UPLOADLIMIT_UNIT">
+                      <label>(in %s/s)</label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <cols>2</cols>
+                  <hgap>5</hgap>
                 </object>
                 <flag>wxALIGN_CENTRE_VERTICAL</flag>
               </object>
@@ -921,7 +937,7 @@
                   <label/>
                 </object>
               </object>
-              <cols>3</cols>
+              <cols>2</cols>
               <vgap>5</vgap>
               <hgap>5</hgap>
             </object>
