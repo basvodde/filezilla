@@ -82,6 +82,13 @@ static int ReadQuotas(int i)
 
 int RequestQuota(int i, int bytes)
 {
+    if (bytesAvailable[i] < -100)
+	bytesAvailable[i] = 0;
+    else if (bytesAvailable[i] < 0)
+    {
+	bytesAvailable[i]--;
+	return bytes;
+    }
     if (bytesAvailable[i] == 0)
     {
 	bytesAvailable[i] = 0;
@@ -92,10 +99,7 @@ int RequestQuota(int i, int bytes)
 	ReadQuotas(i);
     }
 
-    if (bytesAvailable[i] == -1)
-	return bytes;
-
-    if (bytesAvailable[i] > bytes)
+    if (bytesAvailable[i] < 0 || bytesAvailable[i] > bytes)
 	return bytes;
 
     return bytesAvailable[i];
@@ -103,7 +107,7 @@ int RequestQuota(int i, int bytes)
 
 void UpdateQuota(int i, int bytes)
 {
-    if (bytesAvailable[i] == -1)
+    if (bytesAvailable[i] < 0)
 	return;
 
     if (bytesAvailable[i] > bytes)
@@ -114,7 +118,7 @@ void UpdateQuota(int i, int bytes)
 
 int ProcessQuotaCmd(const char* line)
 {
-	int direction = 0, number, pos;
+    int direction = 0, number, pos;
 
     if (line[0] != '-')
 	return 0;
@@ -300,6 +304,6 @@ int fz_timer_check(_fztimer *timer)
 #else
 #error "Neither gettimeofday nor ftime available."
 #endif
-    return 1;
 #endif
+    return 1;
 }
