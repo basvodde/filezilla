@@ -37,6 +37,13 @@ public:
 	}
 #endif
 
+#ifndef __WXMAC__
+	void SetDefaultColor(const wxColour& color)
+	{
+		m_defaultStyle.SetTextColour(color);
+	}
+#endif
+
 	DECLARE_EVENT_TABLE();
 
 	void OnText(wxCommandEvent& event)
@@ -200,7 +207,7 @@ void CStatusView::AddToLog(enum MessageType messagetype, const wxString& message
 	}
 	m_pTextCtrl->SetStyle(m_insertionPoint, m_insertionPoint, m_attributeCache[messagetype].attr);
 #else
-	m_pTextCtrl->SetDefaultStyle(m_attributeCache[messagetype].attr);
+	m_pTextCtrl->SetDefaultColor(m_attributeCache[messagetype].attr.GetTextColour());
 #endif
 
 	prefix += m_attributeCache[messagetype].prefix;
@@ -310,9 +317,7 @@ void CStatusView::InitDefAttr()
 	wxTextAttr defAttr;
 	defAttr.SetTabs(array);
 	defAttr.SetLeftIndent(0, maxWidth);
-#ifdef __WXMAC__
 	m_pTextCtrl->SetDefaultStyle(defAttr);
-#endif
 
 	const wxColour background = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
 	const bool is_dark = background.Red() + background.Green() + background.Blue() < 384;

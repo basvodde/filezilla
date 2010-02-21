@@ -197,8 +197,22 @@ bool CFileZillaApp::OnInit()
 	SetAppId();
 #endif
 
+	//wxSystemOptions is slow, if a value is not set, it keeps querying the environment
+	//each and every time...
+	wxSystemOptions::SetOption(_T("filesys.no-mimetypesmanager"), 0);
+	wxSystemOptions::SetOption(_T("window-default-variant"), _T(""));
+#ifdef __WXMSW__
+	wxSystemOptions::SetOption(_T("no-maskblt"), 0);
+	wxSystemOptions::SetOption(_T("msw.window.no-clip-children"), 0);
+	wxSystemOptions::SetOption(_T("msw.font.no-proof-quality"), 0);
+#endif
+
+#ifdef __WXMSW__
 	wxSystemOptions::SetOption(_T("msw.remap"), 0);
+#endif
+#ifdef __WXMAC__
 	wxSystemOptions::SetOption(_T("mac.listctrl.always_use_generic"), 1);
+#endif
 
 	int cmdline_result = ProcessCommandLine();
 	if (!cmdline_result)
