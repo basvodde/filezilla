@@ -2984,7 +2984,10 @@ int CFtpControlSocket::RawCommandSend()
 
 	CDirectoryCache cache;
 	cache.InvalidateServer(*m_pCurrentServer);
+	CPathCache::InvalidateServer(*m_pCurrentServer);
 	m_CurrentPath.Clear();
+
+	m_lastTypeBinary = -1;
 
 	CRawCommandOpData *pData = static_cast<CRawCommandOpData *>(m_pCurOpData);
 
