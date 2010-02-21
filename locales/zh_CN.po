@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 14:36+0100\n"
-"PO-Revision-Date: 2010-02-06 10:33+0800\n"
+"POT-Creation-Date: 2010-02-21 16:01+0100\n"
+"PO-Revision-Date: 2010-02-15 10:41+0800\n"
 "Last-Translator: Sun Junwen <sunjw8888@gmail.com>\n"
 "Language-Team: Sun Junwen <sunjw8888@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -74,11 +74,11 @@ msgstr[0] "%d 个文件。大小总共: 至少 %s"
 msgid "%d files added to queue"
 msgstr "%d 个文件加入到队列"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:103
+#: ../../locales/../src/engine/ControlSocket.cpp:104
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
+msgstr[0] "%d 秒"
 
 #: resources.h:764
 msgid "%h - Host"
@@ -148,7 +148,7 @@ msgstr "%s 字节 (%d.%d MB/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s 字节 (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:790
+#: ../../locales/../src/interface/FileZilla.cpp:804
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -161,7 +161,7 @@ msgstr ""
 "\n"
 "请重新下载FileZilla。 如果该问题仍然存在，请提交一份问题报告。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:884
+#: ../../locales/../src/interface/FileZilla.cpp:898
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -300,13 +300,12 @@ msgid "&Close FileZilla"
 msgstr "关闭 FileZilla (&C)"
 
 #: resources.h:659
-#, fuzzy
 msgid "&Configure speed limits..."
-msgstr "速度限制(&S)..."
+msgstr "配置速度限制(&C)..."
 
 #: resources.h:526
 msgid "&Configure..."
-msgstr ""
+msgstr "配置(&C)"
 
 #: resources.h:112
 msgid "&Connect"
@@ -857,9 +856,8 @@ msgid "&Skip"
 msgstr "跳过(&S)"
 
 #: resources.h:527
-#, fuzzy
 msgid "&Speed limits"
-msgstr "速度限制"
+msgstr "速度限制(&S)"
 
 #: resources.h:443
 msgid "&Start transfer immediately"
@@ -1033,9 +1031,9 @@ msgid "(example: %Y-%m-%d)"
 msgstr "(示例: %Y-%m-%d)"
 
 #: resources.h:477 resources.h:479 resources.h:801 resources.h:803
-#, fuzzy, c-format
+#, c-format
 msgid "(in %s/s)"
-msgstr "(单位 KB/s)"
+msgstr "(在 %s/s)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:868
 msgid ", %H:%M:%S left"
@@ -1153,7 +1151,7 @@ msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr "该名称的文件仍在编辑，请将其关闭后再试一次。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:770
+#: ../../locales/../src/interface/FileZilla.cpp:784
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -1763,7 +1761,7 @@ msgstr "改变文件权限。"
 msgid "Changing logfile settings requires restart of FileZilla."
 msgstr "修改日志文件设置需要重启 FileZilla。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:770
+#: ../../locales/../src/interface/FileZilla.cpp:784
 msgid "Character encoding issue"
 msgstr "字符编码问题"
 
@@ -1813,7 +1811,7 @@ msgstr "选择默认的本地目录"
 msgid "Choose the local directory"
 msgstr "选择本地目录"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:857
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:854
 msgid "Chunk data improperly terminated"
 msgstr "块数据被错误地中止了"
 
@@ -1929,8 +1927,8 @@ msgid "Command not supported by this protocol"
 msgstr "命令不被该协议支持"
 
 #: ../../locales/../src/engine/logging.cpp:214
-#: ../../locales/../src/interface/StatusView.cpp:280
-#: ../../locales/../src/interface/StatusView.cpp:332
+#: ../../locales/../src/interface/StatusView.cpp:287
+#: ../../locales/../src/interface/StatusView.cpp:337
 #: ../../locales/../src/interface/updatewizard.cpp:513
 msgid "Command:"
 msgstr "命令:"
@@ -2047,12 +2045,12 @@ msgstr "正在连接"
 msgid "Connecting to %s"
 msgstr "连接到 %s"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1162
+#: ../../locales/../src/engine/ControlSocket.cpp:1163
 #, c-format
 msgid "Connecting to %s through proxy"
 msgstr "通过代理连接到 %s"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1032
+#: ../../locales/../src/engine/ControlSocket.cpp:1034
 #: ../../locales/../src/engine/proxy.cpp:172
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:394
 #, c-format
@@ -2072,18 +2070,18 @@ msgstr "连接"
 msgid "Connection attempt failed"
 msgstr "连接尝试失败"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1037
+#: ../../locales/../src/engine/ControlSocket.cpp:1039
 #: ../../locales/../src/engine/proxy.cpp:176
 #, c-format
 msgid "Connection attempt failed with \"%s\", trying next address."
 msgstr "尝试连接失败 \"%s\" ，正在尝试下一个地址。"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1042
+#: ../../locales/../src/engine/ControlSocket.cpp:1044
 #, c-format
 msgid "Connection attempt failed with \"%s\"."
 msgstr "尝试连接失败 \"%s\" 。"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:185
+#: ../../locales/../src/engine/ControlSocket.cpp:186
 #: ../../locales/../src/engine/engineprivate.cpp:320
 msgid "Connection attempt interrupted by user"
 msgstr "尝试连接被用户终止"
@@ -2092,7 +2090,7 @@ msgstr "尝试连接被用户终止"
 msgid "Connection closed"
 msgstr "连接关闭"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1130
+#: ../../locales/../src/engine/ControlSocket.cpp:1132
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:231
 msgid "Connection closed by server"
 msgstr "连接被服务器关闭"
@@ -2122,7 +2120,7 @@ msgstr "规则设定不允许该连接"
 msgid "Connection refused"
 msgstr "连接被拒绝"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:679
+#: ../../locales/../src/engine/ControlSocket.cpp:681
 msgid "Connection timed out"
 msgstr "连接超时"
 
@@ -2180,11 +2178,11 @@ msgstr "无法建立连接: %s"
 msgid "Could not add connection to Site Manager"
 msgstr "无法添加当前连接到站点管理器"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:187
+#: ../../locales/../src/engine/ControlSocket.cpp:188
 msgid "Could not connect to server"
 msgstr "无法连接到服务器"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1204
+#: ../../locales/../src/engine/ControlSocket.cpp:1205
 #, c-format
 msgid "Could not connect to server: %s"
 msgstr "无法连接到服务器: %s"
@@ -2217,11 +2215,11 @@ msgstr ""
 "无法确定拖放操作的目标。\n"
 "由于 Shell Extension 未正确安装，或者您没有把文件拖拽到浏览器窗口。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4236
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4238
 msgid "Could not establish connection to server"
 msgstr "无法建立到服务器的连接"
 
-#: ../../locales/../src/interface/FileZilla.cpp:483
+#: ../../locales/../src/interface/FileZilla.cpp:497
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -2350,12 +2348,12 @@ msgstr "不能从接口 (socket) 读取: %s"
 msgid "Could not read server item."
 msgstr "无法读取服务器项。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2678
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2677
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "无法找到文件中偏移为%s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2611
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2610
 msgid "Could not seek to the end of the file"
 msgstr "无法找到文件尾"
 
@@ -2363,11 +2361,11 @@ msgstr "无法找到文件尾"
 msgid "Could not send command to fzputtygen."
 msgstr "不能将命令送达fzputtygen。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2709
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2708
 msgid "Could not spawn IO thread"
 msgstr "无法生成 IO 线程"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1177
+#: ../../locales/../src/engine/ControlSocket.cpp:1178
 #, c-format
 msgid "Could not start proxy handshake: %s"
 msgstr "无法开始代理握手: %s"
@@ -2432,8 +2430,8 @@ msgstr "不能向本地文件写入: %s"
 msgid "Could not write to log file: %s"
 msgstr "不能写入日志文件: %s"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:997
-#: ../../locales/../src/engine/ControlSocket.cpp:1095
+#: ../../locales/../src/engine/ControlSocket.cpp:999
+#: ../../locales/../src/engine/ControlSocket.cpp:1097
 #, c-format
 msgid "Could not write to socket: %s"
 msgstr "不能向接口 (socket) 写入: %s"
@@ -2461,25 +2459,24 @@ msgstr "创建目录"
 msgid "Creating directory"
 msgstr "正在创建目录"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3279
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2050
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3281
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2049
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "创建目录‘ %s’ ..."
 
-#: ../../locales/../src/engine/ControlSocket.cpp:119
-#, c-format
-msgid "Critical File transfer error after transferring %s in %s"
-msgstr ""
-
-#: ../../locales/../src/engine/ControlSocket.cpp:173
+#: ../../locales/../src/engine/ControlSocket.cpp:174
 msgid "Critical error"
 msgstr "严重错误"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:136
-#, fuzzy
+#: ../../locales/../src/engine/ControlSocket.cpp:137
 msgid "Critical file transfer error"
-msgstr "严重错误"
+msgstr "严重文件传输错误"
+
+#: ../../locales/../src/engine/ControlSocket.cpp:120
+#, fuzzy, c-format
+msgid "Critical file transfer error after transferring %s in %s"
+msgstr "传输了 %s 在 %s 后文件传输严重错误"
 
 #: ../../locales/../src/interface/state.cpp:370
 #, c-format
@@ -2680,12 +2677,12 @@ msgstr "目录"
 msgid "Direction"
 msgstr "方向"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:529
+#: ../../locales/../src/interface/filelistctrl.cpp:579
 msgid "Directory"
 msgstr "目录"
 
 #: resources.h:631 resources.h:901 resources.h:984
-#: ../../locales/../src/interface/filelistctrl.cpp:451
+#: ../../locales/../src/interface/filelistctrl.cpp:501
 #: ../../locales/../src/interface/Mainfrm.cpp:2316
 msgid "Directory comparison"
 msgstr "比较目录"
@@ -2700,7 +2697,7 @@ msgstr "比较目录失败"
 msgid "Directory containing the logfile does not exist or filename is invalid."
 msgstr "保存日志文件的目录不存在或文件名无效。"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:191
+#: ../../locales/../src/engine/ControlSocket.cpp:192
 msgid "Directory listing aborted by user"
 msgstr "目录列表被用户终止"
 
@@ -2712,7 +2709,7 @@ msgstr "目录列表失败"
 msgid "Directory listing filters"
 msgstr "目录过滤器"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:195
+#: ../../locales/../src/engine/ControlSocket.cpp:196
 msgid "Directory listing successful"
 msgstr "列目录成功"
 
@@ -2735,19 +2732,19 @@ msgstr "如果您无法再看见文件时请停用此选项。"
 msgid "Disconnect from server"
 msgstr "从服务器断开"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:81
-#: ../../locales/../src/engine/ControlSocket.cpp:998
-#: ../../locales/../src/engine/ControlSocket.cpp:1097
+#: ../../locales/../src/engine/ControlSocket.cpp:82
+#: ../../locales/../src/engine/ControlSocket.cpp:1000
+#: ../../locales/../src/engine/ControlSocket.cpp:1099
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:223
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:939
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:941
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:936
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:938
 #: ../../locales/../src/interface/QueueView.cpp:1047
 #: ../../locales/../src/interface/QueueView.cpp:1091
 msgid "Disconnected from server"
 msgstr "已从服务器断开"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1132
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:956
+#: ../../locales/../src/engine/ControlSocket.cpp:1134
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:953
 #, c-format
 msgid "Disconnected from server: %s"
 msgstr "已从服务器断开: %s"
@@ -2834,9 +2831,9 @@ msgid "Download &limit:"
 msgstr "下载限制(&L)"
 
 #: ../../locales/../src/interface/statusbar.cpp:591
-#, fuzzy, c-format
+#, c-format
 msgid "Download limit: %s/s"
-msgstr "下载限制: %s/s。"
+msgstr "下载限制: %s/s"
 
 #: ../../locales/../src/interface/statusbar.cpp:593
 msgid "Download limit: none"
@@ -2993,7 +2990,7 @@ msgstr "加密"
 msgid "Encryption details"
 msgstr "加密细节"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:453
+#: ../../locales/../src/interface/filelistctrl.cpp:503
 msgid "End comparison and change sorting order?"
 msgstr "结束对比并改变排序?"
 
@@ -3002,9 +2999,9 @@ msgid "Enter &custom command..."
 msgstr "输入自定义命令(&c)..."
 
 #: resources.h:480
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enter 0 for unlimited speed."
-msgstr "给过滤器集合输入名称"
+msgstr "输入 0 表示无速度限制。"
 
 #: ../../locales/../src/interface/QueueView.cpp:2194
 msgid "Enter command"
@@ -3135,8 +3132,8 @@ msgid "Error, local file exists but cannot be removed"
 msgstr "错误，本地文件存在但无法删除"
 
 #: ../../locales/../src/engine/logging.cpp:213
-#: ../../locales/../src/interface/StatusView.cpp:278
-#: ../../locales/../src/interface/StatusView.cpp:328
+#: ../../locales/../src/interface/StatusView.cpp:285
+#: ../../locales/../src/interface/StatusView.cpp:333
 #: ../../locales/../src/interface/updatewizard.cpp:507
 msgid "Error:"
 msgstr "错误:"
@@ -3230,9 +3227,9 @@ msgstr "FTPS - 通过隐式 TLS/SSL 的 FTP"
 msgid "Failed to change directory"
 msgstr "改变目录失败"
 
-#: ../../locales/../src/interface/FileZilla.cpp:256
-#: ../../locales/../src/interface/FileZilla.cpp:264
-#: ../../locales/../src/interface/FileZilla.cpp:266
+#: ../../locales/../src/interface/FileZilla.cpp:270
+#: ../../locales/../src/interface/FileZilla.cpp:278
+#: ../../locales/../src/interface/FileZilla.cpp:280
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 msgid "Failed to change language"
 msgstr "改变语言失败"
@@ -3253,8 +3250,8 @@ msgstr "创建 XML 文件的备件拷贝失败"
 msgid "Failed to create listen socket, aborting"
 msgstr "创建监听接口失败，正在中止"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4212
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4216
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4214
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4218
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "为主动模式传输创建监听端口失败"
 
@@ -3297,19 +3294,19 @@ msgstr "导入面板失败，无效资源文件？"
 msgid "Failed to load private key: %s"
 msgstr "加载私钥: %s 失败"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2600
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
 msgstr "打开“%s”追加/写入失败"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2662
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2661
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "打开“%s”读取失败"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2641
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:393
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:450
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2640
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:391
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:448
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "打开“%s”写入失败"
@@ -3322,7 +3319,7 @@ msgstr "解析认证的根证书失败。"
 msgid "Failed to receive data"
 msgstr "接收数据失败"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:193
+#: ../../locales/../src/engine/ControlSocket.cpp:194
 msgid "Failed to retrieve directory listing"
 msgstr "读取目录列表失败"
 
@@ -3330,11 +3327,11 @@ msgstr "读取目录列表失败"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "获取外部 IP 地址失败，中止"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3910
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3912
 msgid "Failed to retrieve external ip address, using local address"
 msgstr "获取外部 IP 地址失败，使用本地地址。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3932
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3934
 msgid "Failed to retrieve local ip address."
 msgstr "获取本地 IP 地址失败"
 
@@ -3350,34 +3347,34 @@ msgstr "获取外部 IP 地址失败"
 msgid "Failed to send command."
 msgstr "发送命令失败。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:264
+#: ../../locales/../src/interface/FileZilla.cpp:278
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language"
 msgstr "无法设置语言为 %s (%s)，使用系统默认语言。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:249
+#: ../../locales/../src/interface/FileZilla.cpp:263
 #, c-format
 msgid ""
 "Failed to set language to %s (%s), using default system language (%s, %s)."
 msgstr "无法设置语言为 %s (%s)，使用系统默认语言 (%s, %s)。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:237
+#: ../../locales/../src/interface/FileZilla.cpp:251
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language."
 msgstr "无法设置语言为 %s (%s)，使用系统默认语言。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:266
+#: ../../locales/../src/interface/FileZilla.cpp:280
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 #, c-format
 msgid "Failed to set language to %s, using default system language"
 msgstr "设置语言为 %s 失败，使用默认系统语言"
 
-#: ../../locales/../src/interface/FileZilla.cpp:245
+#: ../../locales/../src/interface/FileZilla.cpp:259
 #, c-format
 msgid "Failed to set language to %s, using default system language (%s, %s)."
 msgstr "无法设置语言为 %s，使用系统默认语言 (%s, %s)。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:234
+#: ../../locales/../src/interface/FileZilla.cpp:248
 #, c-format
 msgid "Failed to set language to %s, using default system language."
 msgstr "无法设置语言为 %s，使用系统默认语言。"
@@ -3390,7 +3387,7 @@ msgstr "校验设置失败"
 msgid "Failed to verify peer certificate"
 msgstr "验证对等证书失败"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:569
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:566
 #, c-format
 msgid "Failed to write to file %s"
 msgstr "写入 %s 文件失败"
@@ -3415,9 +3412,9 @@ msgstr "文件(&E):"
 msgid "Fil&es"
 msgstr "文件(&E)"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:506
-#: ../../locales/../src/interface/filelistctrl.cpp:524
-#: ../../locales/../src/interface/filelistctrl.cpp:533
+#: ../../locales/../src/interface/filelistctrl.cpp:556
+#: ../../locales/../src/interface/filelistctrl.cpp:574
+#: ../../locales/../src/interface/filelistctrl.cpp:583
 msgid "File"
 msgstr "文件"
 
@@ -3450,8 +3447,8 @@ msgid "File lists"
 msgstr "文件列表"
 
 #: ../../locales/../src/interface/edithandler.cpp:1713
-#: ../../locales/../src/interface/FileZilla.cpp:791
-#: ../../locales/../src/interface/FileZilla.cpp:885
+#: ../../locales/../src/interface/FileZilla.cpp:805
+#: ../../locales/../src/interface/FileZilla.cpp:899
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "File not found"
 msgstr "文件未找到"
@@ -3460,39 +3457,36 @@ msgstr "文件未找到"
 msgid "File search"
 msgstr "文件搜索"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:127
-#, fuzzy
+#: ../../locales/../src/engine/ControlSocket.cpp:128
 msgid "File transfer aborted by user"
 msgstr "传输被用户终止"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:117
-#, c-format
+#: ../../locales/../src/engine/ControlSocket.cpp:118
+#, fuzzy, c-format
 msgid "File transfer aborted by user after transferring %s in %s"
-msgstr ""
+msgstr "传输了 %s 在 %s 后用户取消文件传输"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:138
-#, fuzzy
+#: ../../locales/../src/engine/ControlSocket.cpp:139
 msgid "File transfer failed"
-msgstr "文件传输成功"
+msgstr "文件传输失败"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:121
-#, c-format
+#: ../../locales/../src/engine/ControlSocket.cpp:122
+#, fuzzy, c-format
 msgid "File transfer failed after transferring %s in %s"
-msgstr ""
+msgstr "传输了 %s 在 %s 后文件传输失败"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:133
-#, fuzzy
+#: ../../locales/../src/engine/ControlSocket.cpp:134
 msgid "File transfer skipped"
-msgstr "传输失败"
+msgstr "文件传输被跳过"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:131
+#: ../../locales/../src/engine/ControlSocket.cpp:132
 msgid "File transfer successful"
 msgstr "文件传输成功"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:114
+#: ../../locales/../src/engine/ControlSocket.cpp:115
 #, fuzzy, c-format
 msgid "File transfer successful, transferred %s in %s"
-msgstr "文件传输成功"
+msgstr "文件传输成功，传输了 %s 在 %s"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1108
 msgid "File transfers still in progress."
@@ -3506,7 +3500,7 @@ msgstr "文件将以 ASCII 的数据类型传送。"
 msgid "File would transfer with binary data type."
 msgstr "文件将以二进制的数据类型传送。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:484
+#: ../../locales/../src/interface/FileZilla.cpp:498
 #: ../../locales/../src/interface/quickconnectbar.cpp:67
 #: ../../locales/../src/interface/quickconnectbar.cpp:189
 msgid "FileZilla Error"
@@ -3552,8 +3546,8 @@ msgstr "文件名"
 msgid "Filename &filters..."
 msgstr "文件过滤器(&F)..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3077
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2313
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3079
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2312
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "不能为目录 %s 和文件名 %s 构造文件名"
@@ -4039,28 +4033,28 @@ msgstr "交互式"
 msgid "Interface"
 msgstr "用户界面"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:218
+#: ../../locales/../src/engine/ControlSocket.cpp:219
 #: ../../locales/../src/interface/QueueView.cpp:1000
 #: ../../locales/../src/interface/QueueView.cpp:1574
 msgid "Interrupted by user"
 msgstr "用户终止"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:775
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:772
 msgid "Invalid Content-Length"
 msgstr "无效的 Content-Length"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:626
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:623
 msgid "Invalid HTTP Response"
 msgstr "无效的 HTTP 响应"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:542
-#: ../../locales/../src/engine/ControlSocket.cpp:602
+#: ../../locales/../src/engine/ControlSocket.cpp:544
+#: ../../locales/../src/engine/ControlSocket.cpp:604
 msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
 msgstr "收到无效字节，关闭了 UTF-8 编码。请在站点管理器中强制选择 UTF-8 编码。"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:899
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:896
 msgid "Invalid chunk size"
 msgstr "无效的块大小"
 
@@ -4113,7 +4107,7 @@ msgstr ""
 msgid "Invalid regular expression in search conditions."
 msgstr "无效的搜索条件正则表达式。"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:636
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:633
 msgid "Invalid response code"
 msgstr "无效的响应码"
 
@@ -4217,7 +4211,7 @@ msgstr "日志文件大小限制"
 msgid "Limit:"
 msgstr "限制:"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:842
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:839
 msgid "Line length exceeded"
 msgstr "行长度已超出"
 
@@ -4230,8 +4224,8 @@ msgid "Listen socket closed"
 msgstr "监听接口已关闭"
 
 #: ../../locales/../src/engine/logging.cpp:220
-#: ../../locales/../src/interface/StatusView.cpp:289
-#: ../../locales/../src/interface/StatusView.cpp:356
+#: ../../locales/../src/interface/StatusView.cpp:296
+#: ../../locales/../src/interface/StatusView.cpp:361
 msgid "Listing:"
 msgstr "列表:"
 
@@ -4333,20 +4327,20 @@ msgstr "MAC:"
 msgid "Make sure the file can be accessed and is a well-formed XML document."
 msgstr "确认该文件可以被存取而且是一个格式正确的 XML 文档。"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:830
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:842
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:857
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:899
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:839
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:854
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:896
 #, c-format
 msgid "Malformed chunk data: %s"
 msgstr "错误的块数据:%s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:775
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:772
 #, c-format
 msgid "Malformed header: %s"
 msgstr "错误的头:%s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:596
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:593
 msgid "Malformed reply, server not sending proper line endings"
 msgstr "畸形的回应，服务器没有发送正确的行结尾"
 
@@ -4525,7 +4519,7 @@ msgstr "没有选定要导出的分类目录"
 msgid "No command given, aborting."
 msgstr "没有给出命令，异常终止。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3877
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3879
 msgid "No external IP address set, trying default."
 msgstr "没有设定外部 IP 地址，使用默认值。"
 
@@ -4711,7 +4705,7 @@ msgid ""
 "Opens the directory listing filter dialog. Right-click to toggle filters."
 msgstr "打开目录列表过滤器对话框。右击切换过滤器。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:303
+#: ../../locales/../src/interface/FileZilla.cpp:317
 msgid "Operating system problem detected"
 msgstr "检测到操作系统问题"
 
@@ -4819,8 +4813,8 @@ msgstr "密码请求"
 msgid "Path"
 msgstr "路径"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3164
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2358
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3166
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2357
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "不能为目录 %s 和子目录 %s 构造路径"
@@ -4895,9 +4889,9 @@ msgstr "请输入自定义时间格式。"
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:111
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:54
-#, fuzzy, c-format
-msgid "Please enter a download speedlimit greater or equal to 0 %s/s."
-msgstr "请输入大于等于 0 KB/s 的下载速限。"
+#, c-format
+msgid "Please enter a download speed limit greater or equal to 0 %s/s."
+msgstr "请输入大于等于 0 %s/s 的下载速限。"
 
 #: ../../locales/../src/interface/filteredit.cpp:134
 msgid "Please enter a name for the new filter."
@@ -4957,12 +4951,6 @@ msgstr "请输入介于 5 和 9999 之间的超时秒数，或输入 0 禁用超
 msgid "Please enter a unique name for this filter set"
 msgstr "请为这个过滤器集合输入一个唯一的名称"
 
-#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:118
-#: ../../locales/../src/interface/speedlimits_dialog.cpp:62
-#, fuzzy, c-format
-msgid "Please enter a upload speedlimit greater or equal to 0 %s/s."
-msgstr "请输入大于等于 0 KB/s 的上传速度限制。"
-
 #: resources.h:117
 msgid "Please enter a username for this server:"
 msgstr "请为这个服务器输入用户名:"
@@ -4978,6 +4966,12 @@ msgstr "请输入您用以获取外部地址的 URL"
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:41
 msgid "Please enter an update interval of at least 7 days"
 msgstr "请输入升级时间间隔(至少 7 天)"
+
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:118
+#: ../../locales/../src/interface/speedlimits_dialog.cpp:62
+#, c-format
+msgid "Please enter an upload speed limit greater or equal to 0 %s/s."
+msgstr "请输入大于等于 0 %s/s 的上传速度限制。"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:577
 msgid ""
@@ -5025,7 +5019,7 @@ msgid ""
 msgstr ""
 "请确保 FileZilla 被允许建立向外的连接并且确保您输入了被正确解析的地址。"
 
-#: ../../locales/../src/interface/FileZilla.cpp:255
+#: ../../locales/../src/interface/FileZilla.cpp:269
 msgid "Please make sure the requested locale is installed on your system."
 msgstr "请确认所要求的语系有安装在系统里。"
 
@@ -5229,7 +5223,7 @@ msgstr "代理请求失败: %s"
 msgid "Proxy request failed: Unknown address type in CONNECT reply"
 msgstr "代理请求失败: CONNECT 回复有未知地址类型 "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4361
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4363
 msgid "Proxy set but proxy host or port invalid"
 msgstr "已设定代理服务器，但代理地址或端口设置无效"
 
@@ -5373,7 +5367,7 @@ msgstr "重连设置"
 msgid "Reconnects to the last used server"
 msgstr "重新连接上一次使用过的服务器"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:718
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:715
 msgid "Redirection to invalid address"
 msgstr "重定向到无效的地址"
 
@@ -5469,8 +5463,8 @@ msgstr "重命令选定的文件夹"
 msgid "Rename selected files and directories"
 msgstr "重命令选定的文件和文件夹"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3510
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2560
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3512
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2559
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "把‘%s’改名为‘%s’"
@@ -5483,8 +5477,8 @@ msgstr "报告错误和功能请求"
 msgid "Reset and requeue selected files"
 msgstr "重置并重新请求所选的文件"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1197
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:499
+#: ../../locales/../src/engine/ControlSocket.cpp:1198
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:497
 #, c-format
 msgid "Resolving address of %s"
 msgstr "正在解析 %s  的 IP 地址"
@@ -5495,8 +5489,8 @@ msgstr "正在解析主机名称"
 
 #: ../../locales/../src/engine/logging.cpp:215
 #: ../../locales/../src/interface/netconfwizard.cpp:395
-#: ../../locales/../src/interface/StatusView.cpp:283
-#: ../../locales/../src/interface/StatusView.cpp:339
+#: ../../locales/../src/interface/StatusView.cpp:290
+#: ../../locales/../src/interface/StatusView.cpp:344
 #: ../../locales/../src/interface/updatewizard.cpp:516
 msgid "Response:"
 msgstr "响应:"
@@ -5520,7 +5514,7 @@ msgstr "如果服务器使用另外格式的行结尾，继续文本格式文件
 msgid "Retrieving directory listing..."
 msgstr "读取目录列表..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3895
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3897
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -5770,7 +5764,7 @@ msgstr "发出 FTP 保持连接指令(&S)"
 msgid "Send custom command to the server otherwise not available"
 msgstr "发送自定义命令到服务器，如果可用的话"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4443
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4445
 msgid "Sending keep-alive command"
 msgstr "发出防掉线指令"
 
@@ -5782,27 +5776,27 @@ msgstr "序列号:"
 msgid "Server did not properly shut down TLS connection"
 msgstr "服务器没有正常的关闭 TLS 连接"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4294
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4296
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "服务器不支持续传大于 %d GB 的文件。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4290
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4292
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
 "sizes match."
 msgstr "服务器不支持续传大于 %d GB 的文件。当文件大小吻合时传输终止。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2529
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2528
 msgid "Server does not support resume of files > 2GB."
 msgstr "服务器不支持续传大于 2 GB 的文件。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2524
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2523
 msgid "Server does not support resume of files > 4GB."
 msgstr "服务器不支持续传大于 4 GB 的文件。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4305
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4307
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -5821,11 +5815,11 @@ msgid ""
 "login type."
 msgstr "服务器传送了一个附加的登入提示。您需要去使用交互式的登入方式。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3837
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3839
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr "服务器发回了不可路由的地址。被动模式失败。"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3831
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3833
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -5871,8 +5865,8 @@ msgstr "会话细节"
 msgid "Set &Priority"
 msgstr "设定优先级(&P):"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3662
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2438
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3664
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2437
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "修改权限‘%s’为‘%s’"
@@ -5926,9 +5920,8 @@ msgstr "站点管理器"
 #: ../../locales/../src/interface/sitemanager.cpp:1187
 #: ../../locales/../src/interface/sitemanager.cpp:1197
 #: ../../locales/../src/interface/sitemanager.cpp:1206
-#, fuzzy
 msgid "Site Manager - Invalid data"
-msgstr "站点管理器已经打开"
+msgstr "站点管理器 - 无效数据"
 
 #: ../../locales/../src/interface/sitemanager.cpp:313
 msgid "Site Manager already open"
@@ -5984,18 +5977,18 @@ msgstr "大小未知"
 msgid "Skip file"
 msgstr "跳过文件"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1269
-#: ../../locales/../src/engine/ControlSocket.cpp:1288
-#: ../../locales/../src/engine/ControlSocket.cpp:1313
-#: ../../locales/../src/engine/ControlSocket.cpp:1379
+#: ../../locales/../src/engine/ControlSocket.cpp:1270
+#: ../../locales/../src/engine/ControlSocket.cpp:1289
+#: ../../locales/../src/engine/ControlSocket.cpp:1314
+#: ../../locales/../src/engine/ControlSocket.cpp:1380
 #, c-format
 msgid "Skipping download of %s"
 msgstr "跳过下载 %s"
 
-#: ../../locales/../src/engine/ControlSocket.cpp:1273
-#: ../../locales/../src/engine/ControlSocket.cpp:1292
-#: ../../locales/../src/engine/ControlSocket.cpp:1317
-#: ../../locales/../src/engine/ControlSocket.cpp:1383
+#: ../../locales/../src/engine/ControlSocket.cpp:1274
+#: ../../locales/../src/engine/ControlSocket.cpp:1293
+#: ../../locales/../src/engine/ControlSocket.cpp:1318
+#: ../../locales/../src/engine/ControlSocket.cpp:1384
 #, c-format
 msgid "Skipping upload of %s"
 msgstr "跳过上传 %s"
@@ -6014,7 +6007,7 @@ msgstr "一些配置错误的远程服务器放在了路由器后面，可能会
 msgid "Sort directories inline"
 msgstr "排序目录列表"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:452
+#: ../../locales/../src/interface/filelistctrl.cpp:502
 msgid "Sort order cannot be changed if comparing directories."
 msgstr "对比目录时不能改变目录排序。"
 
@@ -6052,11 +6045,11 @@ msgid "Speed limits"
 msgstr "速度限制"
 
 #: ../../locales/../src/interface/statusbar.cpp:584
-msgid "Speedlimits are disabled, click to change."
+msgid "Speed limits are disabled, click to change."
 msgstr "速度限制已禁用，点击修改。"
 
 #: ../../locales/../src/interface/statusbar.cpp:588
-msgid "Speedlimits are enabled, click to change."
+msgid "Speed limits are enabled, click to change."
 msgstr "速度限制已启用，点击修改。"
 
 #: resources.h:385
@@ -6089,8 +6082,8 @@ msgid "Status"
 msgstr "状态"
 
 #: ../../locales/../src/engine/logging.cpp:212
-#: ../../locales/../src/interface/StatusView.cpp:292
-#: ../../locales/../src/interface/StatusView.cpp:363
+#: ../../locales/../src/interface/StatusView.cpp:299
+#: ../../locales/../src/interface/StatusView.cpp:368
 #: ../../locales/../src/interface/updatewizard.cpp:510
 msgid "Status:"
 msgstr "状态:"
@@ -6190,7 +6183,7 @@ msgstr "目标文件名已经存在，是否继续？"
 msgid "Test results"
 msgstr "测试结果"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4311
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4313
 msgid "Testing resume capabilities of server"
 msgstr "正在检测服务器能否续传"
 
@@ -6519,7 +6512,7 @@ msgid "The system will soon reboot unless you click Cancel."
 msgstr "除非您按下取消，否则系统将会马上重启。"
 
 #: ../../locales/../src/interface/QueueView.cpp:3105
-msgid "The system will soon shutdown unless you click Cancel."
+msgid "The system will soon shut down unless you click Cancel."
 msgstr "除非您按下取消，否则系统将会马上关闭。"
 
 #: resources.h:48
@@ -6648,17 +6641,17 @@ msgstr "切换远程目录树显示"
 msgid "Toggles the display of the transfer queue"
 msgstr "切换传输队列显示"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:608
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:605
 msgid "Too long header line"
 msgstr "头行太长"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:669
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:666
 msgid "Too many redirects"
 msgstr "太多重定向"
 
 #: ../../locales/../src/engine/logging.cpp:216
-#: ../../locales/../src/interface/StatusView.cpp:286
-#: ../../locales/../src/interface/StatusView.cpp:349
+#: ../../locales/../src/interface/StatusView.cpp:293
+#: ../../locales/../src/interface/StatusView.cpp:354
 msgid "Trace:"
 msgstr "追踪:"
 
@@ -6834,7 +6827,7 @@ msgstr "除非问题被修复，主动模式 FTP 不会工作，只能使用被�
 msgid "Unsupported certificate type"
 msgstr "不支持的证书类型"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:653
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:650
 msgid "Unsupported redirect"
 msgstr "不支持的重定向"
 
@@ -6861,9 +6854,9 @@ msgid "Upload failed"
 msgstr "上传失败"
 
 #: ../../locales/../src/interface/statusbar.cpp:596
-#, fuzzy, c-format
+#, c-format
 msgid "Upload limit: %s/s"
-msgstr "上传限制: %s/s。"
+msgstr "上传限制: %s/s"
 
 #: ../../locales/../src/interface/statusbar.cpp:598
 msgid "Upload limit: none"
@@ -6972,7 +6965,7 @@ msgstr "用户:"
 msgid "Username cannot be a series of spaces"
 msgstr "用户名不能是一系列的空格"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4366
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4368
 #, c-format
 msgid "Using proxy %s"
 msgstr "使用该代理 %s"
@@ -7042,7 +7035,7 @@ msgstr "等待传输取消"
 msgid "Waiting to retry..."
 msgstr "正在等待重试 ..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:294
+#: ../../locales/../src/interface/FileZilla.cpp:308
 msgid ""
 "Warning!\n"
 "\n"
@@ -7124,7 +7117,7 @@ msgstr "写入(&I)"
 msgid "Wrong external IP address"
 msgstr "错误的外部 IP 地址"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:830
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:827
 msgid "Wrong line endings"
 msgstr "错误的行结尾"
 
@@ -7297,10 +7290,10 @@ msgstr "作结尾"
 msgid "equals"
 msgstr "相等"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:503
-#: ../../locales/../src/interface/filelistctrl.cpp:521
-#: ../../locales/../src/interface/filelistctrl.cpp:546
-#: ../../locales/../src/interface/filelistctrl.cpp:562
+#: ../../locales/../src/interface/filelistctrl.cpp:553
+#: ../../locales/../src/interface/filelistctrl.cpp:571
+#: ../../locales/../src/interface/filelistctrl.cpp:596
+#: ../../locales/../src/interface/filelistctrl.cpp:612
 msgid "file"
 msgstr "文件"
 
