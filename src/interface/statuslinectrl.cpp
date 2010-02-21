@@ -108,7 +108,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	else
 		elapsedSeconds = 0;
 
-	const wxString bytes = CSizeFormat::Format(m_pStatus->currentOffset, true, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
+	const wxString bytes = CSizeFormat::Format(m_pStatus->currentOffset, false, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
 	if (elapsedSeconds)
 	{
 		wxFileOffset rate = GetSpeed(elapsedSeconds);
