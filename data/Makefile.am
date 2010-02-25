@@ -1,6 +1,8 @@
 dist_noinst_DATA = install.nsi.in \
 		makezip.sh.in \
 		mingwm10.dll \
+		nsis_appid.dll \
+		nsis_appid.txt \
 		process_running.nsh \
 		UAC_unicode.dll \
 		UAC_unicode.dll.txt \

@@ -836,6 +836,13 @@ Section "FileZilla Client" SecMain
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\FileZilla.lnk" "$INSTDIR\filezilla.exe"
   
+  ${If} ${AtLeastWin7}
+    ; Setting AppID
+    push "FileZilla.Client.AppID"
+    push "$SMPROGRAMS\$STARTMENU_FOLDER\FileZilla.lnk"
+    nsis_appid::set_appid
+  ${EndIf}
+
   !insertmacro MUI_STARTMENU_WRITE_END
 
   Push $R0
