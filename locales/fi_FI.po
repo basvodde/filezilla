@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla Client 3.3.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-13 21:41+0100\n"
+"POT-Creation-Date: 2010-02-28 21:06+0100\n"
 "PO-Revision-Date: 2010-01-05 10:44+0200\n"
 "Last-Translator: Kari Saariniemi <kari.saariniemi@pp.inet.fi>\n"
 "Language-Team: Kari Saariniemi <kari.saariniemi@pp.inet.fi>\n"
@@ -158,7 +158,7 @@ msgstr "%s tavua (%d.%d Mt/s)"
 msgid "%s bytes (? B/s)"
 msgstr "%s tavua (? B/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:790
+#: ../../locales/../src/interface/FileZilla.cpp:804
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -171,7 +171,7 @@ msgstr ""
 "\n"
 "Lataa FileZilla uudestaan. Jos tämä ongelma toistuu, lähetä virheraportti."
 
-#: ../../locales/../src/interface/FileZilla.cpp:884
+#: ../../locales/../src/interface/FileZilla.cpp:898
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -1176,7 +1176,7 @@ msgstr ""
 "Tällä nimellä oleva tiedosto on vielä muokattavana. Sulje se ja yritä "
 "uudestaan."
 
-#: ../../locales/../src/interface/FileZilla.cpp:770
+#: ../../locales/../src/interface/FileZilla.cpp:784
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -1808,7 +1808,7 @@ msgid "Changing logfile settings requires restart of FileZilla."
 msgstr ""
 "FileZilla pitää käynnistää uudelleen, kun muutetaan lokitiedoston asetuksia."
 
-#: ../../locales/../src/interface/FileZilla.cpp:770
+#: ../../locales/../src/interface/FileZilla.cpp:784
 msgid "Character encoding issue"
 msgstr "Merkin koodausselvitys"
 
@@ -1858,7 +1858,7 @@ msgstr "Valitse paikallinen oletushakemisto"
 msgid "Choose the local directory"
 msgstr "Valitse paikallinen hakemisto"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:855
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:854
 msgid "Chunk data improperly terminated"
 msgstr "Paladata lopetettu virheellisesti"
 
@@ -1969,13 +1969,13 @@ msgstr "Komento epäonnistui"
 msgid "Command not supported"
 msgstr "Komento ei ole tuettu"
 
-#: ../../locales/../src/engine/engineprivate.cpp:183
+#: ../../locales/../src/engine/engineprivate.cpp:215
 msgid "Command not supported by this protocol"
 msgstr "Tämä protokolla ei tue komentoa"
 
 #: ../../locales/../src/engine/logging.cpp:214
-#: ../../locales/../src/interface/StatusView.cpp:280
-#: ../../locales/../src/interface/StatusView.cpp:332
+#: ../../locales/../src/interface/StatusView.cpp:287
+#: ../../locales/../src/interface/StatusView.cpp:337
 #: ../../locales/../src/interface/updatewizard.cpp:513
 msgid "Command:"
 msgstr "Komento:"
@@ -2130,7 +2130,7 @@ msgid "Connection attempt failed with \"%s\"."
 msgstr "Yhteysyritys epäonnistui osoitteeseen \"%s\"."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:186
-#: ../../locales/../src/engine/engineprivate.cpp:320
+#: ../../locales/../src/engine/engineprivate.cpp:352
 msgid "Connection attempt interrupted by user"
 msgstr "Käyttäjä keskeytti yhteysyrityksen"
 
@@ -2264,11 +2264,11 @@ msgstr ""
 "Joko valikon laajennusta ei ole asennettu oikein tai et pudottanut "
 "tiedostoja Resurssienhallinnan ikkunaan. "
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4235
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4240
 msgid "Could not establish connection to server"
 msgstr "Palvelimeen ei saatu yhteyttä"
 
-#: ../../locales/../src/interface/FileZilla.cpp:483
+#: ../../locales/../src/interface/FileZilla.cpp:497
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -2409,12 +2409,12 @@ msgstr "Ei voitu lukea socket-rajapinnasta: %s"
 msgid "Could not read server item."
 msgstr "Palvelinosiota ei voitu lukea."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2677
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2679
 #, c-format
 msgid "Could not seek to offset %s within file"
 msgstr "Ei voitu etsiä tämän tiedoston siirtymäkohtaan %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2610
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2612
 msgid "Could not seek to the end of the file"
 msgstr "Ei voitu etsiä tiedoston loppuun"
 
@@ -2422,7 +2422,7 @@ msgstr "Ei voitu etsiä tiedoston loppuun"
 msgid "Could not send command to fzputtygen."
 msgstr "Komennon lähettäminen fzputtygen:ille epäonnistui."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2708
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2710
 msgid "Could not spawn IO thread"
 msgstr "IO-solmua ei voitu  muodostaa"
 
@@ -2524,16 +2524,11 @@ msgstr "Luo hakemisto"
 msgid "Creating directory"
 msgstr "Luodaan hakemisto"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3278
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3283
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2049
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Luodaan hakemisto '%s'..."
-
-#: ../../locales/../src/engine/ControlSocket.cpp:120
-#, c-format
-msgid "Critical File transfer error after transferring %s in %s"
-msgstr ""
 
 #: ../../locales/../src/engine/ControlSocket.cpp:174
 msgid "Critical error"
@@ -2542,6 +2537,11 @@ msgstr "Kriittinen virhe"
 #: ../../locales/../src/engine/ControlSocket.cpp:137
 #, fuzzy
 msgid "Critical file transfer error"
+msgstr "Kriittinen virhe"
+
+#: ../../locales/../src/engine/ControlSocket.cpp:120
+#, fuzzy, c-format
+msgid "Critical file transfer error after transferring %s in %s"
 msgstr "Kriittinen virhe"
 
 #: ../../locales/../src/interface/state.cpp:370
@@ -2694,7 +2694,7 @@ msgstr ""
 "Epäonnistuneiden yhteysyritysten viiveen pitää olla välillä 1 ja 999 "
 "sekuntia."
 
-#: ../../locales/../src/engine/engineprivate.cpp:633
+#: ../../locales/../src/engine/engineprivate.cpp:665
 #, c-format
 msgid ""
 "Delaying connection for %d second due to previously failed connection "
@@ -2753,12 +2753,12 @@ msgstr "&Hakemistot"
 msgid "Direction"
 msgstr "Suunta"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:529
+#: ../../locales/../src/interface/filelistctrl.cpp:579
 msgid "Directory"
 msgstr "Hakemisto"
 
 #: resources.h:631 resources.h:901 resources.h:984
-#: ../../locales/../src/interface/filelistctrl.cpp:451
+#: ../../locales/../src/interface/filelistctrl.cpp:501
 #: ../../locales/../src/interface/Mainfrm.cpp:2316
 msgid "Directory comparison"
 msgstr "Hakemistojen vertailu"
@@ -2814,15 +2814,15 @@ msgstr "Katkaise yhteys palvelimeen"
 #: ../../locales/../src/engine/ControlSocket.cpp:1000
 #: ../../locales/../src/engine/ControlSocket.cpp:1099
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:223
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:937
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:939
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:936
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:938
 #: ../../locales/../src/interface/QueueView.cpp:1047
 #: ../../locales/../src/interface/QueueView.cpp:1091
 msgid "Disconnected from server"
 msgstr "Yhteys palvelimeen katkaistu"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1134
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:954
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:953
 #, c-format
 msgid "Disconnected from server: %s"
 msgstr "Yhteys katkaistu palvelimeen: %s"
@@ -3075,7 +3075,7 @@ msgstr "Salaus"
 msgid "Encryption details"
 msgstr "Salauksen tiedot"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:453
+#: ../../locales/../src/interface/filelistctrl.cpp:503
 msgid "End comparison and change sorting order?"
 msgstr "Lopetetaanko vertailu ja muutetaan lajittelujärjestystä?"
 
@@ -3218,8 +3218,8 @@ msgid "Error, local file exists but cannot be removed"
 msgstr "Virhe, paikallinen tiedosto on olemassa, mutta sitä ei voi poistaa"
 
 #: ../../locales/../src/engine/logging.cpp:213
-#: ../../locales/../src/interface/StatusView.cpp:278
-#: ../../locales/../src/interface/StatusView.cpp:328
+#: ../../locales/../src/interface/StatusView.cpp:285
+#: ../../locales/../src/interface/StatusView.cpp:333
 #: ../../locales/../src/interface/updatewizard.cpp:507
 msgid "Error:"
 msgstr "Virhe:"
@@ -3315,9 +3315,9 @@ msgstr "FTPS - FTP yli implicit TLS/SSL"
 msgid "Failed to change directory"
 msgstr "Hakemiston vaihtaminen ei onnistunut"
 
-#: ../../locales/../src/interface/FileZilla.cpp:256
-#: ../../locales/../src/interface/FileZilla.cpp:264
-#: ../../locales/../src/interface/FileZilla.cpp:266
+#: ../../locales/../src/interface/FileZilla.cpp:270
+#: ../../locales/../src/interface/FileZilla.cpp:278
+#: ../../locales/../src/interface/FileZilla.cpp:280
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 msgid "Failed to change language"
 msgstr "Kielen vaihtaminen ei onnistunut"
@@ -3338,8 +3338,8 @@ msgstr "XML-tiedoston varmuuskopion luonti epäonnistui"
 msgid "Failed to create listen socket, aborting"
 msgstr "Kuuntelun socket-rajapinnan luonti epäonnistui, keskeytetään"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4211
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4215
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4216
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4220
 msgid "Failed to create listening socket for active mode transfer"
 msgstr "Kuuntelun socket-rajapinnan luonti epäonnistui aktiivitilan siirrolle"
 
@@ -3382,17 +3382,17 @@ msgstr "Paneelien lataminen epäonnistui, epäkelvot resurssitiedostot?"
 msgid "Failed to load private key: %s"
 msgstr "Salatun avaimen lataaminen epäonnistui: %s"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2601
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
 msgstr "Ei voitu avata tiedostoa \"%s\" lisäämistä/kirjoittamista varten"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2661
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2663
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Ei voitu avata kohdetta \"%s\" lukemista varten"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2640
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2642
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:391
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:448
 #, c-format
@@ -3415,12 +3415,12 @@ msgstr "Hakemistolistauksen haku epäonnistui"
 msgid "Failed to retrieve external ip address, aborting"
 msgstr "Ulkoisen IP-osoitteen haku epäonnistui, keskeytetään"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3909
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3914
 msgid "Failed to retrieve external ip address, using local address"
 msgstr ""
 "Ulkoisen IP-osoitteen haku epäonnistui, käytetään paikallista osoitetta"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3931
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3936
 msgid "Failed to retrieve local ip address."
 msgstr "Paikallisen IP-osoitteen haku epäonnistui."
 
@@ -3436,14 +3436,14 @@ msgstr "Ulkoisen IP-osoitteen haku epäonnistui."
 msgid "Failed to send command."
 msgstr "Komennon lähetys epäonnistui."
 
-#: ../../locales/../src/interface/FileZilla.cpp:264
+#: ../../locales/../src/interface/FileZilla.cpp:278
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language"
 msgstr ""
 "Kielen asetus kielelle %s (%s) epäonnistui, käytetään järjestelmän "
 "oletuskieltä"
 
-#: ../../locales/../src/interface/FileZilla.cpp:249
+#: ../../locales/../src/interface/FileZilla.cpp:263
 #, c-format
 msgid ""
 "Failed to set language to %s (%s), using default system language (%s, %s)."
@@ -3451,28 +3451,28 @@ msgstr ""
 "Kielen asetus kielelle %s (%s) epäonnistui, käytetään järjestelmän "
 "oletuskieltä (%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:237
+#: ../../locales/../src/interface/FileZilla.cpp:251
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language."
 msgstr ""
 "Kielen asetus kielelle %s (%s) epäonnistui, käytetään järjestelmän "
 "oletuskieltä."
 
-#: ../../locales/../src/interface/FileZilla.cpp:266
+#: ../../locales/../src/interface/FileZilla.cpp:280
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 #, c-format
 msgid "Failed to set language to %s, using default system language"
 msgstr ""
 "Kielen asetus kielelle %s epäonnistui, käytetään järjestelmän oletuskieltä"
 
-#: ../../locales/../src/interface/FileZilla.cpp:245
+#: ../../locales/../src/interface/FileZilla.cpp:259
 #, c-format
 msgid "Failed to set language to %s, using default system language (%s, %s)."
 msgstr ""
 "Kielen asetus kielelle %s epäonnistui, käytetään järjestelmän oletuskieltä (%"
 "s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:234
+#: ../../locales/../src/interface/FileZilla.cpp:248
 #, c-format
 msgid "Failed to set language to %s, using default system language."
 msgstr ""
@@ -3486,7 +3486,7 @@ msgstr "Asetuksien varmennus epäonnistui"
 msgid "Failed to verify peer certificate"
 msgstr "'Peer'-sertifikaatin todennus epäonnistui"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:567
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:566
 #, c-format
 msgid "Failed to write to file %s"
 msgstr "Tiedostoon %s kirjoittaminen epäonnistui"
@@ -3511,9 +3511,9 @@ msgstr "Tie&dosto:"
 msgid "Fil&es"
 msgstr "&Tiedostot"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:506
-#: ../../locales/../src/interface/filelistctrl.cpp:524
-#: ../../locales/../src/interface/filelistctrl.cpp:533
+#: ../../locales/../src/interface/filelistctrl.cpp:556
+#: ../../locales/../src/interface/filelistctrl.cpp:574
+#: ../../locales/../src/interface/filelistctrl.cpp:583
 msgid "File"
 msgstr "Tiedosto"
 
@@ -3546,8 +3546,8 @@ msgid "File lists"
 msgstr "Tiedostolistaukset"
 
 #: ../../locales/../src/interface/edithandler.cpp:1713
-#: ../../locales/../src/interface/FileZilla.cpp:791
-#: ../../locales/../src/interface/FileZilla.cpp:885
+#: ../../locales/../src/interface/FileZilla.cpp:805
+#: ../../locales/../src/interface/FileZilla.cpp:899
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "File not found"
 msgstr "Tiedostoa ei löydy"
@@ -3602,7 +3602,7 @@ msgstr "Tiedosto siirrettäisiin ASCII-tietotyyppinä."
 msgid "File would transfer with binary data type."
 msgstr "Tiedosto siirrettäisiin binääritietotyyppinä."
 
-#: ../../locales/../src/interface/FileZilla.cpp:484
+#: ../../locales/../src/interface/FileZilla.cpp:498
 #: ../../locales/../src/interface/quickconnectbar.cpp:67
 #: ../../locales/../src/interface/quickconnectbar.cpp:189
 msgid "FileZilla Error"
@@ -3651,7 +3651,7 @@ msgstr "Nimi"
 msgid "Filename &filters..."
 msgstr "Tiedostonimen &suodattimet..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3076
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3081
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2312
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
@@ -4187,11 +4187,11 @@ msgstr "Käyttöliittymä"
 msgid "Interrupted by user"
 msgstr "Käyttäjän keskeytys"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:773
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:772
 msgid "Invalid Content-Length"
 msgstr "Content-Length ei kelpaa"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:624
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:623
 msgid "Invalid HTTP Response"
 msgstr "HTTP-vastaus ei kelpaa"
 
@@ -4204,7 +4204,7 @@ msgstr ""
 "Vastaanotettiin epäkelpo merkistösekvenssi, poistetaan UTF-8. Valitse UTF-8 "
 "Sivustonhallinnassa pakottaaksesi UTF-8."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:897
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:896
 msgid "Invalid chunk size"
 msgstr "Alilohkon koko ei kelpaa"
 
@@ -4260,7 +4260,7 @@ msgstr ""
 msgid "Invalid regular expression in search conditions."
 msgstr "Epäkelpo säännöllinen lauseke hakuehdoissa."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:634
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:633
 msgid "Invalid response code"
 msgstr "Vastauskoodi ei kelpaa"
 
@@ -4367,7 +4367,7 @@ msgstr "Rajaa lokitiedoston koko"
 msgid "Limit:"
 msgstr "Raja:"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:840
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:839
 msgid "Line length exceeded"
 msgstr "Rivin pituus ylitetty"
 
@@ -4380,8 +4380,8 @@ msgid "Listen socket closed"
 msgstr "Kuuntelun socket-rajapinta suljettu"
 
 #: ../../locales/../src/engine/logging.cpp:220
-#: ../../locales/../src/interface/StatusView.cpp:289
-#: ../../locales/../src/interface/StatusView.cpp:356
+#: ../../locales/../src/interface/StatusView.cpp:296
+#: ../../locales/../src/interface/StatusView.cpp:361
 msgid "Listing:"
 msgstr "Listaus:"
 
@@ -4491,20 +4491,20 @@ msgstr ""
 "Varmista, että tiedoston voi avata ja että se on oikein muotoiltu XML-"
 "asiakirja."
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:828
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:840
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:855
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:897
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:827
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:839
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:854
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:896
 #, c-format
 msgid "Malformed chunk data: %s"
 msgstr "Virheellisesti muotoiltu paladata: %s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:773
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:772
 #, c-format
 msgid "Malformed header: %s"
 msgstr "Virheellisesti muotoiltu tunniste: %s"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:594
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:593
 msgid "Malformed reply, server not sending proper line endings"
 msgstr ""
 "Virheellisesti muotoiltu vastaus, palvelin ei lähetä kelvollisia "
@@ -4685,7 +4685,7 @@ msgstr "Luokkaa ei ole valittu vientiin."
 msgid "No command given, aborting."
 msgstr "Komentoa ei annettu, keskeytetään."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3876
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3881
 msgid "No external IP address set, trying default."
 msgstr "Ulkoista IP-osoitetta ei asetettu, kokeillaan oletusta."
 
@@ -4884,7 +4884,7 @@ msgstr ""
 "Avaa hakemistolistauksen suodatinikkunan. Klikkaa hiiren oikealla "
 "vaihtaaksesi suodattimia."
 
-#: ../../locales/../src/interface/FileZilla.cpp:303
+#: ../../locales/../src/interface/FileZilla.cpp:317
 msgid "Operating system problem detected"
 msgstr "Käyttöjärjestelmän ongelma havaittu."
 
@@ -4994,7 +4994,7 @@ msgstr "Tarvitaan salasana"
 msgid "Path"
 msgstr "Polku"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3163
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3168
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2357
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
@@ -5075,7 +5075,7 @@ msgstr "Anna oma aikamuoto."
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:111
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:54
 #, fuzzy, c-format
-msgid "Please enter a download speedlimit greater or equal to 0 %s/s."
+msgid "Please enter a download speed limit greater or equal to 0 %s/s."
 msgstr "Anna latausnopeus, joka on suurempi tai yhtäsuuri kuin 0 kt/s."
 
 #: ../../locales/../src/interface/filteredit.cpp:134
@@ -5138,13 +5138,6 @@ msgstr ""
 msgid "Please enter a unique name for this filter set"
 msgstr "Anna nimi tälle suodatinjoukolle"
 
-#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:118
-#: ../../locales/../src/interface/speedlimits_dialog.cpp:62
-#, fuzzy, c-format
-msgid "Please enter a upload speedlimit greater or equal to 0 %s/s."
-msgstr ""
-"Anna latauksen nopeusrajoitus, joka on suurempi tai yhtäsuuri kuin 0 kt/s."
-
 #: resources.h:117
 msgid "Please enter a username for this server:"
 msgstr "Anna käyttäjänimi tälle palvelimelle:"
@@ -5160,6 +5153,13 @@ msgstr "Anna URL, josta ulkoinen osoite haetaan."
 #: ../../locales/../src/interface/settings/optionspage_updatecheck.cpp:41
 msgid "Please enter an update interval of at least 7 days"
 msgstr "Anna päivitysväli vähintään 7 päivälle."
+
+#: ../../locales/../src/interface/settings/optionspage_transfer.cpp:118
+#: ../../locales/../src/interface/speedlimits_dialog.cpp:62
+#, fuzzy, c-format
+msgid "Please enter an upload speed limit greater or equal to 0 %s/s."
+msgstr ""
+"Anna latauksen nopeusrajoitus, joka on suurempi tai yhtäsuuri kuin 0 kt/s."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:577
 msgid ""
@@ -5210,7 +5210,7 @@ msgstr ""
 "Varmista, että FileZillalla on oikeus muodostaa ulosmeneviä yhteyksiä ja "
 "että annoit osoitteen oikeassa muodossa."
 
-#: ../../locales/../src/interface/FileZilla.cpp:255
+#: ../../locales/../src/interface/FileZilla.cpp:269
 msgid "Please make sure the requested locale is installed on your system."
 msgstr "Varmista, että pyydetty lokaali on asennettu järjestelmääsi."
 
@@ -5428,7 +5428,7 @@ msgstr ""
 "Välityspalvelimen pyyntö epäonnistui: Tuntematon osoitteen tyyppi CONNECT-"
 "vastauksessa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4360
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4365
 msgid "Proxy set but proxy host or port invalid"
 msgstr "Välityspalvelin asetettu, mutta isäntä tai portti epäkelpo"
 
@@ -5576,7 +5576,7 @@ msgstr "Uudelleenyhdistämisen asetukset"
 msgid "Reconnects to the last used server"
 msgstr "Yhdistä uudelleen viimeisimpään käytettyyn palvelimeen"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:716
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:715
 msgid "Redirection to invalid address"
 msgstr "Uudelleenohjaus epäkelpoon osoitteeseen"
 
@@ -5675,7 +5675,7 @@ msgstr "Nimeä valittu hakemisto uudelleen"
 msgid "Rename selected files and directories"
 msgstr "Nimeä uudelleen tiedostot ja hakemistot"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3509
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3514
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2559
 #, c-format
 msgid "Renaming '%s' to '%s'"
@@ -5701,8 +5701,8 @@ msgstr "Selvitetään isäntänimeä"
 
 #: ../../locales/../src/engine/logging.cpp:215
 #: ../../locales/../src/interface/netconfwizard.cpp:395
-#: ../../locales/../src/interface/StatusView.cpp:283
-#: ../../locales/../src/interface/StatusView.cpp:339
+#: ../../locales/../src/interface/StatusView.cpp:290
+#: ../../locales/../src/interface/StatusView.cpp:344
 #: ../../locales/../src/interface/updatewizard.cpp:516
 msgid "Response:"
 msgstr "Vastaus:"
@@ -5728,7 +5728,7 @@ msgstr ""
 msgid "Retrieving directory listing..."
 msgstr "Haetaan hakemistolistausta..."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3894
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3899
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
@@ -5977,7 +5977,7 @@ msgstr ""
 "palvelintyyppiä.\n"
 "Käytä sivustokohtaisia kirjanmerkkejä tälle palvelimelle."
 
-#: ../../locales/../src/engine/engineprivate.cpp:281
+#: ../../locales/../src/engine/engineprivate.cpp:313
 msgid "Selected port usually in use by a different protocol."
 msgstr "Valittu portti on yleensä toisen protokollan käytössä."
 
@@ -5989,7 +5989,7 @@ msgstr "Lähetä FTP:n &Keep-Alive komentoja"
 msgid "Send custom command to the server otherwise not available"
 msgstr "Lähetä oma komento palvelimelle, joka ei ole muuten saatavissa"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4442
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4447
 msgid "Sending keep-alive command"
 msgstr "Lähetetään Keep-Alive komento"
 
@@ -6001,12 +6001,12 @@ msgstr "Sarjanumero:"
 msgid "Server did not properly shut down TLS connection"
 msgstr "Palvelin ei lopettanut kunnolla TLS-yhteyttä"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4293
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4298
 #, c-format
 msgid "Server does not support resume of files > %d GB."
 msgstr "Palvelin ei tue tiedostoja, jotka ovat > %d GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4289
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4294
 #, c-format
 msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
@@ -6015,15 +6015,15 @@ msgstr ""
 "Palvelin ei tue tiedostojen palautusta, jotka ovat > %d Gt. Lopeta siirto "
 "siihen asti, kunnes tiedostokoot täsmäävät."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2528
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2530
 msgid "Server does not support resume of files > 2GB."
 msgstr "Palvelin ei tue tiedostoja, jotka ovat > 2GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2523
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2525
 msgid "Server does not support resume of files > 4GB."
 msgstr "Palvelin ei tue tiedostoja, jotka ovat > 4GB."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4304
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4309
 #, c-format
 msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
@@ -6046,13 +6046,13 @@ msgstr ""
 "Palvelin lähetti kirjautumisen lisäkyselyn. Sinun pitää käyttää "
 "interaktiivista kirjautumistapaa."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3836
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3841
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
 msgstr ""
 "Palvelin lähetti passiivisen vastauksen osoitteesta, jota ei voi reitittää. "
 "Passiivitila epäonnistui."
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3830
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3835
 msgid ""
 "Server sent passive reply with unroutable address. Using server address "
 "instead."
@@ -6100,7 +6100,7 @@ msgstr "Yhteyskerran tiedot"
 msgid "Set &Priority"
 msgstr "Aseta &prioriteetti"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3661
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:3666
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2437
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
@@ -6248,7 +6248,7 @@ msgstr ""
 msgid "Sort directories inline"
 msgstr "Lajittele linjalla olevat hakemistot"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:452
+#: ../../locales/../src/interface/filelistctrl.cpp:502
 msgid "Sort order cannot be changed if comparing directories."
 msgstr "Lajittelujärjestystä ei voi muuttaa, jos vertaillaan hakemistoja."
 
@@ -6287,11 +6287,11 @@ msgid "Speed limits"
 msgstr "Nopeusrajoitukset"
 
 #: ../../locales/../src/interface/statusbar.cpp:584
-msgid "Speedlimits are disabled, click to change."
+msgid "Speed limits are disabled, click to change."
 msgstr ""
 
 #: ../../locales/../src/interface/statusbar.cpp:588
-msgid "Speedlimits are enabled, click to change."
+msgid "Speed limits are enabled, click to change."
 msgstr ""
 
 #: resources.h:385
@@ -6302,13 +6302,13 @@ msgstr "Aloita siirto &heti"
 msgid "Start with opened Site Manager"
 msgstr "Avaa Sivustonhallinta avattuna"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2209
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2211
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
 #, c-format
 msgid "Starting download of %s"
 msgstr "Aloitetaan %s:n lataus palvelimelta"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2213
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:2215
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1637
 #, c-format
 msgid "Starting upload of %s"
@@ -6324,8 +6324,8 @@ msgid "Status"
 msgstr "Tila"
 
 #: ../../locales/../src/engine/logging.cpp:212
-#: ../../locales/../src/interface/StatusView.cpp:292
-#: ../../locales/../src/interface/StatusView.cpp:363
+#: ../../locales/../src/interface/StatusView.cpp:299
+#: ../../locales/../src/interface/StatusView.cpp:368
 #: ../../locales/../src/interface/updatewizard.cpp:510
 msgid "Status:"
 msgstr "Tila:"
@@ -6427,7 +6427,7 @@ msgstr "Kohdetiedosto on jo olemassa, jatketaanko?"
 msgid "Test results"
 msgstr "Testitulokset"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4310
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4315
 msgid "Testing resume capabilities of server"
 msgstr "Testataan palvelimen kykyjä jatkaa"
 
@@ -6778,7 +6778,7 @@ msgstr "Järjestelmä käynnistetään kohta uudestaan, jollet paina Peruuta."
 
 #: ../../locales/../src/interface/QueueView.cpp:3105
 #, fuzzy
-msgid "The system will soon shutdown unless you click Cancel."
+msgid "The system will soon shut down unless you click Cancel."
 msgstr "Järjestelmä sammutetaan kohta, jollet paina Peruuta."
 
 #: resources.h:48
@@ -6842,7 +6842,7 @@ msgstr "&Aikakatkaisu sekunneissa:"
 msgid "Timeout"
 msgstr "Aikakatkaisu"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1668
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:1669
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1079
 #, c-format
 msgid ""
@@ -6923,17 +6923,17 @@ msgstr "Palvelimen hakemistopuu"
 msgid "Toggles the display of the transfer queue"
 msgstr "Siirtojono"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:606
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:605
 msgid "Too long header line"
 msgstr "Liian pitkä tunnisterivi"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:667
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:666
 msgid "Too many redirects"
 msgstr "Liian monta uudelleenohjausta"
 
 #: ../../locales/../src/engine/logging.cpp:216
-#: ../../locales/../src/interface/StatusView.cpp:286
-#: ../../locales/../src/interface/StatusView.cpp:349
+#: ../../locales/../src/interface/StatusView.cpp:293
+#: ../../locales/../src/interface/StatusView.cpp:354
 msgid "Trace:"
 msgstr "Jäljitä:"
 
@@ -7118,7 +7118,7 @@ msgstr ""
 msgid "Unsupported certificate type"
 msgstr "Sertifikaatin tyyppi ei tuettu"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:651
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:650
 msgid "Unsupported redirect"
 msgstr "Uudellenohjaus ei tuettu"
 
@@ -7262,7 +7262,7 @@ msgstr "Käyttäjä:"
 msgid "Username cannot be a series of spaces"
 msgstr "Käyttäjänimi ei voi olla sarja välilyöntejä"
 
-#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4365
+#: ../../locales/../src/engine/ftpcontrolsocket.cpp:4370
 #, c-format
 msgid "Using proxy %s"
 msgstr "Käytetään välityspalvelinta %s"
@@ -7330,11 +7330,11 @@ msgstr "Odotetaan salasanaa"
 msgid "Waiting for transfer to be cancelled"
 msgstr "Odotetaan, siirron peruuttamista"
 
-#: ../../locales/../src/engine/engineprivate.cpp:203
+#: ../../locales/../src/engine/engineprivate.cpp:235
 msgid "Waiting to retry..."
 msgstr "Odotetaan uudelleenyritystä..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:294
+#: ../../locales/../src/interface/FileZilla.cpp:308
 msgid ""
 "Warning!\n"
 "\n"
@@ -7421,7 +7421,7 @@ msgstr "Ki&rjoita"
 msgid "Wrong external IP address"
 msgstr "Väärä ulkoinen IP-osoite"
 
-#: ../../locales/../src/engine/httpcontrolsocket.cpp:828
+#: ../../locales/../src/engine/httpcontrolsocket.cpp:827
 msgid "Wrong line endings"
 msgstr "Väärät rivin lopetukset"
 
@@ -7607,10 +7607,10 @@ msgstr "loppuu"
 msgid "equals"
 msgstr "yhtäsuuri kuin"
 
-#: ../../locales/../src/interface/filelistctrl.cpp:503
-#: ../../locales/../src/interface/filelistctrl.cpp:521
-#: ../../locales/../src/interface/filelistctrl.cpp:546
-#: ../../locales/../src/interface/filelistctrl.cpp:562
+#: ../../locales/../src/interface/filelistctrl.cpp:553
+#: ../../locales/../src/interface/filelistctrl.cpp:571
+#: ../../locales/../src/interface/filelistctrl.cpp:596
+#: ../../locales/../src/interface/filelistctrl.cpp:612
 msgid "file"
 msgstr "tiedosto"
 
@@ -7704,161 +7704,3 @@ msgstr "maailma kirjoitettavissa"
 #: resources.h:164
 msgid "wxWidgets:"
 msgstr "wxWidgets:"
-
-#~ msgid "Cannot load main menu from resource file"
-#~ msgstr "Ei voitu ladata päävalikkoa resurssitiedostosta"
-
-#~ msgid "bytes"
-#~ msgstr "tavua"
-
-#~ msgid "Break current connection?"
-#~ msgstr "Katkaistaanko yhteys?"
-
-#~ msgid ";1"
-#~ msgstr ";1"
-
-#~ msgid "A&sk for action"
-#~ msgstr "K&ysy toimintoa"
-
-#~ msgid "Add &more"
-#~ msgstr "&Lisää"
-
-#~ msgid "Any of the following"
-#~ msgstr "Mikä tahansa seuraavista"
-
-#~ msgid "Connecting to %s:%d..."
-#~ msgstr "Yhdistetään kohteeseen %s:%d..."
-
-#~ msgid "Downloads"
-#~ msgstr "Lataukset palvelimelta"
-
-#~ msgid "Filter &out all files that:"
-#~ msgstr "Suodata &pois kaikki seuraavat tiedostot:"
-
-#~ msgid "None of the following"
-#~ msgstr "Ei mikään seuraavista"
-
-#~ msgid "O&verwrite"
-#~ msgstr "Kor&vaa"
-
-#~ msgid "Over&write if source newer"
-#~ msgstr "Ko&rvaa, jos lähde uudempi"
-
-#~ msgid "Queue: %s%d bytes"
-#~ msgstr "Jono: %s%d tavua"
-
-#~ msgid "Rena&me"
-#~ msgstr "&Nimeä uudelleen"
-
-#~ msgid "Res&ume"
-#~ msgstr "J&atka"
-
-#~ msgid "S&kip"
-#~ msgstr "O&hita"
-
-#~ msgid "Search for files that:"
-#~ msgstr "Etsi tiedostoja, jotka:"
-
-#~ msgid "Sk&ip"
-#~ msgstr "Oh&ita"
-
-#~ msgid "State:"
-#~ msgstr "Tila:"
-
-#~ msgid "Uploads"
-#~ msgstr "Lataukset palvelimelle"
-
-#~ msgid "Use d&efault"
-#~ msgstr "Käytä o&letusta"
-
-#~ msgid "FileZilla does not support the HTTP protocol"
-#~ msgstr "FileZilla ei tue HTTP-protokollaa"
-
-#~ msgid "View / Edit"
-#~ msgstr "Näytä / Muokkaa"
-
-#~ msgid "CFileZillaEnginePrivate::ResetOperation(%d)"
-#~ msgstr "CFileZillaEnginePrivate::ResetOperation(%d)"
-
-#~ msgid "CSftpControlSocket::ChangeDirSend()"
-#~ msgstr "CSftpControlSocket::ChangeDirSend()"
-
-#~ msgid "CSftpControlSocket::ChangeDirSubcommandResult()"
-#~ msgstr "CSftpControlSocket::ChangeDirSubcommandResult()"
-
-#~ msgid "&Local path:"
-#~ msgstr "&Paikallinen polku:"
-
-#~ msgid ""
-#~ "Could not load \"%s\", please make sure the file is valid and can be "
-#~ "accessed."
-#~ msgstr ""
-#~ "Ei voitu ladata \"%s\", varmista, että tiedosto on kelvollinen ja että "
-#~ "siihen saa yhteyden."
-
-#~ msgid ""
-#~ "Could not load \"%s\", please make sure the file is valid and can be "
-#~ "accessed.\n"
-#~ "Any changes made in the Site Manager could not be saved."
-#~ msgstr ""
-#~ "Ei voitu ladata \"%s\", varmista, että tiedosto on kelvollinen ja että "
-#~ "siihen saa yhteyden.\n"
-#~ "Sivustonhallinnassa tehtyjä muutoksia ei voitu tallentaa."
-
-#~ msgid ""
-#~ "Could not load \"%s\", please make sure the file is valid and can be "
-#~ "accessed.\n"
-#~ "The queue will not be saved."
-#~ msgstr ""
-#~ "Ei voitu ladata \"%s\", varmista, että tiedosto on kelvollinen ja että "
-#~ "siihen saa yhteyden.\n"
-#~ "Jonoa ei tallenneta."
-
-#~ msgid "Directory comparison."
-#~ msgstr "Hakemistojenn vertailu."
-
-#~ msgid "Example:"
-#~ msgstr "Esimerkki:"
-
-#~ msgid ""
-#~ "Please make sure you are running the latest version of FileZilla. Visit "
-#~ "http://filezilla-project.org for details."
-#~ msgstr ""
-#~ "Varmista, että käytät viimeisintä FileZillan versiota. Käy osoitteessa: "
-#~ "http://filezilla-project.org saadaksesi tarkempia tietoja."
-
-#~ msgid ""
-#~ "Selected file cannot be opened.\n"
-#~ "No default editor has been set or filetype association is missing or "
-#~ "incorrect."
-#~ msgstr ""
-#~ "Valittua tiedostoa ei voi avata.\n"
-#~ "Mitään editoria ei ole valittu, tiedostotyyppi puuttuu tai se on epäkelpo."
-
-#~ msgid ""
-#~ "Submit a bug report if this problem persists even with the latest version "
-#~ "of FileZilla."
-#~ msgstr ""
-#~ "Lähetä vikailmoitus jos tämä ongelma jatkuu, vaikka käytössä olisi uusin "
-#~ "FileZillan versio."
-
-#~ msgid "Trace"
-#~ msgstr "Jäljitys:"
-
-#~ msgid "D&iscard"
-#~ msgstr "P&eruuta"
-
-#~ msgid "Default"
-#~ msgstr "Oletus"
-
-#~ msgid "Error %d writing to socket"
-#~ msgstr "Virhe %d kirjoitettaessa socket-rajapintaan"
-
-#~ msgid "Folder"
-#~ msgstr "Kansio"
-
-#~ msgid "Invalid hostname or host not found"
-#~ msgstr "Isäntänimi ei kelpaa tai isäntää ei löytynyt"
-
-#~ msgid "Updatecheck failed"
-#~ msgstr "Päivitystarkistus epäonnistui"
