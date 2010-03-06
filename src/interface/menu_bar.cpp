@@ -329,6 +329,9 @@ void CMenuBar::OnStateChange(CState* pState, enum t_statechange_notifications no
 	switch (notification)
 	{
 	case STATECHANGE_CHANGEDCONTEXT:
+		UpdateMenubarState();
+		UpdateBookmarkMenu();
+		break;
 	case STATECHANGE_SERVER:
 	case STATECHANGE_REMOTE_IDLE:
 		UpdateMenubarState();

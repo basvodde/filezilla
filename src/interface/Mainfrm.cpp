@@ -330,14 +330,8 @@ CMainFrame::CMainFrame()
 
 	m_pContextControl->CreateTab();
 
-	CContextControl::_context_controls* controls = m_pContextControl->GetCurrentControls();
-	if (controls)
-	{
-		controls->site_bookmarks->path = COptions::Get()->GetOption(OPTION_LAST_CONNECTED_SITE);
-		CSiteManager::GetBookmarks(controls->site_bookmarks->path,
-								   controls->site_bookmarks->bookmarks);
-	}
-
+	m_pContextControl->GetCurrentControls();
+	
 	switch (message_log_position)
 	{
 	case 1:
