@@ -32,7 +32,7 @@ public:
 	static enum local_fileType GetFileInfo(const wxString& path, bool &isLink, wxLongLong* size, wxDateTime* modificationTime, int* mode);
 
 	// If parent window is given, display confirmation dialog
-	// Returns falls iff there's an encoding error, e.g. program
+	// Returns false iff there's an encoding error, e.g. program
 	// started without UTF-8 locale.
 	static bool RecursiveDelete(const wxString& path, wxWindow* parent);
 	static bool RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow* parent);
