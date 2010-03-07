@@ -544,7 +544,7 @@ Function RunUninstaller
   ${AndIf} $REINSTALL_UNINSTALL == "1"
     ExecWait '$R1 _?=$INSTDIR'
   ${Else}
-    ExecWait '$R1 /frominstall _?=$INSTDIR'
+    ExecWait '$R1 /frominstall /keepstartmenudir _?=$INSTDIR'
   ${EndIf}
 
   IfErrors no_remove_uninstaller
@@ -1055,17 +1055,24 @@ Function un.RemoveStartmenu
   Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$MUI_TEMP\FileZilla.lnk"
   
-  ;Delete empty start menu parent diretories
-  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
+  ${un.GetParameters} $R0
+
+  ${un.GetOptions} $R0 "/keepstartmenudir" $R1
+  ${If} ${Errors}
  
-  startMenuDeleteLoop:
-    RMDir $MUI_TEMP
-    GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
+    ;Delete empty start menu parent diretories
+    StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
+ 
+    startMenuDeleteLoop:
+      RMDir $MUI_TEMP
+      GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
     
-    IfErrors startMenuDeleteLoopDone
+      IfErrors startMenuDeleteLoopDone
   
-    StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
-  startMenuDeleteLoopDone:
+      StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
+    startMenuDeleteLoopDone:
+
+  ${EndUnless}
 
 FunctionEnd
 
