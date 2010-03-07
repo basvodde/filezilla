@@ -42,7 +42,8 @@ protected:
 
 	int SendTransferCommand();
 
-	wxString GetDownloadDir();
+	CLocalPath GetDownloadDir() const;
+	bool SetLocalFile();
 
 	bool VerifyChecksum();
 	void FailedChecksum();
