@@ -87,6 +87,7 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 	menubar->Check(XRCID("ID_VIEW_LOCALTREE"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL) != 0);
 	menubar->Check(XRCID("ID_VIEW_REMOTETREE"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_REMOTE) != 0);
 	menubar->Check(XRCID("ID_MENU_VIEW_FILELISTSTATUSBAR"), COptions::Get()->GetOptionVal(OPTION_FILELIST_STATUSBAR) != 0);
+	menubar->Check(XRCID("ID_MENU_TRANSFER_PRESERVETIMES"), COptions::Get()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) != 0);
 
 	switch (COptions::Get()->GetOptionVal(OPTION_ASCIIBINARY))
 	{
@@ -378,7 +379,7 @@ void CMenuBar::OnOptionChanged(int option)
 		}
 		break;
 	case OPTION_PRESERVE_TIMESTAMPS:
-		Check(XRCID("ID_MENU_TRANSFER_PRESERVETIMES"), COptions::Get()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) ? true : false);
+		Check(XRCID("ID_MENU_TRANSFER_PRESERVETIMES"), COptions::Get()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) != 0);
 		break;
 	case OPTION_SHOW_TREE_LOCAL:
 		Check(XRCID("ID_VIEW_LOCALTREE"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL) != 0);
