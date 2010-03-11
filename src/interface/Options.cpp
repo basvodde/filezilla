@@ -93,6 +93,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Last automatic update check", string, _T(""), false },
 	{ "Update Check New Version", string, _T(""), false },
 	{ "Update Check Check Beta", number, _T("0"), false },
+	{ "Update Check Download Dir", string, _T(""), false },
 	{ "Show debug menu", number, _T("0"), false },
 	{ "File exists action download", number, _T("0"), false },
 	{ "File exists action upload", number, _T("0"), false },
