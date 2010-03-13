@@ -343,6 +343,8 @@ template<class CFileData> void CFileListCtrl<CFileData>::InitHeaderImageList()
 
 template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=-1*/, int direction /*=-1*/, bool updateSelections /*=true*/)
 {
+	CancelLabelEdit();
+
 	if (column != -1)
 	{
 		if (column != m_sortColumn)

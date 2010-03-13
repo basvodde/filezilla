@@ -81,6 +81,9 @@ protected:
 
 	virtual void OnNavigationEvent(bool forward);
 
+	virtual bool OnBeginRename(const wxListEvent& event);
+	virtual bool OnAcceptRename(const wxListEvent& event);
+
 	wxString m_dir;
 
 	wxDropTarget* m_pDropTarget;
@@ -97,8 +100,6 @@ protected:
 	void OnMenuDelete(wxCommandEvent& event);
 	void OnMenuRename(wxCommandEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
-	void OnBeginLabelEdit(wxListEvent& event);
-	void OnEndLabelEdit(wxListEvent& event);
 	void OnBeginDrag(wxListEvent& event);
 	void OnMenuOpen(wxCommandEvent& event);
 	void OnMenuEdit(wxCommandEvent& event);

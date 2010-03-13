@@ -18,6 +18,8 @@ EVT_MOUSEWHEEL(wxListCtrlEx::OnMouseWheel)
 EVT_LIST_ITEM_FOCUSED(wxID_ANY, wxListCtrlEx::OnSelectionChanged)
 EVT_LIST_ITEM_SELECTED(wxID_ANY, wxListCtrlEx::OnSelectionChanged)
 EVT_KEY_DOWN(wxListCtrlEx::OnKeyDown)
+EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, wxListCtrlEx::OnBeginLabelEdit)
+EVT_LIST_END_LABEL_EDIT(wxID_ANY, wxListCtrlEx::OnEndLabelEdit)
 END_EVENT_TABLE()
 
 wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
@@ -31,6 +33,10 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 {
 	m_pVisibleColumnMapping = 0;
 	m_prefixSearch_enabled = false;
+
+#ifndef __WXMSW__
+	m_editing = false;
+#endif
 }
 
 wxListCtrlEx::~wxListCtrlEx()
@@ -870,3 +876,85 @@ void wxListCtrlEx::RefreshListOnly(bool eraseBackground /*=true*/)
 	GetMainWindow()->Refresh(eraseBackground);
 #endif
 }
+
+void wxListCtrlEx::CancelLabelEdit()
+{
+#ifdef __WXMSW__
+	if (GetEditControl())
+		ListView_CancelEditLabel((HWND)GetHandle());
+#else
+	m_editing = false;
+	wxTextCtrl* pEdit = GetEditControl();
+	if (pEdit)
+	{
+		wxKeyEvent evt(wxEVT_CHAR);
+		evt.m_keyCode = WXK_ESCAPE;
+		pEdit->GetEventHandler()->ProcessEvent(evt);
+	}
+#endif
+
+}
+
+void wxListCtrlEx::OnBeginLabelEdit(wxListEvent& event)
+{
+#ifndef __WXMSW__
+	if (m_editing)
+	{
+		event.Veto();
+		return;
+	}
+#endif
+
+	if (!OnBeginRename(event))
+		event.Veto();
+#ifndef __WXMSW__
+	else
+		m_editing = true;
+#endif
+}
+
+void wxListCtrlEx::OnEndLabelEdit(wxListEvent& event)
+{
+#ifdef __WXMAC__
+	int item = event.GetIndex();
+	if (item != -1)
+	{
+		int to = item + 1;
+		if (to < GetItemCount())
+		{
+			int from = item;
+			if (from)
+				from--;
+			RefreshItems(from, to);
+		}
+		else
+			RefreshListOnly();
+	}
+#endif
+
+#ifndef __WXMSW__
+	if (!m_editing)
+	{
+		event.Veto();
+		return;
+	}
+	m_editing = false;
+#endif
+
+	if (event.IsEditCancelled())
+		return;
+
+	if (!OnAcceptRename(event))
+		event.Veto();
+}
+
+bool wxListCtrlEx::OnBeginRename(const wxListEvent& event)
+{
+	return false;
+}
+
+bool wxListCtrlEx::OnAcceptRename(const wxListEvent& event)
+{
+	return false;
+}
+

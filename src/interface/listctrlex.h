@@ -60,6 +60,8 @@ protected:
 	int GetHeaderIconIndex(int col);
 	void SetHeaderIconIndex(int col, int icon);
 
+	void CancelLabelEdit();
+
 private:
 	// Keyboard prefix search
 	void HandlePrefixSearch(wxChar character);
@@ -71,6 +73,8 @@ private:
 	void OnMouseWheel(wxMouseEvent& event);
 	void OnSelectionChanged(wxListEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
+	void OnBeginLabelEdit(wxListEvent& event);
+	void OnEndLabelEdit(wxListEvent& event);
 
 	bool m_prefixSearch_enabled;
 	wxDateTime m_prefixSearch_lastKeyPress;
@@ -80,6 +84,9 @@ private:
 	void SaveColumnWidths(unsigned int optionId);
 
 	void CreateVisibleColumnMapping();
+
+	virtual bool OnBeginRename(const wxListEvent& event);
+	virtual bool OnAcceptRename(const wxListEvent& event);
 
 	struct t_columnInfo
 	{
@@ -92,6 +99,10 @@ private:
 	};
 	std::vector<t_columnInfo> m_columnInfo;
 	unsigned int *m_pVisibleColumnMapping;
+
+#ifndef __WXMSW__
+	bool m_editing;
+#endif
 };
 
 #endif //__LISTCTRLEX_H__

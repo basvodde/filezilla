@@ -51,7 +51,6 @@ protected:
 	virtual bool ItemIsDir(int index) const;
 	virtual wxLongLong ItemGetSize(int index) const;
 
-protected:
 	bool IsItemValid(unsigned int item) const;
 	int GetItemIndex(unsigned int item) const;
 
@@ -82,6 +81,9 @@ protected:
 	void RepositionInfoText();
 	void SetInfoText();
 
+	virtual bool OnBeginRename(const wxListEvent& event);
+	virtual bool OnAcceptRename(const wxListEvent& event);
+
 #ifdef __WXMSW__
 	virtual int GetOverlayIndex(int item);
 #endif
@@ -111,8 +113,6 @@ protected:
 	void OnMenuDelete(wxCommandEvent& event);
 	void OnMenuRename(wxCommandEvent& event);
 	void OnKeyDown(wxKeyEvent& event);
-	void OnBeginLabelEdit(wxListEvent& event);
-	void OnEndLabelEdit(wxListEvent& event);
 	void OnMenuChmod(wxCommandEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnBeginDrag(wxListEvent& event);

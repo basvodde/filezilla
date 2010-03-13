@@ -330,8 +330,6 @@ BEGIN_EVENT_TABLE(CRemoteListView, CFileListCtrl<CGenericFileData>)
 	EVT_MENU(XRCID("ID_RENAME"), CRemoteListView::OnMenuRename)
 	EVT_MENU(XRCID("ID_CHMOD"), CRemoteListView::OnMenuChmod)
 	EVT_KEY_DOWN(CRemoteListView::OnKeyDown)
-	EVT_LIST_BEGIN_LABEL_EDIT(wxID_ANY, CRemoteListView::OnBeginLabelEdit)
-	EVT_LIST_END_LABEL_EDIT(wxID_ANY, CRemoteListView::OnEndLabelEdit)
 	EVT_SIZE(CRemoteListView::OnSize)
 	EVT_LIST_BEGIN_DRAG(wxID_ANY, CRemoteListView::OnBeginDrag)
 	EVT_MENU(XRCID("ID_EDIT"), CRemoteListView::OnMenuEdit)
@@ -709,10 +707,7 @@ bool CRemoteListView::UpdateDirectoryListing(const CSharedPointer<const CDirecto
 
 void CRemoteListView::SetDirectoryListing(const CSharedPointer<const CDirectoryListing> &pDirectoryListing, bool modified /*=false*/)
 {
-#ifdef __WXMSW__
-	if (GetEditControl())
-		ListView_CancelEditLabel((HWND)GetHandle());
-#endif
+	CancelLabelEdit();
 
 	bool reset = false;
 	if (!pDirectoryListing || !m_pDirectoryListing)
@@ -1783,85 +1778,54 @@ void CRemoteListView::OnKeyDown(wxKeyEvent& event)
 		event.Skip();
 }
 
-void CRemoteListView::OnBeginLabelEdit(wxListEvent& event)
+bool CRemoteListView::OnBeginRename(const wxListEvent& event)
 {
 	if (!m_pState->IsRemoteIdle())
 	{
-		event.Veto();
 		wxBell();
-		return;
+		return false;
 	}
 
 	if (!m_pDirectoryListing)
 	{
-		event.Veto();
 		wxBell();
-		return;
+		return false;
 	}
 
 	int item = event.GetIndex();
 	if (!item)
-	{
-		event.Veto();
-		return;
-	}
+		return false;
 
 	int index = GetItemIndex(item);
 	if (index == -1 || m_fileData[index].flags == fill)
-	{
-		event.Veto();
-		return;
-	}
+		return false;
+
+	return true;
 }
 
-void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
+bool CRemoteListView::OnAcceptRename(const wxListEvent& event)
 {
-	int item = event.GetIndex();
-#ifdef __WXMAC__
-	if (item != -1)
-	{
-		int from = item;
-		int to = item;
-		if (from)
-			from--;
-		if (to < GetItemCount() - 1)
-			to++;
-		RefreshItems(from, to);
-	}
-#endif
-
-	if (event.IsEditCancelled() || event.GetLabel() == _T(""))
-	{
-		event.Veto();
-		return;
-	}
-
 	if (!m_pState->IsRemoteIdle())
 	{
-		event.Veto();
 		wxBell();
-		return;
+		return false;
 	}
 
 	if (!m_pDirectoryListing)
 	{
-		event.Veto();
 		wxBell();
-		return;
+		return false;
 	}
 
+	int item = event.GetIndex();
 	if (!item)
-	{
-		event.Veto();
-		return;
-	}
+		return false;
 
 	int index = GetItemIndex(item);
 	if (index == -1 || m_fileData[index].flags == fill)
 	{
 		wxBell();
-		event.Veto();
-		return;
+		return false;
 	}
 
 	const CDirentry& entry = (*m_pDirectoryListing)[index];
@@ -1872,14 +1836,13 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 	if (!newPath.ChangePath(newFile, true))
 	{
 		wxMessageBox(_("Filename invalid"), _("Cannot rename file"), wxICON_EXCLAMATION);
-		event.Veto();
-		return;
+		return false;
 	}
 
 	if (newPath == m_pDirectoryListing->path)
 	{
 		if (entry.name == newFile)
-			return;
+			return false;
 
 		// Check if target file already exists
 		for (unsigned int i = 0; i < m_pDirectoryListing->GetCount(); i++)
@@ -1887,10 +1850,7 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 			if (newFile == (*m_pDirectoryListing)[i].name)
 			{
 				if (wxMessageBox(_("Target filename already exists, really continue?"), _("File exists"), wxICON_QUESTION | wxYES_NO) != wxYES)
-				{
-					event.Veto();
-					return;
-				}
+					return false;
 
 				break;
 			}
@@ -1898,6 +1858,8 @@ void CRemoteListView::OnEndLabelEdit(wxListEvent& event)
 	}
 
 	m_pState->m_pCommandQueue->ProcessCommand(new CRenameCommand(m_pDirectoryListing->path, entry.name, newPath, newFile));
+
+	return true;
 }
 
 void CRemoteListView::OnMenuChmod(wxCommandEvent& event)
