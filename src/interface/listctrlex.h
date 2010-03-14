@@ -43,6 +43,9 @@ public:
 	// Refresh list but not header
 	void RefreshListOnly(bool eraseBackground = true);
 
+	void CancelLabelEdit();
+	void SetLabelEditBlock(bool block);
+
 #ifndef __WXMSW__
 	wxScrolledWindow* GetMainWindow();
 #endif
@@ -59,8 +62,6 @@ protected:
 	// Argument is visible column index
 	int GetHeaderIconIndex(int col);
 	void SetHeaderIconIndex(int col, int icon);
-
-	void CancelLabelEdit();
 
 private:
 	// Keyboard prefix search
@@ -103,6 +104,16 @@ private:
 #ifndef __WXMSW__
 	bool m_editing;
 #endif
+	int m_blockedLabelEditing;
+};
+
+class CLabelEditBlocker
+{
+public:
+	CLabelEditBlocker(wxListCtrlEx& listCtrl);
+	virtual ~CLabelEditBlocker();
+private:
+	wxListCtrlEx& m_listCtrl;
 };
 
 #endif //__LISTCTRLEX_H__

@@ -1623,6 +1623,8 @@ void CLocalListView::OnBeginDrag(wxListEvent& event)
 		return;
 	}
 
+	CLabelEditBlocker(*this);
+
 	wxDropSource source(this);
 	source.SetData(obj);
 	int res = source.DoDragDrop(wxDrag_AllowMove);

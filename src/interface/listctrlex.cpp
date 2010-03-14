@@ -37,6 +37,7 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 #ifndef __WXMSW__
 	m_editing = false;
 #endif
+	m_blockedLabelEditing = false;
 }
 
 wxListCtrlEx::~wxListCtrlEx()
@@ -904,6 +905,11 @@ void wxListCtrlEx::OnBeginLabelEdit(wxListEvent& event)
 		return;
 	}
 #endif
+	if (m_blockedLabelEditing)
+	{
+		event.Veto();
+		return;
+	}
 
 	if (!OnBeginRename(event))
 		event.Veto();
@@ -958,3 +964,28 @@ bool wxListCtrlEx::OnAcceptRename(const wxListEvent& event)
 	return false;
 }
 
+void wxListCtrlEx::SetLabelEditBlock(bool block)
+{
+	if (block)
+	{
+		CancelLabelEdit();
+		++m_blockedLabelEditing;
+	}
+	else
+	{
+		wxASSERT(m_blockedLabelEditing);
+		if (m_blockedLabelEditing > 0)
+			m_blockedLabelEditing--;
+	}
+}
+
+CLabelEditBlocker::CLabelEditBlocker(wxListCtrlEx& listCtrl)
+	: m_listCtrl(listCtrl)
+{
+	m_listCtrl.SetLabelEditBlock(true);
+}
+
+CLabelEditBlocker::~CLabelEditBlocker()
+{
+	m_listCtrl.SetLabelEditBlock(false);
+}
