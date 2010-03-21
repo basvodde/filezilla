@@ -1273,7 +1273,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 				return;
 			}
 
-			m_pQueue->QueueFile(queue_only, true, local_path.GetPath() + name, name, m_pDirectoryListing->path, *pServer, entry.size);
+			m_pQueue->QueueFile(queue_only, true, local_path.GetPath() + CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
 			m_pQueue->QueueFile_Finish(true);
 		}
 	}
