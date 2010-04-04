@@ -108,17 +108,17 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	else
 		elapsedSeconds = 0;
 
-	const wxString bytes = CSizeFormat::Format(m_pStatus->currentOffset, false, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
+	const wxString bytestr = CSizeFormat::Format(m_pStatus->currentOffset, true, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
 	if (elapsedSeconds)
 	{
 		wxFileOffset rate = GetSpeed(elapsedSeconds);
 
         if (rate > (1000*1000))
-			dc.DrawText(wxString::Format(_("%s bytes (%d.%d MB/s)"), bytes.c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10)), m_fieldOffsets[3], h);
+			dc.DrawText(wxString::Format(_("%s (%d.%d MB/s)"), bytestr.c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10)), m_fieldOffsets[3], h);
 		else if (rate > 1000)
-			dc.DrawText(wxString::Format(_("%s bytes (%d.%d KB/s)"), bytes.c_str(), (int)(rate / 1000), (int)((rate / 100) % 10)), m_fieldOffsets[3], h);
+			dc.DrawText(wxString::Format(_("%s (%d.%d KB/s)"), bytestr.c_str(), (int)(rate / 1000), (int)((rate / 100) % 10)), m_fieldOffsets[3], h);
 		else
-			dc.DrawText(wxString::Format(_("%s bytes (%d B/s)"), bytes.c_str(), (int)rate), m_fieldOffsets[3], h);
+			dc.DrawText(wxString::Format(_("%s (%d B/s)"), bytestr.c_str(), (int)rate), m_fieldOffsets[3], h);
 
 		if (m_pStatus->totalSize > 0 && rate > 0)
 		{
@@ -136,7 +136,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	else
 	{
 		DrawRightAlignedText(dc, _("--:--:-- left"), m_fieldOffsets[1], h);
-		dc.DrawText(wxString::Format(_("%s bytes (? B/s)"), bytes.c_str()), m_fieldOffsets[3], h);
+		dc.DrawText(wxString::Format(_("%s (? B/s)"), bytestr.c_str()), m_fieldOffsets[3], h);
 	}
 
 	DrawProgressBar(dc, m_fieldOffsets[2], 1, rect.GetHeight() - 2);
