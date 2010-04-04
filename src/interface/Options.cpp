@@ -45,7 +45,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Timeout", number, _T("20"), false },
 	{ "Logging Debug Level", number, _T("0"), false },
 	{ "Logging Raw Listing", number, _T("0"), false },
-	{ "fzsftp executable", string, _T(""), false },
+	{ "fzsftp executable", string, _T(""), true },
 	{ "Allow transfermode fallback", number, _T("1"), false },
 	{ "Reconnect count", number, _T("2"), false },
 	{ "Reconnect delay", number, _T("5"), false },
