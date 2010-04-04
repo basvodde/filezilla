@@ -38,6 +38,10 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 	m_pParent = pParent;
 	m_pStatus = 0;
 	m_lastOffset = -1;
+	
+	m_gcLastTimeStamp = wxDateTime::Now();
+	m_gcLastOffset = -1;
+	m_gcLastSpeed = -1;
 
 	SetTransferStatus(0);
 
@@ -108,12 +112,16 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 	else
 		elapsedSeconds = 0;
 
-	const wxString bytestr = CSizeFormat::Format(m_pStatus->currentOffset, true, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
-	if (elapsedSeconds)
-	{
-		wxFileOffset rate = GetSpeed(elapsedSeconds);
+	wxFileOffset rate;
+	if (COptions::Get()->GetOptionVal(OPTION_SPEED_DISPLAY))
+	    rate = GetCurrentSpeed();
+	else
+	    rate = GetSpeed(elapsedSeconds);
 
-        if (rate > (1000*1000))
+	const wxString bytestr = CSizeFormat::Format(m_pStatus->currentOffset, true, CSizeFormat::bytes, COptions::Get()->GetOptionVal(OPTION_SIZE_USETHOUSANDSEP) != 0, 0);
+	if (elapsedSeconds && rate > -1)
+	{
+		if (rate > (1000*1000))
 			dc.DrawText(wxString::Format(_("%s (%d.%d MB/s)"), bytestr.c_str(), (int)(rate / 1000 / 1000), (int)((rate / 1000 / 100) % 10)), m_fieldOffsets[3], h);
 		else if (rate > 1000)
 			dc.DrawText(wxString::Format(_("%s (%d.%d KB/s)"), bytestr.c_str(), (int)(rate / 1000), (int)((rate / 100) % 10)), m_fieldOffsets[3], h);
@@ -313,6 +321,28 @@ wxFileOffset CStatusLineCtrl::GetSpeed(int elapsedSeconds)
 	}
 
 	return (m_pStatus->currentOffset - m_pStatus->startOffset - forget.offset) / (elapsedSeconds - forget.elapsed);
+}
+
+wxFileOffset CStatusLineCtrl::GetCurrentSpeed()
+{
+	if (!m_pStatus)
+		return -1;
+	
+	const wxTimeSpan timeDiff( wxDateTime::UNow().Subtract(m_gcLastTimeStamp) );
+	
+	if (timeDiff.GetMilliseconds().GetLo() <= 2000)
+		return m_gcLastSpeed;
+
+	m_gcLastTimeStamp = wxDateTime::UNow();
+
+	if (m_gcLastOffset == -1)
+	    m_gcLastOffset = m_pStatus->startOffset;
+	
+	const wxFileOffset fileOffsetDiff = m_pStatus->currentOffset - m_gcLastOffset;
+	m_gcLastOffset = m_pStatus->currentOffset;
+	m_gcLastSpeed = fileOffsetDiff * 1000 / timeDiff.GetMilliseconds().GetLo();
+	
+	return m_gcLastSpeed;
 }
 
 bool CStatusLineCtrl::Show(bool show /*=true*/)

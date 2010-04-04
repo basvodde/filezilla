@@ -16,6 +16,7 @@ public:
 	wxLongLong GetLastOffset() const { return m_pStatus ? m_pStatus->currentOffset : m_lastOffset; }
 	wxLongLong GetTotalSize() const { return m_pStatus ? m_pStatus->totalSize : -1; }
 	wxFileOffset GetSpeed(int elapsedSeconds);
+	wxFileOffset GetCurrentSpeed();
 
 	virtual bool Show(bool show = true);
 
@@ -46,6 +47,11 @@ protected:
 		wxFileOffset offset;
 	} m_past_data[10];
 	int m_past_data_index;
+
+	//Used by getCurrentSpeed
+	wxDateTime m_gcLastTimeStamp;
+	wxFileOffset m_gcLastOffset;
+	wxFileOffset m_gcLastSpeed;
 
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent& event);
