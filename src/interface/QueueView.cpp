@@ -3337,7 +3337,8 @@ wxString CQueueView::ReplaceInvalidCharacters(const wxString& filename)
 	const wxChar* p = filename.c_str();
 	while (*p)
 	{
-		switch (*p)
+		const wxChar c = *p;
+		switch (c)
 		{
 		case '/':
 #ifdef __WXMSW__
@@ -3354,7 +3355,14 @@ wxString CQueueView::ReplaceInvalidCharacters(const wxString& filename)
 				*buf++ = replace;
 			break;
 		default:
-			*buf++ = *p;
+#ifdef __WXMSW__
+			if (c < 0x20)
+				*buf++ = replace;
+			else
+#endif
+			{
+				*buf++ = c;
+			}
 		}
 		p++;
 	}
