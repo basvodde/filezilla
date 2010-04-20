@@ -4,47 +4,47 @@ FileZilla \- FTP client
 .SH SYNOPSIS
 .B filezilla
 .br
-.B filezilla [-l <logontype>] <FTP URL>
+.B filezilla [\-l <logontype>] <FTP URL>
 .br
-.B filezilla -h|-s|-v
+.B filezilla \-h|\-s|\-v
 .br
-.B filezilla -c <site>
+.B filezilla \-c <site>
 .SH DESCRIPTION
 FileZilla is a powerful client for plain FTP, FTP over SSL/TLS (FTPS) and the SSH File Transfer Protocol (SFTP).
 .SH OPTIONS
 
 .TP
-.B -c <site>, --site <site>
+.B \-c <site>, \-\-site <site>
 Connect to the given site from the Site Manager.
 Site has to be given as complete path, with a slash as separation character. Any slash or backslash that is part of a segment has to be escaped with a backslash. Path has to be prefixed with 0 for user defined entries or 1 for default entries. Site path may not contain double quotation marks.
 .IP
-Example: filezilla -c 0/foo/bar/sl\\/ash connects to the user site sl/ash in the site directory foo/bar
+Example: filezilla \-c 0/foo/bar/sl\\/ash connects to the user site sl/ash in the site directory foo/bar
 .IP
 May not be used together with
-.B -s
+.B \-s
 nor with URL parameter.
 
 .TP
-.B -h, --help
+.B \-h, \-\-help
 Displays a help dialog listing these commandline options.
 
 .TP
-.B -l <logontype>, --logontype <logontype>
+.B \-l <logontype>, \-\-logontype <logontype>
 Set a special logontype, can only be used in combination with a FTP URL as argument.
 
 Logontype has to be either
 .B ask
 or
-.BR interactive ". If " -l " isn't given, the normal logontype is used."
+.BR interactive ". If " \-l " isn't given, the normal logontype is used."
 
 .TP
-.B -s, --sitemanager
+.B \-s, \-\-sitemanager
 Start with Site Manager opened. May not be used together with
-.B -c
+.B \-c
 nor with URL parameter.
 
 .TP
-.B -v, --version
+.B \-v, \-\-version
 Display version number of FileZilla.
 
 
@@ -54,9 +54,9 @@ The
 .B FZ_DATADIR
 environment variable can be used to specify the directory containing FileZilla's data files.
 .SH SUPPORT
-Please visit http://filezilla-project.org/ for further information. Report bugs only if you are using the latest version available from the FileZilla website.
+Please visit http://filezilla\-project.org/ for further information. Report bugs only if you are using the latest version available from the FileZilla website.
 .SH COPYRIGHT
-Copyright (C) 2004-2010  Tim Kosse
+Copyright (C) 2004\-2010  Tim Kosse
 .P
 FileZilla is distributed under the terms of the GNU General Public License version 2 or later.
 .SH "SEE ALSO"
