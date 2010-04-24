@@ -25,8 +25,11 @@ public:
 	void UnselectDirectory();
 
 	void SetEmptyString(const wxString& empty);
+
+	void SetConnected(bool connected);
 protected:
 
+	bool m_connected;
 	int m_count_files;
 	int m_count_dirs;
 	wxLongLong m_total_size;
@@ -41,6 +44,7 @@ protected:
 	wxTimer m_updateTimer;
 
 	wxString m_empty_string;
+	wxString m_offline_string;
 
 	DECLARE_EVENT_TABLE()
 	void OnTimer(wxTimerEvent& event);

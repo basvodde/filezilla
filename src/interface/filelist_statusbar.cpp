@@ -9,6 +9,7 @@ END_EVENT_TABLE()
 CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 	: wxStatusBar(pParent, wxID_ANY, 0)
 {
+	m_connected = true;
 	m_count_files = 0;
 	m_count_dirs = 0;
 	m_total_size = 0;
@@ -23,6 +24,7 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 	m_updateTimer.SetOwner(this);
 
 	m_empty_string = _("Empty directory.");
+	m_offline_string = _("Not connected.");
 
 	UpdateText();
 
@@ -35,7 +37,11 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 void CFilelistStatusBar::UpdateText()
 {
 	wxString text;
-	if (m_count_selected_files || m_count_selected_dirs)
+	if (!m_connected)
+	{
+		text = m_offline_string;
+	}
+	else if (m_count_selected_files || m_count_selected_dirs)
 	{
 		if (!m_count_selected_files)
 			text = wxString::Format(wxPLURAL("Selected %d directory.", "Selected %d directories.", m_count_selected_dirs), m_count_selected_dirs);
@@ -234,6 +240,11 @@ void CFilelistStatusBar::SetHidden(int hidden)
 
 void CFilelistStatusBar::SetEmptyString(const wxString& empty)
 {
-	m_empty_string = empty;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::SetConnected(bool connected)
+{
+	m_connected = connected;
 	TriggerUpdateText();
 }

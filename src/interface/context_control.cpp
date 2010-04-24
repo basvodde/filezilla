@@ -185,6 +185,8 @@ void CContextControl::CreateContextControls(CState* pState)
 		pRemoteFilelistStatusBar->Hide();
 	context_controls.pRemoteListViewPanel->SetStatusBar(pRemoteFilelistStatusBar);
 	context_controls.pRemoteListView->SetFilelistStatusBar(pRemoteFilelistStatusBar);
+	pRemoteFilelistStatusBar->SetConnected(false);
+
 
 	const int layout = COptions::Get()->GetOptionVal(OPTION_FILEPANE_LAYOUT);
 	const int swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);

@@ -378,6 +378,7 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 	EnablePrefixSearch(true);
 
 	m_pLinkResolveState = 0;
+
 }
 
 CRemoteListView::~CRemoteListView()
@@ -754,7 +755,10 @@ void CRemoteListView::SetDirectoryListing(const CSharedPointer<const CDirectoryL
 	}
 
 	if (m_pFilelistStatusBar)
+	{
 		m_pFilelistStatusBar->UnselectAll();
+		m_pFilelistStatusBar->SetConnected(pDirectoryListing); 
+	}
 
 	m_pDirectoryListing = pDirectoryListing;
 
