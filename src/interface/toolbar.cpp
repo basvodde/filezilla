@@ -81,7 +81,7 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 		toolbar->HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
 
 #ifdef __WXMAC__
-	// Hide than re-show fixes some odd sizing
+	// Hide then re-show fixes some odd sizing
 	toolbar->Hide();
 	if (COptions::Get()->GetOptionVal(OPTION_TOOLBAR_HIDDEN) == 0)
 		toolbar->Show();
