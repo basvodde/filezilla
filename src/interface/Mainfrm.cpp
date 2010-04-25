@@ -298,8 +298,10 @@ CMainFrame::CMainFrame()
 
 #ifdef __WXMSW__
 	long style = wxSP_NOBORDER | wxSP_LIVE_UPDATE;
-#else
+#elif !defined(__WXMAC__)
 	long style = wxSP_3DBORDER | wxSP_LIVE_UPDATE;
+#else
+	long style = wxSP_LIVE_UPDATE;
 #endif
 
 	wxSize clientSize = GetClientSize();
@@ -1018,6 +1020,10 @@ bool CMainFrame::CreateToolBar()
 {
 	if (m_pToolBar)
 	{
+#ifdef __WXMAC__
+		if (m_pToolBar)
+			COptions::Get()->SetOption(OPTION_TOOLBAR_HIDDEN, m_pToolBar->IsShown() ? 0 : 1);
+#endif
 		SetToolBar(0);
 		delete m_pToolBar;
 	}
@@ -1201,6 +1207,11 @@ void CMainFrame::OnClose(wxCloseEvent &event)
 		}
 
 		RememberSplitterPositions();
+		
+#ifdef __WXMAC__
+		if (m_pToolBar)
+			COptions::Get()->SetOption(OPTION_TOOLBAR_HIDDEN, m_pToolBar->IsShown() ? 0 : 1);
+#endif
 		m_bQuit = true;
 	}
 

@@ -3,7 +3,7 @@
   <object class="wxPanel" name="ID_QUICKCONNECTBAR">
     <object class="wxBoxSizer">
       <orient>wxVERTICAL</orient>
-      <object class="sizeritem">
+      <object class="sizeritem" platform="win|unix">
         <flag>wxGROW</flag>
         <border>0</border>
         <object class="wxStaticLine" name="wxID_STATIC">
@@ -14,11 +14,10 @@
       <object class="sizeritem">
         <border>0</border>
         <object class="wxFlexGridSizer">
-          <cols>10</cols>
           <rows>1</rows>
           <vgap>0</vgap>
           <hgap>0</hgap>
-          <object class="sizeritem">
+          <object class="sizeritem" platform="win|unix">
             <flag>wxGROW|wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM</flag>
             <border>3</border>
             <object class="wxStaticLine" name="wxID_STATIC">

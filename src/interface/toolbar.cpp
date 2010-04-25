@@ -80,6 +80,12 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 	if (COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION) == 2)
 		toolbar->HideTool(XRCID("ID_TOOLBAR_LOGVIEW"));
 
+#ifdef __WXMAC__
+	// Hide than re-show fixes some odd sizing
+	toolbar->Hide();
+	if (COptions::Get()->GetOptionVal(OPTION_TOOLBAR_HIDDEN) == 0)
+		toolbar->Show();
+#endif
 	return toolbar;
 }
 
