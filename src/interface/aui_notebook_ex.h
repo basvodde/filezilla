@@ -24,11 +24,18 @@ public:
 
 	void AdvanceTab(bool forward);
 
+	virtual bool SetCursor(const wxCursor& cursor);
 protected:
 	std::vector<bool> m_highlighted;
 
 	DECLARE_EVENT_TABLE()
 	void OnPageChanged(wxAuiNotebookEvent& event);
+
+#ifdef __WXGTK__
+	void OnSetCursor(wxSetCursorEvent& event);
+
+	bool m_ignore_next_set_cursor;
+#endif
 };
 
 #endif //__AUI_NOTEBOOK_EX_H__

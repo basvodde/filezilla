@@ -5,6 +5,9 @@
 #include "speedlimits_dialog.h"
 #include "statusbar.h"
 #include "verifycertdialog.h"
+#ifdef __WXGTK__
+#include "cursor_resetter.h"
+#endif
 
 static const int statbarWidths[3] = {
 	-3, 0, 35
@@ -295,6 +298,9 @@ public:
 		: wxStaticBitmapEx(pStatusBar, wxID_ANY, bmp)
 	{
 		m_pStatusBar = pStatusBar;
+#ifdef __WXGTK__
+		ResetCursor(this);
+#endif
 	}
 
 protected:
