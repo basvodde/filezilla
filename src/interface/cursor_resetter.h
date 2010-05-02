@@ -7,6 +7,6 @@
 
 #ifdef __WXGTK__
 void ResetCursor(wxWindow* wnd);
-#endif __WXGTK__
+#endif //__WXGTK__
 
 #endif //__CURSOR_RESETTER_H__

@@ -76,6 +76,9 @@ private:
 	void OnKeyDown(wxKeyEvent& event);
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
+#ifdef __WXGTK__
+	void OnHeaderMouse( wxMouseEvent &event );
+#endif
 
 	bool m_prefixSearch_enabled;
 	wxDateTime m_prefixSearch_lastKeyPress;

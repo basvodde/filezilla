@@ -2,6 +2,7 @@
 #define __CONTEXT_CONTROL_H__
 
 #include <wx/aui/auibook.h>
+#include "splitter.h"
 #include "state.h"
 
 class wxAuiNotebookEx;
@@ -15,7 +16,7 @@ class CViewHeader;
 class CSplitterWindowEx;
 class CState;
 
-class CContextControl : public wxSplitterWindow, public CStateEventHandler
+class CContextControl : public CSplitterWindowEx, public CStateEventHandler
 {
 public:
 	struct _context_controls

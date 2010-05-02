@@ -24,7 +24,9 @@ public:
 
 	void AdvanceTab(bool forward);
 
+#ifdef __WXGTK__
 	virtual bool SetCursor(const wxCursor& cursor);
+#endif
 protected:
 	std::vector<bool> m_highlighted;
 
