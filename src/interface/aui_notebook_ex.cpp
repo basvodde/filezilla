@@ -304,12 +304,15 @@ EVT_NAVIGATION_KEY(wxAuiNotebookEx::OnNavigationKey)
 END_EVENT_TABLE()
 
 wxAuiNotebookEx::wxAuiNotebookEx()
+#ifdef __WXGTK__
 	: m_ignore_next_set_cursor(false)
 {
-#ifdef __WXGTK__
 	m_mgr.Connect(wxEVT_SET_CURSOR, wxSetCursorEventHandler(wxAuiNotebookEx::OnSetCursor), 0, this);
-#endif
 }
+#else
+{
+}
+#endif
 
 wxAuiNotebookEx::~wxAuiNotebookEx()
 {

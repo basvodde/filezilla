@@ -22,7 +22,7 @@ public:
 
 protected:
 	void DrawRightAlignedText(wxDC& dc, wxString text, int x, int y);
-	void DrawProgressBar(wxDC& dc, int x, int y, int height);
+	void DrawProgressBar(wxDC& dc, int x, int y, int height, int bar_split, int permill);
 
 	CQueueView* m_pParent;
 	const t_EngineData* m_pEngineData;
@@ -53,6 +53,16 @@ protected:
 	wxFileOffset m_gcLastOffset;
 	wxFileOffset m_gcLastSpeed;
 
+	//Used to avoid excessive redraws
+	wxBitmap m_data;
+	wxMemoryDC* m_mdc;
+	wxString* m_pPreviousStatusText;
+	int m_last_elapsed_seconds;
+	int m_last_left;
+	wxString m_last_bytes_and_rate;
+	int m_last_bar_split;
+	int m_last_permill;
+	
 	DECLARE_EVENT_TABLE()
 	void OnPaint(wxPaintEvent& event);
 	void OnTimer(wxTimerEvent& event);
