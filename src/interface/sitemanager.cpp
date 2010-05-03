@@ -1148,7 +1148,7 @@ bool CSiteManager::Verify()
 			if (!remotePath.SetPath(remotePathRaw))
 			{
 				XRCCTRL(*this, "ID_REMOTEDIR", wxTextCtrl)->SetFocus();
-				wxMessageBox(_("Default remote path cannot be parsed. Make sure it is valid and is supported by the selected servertype."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
+				wxMessageBox(_("Default remote path cannot be parsed. Make sure it is valid abolute path for the selected servertype."), _("Site Manager - Invalid data"), wxICON_EXCLAMATION, this);
 				return false;
 			}
 		}
