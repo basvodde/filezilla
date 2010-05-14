@@ -1863,6 +1863,7 @@
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxStaticBitmap">
+              <size>32,32</size>
               <bitmap stock_id="wxART_INFORMATION"/>
             </object>
             <flag>wxALL</flag>
@@ -1965,6 +1966,7 @@
           <orient>wxHORIZONTAL</orient>
           <object class="sizeritem">
             <object class="wxStaticBitmap">
+              <size>32,32</size>
               <bitmap stock_id="wxART_WARNING"/>
             </object>
             <flag>wxALL</flag>
@@ -1982,10 +1984,15 @@
               </object>
               <object class="sizeritem">
                 <object class="wxStaticText" name="ID_DESC">
-                  <label>The server's host key does not match the key that has been cached. This means that either the administrator has changed the host key, or you are actually trying to connect to another computer pretending to be the server.\nIf the host key change was not expected, please contact the server administrator.</label>
+                  <label>The server's host key does not match the key that has been cached. This means that either the administrator has changed the host key, or you are actually trying to connect to another computer pretending to be the server.</label>
                 </object>
                 <flag>wxALL</flag>
                 <border>5</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText" name="ID_DESC2">
+                  <label>If the host key change was not expected, please contact the server administrator.</label>
+                </object>
               </object>
               <object class="sizeritem">
                 <object class="wxStaticBoxSizer">
