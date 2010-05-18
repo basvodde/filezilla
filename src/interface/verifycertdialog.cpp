@@ -103,6 +103,16 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 	m_pIssuerSizer = XRCCTRL(*m_pDlg, "ID_ISSUER_DUMMY", wxStaticText)->GetContainingSizer();
 	XRCCTRL(*m_pDlg, "ID_ISSUER_DUMMY", wxStaticText)->Destroy();
 
+	wxSize minSize(0, 0);
+	for (unsigned int i = 0; i < m_certificates.size(); ++i)
+	{
+		DisplayCert(m_pDlg, m_certificates[i]);
+		m_pDlg->Layout();
+		m_pDlg->GetSizer()->Fit(m_pDlg);
+		minSize.IncTo(m_pDlg->GetSizer()->GetMinSize());
+	}
+	m_pDlg->GetSizer()->SetMinSize(minSize);
+
 	bool warning = DisplayCert(m_pDlg, m_certificates[0]);
 
 	m_pDlg->SetLabel(XRCID("ID_CIPHER"), pNotification->GetSessionCipher());
