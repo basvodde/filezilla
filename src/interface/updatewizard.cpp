@@ -134,7 +134,7 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 
 #ifdef __WXMSW__
 	if (wxIsPlatform64Bit())
-		m_urlFile += _T("&osarch=32");
+		m_urlFile += _T("&osarch=64");
 	else
 		m_urlFile += _T("&osarch=32");
 #endif
