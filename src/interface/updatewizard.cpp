@@ -132,6 +132,13 @@ CUpdateWizard::CUpdateWizard(wxWindow* pParent)
 	m_urlFile += osVersion;
 #endif
 
+#ifdef __WXMSW__
+	if (wxIsPlatform64Bit())
+		m_urlFile += _T("&osarch=32");
+	else
+		m_urlFile += _T("&osarch=32");
+#endif
+
 	m_statusTimer.SetOwner(this);
 	m_autoCheckTimer.SetOwner(this);
 	m_busy_timer.SetOwner(this);
