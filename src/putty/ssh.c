@@ -930,6 +930,12 @@ struct ssh_tag {
      * Fully qualified host name, which we need if doing GSSAPI.
      */
     char *fullhostname;
+
+    /* FZ:
+     * A known hostkey accepted during session establishment.
+     * While we might not permanently accept it, do accept it for rekeys.
+     */
+    char *knownkey;
 };
 
 #define logevent(s) logevent(ssh->frontend, s)
@@ -3381,11 +3387,20 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 	rsastr_fmt(keystr, &hostkey);
 	rsa_fingerprint(fingerprint, sizeof(fingerprint), &hostkey);
 
-        ssh_set_frozen(ssh, 1);
-	s->dlgret = verify_ssh_host_key(ssh->frontend,
-                                        ssh->savedhost, ssh->savedport,
-                                        "rsa", keystr, fingerprint,
-                                        ssh_dialog_callback, ssh);
+	ssh_set_frozen(ssh, 1);
+	if (ssh->knownkey && !strcmp(ssh->knownkey, keystr)) {
+	    s->dlgret = 1;
+	}
+	else {
+	    s->dlgret = verify_ssh_host_key(ssh->frontend,
+	                                    ssh->savedhost, ssh->savedport,
+	                                    "rsa", keystr, fingerprint,
+	                                    ssh_dialog_callback, ssh);
+	    if (s->dlgret > 0) {
+		sfree(ssh->knownkey);
+		ssh->knownkey = dupstr(keystr);
+	    }
+	}
 	sfree(keystr);
         if (s->dlgret < 0) {
             do {
@@ -6247,11 +6262,20 @@ static int do_ssh2_transport(Ssh ssh, void *vin, int inlen,
     s->fingerprint = ssh->hostkey->fingerprint(s->hkey);
     ssh_set_frozen(ssh, 1);
     fzprintf(sftpHostkey, s->fingerprint);
-    s->dlgret = verify_ssh_host_key(ssh->frontend,
-                                    ssh->savedhost, ssh->savedport,
-                                    ssh->hostkey->keytype, s->keystr,
-				    s->fingerprint,
-                                    ssh_dialog_callback, ssh);
+    if (ssh->knownkey && !strcmp(ssh->knownkey, s->keystr)) {
+	s->dlgret = 1;
+    }
+    else {
+	s->dlgret = verify_ssh_host_key(ssh->frontend,
+	                                ssh->savedhost, ssh->savedport,
+	                                ssh->hostkey->keytype, s->keystr,
+	                                s->fingerprint,
+	                                ssh_dialog_callback, ssh);
+	if (s->dlgret > 0) {
+	    sfree(ssh->knownkey);
+	    ssh->knownkey = dupstr(s->keystr);
+	}
+    }
     if (s->dlgret < 0) {
         do {
             crReturn(0);
@@ -9509,6 +9533,8 @@ static const char *ssh_init(void *frontend_handle, void **backend_handle,
     ssh->max_data_size = parse_blocksize(ssh->cfg.ssh_rekey_data);
     ssh->kex_in_progress = FALSE;
 
+    ssh->knownkey = 0;
+
     p = connect_to_host(ssh, host, port, realhost, nodelay, keepalive);
     if (p != NULL)
 	return p;
@@ -9605,6 +9631,7 @@ static void ssh_free(void *handle)
     if (ssh->pinger)
 	pinger_free(ssh->pinger);
     bufchain_clear(&ssh->queued_incoming_data);
+    sfree(ssh->knownkey);
     sfree(ssh);
 
     random_unref();
