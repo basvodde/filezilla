@@ -1007,6 +1007,12 @@ template<class CFileData> void CFileListCtrl<CFileData>::ClearSelection()
 
 template<class CFileData> void CFileListCtrl<CFileData>::OnKeyDown(wxKeyEvent& event)
 {
+#ifdef __WXMAC__
+#define CursorModifierKey wxMOD_CMD
+#else
+#define CursorModifierKey wxMOD_ALT
+#endif
+
 	const int code = event.GetKeyCode();
 	const int mods = event.GetModifiers();
 	if (code == 'A' && (mods == wxMOD_CMD || mods == (wxMOD_CONTROL | wxMOD_META)))
@@ -1024,7 +1030,10 @@ template<class CFileData> void CFileListCtrl<CFileData>::OnKeyDown(wxKeyEvent& e
 		if (m_pFilelistStatusBar)
 			m_pFilelistStatusBar->SelectAll();
 	}
-	else if (code == WXK_BACK)
+	else if (code == WXK_BACK ||
+			(code == WXK_UP && event.GetModifiers() == CursorModifierKey) ||
+			(code == WXK_LEFT && event.GetModifiers() == CursorModifierKey)
+		)
 	{
 		OnNavigationEvent(false);
 	}

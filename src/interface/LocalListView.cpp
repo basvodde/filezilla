@@ -1269,6 +1269,12 @@ void CLocalListView::OnMenuRename(wxCommandEvent& event)
 
 void CLocalListView::OnKeyDown(wxKeyEvent& event)
 {
+#ifdef __WXMAC__
+#define CursorModifierKey wxMOD_CMD
+#else
+#define CursorModifierKey wxMOD_ALT
+#endif
+
 	const int code = event.GetKeyCode();
 	if (code == WXK_DELETE)
 	{
@@ -1285,6 +1291,17 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 	{
 		wxCommandEvent tmp;
 		OnMenuRename(tmp);
+	}
+	else if (code == WXK_RIGHT && event.GetModifiers() == CursorModifierKey)
+	{
+		wxListEvent evt;
+		evt.m_itemIndex = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_FOCUSED);
+		OnItemActivated(evt);
+	}
+	else if (code == WXK_DOWN && event.GetModifiers() == CursorModifierKey)
+	{
+		wxCommandEvent cmdEvent;
+		OnMenuUpload(cmdEvent);
 	}
 	else
 		event.Skip();
