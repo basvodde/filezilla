@@ -68,6 +68,7 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 		stringConditionTypes.Add(_("begins with"));
 		stringConditionTypes.Add(_("ends with"));
 		stringConditionTypes.Add(_("matches regex"));
+		stringConditionTypes.Add(_("does not contain"));
 
 		sizeConditionTypes.Add(_("greater than"));
 		sizeConditionTypes.Add(_("equals"));

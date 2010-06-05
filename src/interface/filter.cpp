@@ -629,6 +629,88 @@ bool CFilterManager::FilenameFiltered(const std::list<CFilter> &filters, const w
 	return false;
 }
 
+static bool StringMatch(const wxString& subject, const wxString& filter, int condition, bool matchCase, const CSharedPointer<const wxRegEx>& pRegEx)
+{
+	bool match = false;
+
+	switch (condition)
+	{
+	case 0:
+		if (matchCase)
+		{
+			if (subject.Contains(filter))
+				match = true;
+		}
+		else
+		{
+			if (subject.Lower().Contains(filter.Lower()))
+				match = true;
+		}
+		break;
+	case 1:
+		if (matchCase)
+		{
+			if (subject == filter)
+				match = true;
+		}
+		else
+		{
+			if (!subject.CmpNoCase(filter))
+				match = true;
+		}
+		break;
+	case 2:
+		{
+			const wxString& left = subject.Left(filter.Len());
+			if (matchCase)
+			{
+				if (left == filter)
+					match = true;
+			}
+			else
+			{
+				if (!left.CmpNoCase(filter))
+					match = true;
+			}
+		}
+		break;
+	case 3:
+		{
+			const wxString& right = subject.Right(filter.Len());
+			if (matchCase)
+			{
+				if (right == filter)
+					match = true;
+			}
+			else
+			{
+				if (!right.CmpNoCase(filter))
+					match = true;
+			}
+		}
+		break;
+	case 4:
+		wxASSERT(pRegEx);
+		if (pRegEx && pRegEx->Matches(subject))
+			match = true;
+		break;
+	case 5:
+		if (matchCase)
+		{
+			if (!subject.Contains(filter))
+				match = true;
+		}
+		else
+		{
+			if (!subject.Lower().Contains(filter.Lower()))
+				match = true;
+		}
+		break;
+	}
+	
+	return match;
+}
+
 bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxString& name, const wxString& path, bool dir, wxLongLong size, int attributes)
 {
 	if (dir && !filter.filterDirs)
@@ -644,131 +726,10 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 		switch (condition.type)
 		{
 		case filter_name:
-			switch (condition.condition)
-			{
-			case 0:
-				if (filter.matchCase)
-				{
-					if (name.Contains(condition.strValue))
-						match = true;
-				}
-				else
-				{
-					if (name.Lower().Contains(condition.strValue.Lower()))
-						match = true;
-				}
-				break;
-			case 1:
-				if (filter.matchCase)
-				{
-					if (name == condition.strValue)
-						match = true;
-				}
-				else
-				{
-					if (!name.CmpNoCase(condition.strValue))
-						match = true;
-				}
-				break;
-			case 2:
-				{
-					const wxString& left = name.Left(condition.strValue.Len());
-					if (filter.matchCase)
-					{
-						if (left == condition.strValue)
-							match = true;
-					}
-					else
-					{
-						if (!left.CmpNoCase(condition.strValue))
-							match = true;
-					}
-				}
-				break;
-			case 3:
-				{
-					const wxString& right = name.Right(condition.strValue.Len());
-					if (filter.matchCase)
-					{
-						if (right == condition.strValue)
-							match = true;
-					}
-					else
-					{
-						if (!right.CmpNoCase(condition.strValue))
-							match = true;
-					}
-				}
-				break;
-			case 4:
-				wxASSERT(condition.pRegEx);
-				if (condition.pRegEx && condition.pRegEx->Matches(name))
-					match = true;
-			}
+			match = StringMatch(name, condition.strValue, condition.condition, filter.matchCase, condition.pRegEx);
 			break;
 		case filter_path:
-			switch (condition.condition)
-			{
-			case 0:
-				if (filter.matchCase)
-				{
-					if (path.Contains(condition.strValue))
-						match = true;
-				}
-				else
-				{
-					if (path.Lower().Contains(condition.strValue.Lower()))
-						match = true;
-				}
-				break;
-			case 1:
-				if (filter.matchCase)
-				{
-					if (path == condition.strValue)
-						match = true;
-				}
-				else
-				{
-					if (!path.CmpNoCase(condition.strValue))
-						match = true;
-				}
-				break;
-			case 2:
-				{
-					const wxString& left = path.Left(condition.strValue.Len());
-					if (filter.matchCase)
-					{
-						if (left == condition.strValue)
-							match = true;
-					}
-					else
-					{
-						if (!left.CmpNoCase(condition.strValue))
-							match = true;
-					}
-				}
-				break;
-			case 3:
-				{
-					const wxString& right = path.Right(condition.strValue.Len());
-					if (filter.matchCase)
-					{
-						if (right == condition.strValue)
-							match = true;
-					}
-					else
-					{
-						if (!right.CmpNoCase(condition.strValue))
-							match = true;
-					}
-				}
-				break;
-			case 4:
-				wxASSERT(condition.pRegEx);
-				if (condition.pRegEx && condition.pRegEx->Matches(path))
-					match = true;
-			}
-			break;
+			match = StringMatch(path, condition.strValue, condition.condition, filter.matchCase, condition.pRegEx);
 		case filter_size:
 			if (size == -1)
 				continue;
