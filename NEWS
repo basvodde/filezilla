@@ -10,6 +10,24 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.3.3-rc1 (2010-06-06)
+
++ Added "does not contain" filter condition to name and path filter types
++ Pressing Alt+Left or Alt+Up (Cmd+Left, Cmd+Up on OS X) in file lists enters parent directory
++ Pressing Alt+Down (Cmd+Down on OS X) in file lists transfers selected items
++ Pressing Alt+Right (Cmd+Right on OS X) in file lists activates selected item(s)
++ Add operating system information to about dialog
++ MSW: Auto-update check now transmits whether the operating system is 32bit or 64bit
++ Small performance improvements, mostly benefiting *nix users
++ OS X: Remember hidden state of toolbar, make quickconnect bar look more Mac-ish
++ Add option to display momentary transfer speed instead of average speed
+- Fix problem with rekeying of SFTP connections if not permanently trusting the server's hostkey
+- Certificate details dialog no longer changes size if selecting a different certificate in the chain
+- Some dialogs did not display icons using the correct size
+- Show "Not connected" instead of "Empty directory" in remote filelist statusbar if not connected
+- MSW: Replace some additional characters not allowed in filenames on MSW
+- MSW: Selecting files while holding Ctrl+Shift no longer shows incorrect values in the filelist status bars
+
 3.3.2.1 (2010-03-21)
 
 + Remember location of update download directory
