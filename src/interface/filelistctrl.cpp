@@ -100,30 +100,56 @@ template<class CFileData> LRESULT CALLBACK CFileListCtrl<CFileData>::WindowProc(
 	NMHDR* pNmhdr = (NMHDR*)lParam;
 	if (pNmhdr->code == LVN_ODSTATECHANGED)
 	{
+		// A range of items got (de)selected
+
 		if (pFileListCtrl->m_insideSetSelection)
 			return 0;
 
-		// A range of items got (de)selected
-		fzNMLVODSTATECHANGE* pNmOdStateChange = (fzNMLVODSTATECHANGE*)lParam;
-
 		if (!pFileListCtrl->m_pFilelistStatusBar)
-			return 0;
-
-		wxASSERT(pNmOdStateChange->iFrom <= pNmOdStateChange->iTo);
-		for (int i = pNmOdStateChange->iFrom; i <= pNmOdStateChange->iTo; i++)
+				return 0;
+		
+		if (wxGetKeyState(WXK_CONTROL) && wxGetKeyState(WXK_SHIFT))
 		{
-			const int index = pFileListCtrl->m_indexMapping[i];
-			const CFileData& data = pFileListCtrl->m_fileData[index];
-			if (data.flags == fill)
-				continue;
+			// The behavior of Ctrl+Shift+Click is highly erratic.
+			// Even though it is very slow, we need to manually recount.
+			pFileListCtrl->m_pFilelistStatusBar->UnselectAll();
+			int item = -1;
+			while ((item = pFileListCtrl->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
+			{
+				if (pFileListCtrl->m_hasParent && !item)
+					continue;
 
-			if (pFileListCtrl->m_hasParent && !i)
-				continue;
+				const int index = pFileListCtrl->m_indexMapping[item];
+				const CFileData& data = pFileListCtrl->m_fileData[index];
+				if (data.flags == fill)
+					continue;
 
-			if (pFileListCtrl->ItemIsDir(index))
-				pFileListCtrl->m_pFilelistStatusBar->SelectDirectory();
-			else
-				pFileListCtrl->m_pFilelistStatusBar->SelectFile(pFileListCtrl->ItemGetSize(index));
+				if (pFileListCtrl->ItemIsDir(index))
+					pFileListCtrl->m_pFilelistStatusBar->SelectDirectory();
+				else
+					pFileListCtrl->m_pFilelistStatusBar->SelectFile(pFileListCtrl->ItemGetSize(index));
+			}
+		}
+		else
+		{
+			fzNMLVODSTATECHANGE* pNmOdStateChange = (fzNMLVODSTATECHANGE*)lParam;
+
+			wxASSERT(pNmOdStateChange->iFrom <= pNmOdStateChange->iTo);
+			for (int i = pNmOdStateChange->iFrom; i <= pNmOdStateChange->iTo; i++)
+			{
+				if (pFileListCtrl->m_hasParent && !i)
+					continue;
+
+				const int index = pFileListCtrl->m_indexMapping[i];
+				const CFileData& data = pFileListCtrl->m_fileData[index];
+				if (data.flags == fill)
+					continue;
+
+				if (pFileListCtrl->ItemIsDir(index))
+					pFileListCtrl->m_pFilelistStatusBar->SelectDirectory();
+				else
+					pFileListCtrl->m_pFilelistStatusBar->SelectFile(pFileListCtrl->ItemGetSize(index));
+			}
 		}
 		return 0;
 	}
