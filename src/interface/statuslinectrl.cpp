@@ -140,7 +140,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 		{
 			delete m_pPreviousStatusText;
 			m_pPreviousStatusText = 0;
-			refresh = 15;
+			refresh = 31;
 		}
 
 		if (m_pStatus->started.IsValid())
@@ -245,10 +245,13 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 		}
 		if (refresh & 4)
 		{
+			m_mdc->DrawRectangle(m_fieldOffsets[2], 0, m_fieldOffsets[3] - m_fieldOffsets[2], rect.GetHeight());
 			if (bar_split != -1)
 				DrawProgressBar(*m_mdc, m_fieldOffsets[2], 1, rect.GetHeight() - 2, bar_split, permill);
-			else
-				m_mdc->DrawRectangle(m_fieldOffsets[2], 0, m_fieldOffsets[3] - m_fieldOffsets[2], rect.GetHeight());
+		}
+		if (refresh & 16)
+		{
+			m_mdc->DrawRectangle(m_fieldOffsets[1], 0, m_fieldOffsets[2] - m_fieldOffsets[1], rect.GetHeight());
 		}
 	}
 	dc.Blit(0, 0, rect.GetWidth(), rect.GetHeight(), m_mdc, 0, 0);
