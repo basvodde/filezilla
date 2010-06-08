@@ -197,7 +197,7 @@ void CAboutDialog::OnCopy(wxCommandEvent& event)
 	text += _T("\nOperating system:\n");
 	wxString os = wxGetOsDescription();
 	if (!os.empty())
-		text += _T("  Name:") + os + _T("\n");
+		text += _T("  Name: ") + os + _T("\n");
 	
 	int major, minor;
 	if (wxGetOsVersion(&major, &minor) != wxOS_UNKNOWN)
