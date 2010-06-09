@@ -197,17 +197,17 @@ void CAboutDialog::OnCopy(wxCommandEvent& event)
 	text += _T("\nOperating system:\n");
 	wxString os = wxGetOsDescription();
 	if (!os.empty())
-		text += _T("  Name: ") + os + _T("\n");
+		text += _T("  Name:           ") + os + _T("\n");
 	
 	int major, minor;
 	if (wxGetOsVersion(&major, &minor) != wxOS_UNKNOWN)
-		text += wxString::Format(_T("  Version: %d.%d\n"), major, minor);
+		text += wxString::Format(_T("  Version:        %d.%d\n"), major, minor);
 
 #if defined(__WXMSW__)
 	if (::wxIsPlatform64Bit())
-		text += _T("  Platform: 64 bit system\n");
+		text += _T("  Platform:       64 bit system\n");
 	else
-		text += _T("  Platform: 32 bit system\n");
+		text += _T("  Platform:       32 bit system\n");
 #endif
 
 #ifdef __WXMSW__
