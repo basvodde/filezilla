@@ -106,7 +106,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 		delete m_mdc;
 		m_data = wxBitmap(rect.GetWidth(), rect.GetHeight());
 		m_mdc = new wxMemoryDC(m_data);
-		refresh = 15;
+		refresh = 31;
 	}
 
 	int elapsed_seconds = 0;
@@ -243,15 +243,15 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 			m_mdc->DrawRectangle(m_fieldOffsets[3], 0, rect.GetWidth() - m_fieldOffsets[3], rect.GetHeight());
 			m_mdc->DrawText(bytes_and_rate, m_fieldOffsets[3], h);
 		}
+		if (refresh & 16)
+		{
+			m_mdc->DrawRectangle(m_fieldOffsets[1], 0, m_fieldOffsets[2] - m_fieldOffsets[1], rect.GetHeight());
+		}
 		if (refresh & 4)
 		{
 			m_mdc->DrawRectangle(m_fieldOffsets[2], 0, m_fieldOffsets[3] - m_fieldOffsets[2], rect.GetHeight());
 			if (bar_split != -1)
 				DrawProgressBar(*m_mdc, m_fieldOffsets[2], 1, rect.GetHeight() - 2, bar_split, permill);
-		}
-		if (refresh & 16)
-		{
-			m_mdc->DrawRectangle(m_fieldOffsets[1], 0, m_fieldOffsets[2] - m_fieldOffsets[1], rect.GetHeight());
 		}
 	}
 	dc.Blit(0, 0, rect.GetWidth(), rect.GetHeight(), m_mdc, 0, 0);
