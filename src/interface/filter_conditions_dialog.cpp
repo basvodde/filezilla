@@ -54,7 +54,7 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 	if (!wnd)
 		return false;
 
-	m_pListCtrl = new wxCustomHeightListCtrl(this, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER);
+	m_pListCtrl = new wxCustomHeightListCtrl(this, wxID_ANY, wxDefaultPosition, wnd->GetSize(), wxVSCROLL|wxSUNKEN_BORDER|wxTAB_TRAVERSAL);
 	if (!m_pListCtrl)
 		return false;
 	m_pListCtrl->AllowSelection(false);
@@ -125,6 +125,8 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 
 	m_pListCtrl->Connect(wxEVT_SIZE, wxSizeEventHandler(CFilterConditionsDialog::OnListSize), 0, this);
 
+	m_pListCtrl->MoveAfterInTabOrder(XRCCTRL(*this, "ID_MATCHTYPE", wxChoice));
+
 	return true;
 }
 
@@ -183,6 +185,10 @@ void CFilterConditionsDialog::OnMore()
 	m_currentFilter.filters.push_back(cond);
 
 	MakeControls(cond);
+
+	CFilterControls& controls = m_filterControls.back();
+	m_pAdd->MoveAfterInTabOrder(controls.pSet ? (wxWindow*)controls.pSet : (wxWindow*)controls.pValue);
+
 	m_pListCtrl->SetLineCount(m_filterControls.size() + 1);
 	UpdateConditionsClientSize();
 }
@@ -348,9 +354,11 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 			wxFAIL_MSG(_T("Unhandled condition"));
 			break;
 		}
+		controls.pCondition->MoveAfterInTabOrder(controls.pType);
 	}
 	else
 		controls.pCondition->SetPosition(pos);
+
 	controls.pCondition->Select(condition.condition);
 	wxRect conditionsRect = controls.pCondition->GetSize();
 
@@ -364,6 +372,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 			controls.pRemove->SetSize(m_button_size);
 			controls.pRemove->SetPosition(wxPoint(client_size.GetWidth() - 5 - m_button_size.x, posy));
 		}
+		controls.pRemove->MoveAfterInTabOrder(controls.pCondition);
 	}
 	else
 		controls.pRemove->SetPosition(wxPoint(client_size.GetWidth() - 5 - m_button_size.x, posy));
@@ -392,6 +401,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 
 		// Need to explicitely set min size, otherwise initial size becomes min size
 		controls.pValue->SetMinSize(wxSize(20, -1));
+		controls.pValue->MoveBeforeInTabOrder(controls.pRemove);
 	}
 	else
 	{
@@ -414,6 +424,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 
 		// Need to explicitely set min size, otherwise initial size becomes min size
 		controls.pSet->SetMinSize(wxSize(20, -1));
+		controls.pSet->MoveBeforeInTabOrder(controls.pRemove);
 	}
 }
 
