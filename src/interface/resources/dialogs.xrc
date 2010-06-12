@@ -830,17 +830,16 @@
                       <object class="wxBoxSizer">
                         <orient>wxVERTICAL</orient>
                         <object class="sizeritem">
-                          <object class="wxFlexGridSizer">
-                            <cols>2</cols>
+                          <object class="wxGridBagSizer">
                             <object class="sizeritem">
                               <object class="wxStaticText">
                                 <label>&amp;Host:</label>
                               </object>
                               <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                              <cellpos>0,0</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxBoxSizer">
-                                <orient>wxHORIZONTAL</orient>
                                 <object class="sizeritem">
                                   <object class="wxTextCtrl" name="ID_HOST"/>
                                   <option>1</option>
@@ -859,68 +858,75 @@
                                   <flag>wxLEFT</flag>
                                   <border>5</border>
                                 </object>
+                                <orient>wxHORIZONTAL</orient>
                               </object>
                               <flag>wxGROW</flag>
+                              <cellpos>0,1</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxStaticText">
                                 <label>Server &amp;Type:</label>
                               </object>
                               <flag>wxALL|wxALIGN_CENTRE_VERTICAL</flag>
+                              <cellpos>1,0</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxChoice" name="ID_PROTOCOL">
-                                <content/>
                                 <selection>0</selection>
                               </object>
                               <flag>wxGROW</flag>
+                              <cellpos>1,1</cellpos>
                             </object>
                             <vgap>5</vgap>
                             <hgap>5</hgap>
                             <object class="sizeritem">
                               <object class="wxStaticLine"/>
+                              <option>0</option>
                               <flag>wxTOP|wxBOTTOM|wxGROW</flag>
                               <border>5</border>
+                              <cellpos>2,0</cellpos>
+                              <cellspan>0,2</cellspan>
                             </object>
-                            <object class="sizeritem">
-                              <object class="wxStaticLine"/>
-                              <flag>wxTOP|wxBOTTOM|wxGROW</flag>
-                              <border>5</border>
-                            </object>
+                            
                             <object class="sizeritem">
                               <object class="wxStaticText">
                                 <label>&amp;Logon Type:</label>
                               </object>
                               <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                              <cellpos>3,0</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxChoice" name="ID_LOGONTYPE">
-                                <content/>
                                 <selection>0</selection>
                               </object>
                               <flag>wxGROW</flag>
+                              <cellpos>3,1</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxStaticText">
                                 <label>&amp;User:</label>
                               </object>
                               <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                              <cellpos>4,0</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxTextCtrl" name="ID_USER"/>
                               <flag>wxGROW</flag>
+                              <cellpos>4,1</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxStaticText">
                                 <label>Pass&amp;word:</label>
                               </object>
                               <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                              <cellpos>5,0</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxTextCtrl" name="ID_PASS">
                                 <style>wxTE_PASSWORD</style>
                               </object>
                               <flag>wxGROW</flag>
+                              <cellpos>5,1</cellpos>
                             </object>
                             <vgap>5</vgap>
                             <hgap>5</hgap>
@@ -929,10 +935,12 @@
                               <object class="wxStaticText">
                                 <label>&amp;Account:</label>
                               </object>
+                              <cellpos>6,0</cellpos>
                             </object>
                             <object class="sizeritem">
                               <object class="wxTextCtrl" name="ID_ACCOUNT"/>
                               <flag>wxGROW</flag>
+                              <cellpos>6,1</cellpos>
                             </object>
                           </object>
                           <flag>wxALL|wxGROW</flag>
