@@ -4,7 +4,11 @@
 #include <wx/hyperlink.h>
 #include "Options.h"
 
-bool CWelcomeDialog::Run(wxWindow* parent, bool force /*=false*/)
+BEGIN_EVENT_TABLE(CWelcomeDialog, wxDialogEx)
+EVT_TIMER(wxID_ANY, CWelcomeDialog::OnTimer)
+END_EVENT_TABLE()
+
+bool CWelcomeDialog::Run(wxWindow* parent, bool force /*=false*/, bool delay /*=false*/)
 {
 	const wxString ownVersion = CBuildInfo::GetVersion();
 	wxString greetingVersion = COptions::Get()->GetOption(OPTION_GREETINGVERSION);
@@ -16,6 +20,8 @@ bool CWelcomeDialog::Run(wxWindow* parent, bool force /*=false*/)
 			CBuildInfo::ConvertToVersionNumber(ownVersion) <= CBuildInfo::ConvertToVersionNumber(greetingVersion))
 		{
 			// Been there done that
+			if (delay)
+				delete this;
 			return true;
 		}
 		COptions::Get()->SetOption(OPTION_GREETINGVERSION, ownVersion);
@@ -51,7 +57,19 @@ bool CWelcomeDialog::Run(wxWindow* parent, bool force /*=false*/)
 
 	GetSizer()->Fit(this);
 
-	ShowModal();
+	if (delay)
+	{
+		m_delayedShowTimer.SetOwner(this);
+		m_delayedShowTimer.Start(10, true);
+	}
+	else
+		ShowModal();
 
 	return true;
+}
+
+void CWelcomeDialog::OnTimer(wxTimerEvent& event)
+{
+	ShowModal();
+	Destroy();
 }

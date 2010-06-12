@@ -335,8 +335,8 @@ FileZilla will timeout on big transfers.\
 	frame->Show(true);
 	SetTopWindow(frame);
 
-	CWelcomeDialog welcome_dialog;
-	welcome_dialog.Run(frame);
+	CWelcomeDialog *welcome_dialog = new CWelcomeDialog;
+	welcome_dialog->Run(frame, false, true);
 
 	frame->ProcessCommandLine();
 	frame->PostInitialize();
