@@ -49,9 +49,6 @@
 #include "speedlimits_dialog.h"
 #include "toolbar.h"
 #include "menu_bar.h"
-#ifdef __WXGTK__
-#include "cursor_resetter.h"
-#endif
 
 #ifdef __WXMSW__
 #include <wx/module.h>
@@ -433,10 +430,6 @@ CMainFrame::CMainFrame()
 	CEditHandler::Create()->SetQueue(m_pQueueView);
 
 	CAutoAsciiFiles::SettingsChanged();
-
-#ifdef __WXGTK__
-	ResetCursor(this);
-#endif
 }
 
 CMainFrame::~CMainFrame()

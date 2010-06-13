@@ -299,13 +299,3 @@ void CSplitterWindowEx::Initialize(wxWindow *window)
 
 	SizeWindows();
 }
-
-#ifdef __WXGTK__
-bool CSplitterWindowEx::SetCursor(const wxCursor& cursor)
-{
-	wxSplitterWindow::SetCursor(cursor);
-	wxWindowBase::SetCursor(wxNullCursor);
-
-	return false;
-}
-#endif

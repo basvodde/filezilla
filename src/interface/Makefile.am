@@ -23,7 +23,6 @@ filezilla_SOURCES = aboutdialog.cpp \
 		commandqueue.cpp \
 		conditionaldialog.cpp \
 		context_control.cpp \
-		cursor_resetter.cpp \
 		customheightlistctrl.cpp \
 		defaultfileexistsdlg.cpp \
 		dialogex.cpp \
@@ -130,7 +129,6 @@ noinst_HEADERS = aboutdialog.h \
 		 commandqueue.h \
 		 conditionaldialog.h \
 		 context_control.h \
-		 cursor_resetter.h \
 		 customheightlistctrl.h \
 		 defaultfileexistsdlg.h \
 		 dialogex.h \

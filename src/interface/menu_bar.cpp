@@ -8,9 +8,6 @@
 #include "QueueView.h"
 #include "sitemanager.h"
 #include "state.h"
-#ifdef __WXGTK__
-#include "cursor_resetter.h"
-#endif
 
 IMPLEMENT_DYNAMIC_CLASS(CMenuBar, wxMenuBar)
 
@@ -133,10 +130,6 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 	menubar->RegisterOption(OPTION_SPEEDLIMIT_ENABLE);
 	menubar->RegisterOption(OPTION_SPEEDLIMIT_INBOUND);
 	menubar->RegisterOption(OPTION_SPEEDLIMIT_OUTBOUND);
-
-#ifdef __WXGTK__
-	ResetCursor(menubar);
-#endif
 
 	return menubar;
 }

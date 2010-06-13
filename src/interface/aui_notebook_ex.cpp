@@ -304,15 +304,8 @@ EVT_NAVIGATION_KEY(wxAuiNotebookEx::OnNavigationKey)
 END_EVENT_TABLE()
 
 wxAuiNotebookEx::wxAuiNotebookEx()
-#ifdef __WXGTK__
-	: m_ignore_next_set_cursor(false)
-{
-	m_mgr.Connect(wxEVT_SET_CURSOR, wxSetCursorEventHandler(wxAuiNotebookEx::OnSetCursor), 0, this);
-}
-#else
 {
 }
-#endif
 
 wxAuiNotebookEx::~wxAuiNotebookEx()
 {
@@ -419,22 +412,3 @@ void wxAuiNotebookEx::AdvanceTab(bool forward)
 
 	SetSelection(page);
 }
-
-#ifdef __WXGTK__
-void wxAuiNotebookEx::OnSetCursor(wxSetCursorEvent& event)
-{
-	event.SetCursor(wxNullCursor);
-	m_ignore_next_set_cursor = true;
-}
-
-bool wxAuiNotebookEx::SetCursor(const wxCursor& cursor)
-{
-	if (m_ignore_next_set_cursor)
-	{
-		m_ignore_next_set_cursor = false;
-		return false;
-	}
-	else
-		return wxAuiNotebook::SetCursor(cursor);
-}
-#endif

@@ -6,9 +6,6 @@
 #include "themeprovider.h"
 #include "toolbar.h"
 #include "xh_toolb_ex.h"
-#ifdef __WXGTK__
-#include "cursor_resetter.h"
-#endif
 
 IMPLEMENT_DYNAMIC_CLASS(CToolBar, wxToolBar)
 
@@ -89,11 +86,6 @@ CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 	if (COptions::Get()->GetOptionVal(OPTION_TOOLBAR_HIDDEN) == 0)
 		toolbar->Show();
 #endif
-
-#ifdef __WXGTK__
-	ResetCursor(toolbar);
-#endif
-
 	return toolbar;
 }
 

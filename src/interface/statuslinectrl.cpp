@@ -4,9 +4,6 @@
 #include <wx/dcbuffer.h>
 #include "Options.h"
 #include "sizeformatting.h"
-#ifdef __WXGTK__
-#include "cursor_resetter.h"
-#endif
 
 BEGIN_EVENT_TABLE(CStatusLineCtrl, wxWindow)
 EVT_PAINT(CStatusLineCtrl::OnPaint)
@@ -75,10 +72,6 @@ CStatusLineCtrl::CStatusLineCtrl(CQueueView* pParent, const t_EngineData* const 
 		m_fieldOffsets[2] = m_fieldOffsets[1] + 20;
 		m_fieldOffsets[3] = m_fieldOffsets[2] + PROGRESSBAR_WIDTH + 20;
 	}
-
-#ifdef __WXGTK__
-	ResetCursor(this);
-#endif
 }
 
 CStatusLineCtrl::~CStatusLineCtrl()

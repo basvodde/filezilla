@@ -38,12 +38,6 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 	m_editing = false;
 #endif
 	m_blockedLabelEditing = false;
-
-#ifdef __WXGTK__
-	((wxWindow*)m_headerWin)->Connect(wxEVT_MOTION, wxMouseEventHandler(wxListCtrlEx::OnHeaderMouse), 0, this);
-	((wxWindow*)m_headerWin)->Connect(wxEVT_ENTER_WINDOW, wxMouseEventHandler(wxListCtrlEx::OnHeaderMouse), 0, this);
-	((wxWindow*)m_headerWin)->Connect(wxEVT_LEAVE_WINDOW, wxMouseEventHandler(wxListCtrlEx::OnHeaderMouse), 0, this);
-#endif
 }
 
 wxListCtrlEx::~wxListCtrlEx()
@@ -995,22 +989,3 @@ CLabelEditBlocker::~CLabelEditBlocker()
 {
 	m_listCtrl.SetLabelEditBlock(false);
 }
-
-#ifdef __WXGTK__
-void wxListCtrlEx::OnHeaderMouse( wxMouseEvent &event )
-{
-	static bool skip = false;
-
-	if (!skip)
-	{
-		skip = true;
-		((wxWindow*)m_headerWin)->ProcessEvent(event);
-		((wxWindow*)m_headerWin)->wxWindowBase::SetCursor(wxNullCursor);
-		skip = false;
-	}
-	else
-	{
-		event.Skip();
-	}
-}
-#endif

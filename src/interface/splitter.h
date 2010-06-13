@@ -26,11 +26,6 @@ public:
 
 	bool Unsplit(wxWindow* toRemove = NULL);
 
-
-#ifdef __WXGTK__
-	virtual bool SetCursor(const wxCursor& cursor);
-#endif
-
 protected:
 	virtual int OnSashPositionChanging(int newSashPosition);
 
