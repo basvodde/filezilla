@@ -136,8 +136,8 @@ public:
 	int Close();
 
 	// Returns empty string on error
-	wxString GetLocalIP() const;
-	wxString GetPeerIP() const;
+	wxString GetLocalIP(bool strip_zone_index = false) const;
+	wxString GetPeerIP(bool strip_zone_index = false) const;
 
 	// -1 on error
 	int GetLocalPort(int& error);
@@ -155,7 +155,7 @@ public:
 
 	static bool Cleanup(bool force);
 
-	static wxString AddressToString(const struct sockaddr* addr, int addr_len, bool with_port = true);
+	static wxString AddressToString(const struct sockaddr* addr, int addr_len, bool with_port = true, bool strip_zone_index = false);
 
 	int Listen(enum address_family family, int port = 0);
 	CSocket* Accept(int& error);

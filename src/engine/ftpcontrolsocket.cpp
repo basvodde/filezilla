@@ -3928,7 +3928,7 @@ int CFtpControlSocket::GetExternalIPAddress(wxString& address)
 
 getLocalIP:
 
-	address = m_pSocket->GetLocalIP();
+	address = m_pSocket->GetLocalIP(true);
 	if (address == _T(""))
 	{
 		LogMessage(::Error, _("Failed to retrieve local ip address."), 1);

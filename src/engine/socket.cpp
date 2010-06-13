@@ -1539,7 +1539,7 @@ int CSocket::Write(const void* buffer, unsigned int size, int& error)
 	return res;
 }
 
-wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, bool with_port /*=true*/)
+wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, bool with_port /*=true*/, bool strip_zone_index/*=false*/)
 {
 	char hostbuf[NI_MAXHOST];
 	char portbuf[NI_MAXSERV];
@@ -1571,8 +1571,17 @@ wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, boo
 
 	// IPv6 uses colons as separator, need to enclose address
 	// to avoid ambiguity if also showing port
-	if (with_port && addr->sa_family == AF_INET6)
-		host = _T("[") + host + _T("]");
+	if (addr->sa_family == AF_INET6)
+	{
+		if (strip_zone_index)
+		{
+			int pos = host.Find('%');
+			if (pos != -1)
+				host.Truncate(pos);
+		}
+		if (with_port)
+			host = _T("[") + host + _T("]");
+	}
 
 	if (with_port)
 		return host + _T(":") + port;
@@ -1580,7 +1589,7 @@ wxString CSocket::AddressToString(const struct sockaddr* addr, int addr_len, boo
 		return host;
 }
 
-wxString CSocket::GetLocalIP() const
+wxString CSocket::GetLocalIP(bool strip_zone_index /*=false*/) const
 {
 	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
@@ -1588,10 +1597,10 @@ wxString CSocket::GetLocalIP() const
 	if (res)
 		return _T("");
 
-	return AddressToString((sockaddr *)&addr, addr_len, false);
+	return AddressToString((sockaddr *)&addr, addr_len, false, strip_zone_index);
 }
 
-wxString CSocket::GetPeerIP() const
+wxString CSocket::GetPeerIP(bool strip_zone_index /*=false*/) const
 {
 	struct sockaddr_storage addr;
 	socklen_t addr_len = sizeof(addr);
@@ -1599,7 +1608,7 @@ wxString CSocket::GetPeerIP() const
 	if (res)
 		return _T("");
 
-	return AddressToString((sockaddr *)&addr, addr_len, false);
+	return AddressToString((sockaddr *)&addr, addr_len, false, strip_zone_index);
 }
 
 enum CSocket::address_family CSocket::GetAddressFamily() const
