@@ -32,6 +32,10 @@ CFilelistStatusBar::CFilelistStatusBar(wxWindow* pParent)
 	if (GetLayoutDirection() != wxLayout_RightToLeft)
 		SetDoubleBuffered(true);
 #endif
+
+	RegisterOption(OPTION_SIZE_FORMAT);
+	RegisterOption(OPTION_SIZE_USETHOUSANDSEP);
+	RegisterOption(OPTION_SIZE_DECIMALPLACES);
 }
 
 void CFilelistStatusBar::UpdateText()
@@ -246,5 +250,10 @@ void CFilelistStatusBar::SetEmptyString(const wxString& empty)
 void CFilelistStatusBar::SetConnected(bool connected)
 {
 	m_connected = connected;
+	TriggerUpdateText();
+}
+
+void CFilelistStatusBar::OnOptionChanged(int option)
+{
 	TriggerUpdateText();
 }

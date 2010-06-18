@@ -255,6 +255,13 @@ void CWidgetsStatusBar::PositionChildren(int field)
 	}
 }
 
+void CWidgetsStatusBar::SetFieldWidth(int field, int width)
+{
+	wxStatusBarEx::SetFieldWidth(field, width);
+	for (int i = 0; i < GetFieldsCount(); i++)
+		PositionChildren(i);
+}
+
 #ifdef __WXMSW__
 class wxStaticBitmapEx : public wxStaticBitmap
 {
