@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-13 19:56+0200\n"
+"POT-Creation-Date: 2010-06-20 11:35+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Igor Chomko <igorchomko@gmail.com>\n"
 "Language-Team: Ihor Chomko <igorchomko@gmail.com>\n"
@@ -35,9 +35,9 @@ msgstr ""
 "%a -Акаунт (Рядки,що вміщують його будуть оминатися у випадку,якщо не "
 "використовується логінування в Акаунт) "
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:59
-#: ../../locales/../src/interface/filelist_statusbar.cpp:70
-#: ../../locales/../src/interface/filelist_statusbar.cpp:82
+#: ../../locales/../src/interface/filelist_statusbar.cpp:63
+#: ../../locales/../src/interface/filelist_statusbar.cpp:74
+#: ../../locales/../src/interface/filelist_statusbar.cpp:86
 #, c-format
 msgid "%d directory"
 msgid_plural "%d directories"
@@ -55,8 +55,8 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:58
-#: ../../locales/../src/interface/filelist_statusbar.cpp:81
+#: ../../locales/../src/interface/filelist_statusbar.cpp:62
+#: ../../locales/../src/interface/filelist_statusbar.cpp:85
 #: ../../locales/../src/interface/RemoteListView.cpp:1660
 #: ../../locales/../src/interface/search.cpp:801
 #: ../../locales/../src/interface/search.cpp:1049
@@ -67,7 +67,7 @@ msgstr[0] "%d файл"
 msgstr[1] "%d files"
 msgstr[2] "%d files"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:77
+#: ../../locales/../src/interface/filelist_statusbar.cpp:81
 #, c-format
 msgid "%d file. Total size: %s"
 msgid_plural "%d files. Total size: %s"
@@ -75,7 +75,7 @@ msgstr[0] "%d файл. Загальний розмір: %s"
 msgstr[1] "%d files. Total size: %s"
 msgstr[2] "%d files. Total size: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:75
+#: ../../locales/../src/interface/filelist_statusbar.cpp:79
 #, c-format
 msgid "%d file. Total size: At least %s"
 msgid_plural "%d files. Total size: At least %s"
@@ -140,12 +140,12 @@ msgstr "%s - Все ще не дійсний!"
 msgid "%s - Proxy user"
 msgstr "%s - Користувач проксі"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:87
+#: ../../locales/../src/interface/filelist_statusbar.cpp:91
 #, c-format
 msgid "%s and %s. Total size: %s"
 msgstr "%s і %s. Загальний розмір: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:85
+#: ../../locales/../src/interface/filelist_statusbar.cpp:89
 #, c-format
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s і %s. Загальний розмір: Принаймні %s"
@@ -187,7 +187,7 @@ msgid ""
 "Please download FileZilla again. If this problem persists, please submit a "
 "bug report."
 msgstr ""
-"%s Неможливо знайти. Без цього компоненту FileZilla  SFTP не працюватиме.\n"
+"%s Неможливо знайти. Без цього компоненту FileZilla SFTP не працюватиме.\n"
 "\n"
 "Завантажте FileZilla повторно. Якщо ця проблема повториться - повідомте,"
 "будь- ласка, про неполадку."
@@ -205,9 +205,9 @@ msgstr ""
 "%s Неможливо знайти. Без цього компоненту FileZilla SFTP не працюватиме.\n"
 "\n"
 "Можливі рішення:\n"
-"- Переконайтеся,що %s знаходиться у відповідній  директорії вашого  "
+"- Переконайтеся,що %s знаходиться у відповідній директорії вашого "
 "маршрутного імені змінної конфігурації.\n"
-"- Встановіть  повний маршрут до %s у змінній конфігурації  FZ_FZSFTP."
+"- Встановіть повний маршрут до %s у змінній конфігурації FZ_FZSFTP."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:55
 #, c-format
@@ -323,7 +323,7 @@ msgstr "&Скасувати"
 
 #: resources.h:234
 msgid "&Check for beta versions of FileZilla"
-msgstr "&Перевірте на наявність бета версії  FileZilla"
+msgstr "&Перевірте на наявність бета версії FileZilla"
 
 #: resources.h:504
 msgid "&Clear private data..."
@@ -754,7 +754,7 @@ msgstr "&Порт:"
 #: resources.h:860
 #, fuzzy
 msgid "&Position of the message log:"
-msgstr "Переключає відображення  журналу повідомлень"
+msgstr "Переключає відображення журналу повідомлень"
 
 #: resources.h:529
 msgid "&Preserve timestamps of transferred files"
@@ -989,7 +989,7 @@ msgstr ""
 #: resources.h:927
 #, fuzzy
 msgid "&Use system's default editor for text files"
-msgstr "Обраний файл,як редактор  по замовчувнню не існує."
+msgstr "Обраний файл,як редактор по замовчувнню не існує."
 
 #: resources.h:751
 msgid "&Use the following IP address:"
@@ -1063,11 +1063,10 @@ msgid ""
 msgstr ""
 "'quote' зазвичай є локальною командою,що використовується командною лінійкою "
 "клієнта для відправки аргументів даного 'quote' на сервер.Можливо ви "
-"забажаєте ввести просту команду  ( the raw command), не використовуючи "
-"'quote'."
+"забажаєте ввести просту команду (the raw command), не використовуючи 'quote'."
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:92
-#: ../../locales/../src/interface/filelist_statusbar.cpp:101
+#: ../../locales/../src/interface/filelist_statusbar.cpp:96
+#: ../../locales/../src/interface/filelist_statusbar.cpp:105
 #, c-format
 msgid "(%d object filtered)"
 msgid_plural "(%d objects filtered)"
@@ -1221,7 +1220,7 @@ msgid ""
 msgstr ""
 "Рідкісні сервери не дозволяють пасивного режиму або ж вони неправильно "
 "сконфігуровані.В таких випадках вам необхідно використати активний режим.А "
-"активному режимі  FileZilla  відкриває порт і просить сервер про з'єднання."
+"активному режимі FileZilla відкриває порт і просить сервер про з'єднання."
 
 #: resources.h:305
 msgid "A file previously opened has been changed."
@@ -1231,7 +1230,7 @@ msgstr "Попередньо відкритий файл було змінено
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
-msgstr "Файл з цим іменем уже редагується. Бажаєте перевідкрити  '%s'?"
+msgstr "Файл з цим іменем уже редагується. Бажаєте перевідкрити '%s'?"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2082
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
@@ -1252,10 +1251,10 @@ msgid ""
 "No further warning will be displayed this session."
 msgstr ""
 "Локальне ім'я файлу неможливо декодувати.\n"
-"Переконайтеся,що переключення режиму  LC_CTYPE (або LC_ALL) встановлено "
+"Переконайтеся,що переключення режиму LC_CTYPE (або LC_ALL) встановлено "
 "правильно.\n"
 "Якщо ви не полагодите цієї проблеми,файли будуть відсутні у списках файлів.\n"
-"Більше попереджень упродовж цього з'єднання не буде.  "
+"Більше попереджень упродовж цього з'єднання не буде."
 
 #: resources.h:236
 msgid "A newer version of FileZilla is available:"
@@ -1294,7 +1293,7 @@ msgstr "До&дати"
 
 #: resources.h:851
 msgid "A&llow resume of ASCII files"
-msgstr "До&зволити поновлення  файлів ASCII"
+msgstr "До&зволити поновлення файлів ASCII"
 
 #: ../../locales/../src/interface/fileexistsdlg.cpp:113
 msgid "A&pply only to downloads"
@@ -1380,8 +1379,8 @@ msgid ""
 "address, but your router or firewall has misleadingly modified the sent "
 "address."
 msgstr ""
-"FTP тест активного режиму показав збій. FileZilla  знає правильну зовнішню "
-"ІР адресу,однак ваш маршрутизатор або файєрвол помилково змінили відправлену "
+"FTP тест активного режиму показав збій. FileZilla знає правильну зовнішню ІР "
+"адресу,однак ваш маршрутизатор або файєрвол помилково змінили відправлену "
 "адресу."
 
 #: resources.h:756
@@ -1465,7 +1464,7 @@ msgid ""
 "FileZilla does recognize Pageant."
 msgstr ""
 "Ви можете використати у якості альтернативи інструмент Pageant з PuTTY щоб "
-"управляти своїми ключами. FileZilla розпізнає Pageant.  "
+"управляти своїми ключами. FileZilla розпізнає Pageant."
 
 #: resources.h:785
 #, fuzzy
@@ -1473,8 +1472,8 @@ msgid ""
 "Alternatively you can use your system's SSH agent. To do so, make sure the "
 "SSH_AUTH_SOCK environment variable is set."
 msgstr ""
-"У якості альтернативи, ви можете використати  свого системного агента  SSH."
-"Для цього переконайтеся,що переключення режимів SSH&AUTH&SOCK встановлені."
+"У якості альтернативи, ви можете використати свого системного агента SSH.Для "
+"цього переконайтеся,що переключення режимів SSH&AUTH&SOCK встановлені."
 
 #: ../../locales/../src/interface/updatewizard.cpp:1097
 msgid ""
@@ -1489,8 +1488,8 @@ msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
 msgstr ""
-"Елемент, що перетягується,  позначений схожим іменем з елементом,що вже "
-"існує у вказаній позиції."
+"Елемент, що перетягується, позначений схожим іменем з елементом,що вже існує "
+"у вказаній позиції."
 
 #: ../../locales/../src/engine/server.cpp:873
 #: ../../locales/../src/interface/manual_transfer.cpp:155
@@ -1541,7 +1540,7 @@ msgstr "Застосувати"
 
 #: resources.h:66
 msgid "Apply to &current queue only"
-msgstr "Застосувати лише до &поточної  черги "
+msgstr "Застосувати лише до &поточної черги "
 
 #: resources.h:149
 msgid "Apply to &files only"
@@ -1701,7 +1700,7 @@ msgstr "Пе&ревірити нічні зборки FileZilla"
 
 #: resources.h:611
 msgid "C&lear all"
-msgstr "О&чистити  усе"
+msgstr "О&чистити усе"
 
 #: resources.h:586 resources.h:632
 #, fuzzy
@@ -1863,7 +1862,7 @@ msgstr "Неможливо переглядати / редагувати обр�
 msgid "Categories"
 msgstr "Категорії"
 
-#: ../../locales/../src/interface/statusbar.cpp:518
+#: ../../locales/../src/interface/statusbar.cpp:525
 msgid "Certificate and session data are not available yet."
 msgstr "Сертифікату і даних по з'єднанню ще немає."
 
@@ -1907,7 +1906,7 @@ msgstr "Сукупність символів"
 
 #: resources.h:944
 msgid "Check for &beta versions and release candidates"
-msgstr "Перевірте на наявність бета версії  FileZilla"
+msgstr "Перевірте на наявність бета версії FileZilla"
 
 #: resources.h:548
 msgid "Check for &updates..."
@@ -2127,7 +2126,7 @@ msgstr "Поточні передачі"
 
 #: resources.h:223 resources.h:437
 msgid "Conditions are c&ase sensitive"
-msgstr "Умови чутливі  до роз&міру літер"
+msgstr "Умови чутливі до роз&міру літер"
 
 #: resources.h:704
 msgid "Configuration test"
@@ -2161,7 +2160,7 @@ msgstr "Необхідне підтвердження"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:567
 msgid "Congratulations, your configuration seems to be working."
-msgstr "Вітаємо! Ваша конфігурація  працездатна."
+msgstr "Вітаємо! Ваша конфігурація працездатна."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:140
 msgid "Connect bypassing proxy settings"
@@ -2214,13 +2213,12 @@ msgstr "Невдала спроба під'єднання"
 #: ../../locales/../src/engine/proxy.cpp:176
 #, c-format
 msgid "Connection attempt failed with \"%s\", trying next address."
-msgstr ""
-"Невдала спроба під'єднання з  \"%s\",роблю спробу за наступною адресою."
+msgstr "Невдала спроба під'єднання з \"%s\",роблю спробу за наступною адресою."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1044
 #, c-format
 msgid "Connection attempt failed with \"%s\"."
-msgstr "Невдала спроба під'єднання з  \"%s\"."
+msgstr "Невдала спроба під'єднання з \"%s\"."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:186
 #: ../../locales/../src/engine/engineprivate.cpp:320
@@ -2374,7 +2372,7 @@ msgid ""
 msgstr ""
 "Неможливо знайти вихідні файли FileZilla, закриваю FileZilla.\n"
 "Ви можете встановити директорію даних FileZilla, використовуючи варіант "
-"командної лінійки '--datadir <custompath>' або,  встановивши зміну режиму "
+"командної лінійки '--datadir <custompath>' або, встановивши зміну режиму "
 "FZ_DATADIR ."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:692
@@ -2640,15 +2638,15 @@ msgid ""
 "Synchronized browsing has been disabled."
 msgstr ""
 
-#: ../../locales/../src/interface/statusbar.cpp:412
+#: ../../locales/../src/interface/statusbar.cpp:419
 msgid "Current transfer type is set to ASCII."
 msgstr "Поточний тип передачі встановлено в ASCII."
 
-#: ../../locales/../src/interface/statusbar.cpp:422
+#: ../../locales/../src/interface/statusbar.cpp:429
 msgid "Current transfer type is set to automatic detection."
 msgstr "Тип поточної передачі встановлено за параметром автовизначення."
 
-#: ../../locales/../src/interface/statusbar.cpp:417
+#: ../../locales/../src/interface/statusbar.cpp:424
 msgid "Current transfer type is set to binary."
 msgstr "Тип поточної передачі встановлено за бінарним параметром."
 
@@ -2671,7 +2669,7 @@ msgstr "Т&ип Дати"
 #: resources.h:893
 msgid "D&ecimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
 msgstr ""
-"Де&сятиричні префікси, що використовують  SI символи (наприклад 1 KБ = 1000 "
+"Де&сятиричні префікси, що використовують SI символи (наприклад 1 KБ = 1000 "
 "байт)"
 
 #: resources.h:99
@@ -2893,7 +2891,7 @@ msgid ""
 "Disable this option again if you will not be able to see the correct "
 "directory contents anymore."
 msgstr ""
-"Заблокувати дану опцію ще раз, якщо  вміст директорії припинить бути видимим"
+"Заблокувати дану опцію ще раз, якщо вміст директорії припинить бути видимим"
 
 #: resources.h:984
 msgid "Disconnect from server"
@@ -3003,12 +3001,12 @@ msgstr "Завантажити"
 msgid "Download &limit:"
 msgstr "Завантажити &обмеження:"
 
-#: ../../locales/../src/interface/statusbar.cpp:591
+#: ../../locales/../src/interface/statusbar.cpp:598
 #, fuzzy, c-format
 msgid "Download limit: %s/s"
 msgstr "Завантажити &обмеження:"
 
-#: ../../locales/../src/interface/statusbar.cpp:593
+#: ../../locales/../src/interface/statusbar.cpp:600
 #, fuzzy
 msgid "Download limit: none"
 msgstr "Завантажити &обмеження:"
@@ -3055,7 +3053,7 @@ msgid ""
 "Drag&drop between different instances of FileZilla has not been implemented "
 "yet."
 msgstr ""
-"Функцію Перетягнути&Скинути між різними елементами  у FileZill-і ще не "
+"Функцію Перетягнути&Скинути між різними елементами у FileZilla-і ще не "
 "реалізовано."
 
 #: ../../locales/../src/interface/LocalListView.cpp:108
@@ -3134,7 +3132,7 @@ msgstr "Порожній список директорій"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:26
 msgid "Empty directory."
-msgstr "Порожня  директорія"
+msgstr "Порожня директорія"
 
 #: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:53
 msgid "Empty file extension."
@@ -3143,7 +3141,7 @@ msgstr "Порожні розширення файлу."
 #: ../../locales/../src/interface/filteredit.cpp:206
 #: ../../locales/../src/interface/filteredit.cpp:248
 msgid "Empty filter names are not allowed."
-msgstr "Порожні імена  фільтрів не дозволяються."
+msgstr "Порожні імена фільтрів не дозволяються."
 
 #: ../../locales/../src/interface/filteredit.cpp:206
 #: ../../locales/../src/interface/filteredit.cpp:248
@@ -3392,7 +3390,7 @@ msgstr "Двигун FTP не ініціалізується, неможливо
 
 #: resources.h:741
 msgid "FTP Keep-alive"
-msgstr "Дежурний  FTP "
+msgstr "Дежурний FTP "
 
 #: resources.h:761
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:120
@@ -3461,7 +3459,7 @@ msgstr "Відмова завантаження останньої версії 
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:665
 msgid "Failed to get 'My Documents' path"
-msgstr "Відмова витягнути шлях  'Мої документи' "
+msgstr "Відмова витягнути шлях 'Мої документи' "
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:651
 msgid "Failed to get desktop path"
@@ -3476,7 +3474,7 @@ msgstr ""
 #: ../../locales/../src/interface/netconfwizard.cpp:958
 msgid "Failed to get peer address of data connection, connection closed."
 msgstr ""
-"Відмова витягнути  однорідну адресу даних з'єднання,аварійне завершення."
+"Відмова витягнути однорідну адресу даних з'єднання,аварійне завершення."
 
 #: ../../locales/../src/interface/context_control.cpp:77
 msgid "Failed to initialize FTP engine"
@@ -3532,9 +3530,7 @@ msgstr "Відмова видобути зовнішню ІР адресу,ав�
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3912
 msgid "Failed to retrieve external ip address, using local address"
-msgstr ""
-"Відмова видобути зовнішню ІР адресу, використовуючи локальну "
-"адресу                "
+msgstr "Відмова видобути зовнішню ІР адресу, використовуючи локальну адресу"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3934
 msgid "Failed to retrieve local ip address."
@@ -3640,7 +3636,7 @@ msgstr "Типи файлів"
 
 #: ../../locales/../src/interface/import.cpp:109
 msgid "File does not contain any importable data."
-msgstr "У файлі відсутні будь-які  дані, гідні імпортування."
+msgstr "У файлі відсутні будь-які дані, гідні імпортування."
 
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:132
 msgid "File editing"
@@ -3715,7 +3711,7 @@ msgstr "Передачі файлу усе ще виконуються."
 
 #: resources.h:386
 msgid "File would transfer with ASCII data type."
-msgstr "Файл пропонує свою передачу через  тип даних ASCII."
+msgstr "Файл пропонує свою передачу через тип даних ASCII."
 
 #: resources.h:387
 msgid "File would transfer with binary data type."
@@ -3776,7 +3772,7 @@ msgstr "Фільтри &імені файлу..."
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2312
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
-msgstr "Для директорії %s та файлу %s  імені  створити неможливо "
+msgstr "Для директорії %s та файлу %s імені створити неможливо "
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1859
 msgid "Filename invalid"
@@ -3899,7 +3895,7 @@ msgstr ""
 #: resources.h:701
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr ""
-"Задля надійності вам необхідно  вказати діапазон ,щонайменше, 10 портів."
+"Задля надійності вам необхідно вказати діапазон ,щонайменше, 10 портів."
 
 #: ../../locales/../src/interface/Options.cpp:194
 #, fuzzy
@@ -3913,7 +3909,7 @@ msgstr ""
 
 #: resources.h:108
 msgid "Force &UTF-8"
-msgstr "Примусити  &UTF-8"
+msgstr "Примусити &UTF-8"
 
 #: resources.h:542
 msgid "Force showing &hidden files"
@@ -3943,7 +3939,7 @@ msgstr "Загальне"
 
 #: ../../locales/../src/engine/proxy.cpp:430
 msgid "General SOCKS server failure"
-msgstr "Загальна відмова  сервера SOCKS"
+msgstr "Загальна відмова сервера SOCKS"
 
 #: resources.h:786
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:122
@@ -4006,7 +4002,7 @@ msgstr "Найвищий"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:73
 msgid "Highest available port has to be a number between 1024 and 65535."
-msgstr "Найвищий наявний порт повинен стояти під номером  поміж 1024 та 65535."
+msgstr "Найвищий наявний порт повинен стояти під номером поміж 1024 та 65535."
 
 #: resources.h:208
 msgid ""
@@ -4028,7 +4024,7 @@ msgstr "Ключ хоста не співпадає"
 
 #: ../../locales/../src/engine/server.cpp:152
 msgid "Host starts with '[' but no closing bracket found."
-msgstr "Хост стартує з  '[',однак заключної дужки не знайдено."
+msgstr "Хост стартує з '[',однак заключної дужки не знайдено."
 
 #: ../../locales/../src/engine/proxy.cpp:439
 msgid "Host unreachable"
@@ -4062,7 +4058,7 @@ msgstr ""
 msgid "If reporting bugs, please provide logs with \"Verbose\" logging level."
 msgstr ""
 "Якщо з'явиться повідомлення про дефект, тоді для логів встановіть "
-"\"Багатошаровий\" рівень логування    ."
+"\"Багатошаровий\" рівень логування."
 
 #: resources.h:681
 msgid ""
@@ -4143,7 +4139,7 @@ msgid ""
 "the server. If the time differs (e.g. different timezone), specify a "
 "timezone offset in the site manager."
 msgstr ""
-"При використанні  'переписати якщо новіший',необхідно синхронізувати ваш "
+"При використанні 'переписати якщо новіший',необхідно синхронізувати ваш "
 "системний час з серверним ."
 
 #: resources.h:909
@@ -4152,7 +4148,7 @@ msgid ""
 "timestamp difference does not exceed this threshold."
 msgstr ""
 "При використанні порівняння на основі дати/часу,розглядайте два файли як "
-"одинакові, при умові, що різниця  їхньої дати/часу не перевищує цієї межі."
+"одинакові, при умові, що різниця їхньої дати/часу не перевищує цієї межі."
 
 #: resources.h:924
 msgid "If you change the language, you should restart FileZilla."
@@ -4175,7 +4171,7 @@ msgid ""
 "If you enter the wrong filetypes, those files may get corrupted when "
 "transferred."
 msgstr ""
-"При введенні неправильного типу файлів,при передачі, ці файли можуть  "
+"При введенні неправильного типу файлів,при передачі, ці файли можуть "
 "пошкодитися."
 
 #: resources.h:708
@@ -4208,7 +4204,7 @@ msgid ""
 "If you successfully complete the wizard and the final test succeeds, any "
 "firewalls and routers you have should be configured properly."
 msgstr ""
-"Якщо роботу майстра завершено  і результат кінцевого тесту має успіх, тоді "
+"Якщо роботу майстра завершено і результат кінцевого тесту має успіх, тоді "
 "правильно сконфігуруйте свої файєрвол і маршрутизатор."
 
 #: resources.h:703
@@ -4216,7 +4212,7 @@ msgid ""
 "If you use a firewall, make sure FileZilla is allowed to accept connection "
 "on all given ports."
 msgstr ""
-"Якщо ви користуєтесь файєрволом, переконайтесь, що  FileZilla має дозвіл на "
+"Якщо ви користуєтесь файєрволом, переконайтесь, що FileZilla має дозвіл на "
 "отримання з'єднання по всіх наявних портах."
 
 #: resources.h:702
@@ -4258,8 +4254,8 @@ msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
 msgstr ""
-"В активному режимі  FileZill - і необхідно слухати порт передачі даних.Вам "
-"необхідно вказати який порт  FileZilla використовуватиме."
+"В активному режимі FileZilla - і необхідно слухати порт передачі даних.Вам "
+"необхідно вказати який порт FileZilla використовуватиме."
 
 #: resources.h:697
 msgid ""
@@ -4267,7 +4263,7 @@ msgid ""
 "FileZilla has no influence on the ports your system chooses."
 msgstr ""
 "У випадку,якщо у вас маршрутизатор,вам потрібно вказати всі наявні порти, "
-"оскільки  FileZilla не в стані вплинути на порти, що обираються вашою "
+"оскільки FileZilla не в стані вплинути на порти, що обираються вашою "
 "системою."
 
 #: resources.h:253
@@ -4339,7 +4335,7 @@ msgid ""
 "site manager to force UTF-8."
 msgstr ""
 "Отримано недійсну послідовність знаків,блокування UTF-8. В Сайт Менеджері "
-"виберіть  опцію UTF-8,щоб примусити  UTF-8."
+"виберіть опцію UTF-8,щоб примусити UTF-8."
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:896
 msgid "Invalid chunk size"
@@ -4376,7 +4372,7 @@ msgstr "Недійсне введення"
 #: ../../locales/../src/engine/server.cpp:192
 msgid "Invalid port given. The port has to be a value from 1 to 65535."
 msgstr ""
-"Недійсний заданий порт. Значення порту повинно становити від 1 до  65535."
+"Недійсний заданий порт. Значення порту повинно становити від 1 до 65535."
 
 #: ../../locales/../src/engine/server.cpp:77
 #: ../../locales/../src/interface/quickconnectbar.cpp:120
@@ -4389,7 +4385,7 @@ msgid ""
 msgstr ""
 "Вказано недійсний протокол. Дійсними протоколами є:\n"
 "ftp://для звичайного FTP,\n"
-"sftp://  для протоколу файлу передачіl SSH,\n"
+"sftp:// для протоколу файлу передачіl SSH,\n"
 "ftps:// для FTP через SSL (не явний) і\n"
 "ftpes://для FTP через SSL (явний)."
 
@@ -4485,7 +4481,7 @@ msgstr "Формат"
 
 #: resources.h:799
 msgid "Limit for concurrent &downloads:"
-msgstr "Обмеження для одночасних  &завантажень:"
+msgstr "Обмеження для одночасних &завантажень:"
 
 #: resources.h:801
 msgid "Limit for concurrent &uploads:"
@@ -4536,7 +4532,7 @@ msgstr "Локальний файл"
 
 #: ../../locales/../src/interface/manual_transfer.cpp:324
 msgid "Local file does not exist."
-msgstr "Локальний  файл не існує."
+msgstr "Локальний файл не існує."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:319
 msgid "Local file is a directory instead of a regular file."
@@ -4589,7 +4585,7 @@ msgstr ""
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:839
 msgid "Login sequence fully executed yet not logged in. Aborting."
 msgstr ""
-"Послідовність логування виконана повністю, проте залогування  не відбулось. "
+"Послідовність логування виконана повністю, проте залогування не відбулось. "
 "Аварійне завершення"
 
 #: ../../locales/../src/interface/cmdline.cpp:95
@@ -4615,7 +4611,7 @@ msgstr "Найнижчий"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:67
 msgid "Lowest available port has to be a number between 1024 and 65535."
-msgstr " Найнижче значення порту повинно становити число між 1 та  65535"
+msgstr " Найнижче значення порту повинно становити число між 1 та 65535"
 
 #: resources.h:20 resources.h:44
 msgid "MAC:"
@@ -4746,7 +4742,7 @@ msgstr "Потрібно ввести ім'я фільтру"
 
 #: ../../locales/../src/interface/sitemanager.cpp:1095
 msgid "Need to specify a character encoding"
-msgstr "Потрібно вказати  спосіб кодування знаків"
+msgstr "Потрібно вказати спосіб кодування знаків"
 
 #: ../../locales/../src/engine/proxy.cpp:436
 msgid "Network unreachable"
@@ -4941,7 +4937,7 @@ msgstr "Примітка:Це працює лише чистим,не кодов
 #: resources.h:795
 msgid "Note: Using a generic proxy forces passive mode on FTP connections."
 msgstr ""
-"Примітка: Використання загального  проксі форсує пасивний режим при "
+"Примітка: Використання загального проксі форсує пасивний режим при "
 "з'єднаннях FTP."
 
 #: resources.h:895
@@ -4971,7 +4967,7 @@ msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
 msgstr ""
-"На наступних сторінках  буде сконфігуровано обраний режим передач і режим "
+"На наступних сторінках буде сконфігуровано обраний режим передач і режим "
 "нейтралізації неполадок, у випадку його включення."
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:888
@@ -5153,7 +5149,7 @@ msgstr "Шлях"
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2357
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
-msgstr "Для директорії %s та піддиректорії %s  шлях  створити неможливо "
+msgstr "Для директорії %s та піддиректорії %s шлях створити неможливо "
 
 #: resources.h:400
 #, fuzzy
@@ -5185,7 +5181,7 @@ msgid ""
 "Please check http://filezilla-project.org for the most recent version of "
 "FileZilla."
 msgstr ""
-"Перевірте,будь-ласка:  http://filezilla-project.org на наявність найновішої "
+"Перевірте,будь-ласка: http://filezilla-project.org на наявність найновішої "
 "версії FileZilla."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:553
@@ -5202,7 +5198,7 @@ msgid ""
 "visit http://filezilla-project.org to download the source code of FileZilla."
 msgstr ""
 "Перевірте,будь-ласка,менеджера пакетів вашої системи на предмет наявності "
-"оновленого пакету  або відвідайте http://filezilla-project.org щоб "
+"оновленого пакету або відвідайте http://filezilla-project.org щоб "
 "завантажити вихідні коди FileZilla."
 
 #: resources.h:679
@@ -5241,7 +5237,7 @@ msgstr "Введіть,будь-ласка,користувацький форм
 #, fuzzy, c-format
 msgid "Please enter a download speed limit greater or equal to 0 %s/s."
 msgstr ""
-"Введіть,будь-ласка,обмеження швидкості завантаження більше або рівне  0 KБ/с."
+"Введіть,будь-ласка,обмеження швидкості завантаження більше або рівне 0 KБ/с."
 
 #: ../../locales/../src/interface/filteredit.cpp:134
 msgid "Please enter a name for the new filter."
@@ -5249,16 +5245,16 @@ msgstr "Введіть ім'я для нового фільтру."
 
 #: ../../locales/../src/interface/filteredit.cpp:241
 msgid "Please enter a new name for the copied filter."
-msgstr "Введіть нове  ім'я для скопійованого  фільтру."
+msgstr "Введіть нове ім'я для скопійованого фільтру."
 
 #: ../../locales/../src/interface/filter.cpp:388
 #, fuzzy, c-format
 msgid "Please enter a new name for the filter set \"%s\""
-msgstr "Введіть нове ім'я для  фільтру."
+msgstr "Введіть нове ім'я для фільтру."
 
 #: ../../locales/../src/interface/filteredit.cpp:194
 msgid "Please enter a new name for the filter."
-msgstr "Введіть нове ім'я для  фільтру."
+msgstr "Введіть нове ім'я для фільтру."
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:101
 msgid ""
@@ -5295,7 +5291,7 @@ msgid ""
 msgstr ""
 "Введіть,будь-ласка,шлях до файлу виконання.\n"
 "Зразок: c:\\somePath\\file.exe під управлінням MS Windows або /somePath/file "
-"під управлінням  Unix.\n"
+"під управлінням Unix.\n"
 "Також ви можете вибірково уточнити аргументи програми."
 
 #: ../../locales/../src/interface/settings/optionspage_connection.cpp:46
@@ -5330,16 +5326,15 @@ msgstr "Введіть,будь-ласка,інтервал оновлень н�
 #, fuzzy, c-format
 msgid "Please enter an upload speed limit greater or equal to 0 %s/s."
 msgstr ""
-"Введіть,будь-ласка,обмеження швидкості відвантаження більше або рівне  0 KБ/"
-"с."
+"Введіть,будь-ласка,обмеження швидкості відвантаження більше або рівне 0 KБ/с."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:573
 msgid ""
 "Please enter raw FTP command.\n"
 "Using raw ftp commands will clear the directory cache."
 msgstr ""
-"Введіть,будь-ласка, пряму FTP  команду.\n"
-"Використання прямих  ftp команд очистить каше директорії."
+"Введіть,будь-ласка, пряму FTP команду.\n"
+"Використання прямих ftp команд очистить каше директорії."
 
 #: ../../locales/../src/interface/LocalListView.cpp:1189
 #: ../../locales/../src/interface/LocalTreeView.cpp:1188
@@ -5381,7 +5376,7 @@ msgid ""
 "make sure you typed the address of the address resolver correctly."
 msgstr ""
 "Переконайтесь,що FileZilla має дозвіл на встановлення вихідного з'єднання, а "
-"токож переконайтеся,що ви надрукували адресу  перетворювача адрес правильно. "
+"токож переконайтеся,що ви надрукували адресу перетворювача адрес правильно. "
 
 #: ../../locales/../src/interface/FileZilla.cpp:269
 msgid "Please make sure the requested locale is installed on your system."
@@ -5397,7 +5392,7 @@ msgstr ""
 "Переконайтесь,що ваш маршрутизатор використовує останнє наявне програмне "
 "забезпечення виробника. Більше того,необхідно правильно сконфігурувати ваш "
 "маршрутизатор.Вам доведеться використати ручний порт відправки.Не запускайте "
-"свого маршрутизатора в, так званому,  'режимі DMZ' або 'ігровому режимі'."
+"свого маршрутизатора в, так званому, 'режимі DMZ' або 'ігровому режимі'."
 
 #: resources.h:680
 msgid ""
@@ -5407,7 +5402,7 @@ msgid ""
 "discard."
 msgstr ""
 "Майте на увазі, що FileZilla не має впливу на порт,обраний сервером. Таким "
-"чином сервер може вибрати  порт,який ваш файєрвол може розцінити як такий,що "
+"чином сервер може вибрати порт,який ваш файєрвол може розцінити як такий,що "
 "використовується троянами або іншими шкідливими програмами.Це може викликати "
 "хибну тривогу,яку ви можете безпечно відмінити. "
 
@@ -5416,7 +5411,7 @@ msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
 msgstr ""
-"Майте на увазі, що збереження часових позначок при відвантаженнях на  FTP, "
+"Майте на увазі, що збереження часових позначок при відвантаженнях на FTP, "
 "FTPS та FTPES, сервери спрацьовують лише у випадку, якщо вони підтримують "
 "команду MFMT."
 
@@ -5451,7 +5446,7 @@ msgid ""
 "previously."
 msgstr ""
 "Якщо ви змінили середовище своєї мережі або у випадку,якщо ви зіткнулися з "
-"проблемами на  тих серверах,що раніше працювали - перезапустіть  майстра.  "
+"проблемами на тих серверах,що раніше працювали - перезапустіть майстра. "
 
 #: resources.h:455
 #, fuzzy
@@ -5471,7 +5466,7 @@ msgstr ""
 #: ../../locales/../src/interface/chmoddialog.cpp:38
 #, c-format
 msgid "Please select the new attributes for the directory \"%s\"."
-msgstr "Виберіть,будь-ласка, нові атрибути для  директорії \"%s\"."
+msgstr "Виберіть,будь-ласка, нові атрибути для директорії \"%s\"."
 
 #: ../../locales/../src/interface/chmoddialog.cpp:27
 #, c-format
@@ -5499,19 +5494,19 @@ msgid ""
 "called 'DMZ mode' or 'game mode'. Things like protocol inspection or "
 "protocol specific 'fixups' have to be disabled"
 msgstr ""
-"Обновіть,будь-ласка, ваш файєрвол і переконайтеся, що ваш маршрутизатор  "
+"Обновіть,будь-ласка, ваш файєрвол і переконайтеся, що ваш маршрутизатор "
 "використовує останнє наявне програмне забезпечення виробника. Більше того,"
 "необхідно правильно сконфігурувати ваш маршрутизатор.Вам доведеться "
 "використати ручний порт відправки.Не запускайте свого маршрутизатора в,так "
-"званому,  'режимі DMZ' або 'ігровому режимі'.Такі речі як протокол інспекцій "
-"чи протокол специфічних  'полагоджень' повинні бути відключеними."
+"званому, 'режимі DMZ' або 'ігровому режимі'.Такі речі як протокол інспекцій "
+"чи протокол специфічних 'полагоджень' повинні бути відключеними."
 
 #: resources.h:252
 msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
 msgstr ""
-"Задля отримання ширшої інформації стосовно FileZilla, відвідайте  http://"
+"Задля отримання ширшої інформації стосовно FileZilla, відвідайте http://"
 "filezilla-project.org."
 
 #: ../../locales/../src/interface/updatewizard.cpp:1074
@@ -5520,7 +5515,7 @@ msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
 msgstr ""
-"Щоб завантажити найновішу версію FileZilla, відвідайте  http://filezilla-"
+"Щоб завантажити найновішу версію FileZilla, відвідайте http://filezilla-"
 "project.org."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:178
@@ -5578,11 +5573,11 @@ msgstr "Порт &проксі:"
 
 #: resources.h:776 resources.h:793
 msgid "Proxy &user:"
-msgstr " Користувач  &проксі:"
+msgstr " Користувач &проксі:"
 
 #: ../../locales/../src/engine/proxy.cpp:415
 msgid "Proxy authentication failed"
-msgstr "Невдала автентифікація  проксі "
+msgstr "Невдала автентифікація проксі "
 
 #: ../../locales/../src/engine/transfersocket.cpp:132
 #: ../../locales/../src/engine/transfersocket.cpp:146
@@ -5624,18 +5619,18 @@ msgstr "Публічні допуски"
 msgid "Queue has been fully processed"
 msgstr "Черга опрацьована не повністю"
 
-#: ../../locales/../src/interface/statusbar.cpp:451
+#: ../../locales/../src/interface/statusbar.cpp:458
 #, fuzzy, c-format
 msgid "Queue: %s MiB"
 msgstr "Черга: %s%d MiB"
 
-#: ../../locales/../src/interface/statusbar.cpp:381
+#: ../../locales/../src/interface/statusbar.cpp:388
 #, fuzzy, c-format
 msgid "Queue: %s%s"
 msgstr "Черга: %s%d %c"
 
-#: ../../locales/../src/interface/statusbar.cpp:377
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:384
+#: ../../locales/../src/interface/statusbar.cpp:449
 msgid "Queue: empty"
 msgstr "Черга: пусто"
 
@@ -5973,7 +5968,7 @@ msgstr ""
 msgid "Search server for files"
 msgstr "Фільт&рувати усі файли,що:"
 
-#: ../../locales/../src/interface/statusbar.cpp:518
+#: ../../locales/../src/interface/statusbar.cpp:525
 msgid "Security information"
 msgstr "Інформація безпеки"
 
@@ -6017,7 +6012,7 @@ msgstr ""
 msgid ""
 "Select default file exists action only for the currently selected files in "
 "the queue."
-msgstr "Вибери існуючий файл по замовленню  для наданих файлів у черзі."
+msgstr "Вибери існуючий файл по замовленню для наданих файлів у черзі."
 
 #: ../../locales/../src/interface/updatewizard.cpp:328
 msgid "Select download location for package"
@@ -6087,7 +6082,7 @@ msgstr[0] "Додати вибрану директорію до черги пе
 msgstr[1] "Додати вибрану директорію до черги передачі"
 msgstr[2] "Додати вибрану директорію до черги передачі"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:47
+#: ../../locales/../src/interface/filelist_statusbar.cpp:51
 #, c-format
 msgid "Selected %d directory."
 msgid_plural "Selected %d directories."
@@ -6103,7 +6098,7 @@ msgstr[0] "Обраний %d файл. Загальний розмір: %s"
 msgstr[1] "Selected %d files. Total size: %s"
 msgstr[2] "Selected %d files. Total size: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:54
+#: ../../locales/../src/interface/filelist_statusbar.cpp:58
 #, c-format
 msgid "Selected %d file. Total size: %s"
 msgid_plural "Selected %d files. Total size: %s"
@@ -6111,7 +6106,7 @@ msgstr[0] "Обраний %d файл. Загальний розмір: %s"
 msgstr[1] "Selected %d files. Total size: %s"
 msgstr[2] "Selected %d files. Total size: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:52
+#: ../../locales/../src/interface/filelist_statusbar.cpp:56
 #, c-format
 msgid "Selected %d file. Total size: At least %s"
 msgid_plural "Selected %d files. Total size: At least %s"
@@ -6124,12 +6119,12 @@ msgstr[2] "Selected %d files. Total size: At least %s"
 msgid "Selected %s and %s for transfer."
 msgstr "Обраний %s і %s. Загальний розмір: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:64
+#: ../../locales/../src/interface/filelist_statusbar.cpp:68
 #, c-format
 msgid "Selected %s and %s. Total size: %s"
 msgstr "Обраний %s і %s. Загальний розмір: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:62
+#: ../../locales/../src/interface/filelist_statusbar.cpp:66
 #, c-format
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "Обраний %s і %s. Загальний розмір: Принаймні %s"
@@ -6177,11 +6172,11 @@ msgstr "Надіслати FTP команди &keep-alive "
 
 #: resources.h:541
 msgid "Send custom command to the server otherwise not available"
-msgstr "Надіслати клієнтську команду на  сервер"
+msgstr "Надіслати клієнтську команду на сервер"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4445
 msgid "Sending keep-alive command"
-msgstr "Відправка команди  keep-alive"
+msgstr "Відправка команди keep-alive"
 
 #: resources.h:7 resources.h:31
 msgid "Serial number:"
@@ -6272,7 +6267,7 @@ msgstr "Сервер надіслав недійсну відповідь."
 
 #: resources.h:350
 msgid "Server to client MAC:"
-msgstr "Сервер до клієнта  MAC:"
+msgstr "Сервер до клієнта MAC:"
 
 #: resources.h:348
 msgid "Server to client cipher:"
@@ -6307,7 +6302,7 @@ msgstr "Встановити дозволи '%s' до '%s'"
 
 #: ../../locales/../src/engine/transfersocket.cpp:858
 msgid "SetSocketBufferSize called without socket"
-msgstr "Встановлений розмір  буферу - каже мене - нема..."
+msgstr "Встановлений розмір буферу - каже мене - нема..."
 
 #: resources.h:719
 msgid "Settings"
@@ -6437,8 +6432,8 @@ msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local IP address."
 msgstr ""
-"Деякі, неправильно сконфігуровані, віддалені сервери позаду свого  "
-"маршрутизатора, при відповіді,  можуть видати свою локальну ІР адресу"
+"Деякі, неправильно сконфігуровані, віддалені сервери позаду свого "
+"маршрутизатора, при відповіді, можуть видати свою локальну ІР адресу"
 
 #: resources.h:907
 msgid "Sort directories inline"
@@ -6483,11 +6478,11 @@ msgstr "Обмеження швидкості"
 msgid "Speed limits"
 msgstr "Обмеження швидкості"
 
-#: ../../locales/../src/interface/statusbar.cpp:584
+#: ../../locales/../src/interface/statusbar.cpp:591
 msgid "Speed limits are disabled, click to change."
 msgstr ""
 
-#: ../../locales/../src/interface/statusbar.cpp:588
+#: ../../locales/../src/interface/statusbar.cpp:595
 msgid "Speed limits are enabled, click to change."
 msgstr ""
 
@@ -6666,7 +6661,7 @@ msgstr "ВІддалений шлях неможливо проаналізув�
 msgid "The bookmarks could not be cleared."
 msgstr "ВІддалений шлях неможливо проаналізувати."
 
-#: ../../locales/../src/interface/statusbar.cpp:480
+#: ../../locales/../src/interface/statusbar.cpp:487
 msgid "The connection is encrypted. Click icon for details."
 msgstr "З'єднання криптоване.Клацніть на іконку задля отримання подробиць."
 
@@ -6765,7 +6760,7 @@ msgid ""
 "The file '%s' is not in a format supported by FileZilla.\n"
 "Would you like to convert it into a supported format?"
 msgstr ""
-"Файл '%s' не у тому форматі,що підтримується  FileZilla.\n"
+"Файл '%s' не у тому форматі,що підтримується FileZilla.\n"
 "Бажаєте переконвертувати його у підтримуваний формат?"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:271
@@ -6775,13 +6770,13 @@ msgid ""
 "supported by FileZilla yet.\n"
 "Would you like to convert it into an unprotected file?"
 msgstr ""
-"Файл '%s' захищено паролем. Наразі  FileZilla не підтримує захищені паролем "
+"Файл '%s' захищено паролем. Наразі FileZilla не підтримує захищені паролем "
 "ключі файлів.\n"
 "Не бажаєте переконвертувати його у незахищений файл?"
 
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:144
 msgid "The file selected as default editor does not exist."
-msgstr "Обраний файл,як редактор  по замовчувнню не існує."
+msgstr "Обраний файл,як редактор по замовчувнню не існує."
 
 #: ../../locales/../src/interface/import.cpp:96
 msgid ""
@@ -6803,7 +6798,7 @@ msgstr "Стовпець імен файлів не можна, ані прих�
 
 #: ../../locales/../src/interface/listctrlex.cpp:784
 msgid "The filename column cannot be hidden."
-msgstr "Стовпець імен файлів неможливо  приховати."
+msgstr "Стовпець імен файлів неможливо приховати."
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:68
 #, c-format
@@ -6834,8 +6829,8 @@ msgid ""
 "message log. Displaying debug information has a negative impact on "
 "performance."
 msgstr ""
-"Чим вищий рівень відлагодження,тим більше інформації буде відображено в  "
-"журналі повідомлень . Відображення відлагоджувальної  інформації має "
+"Чим вищий рівень відлагодження,тим більше інформації буде відображено в "
+"журналі повідомлень . Відображення відлагоджувальної інформації має "
 "негативний вплив на продуктивність."
 
 #: ../../locales/../src/interface/settings/optionspage_logging.cpp:78
@@ -6896,7 +6891,7 @@ msgstr "Обрані категорії імпортовано."
 #: resources.h:297
 msgid ""
 "The selected file contains importable data for the following categories:"
-msgstr "Обраний файл вміщує  імпортабельні дані для наступних категорій:"
+msgstr "Обраний файл вміщує імпортабельні дані для наступних категорій:"
 
 #: resources.h:320
 msgid "The selected file is already being edited:"
@@ -6922,7 +6917,7 @@ msgstr ""
 #: ../../locales/../src/interface/sitemanager.cpp:2871
 #, fuzzy
 msgid "The server could not be added."
-msgstr "Стовпець імен файлів неможливо  приховати."
+msgstr "Стовпець імен файлів неможливо приховати."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:574
 #, fuzzy
@@ -7110,7 +7105,7 @@ msgstr "Переключає відображення локального де�
 
 #: resources.h:970 resources.h:971
 msgid "Toggles the display of the message log"
-msgstr "Переключає відображення  журналу повідомлень"
+msgstr "Переключає відображення журналу повідомлень"
 
 #: resources.h:974 resources.h:975
 msgid "Toggles the display of the remote directory tree"
@@ -7291,8 +7286,8 @@ msgid ""
 "Unknown protocol version of SOCKS Username/Password Authentication "
 "subnegotiation: %d"
 msgstr ""
-"Невідома версія протоколу SOCKS переговорів про автентифікацію   "
-"Користувача / Паролю: %d "
+"Невідома версія протоколу SOCKS переговорів про автентифікацію Користувача / "
+"Паролю: %d "
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:455
 msgid ""
@@ -7305,7 +7300,7 @@ msgid ""
 "Unless these problems get fixed, active mode FTP will not work and passive "
 "mode has to be used."
 msgstr ""
-"Якщо ці проблеми не будуть усунуті, активний режим  FTP не працюватиме і "
+"Якщо ці проблеми не будуть усунуті, активний режим FTP не працюватиме і "
 "необхідно використати пасивний режим."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:583
@@ -7313,7 +7308,7 @@ msgid ""
 "Unless this problem gets fixed, active mode FTP will not work and passive "
 "mode has to be used."
 msgstr ""
-"Якщо ця проблема не буде усунута, активний режим  FTP не працюватиме і "
+"Якщо ця проблема не буде усунута, активний режим FTP не працюватиме і "
 "необхідно використати пасивний режим."
 
 #: ../../locales/../src/engine/tlssocket.cpp:872
@@ -7347,12 +7342,12 @@ msgstr "Відвантаження"
 msgid "Upload failed"
 msgstr "Невдале відвантаження"
 
-#: ../../locales/../src/interface/statusbar.cpp:596
+#: ../../locales/../src/interface/statusbar.cpp:603
 #, fuzzy, c-format
 msgid "Upload limit: %s/s"
 msgstr "Обмеження Від&вантаження :"
 
-#: ../../locales/../src/interface/statusbar.cpp:598
+#: ../../locales/../src/interface/statusbar.cpp:605
 #, fuzzy
 msgid "Upload limit: none"
 msgstr "Обмеження Від&вантаження :"
@@ -7440,7 +7435,7 @@ msgstr "Використати наступний діапазон порту:"
 
 #: resources.h:683
 msgid "Use the server's external IP address instead"
-msgstr "Використати натомість зовнішню  ІР адресу сервера"
+msgstr "Використати натомість зовнішню ІР адресу сервера"
 
 #: resources.h:689 resources.h:752
 msgid ""
@@ -7455,7 +7450,7 @@ msgid ""
 "above server once each session as soon as you use active mode for the first "
 "time. Only the version of FileZilla you're using is submitted to the server."
 msgstr ""
-"Скористайтеся цією опцією,якщо у вас динамічна ІР адреса. FileZilla  "
+"Скористайтеся цією опцією,якщо у вас динамічна ІР адреса. FileZilla "
 "з'єднається з вищезгаданим сервером один раз під-час кожної сесії,якщо ви "
 "використовуєте активний режим вперше. На сервер передається лише версія "
 "FileZilla."
@@ -7484,7 +7479,7 @@ msgstr ""
 #: resources.h:230
 msgid "Using this wizard you can check for available updates to FileZilla."
 msgstr ""
-"Користуючись даним майстром, ви можете перевірити наявність поновлень для  "
+"Користуючись даним майстром, ви можете перевірити наявність поновлень для "
 "FileZilla."
 
 #: resources.h:5 resources.h:29
@@ -7569,10 +7564,10 @@ msgstr ""
 "\n"
 "Недолік у Windows створює проблеми для FileZilla\n"
 "\n"
-"Недолік проявляється,якщо у вас \n"
+"Недолік проявляється,якщо у вас\n"
 "- Windows Server 2003 або XP 64\n"
 "- увімкнений Windows файєрвол\n"
-"- увімкнений сервіс Application Layer Gateway \n"
+"- увімкнений сервіс Application Layer Gateway\n"
 "Дивіться http://support.microsoft.com/kb/931130 for background information.\n"
 "\n"
 "Якщо ви не відключите Windows Firewall або сервіс the Application Layer "

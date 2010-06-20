@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-13 19:56+0200\n"
+"POT-Creation-Date: 2010-06-20 11:35+0200\n"
 "PO-Revision-Date: 2009-01-26 21:43+0900\n"
 "Last-Translator: DylanYi <dylan.abc@gmail.com>\n"
 "Language-Team: \n"
@@ -27,12 +27,12 @@ msgid ""
 "%a - Account (Lines containing this will be omitted if not using Account "
 "logontype)"
 msgstr ""
-"%a - 계정 (로그온 형식 중 \"계정\"을 사용하지 않으면 이것이 포함된 행은 생략"
+"%a - 계정 (로그온 유형 중 \"계정\"을 사용하지 않으면 이것이 포함된 행은 생략"
 "됩니다.)"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:59
-#: ../../locales/../src/interface/filelist_statusbar.cpp:70
-#: ../../locales/../src/interface/filelist_statusbar.cpp:82
+#: ../../locales/../src/interface/filelist_statusbar.cpp:63
+#: ../../locales/../src/interface/filelist_statusbar.cpp:74
+#: ../../locales/../src/interface/filelist_statusbar.cpp:86
 #, c-format
 msgid "%d directory"
 msgid_plural "%d directories"
@@ -46,8 +46,8 @@ msgid "%d directory with its contents"
 msgid_plural "%d directories with their contents"
 msgstr[0] "%d 디렉터리 및 그 내용"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:58
-#: ../../locales/../src/interface/filelist_statusbar.cpp:81
+#: ../../locales/../src/interface/filelist_statusbar.cpp:62
+#: ../../locales/../src/interface/filelist_statusbar.cpp:85
 #: ../../locales/../src/interface/RemoteListView.cpp:1660
 #: ../../locales/../src/interface/search.cpp:801
 #: ../../locales/../src/interface/search.cpp:1049
@@ -56,13 +56,13 @@ msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] "%d 파일"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:77
+#: ../../locales/../src/interface/filelist_statusbar.cpp:81
 #, c-format
 msgid "%d file. Total size: %s"
 msgid_plural "%d files. Total size: %s"
 msgstr[0] "%d 파일. 총 크기: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:75
+#: ../../locales/../src/interface/filelist_statusbar.cpp:79
 #, c-format
 msgid "%d file. Total size: At least %s"
 msgid_plural "%d files. Total size: At least %s"
@@ -123,12 +123,12 @@ msgstr "%s - 아직 유효하지 않음!"
 msgid "%s - Proxy user"
 msgstr "%s - 프록시 사용자"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:87
+#: ../../locales/../src/interface/filelist_statusbar.cpp:91
 #, c-format
 msgid "%s and %s. Total size: %s"
 msgstr "%s 및 %s. 총 크기: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:85
+#: ../../locales/../src/interface/filelist_statusbar.cpp:89
 #, c-format
 msgid "%s and %s. Total size: At least %s"
 msgstr "%s와 %s. 총 크기: 적어도 %s"
@@ -168,7 +168,7 @@ msgid ""
 "Please download FileZilla again. If this problem persists, please submit a "
 "bug report."
 msgstr ""
-"%s을 찾을 수 없습니다. FileZilla에 이 요소가 없으면 SFTP가 동작하지 않습니"
+"%s을 찾지 못했습니다. FileZilla에 이 요소가 없으면 SFTP가 동작하지 않습니"
 "다.\n"
 "\n"
 "FileZilla를 다시 다운로드하십시오. 이 문제가 지속되면 버그로 등록해 주십시오."
@@ -183,7 +183,7 @@ msgid ""
 "- Make sure %s is in a directory listed in your PATH environment variable.\n"
 "- Set the full path to %s in the FZ_FZSFTP environment variable."
 msgstr ""
-"%s을 찾을 수 없습니다. FileZilla에 이 요소가 없으면 SFTP가 동작하지 않습니"
+"%s을 찾지 못했습니다. FileZilla에 이 요소가 없으면 SFTP가 동작하지 않습니"
 "다.\n"
 "\n"
 "가능한 해결 방안:\n"
@@ -223,7 +223,7 @@ msgstr "북마크 추가(&A)..."
 
 #: resources.h:557 resources.h:574
 msgid "&Add files to queue"
-msgstr "대기열에 파일 추가(&A)"
+msgstr "파일을 대기열에 추가(&A)"
 
 #: resources.h:782
 msgid "&Add keyfile..."
@@ -235,7 +235,7 @@ msgstr "대기열에 추가(&A)..."
 
 #: resources.h:94
 msgid "&Adjust server timezone offset:"
-msgstr "서버 시간대 조정:"
+msgstr "서버 시간대 맞추기(&A):"
 
 #: resources.h:23
 msgid "&Always trust certificate in future sessions."
@@ -314,11 +314,11 @@ msgstr "FileZilla 닫기(&C)"
 
 #: resources.h:664
 msgid "&Configure speed limits..."
-msgstr "속도 제한 구성(&C)"
+msgstr "속도 제한 구성(&C)..."
 
 #: resources.h:531
 msgid "&Configure..."
-msgstr "구성(&C)"
+msgstr "구성(&C)..."
 
 #: resources.h:112
 msgid "&Connect"
@@ -383,15 +383,15 @@ msgstr "디렉터리 비교(&D)"
 
 #: resources.h:324
 msgid "&Discard local file then download and edit file anew"
-msgstr ""
+msgstr "로컬 파일을 버리고 파일을 새로 다운로드하여 편집하기(&D)"
 
 #: resources.h:537
 msgid "&Disconnect"
-msgstr "연결 끊기(&D)"
+msgstr "연결 종료(&D)"
 
 #: resources.h:602
 msgid "&Disconnect from server"
-msgstr "서버와 연결 끊음(&D)"
+msgstr "서버 연결 종료(&D)"
 
 #: resources.h:868
 msgid "&Display momentary transfer speed instead of average speed"
@@ -403,7 +403,7 @@ msgstr "바이트 크기로 표시(&D)"
 
 #: ../../locales/../src/interface/conditionaldialog.cpp:25
 msgid "&Don't show this dialog again."
-msgstr "이 창 다시 보이지 않기(&D)."
+msgstr "이 창 다시 보지 않음(&D)."
 
 #: resources.h:755
 msgid "&Don't use external IP address on local connections."
@@ -419,15 +419,15 @@ msgstr "다운로드(&D)"
 
 #: resources.h:442
 msgid "&Download to:"
-msgstr "다운로드(&D)"
+msgstr "다운로드 위치(&D)"
 
 #: resources.h:657
 msgid "&Download..."
-msgstr "다운로드(&D)"
+msgstr "다운로드(&D)..."
 
 #: resources.h:256 resources.h:831
 msgid "&Downloads:"
-msgstr "다운로드"
+msgstr "다운로드(&D):"
 
 #: resources.h:502 resources.h:563
 msgid "&Edit"
@@ -455,7 +455,7 @@ msgstr "인코딩(&E):"
 
 #: resources.h:609
 msgid "&Enter custom command..."
-msgstr "사용자 명령어 입력(&E)..."
+msgstr "명령어 직접 입력(&E)..."
 
 #: resources.h:136
 msgid "&Execute"
@@ -471,7 +471,7 @@ msgstr "내보내기(&E)..."
 
 #: resources.h:760
 msgid "&Fall back to active mode"
-msgstr "능동형 모드로 전환(&F)"
+msgstr "능동형 모드로 자동 전환(&F)"
 
 #: resources.h:489
 msgid "&File"
@@ -503,7 +503,7 @@ msgstr "필터(&F):"
 
 #: ../../locales/../src/interface/updatewizard.cpp:29
 msgid "&Finish"
-msgstr "편집 종료(&F)"
+msgstr "종료(&F)"
 
 #: resources.h:316
 msgid "&Finish editing and delete local file"
@@ -525,15 +525,15 @@ msgstr "다음 URL로부터 외부 IP 주소 가져오기(&G):"
 
 #: resources.h:551
 msgid "&Getting help..."
-msgstr "도움말 가져오기(&G)..."
+msgstr "도움이 필요할 때는(&G)..."
 
 #: resources.h:396
 msgid "&Global bookmark"
-msgstr "전역 북마크"
+msgstr "전역 북마크(&G)"
 
 #: resources.h:789
 msgid "&HTTP/1.1 using CONNECT method"
-msgstr ""
+msgstr "CONNECT 방법을 사용한 &HTTP/1.1"
 
 #: resources.h:547
 msgid "&Help"
@@ -557,7 +557,7 @@ msgstr "호스트(&H):"
 
 #: resources.h:891
 msgid "&IEC binary prefixes (e.g. 1 KiB = 1024 bytes)"
-msgstr "IEC 이진수 단위(&I) (예. 1 KiB = 1024 바이트)"
+msgstr "IEC 이진수 단위(&I) (예. 1 KB = 1024 바이트)"
 
 #: resources.h:879
 msgid "&ISO 8601 (example: 2007-09-15)"
@@ -569,7 +569,7 @@ msgstr "가져오기(&I)..."
 
 #: resources.h:934
 msgid "&Inherit system's filetype associations"
-msgstr "시스템의 파일 연결 체계 사용(&I)"
+msgstr "시스템의 파일 연동 체계 사용(&I)"
 
 #: resources.h:445
 msgid "&Keep remote path structure relative to search root"
@@ -577,7 +577,7 @@ msgstr "검색 최상위에 상대적으로 원격 경로 구조 유지(&K)"
 
 #: resources.h:854
 msgid "&Layout of file and directory panes:"
-msgstr "파일 창 및 디렉터리 난 배치(&L):"
+msgstr "파일 및 디렉터리 난 배치(&L):"
 
 #: resources.h:745
 msgid "&Limit local ports used by FileZilla"
@@ -601,11 +601,11 @@ msgstr "로그 파일(&L)"
 
 #: resources.h:82
 msgid "&Logon Type:"
-msgstr "로그온 형식(&L):"
+msgstr "로그온 유형(&L):"
 
 #: resources.h:380
 msgid "&Logontype:"
-msgstr "로그온 형식(&L):"
+msgstr "로그온 유형(&L):"
 
 #: resources.h:598
 msgid "&Low"
@@ -669,7 +669,7 @@ msgstr "없음(&N)"
 
 #: resources.h:597
 msgid "&Normal"
-msgstr "보통(&N)"
+msgstr "일반(&N)"
 
 #: resources.h:941
 msgid "&Number of days between update checks:"
@@ -717,7 +717,7 @@ msgstr "메시지 로그의 위치(&P):"
 
 #: resources.h:529
 msgid "&Preserve timestamps of transferred files"
-msgstr "전송된 파일의 파일 일시 보존(&P)"
+msgstr "전송된 파일의 파일 시간 보존(&P)"
 
 #: resources.h:300
 msgid "&Queue"
@@ -794,7 +794,7 @@ msgstr "마법사 재시작(&R)"
 
 #: resources.h:62
 msgid "&Resume"
-msgstr "이어서 전송(&R)"
+msgstr "전송 재개(&R)"
 
 #: resources.h:603
 msgid "&Run command..."
@@ -802,11 +802,11 @@ msgstr "명령 실행(&R)..."
 
 #: resources.h:725
 msgid "&Run configuration wizard now..."
-msgstr "구성 마법사 실행하기(&R)..."
+msgstr "구성 마법사 실행(&R)..."
 
 #: resources.h:943
 msgid "&Run update check now..."
-msgstr "지금 업데이트 확인 실행(&R)..."
+msgstr "업데이트 확인 실행(&R)..."
 
 #: resources.h:765
 msgid "&SITE"
@@ -818,7 +818,7 @@ msgstr ""
 
 #: resources.h:199
 msgid "&Save as..."
-msgstr "다른 이름으로 저장(&S)..."
+msgstr "다른 이름으로 저장(&S)"
 
 #: resources.h:431
 msgid "&Search"
@@ -826,11 +826,11 @@ msgstr "검색(&S)"
 
 #: resources.h:538
 msgid "&Search remote files..."
-msgstr "리모트 파일 검색(&S)"
+msgstr "리모트 파일 검색(&S)..."
 
 #: resources.h:71
 msgid "&Select Entry:"
-msgstr "항목 선택:"
+msgstr "항목 선택(&S):"
 
 #: resources.h:923
 msgid "&Select language:"
@@ -854,15 +854,15 @@ msgstr "설정(&S)..."
 
 #: resources.h:958
 msgid "&Show debug menu"
-msgstr "디버그 메뉴 보기(&S)"
+msgstr "디버그 메뉴 표시(&S)"
 
 #: resources.h:604
 msgid "&Show message"
-msgstr "메시지 보기(&S)"
+msgstr "메시지 표시(&S)"
 
 #: resources.h:948
 msgid "&Show timestamps in message log"
-msgstr "메시지 로그에 시간 표시(&S)"
+msgstr "메시지 로그에 일시 표시(&S)"
 
 #: resources.h:490
 msgid "&Site Manager..."
@@ -870,7 +870,7 @@ msgstr "사이트 관리자(&S)..."
 
 #: resources.h:397
 msgid "&Site-specific bookmark"
-msgstr "&사이트별 북마크"
+msgstr "사이트별 북마크(&S)"
 
 #: resources.h:64
 msgid "&Skip"
@@ -878,11 +878,11 @@ msgstr "건너뛰기(&S)"
 
 #: resources.h:532
 msgid "&Speed limits"
-msgstr "속도 제한"
+msgstr "속도 제한(&S)"
 
 #: resources.h:448
 msgid "&Start transfer immediately"
-msgstr "즉시 전송 시작(&I)"
+msgstr "즉시 전송 시작(&S)"
 
 #: resources.h:859
 msgid "&Swap local and remote panes"
@@ -926,7 +926,7 @@ msgstr "업로드(&U)"
 
 #: resources.h:266 resources.h:840
 msgid "&Uploads:"
-msgstr "업로드"
+msgstr "업로드(&U):"
 
 #: resources.h:424
 msgid "&Use custom program"
@@ -934,11 +934,11 @@ msgstr "사용자 프로그램 사용(&U)"
 
 #: resources.h:93
 msgid "&Use synchronized browsing"
-msgstr "탐색 동기화 사용(&U)"
+msgstr "탐색 동기화 기능 사용(&U)"
 
 #: resources.h:927
 msgid "&Use system's default editor for text files"
-msgstr "시스템 기본값 사용(&S)"
+msgstr "텍스트 파일에 시스템의 기본 편집기 사용(&U)"
 
 #: resources.h:751
 msgid "&Use the following IP address:"
@@ -950,7 +950,7 @@ msgstr "서버의 외부 IP 주소 사용(&U)"
 
 #: resources.h:894
 msgid "&Use thousands separator"
-msgstr "천단위 구분자 사용(&U)"
+msgstr "천 단위 구분자 사용(&U)"
 
 #: resources.h:83 resources.h:123 resources.h:381
 msgid "&User:"
@@ -971,11 +971,11 @@ msgstr "보기(&V)"
 
 #: resources.h:578
 msgid "&View/Edit"
-msgstr "보기 / 편집(&V)"
+msgstr "보기/편집(&V)"
 
 #: resources.h:933
 msgid "&Watch locally edited files and prompt to upload modifications"
-msgstr "로컬 파일 편집을 감시하여 수정시 업로드 확인(&W)"
+msgstr "로컬 파일 편집을 감시하여 수정시 업로드 여부 묻기(&W)"
 
 #: resources.h:135
 msgid "&Write"
@@ -1001,7 +1001,7 @@ msgstr "'%s'는 디렉터리가 아닙니다."
 #: ../../locales/../src/interface/manual_transfer.cpp:429
 #: ../../locales/../src/interface/sitemanager.cpp:1052
 msgid "'Account' logontype not supported by selected protocol"
-msgstr "선택된 프로토콜은 '계정' 로그온 형식을 지원하지 않습니다."
+msgstr "선택된 프로토콜은 '계정' 로그온 유형을 지원하지 않습니다."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:591
 msgid ""
@@ -1012,16 +1012,16 @@ msgstr ""
 "'quote'는 서버에 다음의 'quote' 인수를 보내기 위해 클라이언트 명령라인에서 자"
 "주 사용되는 로컬 명령어입니다. 앞부분의 'quote' 없이 로우 명령을 입력합니다."
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:92
-#: ../../locales/../src/interface/filelist_statusbar.cpp:101
+#: ../../locales/../src/interface/filelist_statusbar.cpp:96
+#: ../../locales/../src/interface/filelist_statusbar.cpp:105
 #, c-format
 msgid "(%d object filtered)"
 msgid_plural "(%d objects filtered)"
-msgstr[0] ""
+msgstr[0] "(%d 항목 필터됨)"
 
 #: resources.h:800 resources.h:802
 msgid "(0 for no limit)"
-msgstr "(0 제한 없음)"
+msgstr "(0이면 제한 없음)"
 
 #: resources.h:731
 msgid "(0-99)"
@@ -1052,9 +1052,9 @@ msgid "(example: %Y-%m-%d)"
 msgstr "(예: %Y-%m-%d)"
 
 #: resources.h:482 resources.h:484 resources.h:806 resources.h:808
-#, fuzzy, c-format
+#, c-format
 msgid "(in %s/s)"
-msgstr "(KB/s)"
+msgstr "(%s/s)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:896
 msgid ", %H:%M:%S left"
@@ -1086,19 +1086,19 @@ msgstr "--:--:-- 남음"
 
 #: ../../locales/../src/interface/cmdline.cpp:80
 msgid "-c cannot be used together with an FTP URL."
-msgstr "-c는 FTP 주소와 함께 사용될 수 없습니다."
+msgstr "-c는 FTP URL과 같이 사용할 수 없습니다."
 
 #: ../../locales/../src/interface/cmdline.cpp:89
 msgid "-l can only be used together with an FTP URL."
-msgstr "-c는 FTP 주소와 함께 사용될 수 없습니다."
+msgstr "-l은 FTP URL과 같이 사용할 수 없습니다."
 
 #: ../../locales/../src/interface/cmdline.cpp:68
 msgid "-s and -c cannot be present at the same time."
-msgstr "-s와 -c는 동시에 나타낼 수 없습니다."
+msgstr "-s와 -c는 동시에 지정할 수 없습니다."
 
 #: ../../locales/../src/interface/cmdline.cpp:74
 msgid "-s cannot be used together with an FTP URL."
-msgstr "-s는 FTP 주소와 함께 사용될 수 없습니다."
+msgstr "-s는 FTP URL과 같이 사용할 수 없습니다."
 
 #: resources.h:960
 msgid "0 - None"
@@ -1139,12 +1139,9 @@ msgid "?"
 msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:105
-#, fuzzy
 msgid ""
 "A bookmark with the entered name already exists. Please enter an unused name."
-msgstr ""
-"%s 파일이 이미 존재합니다.\n"
-"새로운 이름을 입력하십시오:"
+msgstr "입력하신 이름은 이미 존재하는 북마크입니다. 다른 이름을 입력해주세요."
 
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:153
 msgid "A default editor needs to be set."
@@ -1153,7 +1150,7 @@ msgstr "기본 편집기를 설정해야 합니다."
 #: ../../locales/../src/interface/RemoteListView.cpp:153
 #: ../../locales/../src/interface/RemoteTreeView.cpp:114
 msgid "A directory cannot be dragged into one of its subdirectories."
-msgstr "하위 디렉터리일 경우 디렉터리는 드래그 될 수 없습니다."
+msgstr "디렉터리를 하위 디렉터리에 끌어다 놓을 수는 없습니다."
 
 #: resources.h:671
 msgid ""
@@ -1167,15 +1164,13 @@ msgstr ""
 
 #: resources.h:305
 msgid "A file previously opened has been changed."
-msgstr "이전에 열려져 있던 파일이 변경됨:"
+msgstr "이전에 연 파일이 변경됐습니다."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2086
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
-msgstr ""
-"같은 이름의 파일이 이미 수정되고 있습니다. 이전 파일을 무시하고 새 파일을 다"
-"운로드하시겠습니까?"
+msgstr "같은 이름의 파일을 이미 편집 중입니다. '%s' 파일을 다시 여시겠습니까?"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2082
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
@@ -1195,23 +1190,22 @@ msgid ""
 "Unless you fix this problem, files might be missing in the file listings.\n"
 "No further warning will be displayed this session."
 msgstr ""
-"로컬 파일명을 읽을 수 없습니다.\n"
+"로컬 파일명을 해석하지 못했습니다.\n"
 "LC_CTYPE (혹은 LC_ALL) 환경 변수가 올바르게 설정되어 있는지 확인하십시오.\n"
-"사용자가 이 문제를 수정하지 않으면, 파일 목록이 표시되지 않습니다.\n"
-"이 세션에 더 이상의 경고는 표시되지 않습니다."
+"이 문제를 수정하지 않으면 해당 파일은 파일 목록에 표시되지 않습니다.\n"
+"이 메시지는 앞으로 이 세션에서는 더 표시되지 않습니다."
 
 #: resources.h:236
 msgid "A newer version of FileZilla is available:"
-msgstr "업데이트 가능한 새로운 버전:"
+msgstr "FileZilla 새 버전 있음:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:656
 msgid ""
 "A proper server always shows all files, but some broken servers hide files "
 "from the user. Use this option to force the server to show all files."
 msgstr ""
-"일반적인 서버는 항상 모든 파일을 표시합니다. 그러나 그렇지 못한 서버는 사용자"
-"로부터 파일을 숨깁니다. 강제로 서버의 모든 파일을 표시하려면 이 옵션을 사용하"
-"십시오."
+"정상적인 서버는 항상 모든 파일을 표시하지만 일부 잘못된 서버는 사용자로부터 "
+"파일을 숨깁니다. 강제로 서버의 모든 파일을 표시하려면 이 옵션을 사용하십시오."
 
 #: resources.h:743
 msgid ""
@@ -1239,7 +1233,7 @@ msgstr "추가(&D)"
 
 #: resources.h:851
 msgid "A&llow resume of ASCII files"
-msgstr "아스키 파일 이어서 전송 허용(&L)"
+msgstr "아스키 파일 전송 재개 허용(&L)"
 
 #: ../../locales/../src/interface/fileexistsdlg.cpp:113
 msgid "A&pply only to downloads"
@@ -1332,7 +1326,7 @@ msgstr "능동형 모드 IP"
 
 #: resources.h:449
 msgid "Add files to &queue only"
-msgstr "대기열에만 파일 추가(&A)"
+msgstr "대기열에만 파일 추가(&q)"
 
 #: resources.h:625 resources.h:644
 msgid "Add selected directory to the transfer queue"
@@ -1348,7 +1342,7 @@ msgstr "대기열에 추가"
 
 #: ../../locales/../src/engine/proxy.cpp:451
 msgid "Address type not supported"
-msgstr "주소 형식이 지원되지 않음"
+msgstr "지원되지 않는 주소 형식임"
 
 #: resources.h:87
 msgid "Advanced"
@@ -1356,26 +1350,25 @@ msgstr "고급"
 
 #: resources.h:233
 msgid "Advanced options:"
-msgstr "고급 설정:"
+msgstr "세부 옵션:"
 
 #: resources.h:337
 msgid "Algorithm:"
-msgstr "알고리즘:"
+msgstr "앨거리듬:"
 
 #: ../../locales/../src/interface/QueueView.cpp:3025
 msgid "All files have been successfully transferred"
-msgstr "성공적으로 완료된 전송은 자동 제거(&A)"
+msgstr "모든 파일 전송이 정상 완료됐습니다"
 
 #: resources.h:700
 msgid "All ports in the given range have to be between 1024 and 65535."
-msgstr "모든 포트는 1024 ~ 65535번입니다."
+msgstr "지정 범위의 모든 포트는 1024 ~ 65535 사이에 있어야 합니다."
 
 #: ../../locales/../src/interface/QueueView.cpp:3021
-#, fuzzy, c-format
+#, c-format
 msgid "All transfers have finished. %d file could not be transferred."
 msgid_plural "All transfers have finished. %d files could not be transferred."
-msgstr[0] ""
-"\"%s\"을 쓸 수 없습니다. 사이트 관리자에는 어떤 것도 저장되지 않습니다: %s"
+msgstr[0] "모든 전송 작업이 종료됐습니다. %d 파일은 전송하지 못했습니다."
 
 #: resources.h:739
 msgid "Allow &fall back to other transfer mode on failure"
@@ -1402,8 +1395,8 @@ msgid ""
 "Alternatively you can use your system's SSH agent. To do so, make sure the "
 "SSH_AUTH_SOCK environment variable is set."
 msgstr ""
-"시스템의 SSH 에이전트도 사용할 수 있습니다. 그렇게 하려면 시스템의 "
-"SSH&AUTH&SOCK 환경을 설정해야 합니다."
+"대신 시스템의 SSH 에이전트를 사용할 수 있습니다. 이 경우 SSH_AUTH_SOCK 환경 "
+"변수를 설정해야 합니다."
 
 #: ../../locales/../src/interface/updatewizard.cpp:1097
 msgid ""
@@ -1417,7 +1410,7 @@ msgstr ""
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
-msgstr "드래그한 동일한 이름의 항목이 타겟 위치에 이미 존재합니다."
+msgstr "끌어다 놓은 항목과 이름이 같은 항목이 이미 대상 위치에 존재합니다."
 
 #: ../../locales/../src/engine/server.cpp:873
 #: ../../locales/../src/interface/manual_transfer.cpp:155
@@ -1433,12 +1426,11 @@ msgstr "익명"
 msgid ""
 "Another remote operation is already in progress, cannot change directory now."
 msgstr ""
+"이미 다른 리모트 동작이 진행 중이므로 지금은 디렉터리를 변경할 수 없습니다."
 
 #: ../../locales/../src/interface/sitemanager.cpp:880
-#, fuzzy
 msgid "Any changes made in the Site Manager could not be saved."
-msgstr ""
-"\"%s\"을 쓸 수 없습니다. 사이트 관리자에는 어떤 것도 저장되지 않습니다: %s"
+msgstr "사이트 관리자의 변경 사항을 저장하지 못했습니다."
 
 #: ../../locales/../src/interface/sitemanager.cpp:727
 msgid ""
@@ -1447,10 +1439,8 @@ msgid ""
 msgstr ""
 
 #: ../../locales/../src/interface/filter.cpp:194
-#, fuzzy
 msgid "Any changes made to the filters could not be saved."
-msgstr ""
-"\"%s\"을 쓸 수 없습니다. 사이트 관리자에는 어떤 것도 저장되지 않습니다: %s"
+msgstr "필터의 변경 사항을 저장하지 못했습니다."
 
 #: ../../locales/../src/interface/filter.cpp:992
 msgid "Any changes made to the filters will not be saved."
@@ -1483,13 +1473,13 @@ msgstr "전송 대기열 난의 탭"
 
 #: resources.h:258 resources.h:268 resources.h:832 resources.h:841
 msgid "Ask for action"
-msgstr "동작 물어보기(&A)"
+msgstr "동작 물어보기"
 
 #: ../../locales/../src/engine/server.cpp:848
 #: ../../locales/../src/engine/server.cpp:867
 #: ../../locales/../src/interface/manual_transfer.cpp:184
 msgid "Ask for password"
-msgstr "비밀번호 요청"
+msgstr "비밀번호 묻기"
 
 #: resources.h:696
 msgid "Ask operating system for a port."
@@ -1497,11 +1487,11 @@ msgstr "운영체제에 포트 요청"
 
 #: resources.h:686
 msgid "Ask your operating system for the external IP address"
-msgstr "사용자의 운영체제에 외부 IP 주소 요청"
+msgstr "사용자의 운영체제를 통해 외부 IP 주소 확인"
 
 #: resources.h:470
 msgid "Asking questions in the FileZilla forums"
-msgstr ""
+msgstr "FileZilla 게시판에 질문 올리기"
 
 #: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:64
 msgid "Associated program not found:"
@@ -1513,7 +1503,7 @@ msgstr "하나 이상의 필터 상태가 불완전함"
 
 #: resources.h:705
 msgid "At this point, all required information has been gathered."
-msgstr "여기에서 모든 필요한 정보가 수집되었습니다."
+msgstr "이제 모든 필요 정보가 수집되었습니다."
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:110
 msgid "Attribute"
@@ -1550,11 +1540,11 @@ msgstr ""
 
 #: resources.h:89
 msgid "B&ypass proxy"
-msgstr "프록시 바이패스(&Y)"
+msgstr "프록시 우회(&Y)"
 
 #: resources.h:466
 msgid "Basic usage instructions"
-msgstr ""
+msgstr "기초 사용 지침서"
 
 #: resources.h:865
 msgid "Behaviour"
@@ -1619,7 +1609,7 @@ msgstr "현재 동작 취소(&A)"
 
 #: resources.h:235
 msgid "C&heck for nightly builds of FileZilla"
-msgstr "FileZilla 나이트 빌드 업데이트 확인(&H)"
+msgstr "FileZilla 야간 빌드 확인(&H)"
 
 #: resources.h:611
 msgid "C&lear all"
@@ -1627,7 +1617,7 @@ msgstr "모두 비우기(&L)"
 
 #: resources.h:586 resources.h:632
 msgid "C&opy URL(s) to clipboard"
-msgstr "클립보드로 복사(&C)"
+msgstr "클립보드로 URL 복사(&o)"
 
 #: resources.h:880
 msgid "C&ustom"
@@ -1635,12 +1625,12 @@ msgstr "사용자 정의(&U)"
 
 #: resources.h:935
 msgid "C&ustom filetype associations:"
-msgstr "사용자 정의 파일 형식 연결(&U):"
+msgstr "사용자 정의 파일 유형 연결(&U):"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1607
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1270
 msgid "Calculating timezone offset of server..."
-msgstr "서버의 시간대 옵셋 계산 중..."
+msgstr "서버의 시간대 오차 계산..."
 
 #: ../../locales/../src/engine/transfersocket.cpp:731
 msgid "Can't read from file"
@@ -1649,7 +1639,7 @@ msgstr "파일을 읽을 수 없음"
 #: ../../locales/../src/engine/transfersocket.cpp:710
 #: ../../locales/../src/engine/transfersocket.cpp:784
 msgid "Can't write data to file."
-msgstr "파일에 데이터를 쓸 수 없습니다."
+msgstr "파일에 데이터를 쓸 수 없음."
 
 #: ../../locales/../src/engine/transfersocket.cpp:708
 #: ../../locales/../src/engine/transfersocket.cpp:782
@@ -1677,12 +1667,12 @@ msgstr "현재 작업 취소"
 #, c-format
 msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
-"'%s'에 접근할 수 없습니다, 미디어가 삽입되지 않았거나 드라이브가 준비되지 않"
+"'%s'를 액세스하지 못합니다. 미디어가 삽입되지 않았거나 드라이브가 준비되지 않"
 "았습니다."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:561
 msgid "Cannot add server to Site Manager"
-msgstr "사이트 관리자에 추가할 수 없음"
+msgstr "사이트 관리자에 서버를 추가할 수 없음"
 
 #: ../../locales/../src/interface/context_control.cpp:345
 msgid ""
@@ -1694,13 +1684,11 @@ msgstr ""
 msgid ""
 "Cannot compare directories, different filters for local and remote "
 "directories are enabled"
-msgstr ""
-"디렉터리를 비교할 수 없습니다. 로컬 및 리모트 디렉터리에 다른 필터를 사용할 "
-"수 있습니다."
+msgstr "디렉터리 비교 불가, 로컬과 리모트 디렉터리에 다른 필터가 설정돼 있음"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2760
 msgid "Cannot compare directories, not connected to a server."
-msgstr "디렉터리를 비교할 수 없습니다. 서버에 연결되어 있지 않습니다."
+msgstr "디렉터리 비교 불가, 서버에 연결되어 있지 않습니다."
 
 #: ../../locales/../src/interface/filteredit.cpp:141
 msgid "Cannot create new filter"
@@ -1715,7 +1703,7 @@ msgstr "파일을 편집할 수 없음"
 
 #: ../../locales/../src/interface/LocalListView.cpp:1980
 msgid "Cannot edit file, not connected to any server."
-msgstr "디렉터리를 비교할 수 없습니다. 서버에 연결되어 있지 않습니다."
+msgstr "파일 편집 불가, 서버에 연결되어 있지 않습니다."
 
 #: ../../locales/../src/interface/LocalListView.cpp:1991
 msgid "Cannot edit file, remote path unknown."
@@ -1725,7 +1713,7 @@ msgstr "파일을 편집할 수 없음. 리모트 경로를 알 수 없음."
 msgid ""
 "Cannot establish FTP connection to an SFTP server. Please select proper "
 "protocol."
-msgstr "FTP를 SFTP 서버에 연결할 수 없습니다. 적합한 프로토콜을 확인하십시오."
+msgstr "SFTP 서버로 FTP를 연결하지 못했습니다. 적합한 프로토콜을 선택하십시오."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:35
 #: ../../locales/../src/interface/quickconnectbar.cpp:53
@@ -1742,7 +1730,7 @@ msgstr "키 파일을 열 수 없음"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1034
 msgid "Cannot load toolbar from resource file"
-msgstr "리소스 파일로부터 도구 모음을 열 수 없음"
+msgstr "리소스 파일에서 도구 모음을 읽을 수 없음"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:705
 #: ../../locales/../src/interface/sitemanager.cpp:1280
@@ -1766,7 +1754,7 @@ msgstr "필터를 선택할 수 없음"
 #: ../../locales/../src/interface/edithandler.cpp:1634
 #: ../../locales/../src/interface/edithandler.cpp:1673
 msgid "Cannot set file association"
-msgstr "사용자 정의 파일 형식 연결(&U):"
+msgstr "파일 연동을 설정할 수 없음"
 
 #: ../../locales/../src/interface/edithandler.cpp:1210
 msgid "Cannot show dialog"
@@ -1775,13 +1763,13 @@ msgstr "대화 창을 표시할 수 없음"
 #: ../../locales/../src/interface/LocalListView.cpp:2082
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
 msgid "Cannot view/edit selected file"
-msgstr "선택된 파일을 보거나 / 편집할 수 없음"
+msgstr "선택 파일을 보거나 편집할 수 없음"
 
 #: resources.h:282
 msgid "Categories"
-msgstr "카테고리"
+msgstr "분류"
 
-#: ../../locales/../src/interface/statusbar.cpp:518
+#: ../../locales/../src/interface/statusbar.cpp:525
 msgid "Certificate and session data are not available yet."
 msgstr "아직 인증서 및 세션 데이터가 없습니다."
 
@@ -1791,7 +1779,7 @@ msgstr "인증서 상세"
 
 #: resources.h:3 resources.h:27
 msgid "Certificate in chain:"
-msgstr "인증서 상세"
+msgstr "상위 인증서:"
 
 #: resources.h:13 resources.h:37
 msgid "Certificate issuer"
@@ -1823,7 +1811,7 @@ msgstr "문자셋"
 
 #: resources.h:944
 msgid "Check for &beta versions and release candidates"
-msgstr "FileZilla 베타 버전 업데이트 확인(&C)"
+msgstr "베타 버전 및 릴리즈 후보 확인(&b)"
 
 #: resources.h:548
 msgid "Check for &updates..."
@@ -1869,7 +1857,7 @@ msgstr "덩어리 데이터가 올바르지 않게 종료됨"
 
 #: resources.h:18 resources.h:42
 msgid "Cipher:"
-msgstr "암호:"
+msgstr "암호화:"
 
 #: resources.h:495 resources.h:660
 msgid "Cl&ose tab"
@@ -1889,7 +1877,7 @@ msgstr "배치 캐시 비우기(&L)"
 
 #: resources.h:283
 msgid "Clear &quickconnect history"
-msgstr "빠른 연결 히스토리 비우기(&Q)"
+msgstr "빠른 연결 이력 비우기(&Q)"
 
 #: resources.h:284
 msgid "Clear &reconnect information"
@@ -1901,7 +1889,7 @@ msgstr "전송 대기열 비우기(&T)"
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:142
 msgid "Clear history"
-msgstr "히스토리 비우기"
+msgstr "연결 이력 비우기"
 
 #: resources.h:280 ../../locales/../src/interface/clearprivatedata.cpp:35
 #: ../../locales/../src/interface/clearprivatedata.cpp:41
@@ -1913,7 +1901,7 @@ msgstr "개인 정보 비우기"
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:141
 msgid "Clear quickconnect bar"
-msgstr "빠른 연결 도구 모음 비우기"
+msgstr "빠른 연결 입력란 비우기"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:571
 msgid "Click on Finish to save your configuration."
@@ -1946,11 +1934,11 @@ msgstr "동작 중인 FileZilla의 모든 인스턴스 닫기"
 
 #: resources.h:496
 msgid "Closes current tab"
-msgstr "동시 전송"
+msgstr "현재 탭 닫기"
 
 #: resources.h:86
 msgid "Co&mments:"
-msgstr "주석(&M):"
+msgstr "비고(&M):"
 
 #: ../../locales/../src/interface/listctrlex.cpp:734
 msgid "Column properties"
@@ -1962,7 +1950,7 @@ msgstr "열 설정"
 
 #: resources.h:930
 msgid "Command and its arguments should be properly quoted."
-msgstr "명령과 그 인자는 따옴표로 잘 묶어야 합니다."
+msgstr "명령과 그 인자는 적절히 따옴표로 묶어야 합니다."
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:139
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:153
@@ -1976,7 +1964,7 @@ msgstr "명령어를 지원하지 않음"
 
 #: ../../locales/../src/engine/engineprivate.cpp:183
 msgid "Command not supported by this protocol"
-msgstr "이 프로토콜은 명령어를 지원하지 않음"
+msgstr "명령어를 이 프로토콜이 지원하지 않음"
 
 #: ../../locales/../src/engine/logging.cpp:214
 #: ../../locales/../src/interface/StatusView.cpp:287
@@ -2008,27 +1996,27 @@ msgstr "파일 크기 비교(&S)"
 
 #: resources.h:910
 msgid "Comparison &threshold (in minutes):"
-msgstr "임계치 비교(&T) (분):"
+msgstr "비교 한계값(&T) (분):"
 
 #: ../../locales/../src/interface/settings/optionspage_filelists.cpp:39
 msgid "Comparison threshold needs to be between 0 and 1440 minutes."
-msgstr "임계치 비교에는 0 ~ 1440분의 값을 입력해야 합니다."
+msgstr "비교 한계값은 0 ~ 1440분 사이여야 합니다."
 
 #: resources.h:159
 msgid "Compiled for:"
-msgstr "컴파일 환경:"
+msgstr "컴파일 타겟:"
 
 #: resources.h:160
 msgid "Compiled on:"
-msgstr "컴파일 장비:"
+msgstr "컴파일 환경:"
 
 #: resources.h:162
 msgid "Compiled with:"
-msgstr "컴파일 옵션:"
+msgstr "컴파일 도구:"
 
 #: resources.h:163
 msgid "Compiler flags:"
-msgstr "컴파일 플래그:"
+msgstr "컴파일러 플래그:"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:81
 msgid "Compressed"
@@ -2040,27 +2028,27 @@ msgstr "동시 전송"
 
 #: resources.h:223 resources.h:437
 msgid "Conditions are c&ase sensitive"
-msgstr "대/소문자 구분"
+msgstr "대/소문자 구별"
 
 #: resources.h:704
 msgid "Configuration test"
-msgstr "설정 시험"
+msgstr "구성 시험"
 
 #: resources.h:678
 msgid "Configure passive mode"
-msgstr "수동형 모드 설정"
+msgstr "수동형 모드 구성"
 
 #: resources.h:694
 msgid "Configure port range"
-msgstr "포트 범위 설정"
+msgstr "포트 범위 구성"
 
 #: resources.h:467
 msgid "Configuring FileZilla and your network"
-msgstr ""
+msgstr "FileZilla 및 사용자 네트워크 구성하기"
 
 #: ../../locales/../src/interface/search.cpp:1054
 msgid "Confirm deletion"
-msgstr "확인이 필요함"
+msgstr "삭제 확인"
 
 #: ../../locales/../src/engine/local_filesys.cpp:136
 #: ../../locales/../src/interface/LocalListView.cpp:2035
@@ -2095,19 +2083,19 @@ msgstr "연결 중"
 #: ../../locales/../src/interface/statuslinectrl.cpp:271
 #, c-format
 msgid "Connecting to %s"
-msgstr "%s에 연결 중"
+msgstr "%s에 연결"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1163
 #, c-format
 msgid "Connecting to %s through proxy"
-msgstr "프록시를 통해 %s에 연결 중"
+msgstr "프록시를 통해 %s에 연결"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1034
 #: ../../locales/../src/engine/proxy.cpp:172
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:394
 #, c-format
 msgid "Connecting to %s..."
-msgstr "%s에 연결 중..."
+msgstr "%s에 연결..."
 
 #: ../../locales/../src/interface/updatewizard.cpp:424
 #: ../../locales/../src/interface/updatewizard.cpp:998
@@ -2120,23 +2108,23 @@ msgstr "연결"
 
 #: ../../locales/../src/interface/QueueView.cpp:1049
 msgid "Connection attempt failed"
-msgstr "연결 시도 실패함"
+msgstr "연결 시도 실패"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1039
 #: ../../locales/../src/engine/proxy.cpp:176
-#, fuzzy, c-format
+#, c-format
 msgid "Connection attempt failed with \"%s\", trying next address."
-msgstr "연결 시도 실패함"
+msgstr "\"%s\"(으)로 연결 시도 실패, 다음 주소 시도."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1044
-#, fuzzy, c-format
+#, c-format
 msgid "Connection attempt failed with \"%s\"."
-msgstr "연결 시도 실패함"
+msgstr "\"%s\"(으)로 연결 시도 실패."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:186
 #: ../../locales/../src/engine/engineprivate.cpp:320
 msgid "Connection attempt interrupted by user"
-msgstr "사용자에 의해 접속 시도 중단됨"
+msgstr "사용자에 의해 연결 시도 중단"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:543
 msgid "Connection closed"
@@ -2150,15 +2138,15 @@ msgstr "서버에 의해 연결 닫힘"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:382
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:305
 msgid "Connection established, initializing TLS..."
-msgstr "연결 완료. TLS 초기화 중..."
+msgstr "연결 수립, TLS 초기화..."
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:340
 msgid "Connection established, sending HTTP request"
-msgstr "연결 완료. HTTP 요청 보내는 중..."
+msgstr "연결 수립, HTTP 요청 보냄..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:411
 msgid "Connection established, waiting for welcome message..."
-msgstr "연결 완료. 환영 메시지를 기다리는 중..."
+msgstr "연결 수립, 환영 메시지를 기다림..."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:338
 msgid "Connection lost"
@@ -2166,7 +2154,7 @@ msgstr "연결 끊김"
 
 #: ../../locales/../src/engine/proxy.cpp:433
 msgid "Connection not allowed by ruleset"
-msgstr "연결 닫힘"
+msgstr "규칙에 따라 연결 불가"
 
 #: ../../locales/../src/engine/proxy.cpp:442
 msgid "Connection refused"
@@ -2182,11 +2170,11 @@ msgstr "연결 시간이 초과되었습니다."
 
 #: ../../locales/../src/interface/search.cpp:702
 msgid "Connection to server lost."
-msgstr "서버로 연결 중"
+msgstr "서버 연결 끊김."
 
 #: ../../locales/../src/engine/proxy.cpp:188
 msgid "Connection with proxy established, performing handshake..."
-msgstr "연결 완료. 환영 메시지를 기다리는 중..."
+msgstr "프록시 연결 수립, 핸드셰이크 수행..."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:561
 msgid "Connection with server got closed prematurely."
@@ -2218,44 +2206,44 @@ msgstr "복사 %s"
 
 #: resources.h:587 resources.h:633
 msgid "Copy the URLs of the selected items to clipboard."
-msgstr ""
+msgstr "선택한 항목의 URL을 클립보드로 복사."
 
 #: ../../locales/../src/engine/transfersocket.cpp:207
-#, fuzzy, c-format
+#, c-format
 msgid "Could not accept connection: %s"
-msgstr "서버에 연결할 수 없음"
+msgstr "연결 수락 실패: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:96
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:543
 msgid "Could not add connection to Site Manager"
-msgstr "현재의 연결을 사이트 관리자로 복사(&C)..."
+msgstr "사이트 관리자로 연결 항목을 추가하지 못함"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:188
 msgid "Could not connect to server"
-msgstr "서버에 연결할 수 없음"
+msgstr "서버에 연결하지 못함"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1205
 #, c-format
 msgid "Could not connect to server: %s"
-msgstr "서버에 연결할 수 없음: %s"
+msgstr "서버에 연결하지 못함: %s"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:825
 msgid "Could not convert command to server encoding"
-msgstr "명령을 서버 인코딩으로 변환할 수 없음"
+msgstr "명령을 서버 인코딩으로 변환하지 못함"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:315
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:325
 msgid "Could not convert private key"
-msgstr "개인 키를 변환할 수 없음"
+msgstr "개인 키를 변환하지 못함"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:3062
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1450
 msgid "Could not copy URLs"
-msgstr "서버에 연결할 수 없음"
+msgstr "URL 복사 실패"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:219
 msgid "Could not copy data"
-msgstr "IO 스레드를 생성할 수 없음"
+msgstr "데이터를 복사하지 못함"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2514
 #: ../../locales/../src/interface/RemoteTreeView.cpp:895
@@ -2264,13 +2252,13 @@ msgid ""
 "Either the shell extension is not installed properly or you didn't drop the "
 "files into an Explorer window."
 msgstr ""
-"드래그앤드롭 동작의 타겟을 감지하지 못했습니다(&D).\n"
-"쉘 확장자가 올바르게 설치되지 않았거나, 탐색기 창으로 파일을 드래그앤드롭하"
-"지 않았습니다."
+"끌어다놓기 동작의 대상을 판단하지 못했습니다.\n"
+"셸 확장이 정상 설치되지 않았거나 파일을 끌어다놓은 위치가 탐색기 창이 아닙니"
+"다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4238
 msgid "Could not establish connection to server"
-msgstr "서버에 연결할 수 없음"
+msgstr "서버와의 연결을 수립하지 못함"
 
 #: ../../locales/../src/interface/FileZilla.cpp:497
 msgid ""
@@ -2279,13 +2267,13 @@ msgid ""
 "<custompath>' commandline option or by setting the FZ_DATADIR environment "
 "variable."
 msgstr ""
-"FileZilla의 리소스 파일을 찾을 수 없습니다. FileZilla를 닫습니다.\n"
+"FileZilla의 리소스 파일을 찾지 못하여 FileZilla를 닫습니다.\n"
 "사용자는 '--datadir <사용자 경로>' 명령이나, FZ_DATADIR 환경 변수 설정으로 "
 "FileZilla의 데이터 디렉터리를 설정할 수 있습니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:692
 msgid "Could not generate custom login sequence."
-msgstr "사용자 로그인 절차를 생성할 수 없습니다."
+msgstr "사용자 정의 로그인 절차를 생성하지 못함."
 
 #: ../../locales/../src/engine/tlssocket.cpp:1017
 msgid ""
@@ -2301,16 +2289,16 @@ msgstr ""
 
 #: ../../locales/../src/interface/state.cpp:1011
 msgid "Could not get full remote path."
-msgstr "리모트 경로를 해석할 수 없음."
+msgstr "원격 경로 전체를 가져오지 못함"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:153
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:170
 msgid "Could not get reply from fzputtygen."
-msgstr "fzputtygen으로부터 응답을 가져올 수 없습니다."
+msgstr "fzputtygen의 응답을 가져오지 못함."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2594
 msgid "Could not get temporary directory to download file into."
-msgstr "다운로드 파일로 임시 디렉터리를 가져올 수 없습니다."
+msgstr "파일을 다운로드할 임시 디렉터리를 열지 못함."
 
 #: ../../locales/../src/engine/tlssocket.cpp:945
 msgid "Could not import peer certificates, gnutls_x509_crt_import failed"
@@ -2331,15 +2319,15 @@ msgid ""
 "Any changes made in the Site Manager will not be saved."
 msgstr ""
 "\"%s\"을 읽을 수 없습니다. 파일이 유효하고 접근이 가능한지 확인하십시오.\n"
-"사이트 관리자에는 어떤 것도 저장되지 않습니다."
+"사이트 관리자의 변경 사항은 저장되지 않습니다."
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:223
 msgid "Could not load keyfile"
-msgstr "키 파일을 열 수 없음"
+msgstr "키 파일을 불러오지 못함"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:300
 msgid "Could not load private key"
-msgstr "개인 키를 열 수 없음"
+msgstr "개인 키를 불러오지 못함"
 
 #: ../../locales/../src/interface/state.cpp:1037
 #, c-format
@@ -2348,7 +2336,7 @@ msgid ""
 "s'.\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
-"리모트 디렉터리'%s'에 해당하는 로컬 디렉터리를 구할 수 없습니다.\n"
+"리모트 디렉터리'%s'에 해당하는 로컬 디렉터리를 찾지 못했습니다.\n"
 "탐색 동기화를 중지하고 리모트 디렉터리를 변경하시겠습니까?"
 
 #: ../../locales/../src/interface/state.cpp:381
@@ -2358,7 +2346,7 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
-"리모트 디렉터리 '%s'에 해당하는 로컬 디렉터리를 구할 수 없습니다.\n"
+"리모트 디렉터리 '%s'에 해당하는 로컬 디렉터리를 찾지 못했습니다.\n"
 "탐색 동기화가 중지되었습니다."
 
 #: ../../locales/../src/interface/state.cpp:295
@@ -2368,65 +2356,65 @@ msgid ""
 "s'.\n"
 "Synchronized browsing has been disabled."
 msgstr ""
-"로컬 디렉터리 '%s'에 해당하는 리모트 디렉터리를 구할 수 없습니다.\n"
+"로컬 디렉터리 '%s'에 해당하는 리모트 디렉터리를 찾지 못했습니다.\n"
 "탐색 동기화가 중지되었습니다."
 
 #: ../../locales/../src/interface/aboutdialog.cpp:219
 #: ../../locales/../src/interface/RemoteListView.cpp:3062
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1450
 msgid "Could not open clipboard"
-msgstr "클립보드로 복사(&C)"
+msgstr "클립보드를 열지 못함"
 
 #: ../../locales/../src/engine/logging.cpp:208
 #: ../../locales/../src/engine/logging.cpp:276
 #: ../../locales/../src/engine/logging.cpp:307
 #, c-format
 msgid "Could not open log file: %s"
-msgstr "로그 파일을 열 수 없음: %s"
+msgstr "로그 파일을 열지 못함: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:66
 msgid "Could not parse remote path."
-msgstr "리모트 경로를 해석할 수 없음."
+msgstr "리모트 경로를 해석하지 못함."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:83
 msgid "Could not parse server address:"
-msgstr "서버 주소를 해석할 수 없음:"
+msgstr "서버 주소를 해석하지 못함:"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:221
 #, c-format
 msgid "Could not read from socket: %s"
-msgstr "소켓을 읽을 수 없음: %s"
+msgstr "소켓을 읽지 못함: %s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2629
 msgid "Could not read server item."
-msgstr "서버 주소를 해석할 수 없음:"
+msgstr "서버 항목을 읽지 못함."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2677
 #, c-format
 msgid "Could not seek to offset %s within file"
-msgstr "파일에서 %s 위치를 찾을 수 없음"
+msgstr "파일에서 %s 위치를 찾지 못함"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2610
 msgid "Could not seek to the end of the file"
-msgstr "파일의 끝을 찾을 수 없음"
+msgstr "파일의 끝을 찾지 못함"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:139
 msgid "Could not send command to fzputtygen."
-msgstr "fzputtygen으로 명령을 보낼 수 없습니다."
+msgstr "fzputtygen으로 명령을 보내지 못함."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2708
 msgid "Could not spawn IO thread"
-msgstr "IO 스레드를 생성할 수 없음"
+msgstr "IO 스레드를 생성하지 못함"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1178
-#, fuzzy, c-format
+#, c-format
 msgid "Could not start proxy handshake: %s"
-msgstr "전송을 시작할 수 없음"
+msgstr "프록시 핸드셰이크를 시작하지 못함: %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:1100
 #: ../../locales/../src/interface/QueueView.cpp:1105
 msgid "Could not start transfer"
-msgstr "전송을 시작할 수 없음"
+msgstr "전송을 시작하지 못함"
 
 #: ../../locales/../src/interface/sitemanager.cpp:904
 #: ../../locales/../src/interface/sitemanager.cpp:2926
@@ -2435,58 +2423,60 @@ msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
 "s"
 msgstr ""
-"\"%s\"을 쓸 수 없습니다. 사이트 관리자에는 어떤 것도 저장되지 않습니다: %s"
+"\"%s\" 쓰기에 실패하여 사이트 관리자의 변경 사항이 저장되지 않았습니다. %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:850
-#, fuzzy, c-format
+#, c-format
 msgid "Could not write \"%s\", the bookmark could not be added: %s"
-msgstr "\"%s\" 쓰기에 실패하여 북마크를 추가하지 못했습니다."
+msgstr "\"%s\" 쓰기에 실패하여 북마크를 추가하지 못했습니다. %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:322
-#, fuzzy, c-format
+#, c-format
 msgid "Could not write \"%s\", the global bookmarks could no be saved: %s"
-msgstr "\"%s\" 쓰기에 실패하여 전역 북마크를 저장하지 못했습니다."
+msgstr "\"%s\" 쓰기에 실패하여 전역 북마크를 저장하지 못했습니다. %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:1941
 #: ../../locales/../src/interface/QueueView.cpp:1977
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
 "%s"
-msgstr "\"%s\" 쓰기에 실패하여 큐를 저장하지 못했습니다."
+msgstr ""
+"\"%s\" 쓰기에 실패하여 대기열을 저장하지 못했습니다.\n"
+"%s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2691
 #: ../../locales/../src/interface/sitemanager.cpp:3053
 #: ../../locales/../src/interface/sitemanager.cpp:3115
-#, fuzzy, c-format
+#, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
-msgstr "\"%s\" 쓰기에 실패하여 선택하신 사이트를 내보내지 못했습니다."
+msgstr "\"%s\" 쓰기에 실패하여 선택하신 사이트를 내보내지 못했습니다. %s"
 
 #: ../../locales/../src/interface/wrapengine.cpp:1103
 #, c-format
 msgid "Could not write \"%s\": %s"
-msgstr "\"%s\" 쓰기 실패: %s"
+msgstr "\"%s\" 쓰지 못함: %s"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:325
 #, c-format
 msgid "Could not write keyfile: %s"
-msgstr "키 파일을 쓸 수 없음: %s"
+msgstr "키 파일을 쓰지 못함: %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:1094
 msgid "Could not write to local file"
-msgstr "로컬 파일을 쓸 수 없음"
+msgstr "로컬 파일을 쓰지 못함"
 
 #: ../../locales/../src/engine/logging.cpp:315
 #: ../../locales/../src/engine/logging.cpp:386
 #, c-format
 msgid "Could not write to log file: %s"
-msgstr "로그 파일을 쓸 수 없음: %s"
+msgstr "로그 파일을 쓰지 못함: %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:999
 #: ../../locales/../src/engine/ControlSocket.cpp:1097
 #, c-format
 msgid "Could not write to socket: %s"
-msgstr "소켓을 쓸 수 없음: %s"
+msgstr "소켓을 쓰지 못함: %s"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:175
 msgid "Country:"
@@ -2515,7 +2505,7 @@ msgstr "디렉터리 만들기"
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:2049
 #, c-format
 msgid "Creating directory '%s'..."
-msgstr "'%s' 디렉터리 만드는 중..."
+msgstr "'%s' 디렉터리 생성..."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:174
 msgid "Critical error"
@@ -2523,12 +2513,12 @@ msgstr "치명적 오류"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:137
 msgid "Critical file transfer error"
-msgstr "치명적 오류"
+msgstr "치명적인 파일 전송 오류"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:120
-#, fuzzy, c-format
+#, c-format
 msgid "Critical file transfer error after transferring %s in %s"
-msgstr "치명적 오류"
+msgstr "%s에서 %s 전송 후 치명적인 파일 전송 오류"
 
 #: ../../locales/../src/interface/state.cpp:370
 #, c-format
@@ -2539,17 +2529,17 @@ msgstr ""
 "현재 리모트 디렉터리(%s)는 동기화 루트(%s) 하위에 없습니다.\n"
 "탐색 동기화가 중지됐습니다."
 
-#: ../../locales/../src/interface/statusbar.cpp:412
+#: ../../locales/../src/interface/statusbar.cpp:419
 msgid "Current transfer type is set to ASCII."
-msgstr "현재 전송 형식이 아스키(ASCII)로 설정됩니다."
+msgstr "현재 전송 유형이 아스키(ASCII)로 설정됩니다."
 
-#: ../../locales/../src/interface/statusbar.cpp:422
+#: ../../locales/../src/interface/statusbar.cpp:429
 msgid "Current transfer type is set to automatic detection."
-msgstr "현재 전송 형식이 자동 감지로 설정됩니다."
+msgstr "현재 전송 유형이 자동 감지로 설정됩니다."
 
-#: ../../locales/../src/interface/statusbar.cpp:417
+#: ../../locales/../src/interface/statusbar.cpp:424
 msgid "Current transfer type is set to binary."
-msgstr "현재 전송 형식이 바이너리로 설정됩니다."
+msgstr "현재 전송 유형이 바이너리로 설정됩니다."
 
 #: resources.h:767 resources.h:886
 msgid "Cus&tom"
@@ -2565,7 +2555,7 @@ msgstr "서버 직접 지정"
 
 #: resources.h:384
 msgid "D&ata type"
-msgstr "데이터 형식(&A)"
+msgstr "데이터 유형(&A)"
 
 #: resources.h:893
 msgid "D&ecimal prefixes using SI symbols (e.g. 1 KB = 1000 bytes)"
@@ -2594,7 +2584,7 @@ msgstr "DOS 형식의 가상 경로"
 #: ../../locales/../src/interface/LocalListView.cpp:2069
 #: ../../locales/../src/interface/RemoteListView.cpp:2645
 msgid "Dangerous filetype"
-msgstr "위험한 파일 형식"
+msgstr "위험한 파일 유형"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:41
 msgid "Data"
@@ -2653,12 +2643,12 @@ msgid ""
 "Default remote path cannot be parsed. Make sure it is a valid absolute path "
 "for the selected server type."
 msgstr ""
-"기본 리모트 경로를 해석할 수 없습니다. 올바르거나 선택된 서버 형식에 의해 지"
-"원되는지 확인하십시오."
+"기본 리모트 경로를 해석할 수 없습니다. 선택하신 서버 유형에서 적합한 절대 경"
+"로인지 확인하십시오."
 
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:78
 msgid "Default system language"
-msgstr "기본 시스템 언어"
+msgstr "시스템의 기본 언어"
 
 #: resources.h:672
 msgid "Default transfer mode:"
@@ -2666,7 +2656,7 @@ msgstr "기본 전송 모드:"
 
 #: resources.h:818
 msgid "Default transfer type:"
-msgstr "기본 전송 형식:"
+msgstr "기본 전송 유형:"
 
 #: resources.h:691 resources.h:754
 msgid "Default: http://ip.filezilla-project.org/ip.php"
@@ -2678,14 +2668,14 @@ msgid ""
 msgstr "실패한 연결 시도 간의 지연 시간은 1 ~ 999초입니다."
 
 #: ../../locales/../src/engine/engineprivate.cpp:633
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Delaying connection for %d second due to previously failed connection "
 "attempt..."
 msgid_plural ""
 "Delaying connection for %d seconds due to previously failed connection "
 "attempt..."
-msgstr[0] "이전 실패한 연결 시도 간 연결 지연 중..."
+msgstr[0] "직전 연결 실패로 %d초 연결 지연..."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1313
 msgid "Delete Site Manager entry"
@@ -2701,15 +2691,15 @@ msgstr "선택된 파일과 디렉터리 삭제"
 
 #: ../../locales/../src/interface/search.cpp:1038
 msgid "Deleting directories"
-msgstr "디렉터리 만들기"
+msgstr "디렉터리 삭제"
 
 #: ../../locales/../src/interface/search.cpp:1038
 msgid "Deleting multiple unrelated directories is not yet supported"
-msgstr ""
+msgstr "연관성 없는 여러 디렉터리를 삭제하는 것은 지원되지 않음"
 
 #: resources.h:452
 msgid "Deleting symbolic link"
-msgstr ""
+msgstr "심볼릭 링크 삭제"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1052
 msgid "Desktop"
@@ -2729,7 +2719,7 @@ msgstr "디렉터리(&C)"
 
 #: ../../locales/../src/interface/queue.cpp:1185
 msgid "Direction"
-msgstr "전송 방향"
+msgstr "방향"
 
 #: ../../locales/../src/interface/filelistctrl.cpp:607
 msgid "Directory"
@@ -2753,19 +2743,19 @@ msgstr ""
 
 #: ../../locales/../src/engine/ControlSocket.cpp:192
 msgid "Directory listing aborted by user"
-msgstr "사용자에 의해 디렉터리 갱신 취소됨"
+msgstr "사용자에 의해 디렉터리 목록 조회 중단"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2314
 msgid "Directory listing failed"
-msgstr "디렉터리 목록 갱신 실패"
+msgstr "디렉터리 목록 조회 실패"
 
 #: resources.h:197
 msgid "Directory listing filters"
-msgstr "디렉터리 목록 갱신 필터"
+msgstr "디렉터리 목록 조회 필터"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:196
 msgid "Directory listing successful"
-msgstr "디렉터리 목록 갱신 성공"
+msgstr "디렉터리 목록 조회 성공"
 
 #: resources.h:207
 msgid "Disa&ble all"
@@ -2780,11 +2770,12 @@ msgstr "탐색 동기화를 중지하고 리모트 디렉터리를 변경하시�
 msgid ""
 "Disable this option again if you will not be able to see the correct "
 "directory contents anymore."
-msgstr "더 이상 파일을 볼 수 없으면 이 설정을 해제하십시오."
+msgstr ""
+"디렉터리 내용을 정상적으로 볼 수 없게 되면 다시 이 옵션을 해제하십시오."
 
 #: resources.h:984
 msgid "Disconnect from server"
-msgstr "서버와 연결 끊음"
+msgstr "서버 연결 종료"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:82
 #: ../../locales/../src/engine/ControlSocket.cpp:1000
@@ -2795,26 +2786,26 @@ msgstr "서버와 연결 끊음"
 #: ../../locales/../src/interface/QueueView.cpp:1047
 #: ../../locales/../src/interface/QueueView.cpp:1091
 msgid "Disconnected from server"
-msgstr "서버와 연결 끊어짐"
+msgstr "서버 연결 종료됨"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1134
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:953
 #, c-format
 msgid "Disconnected from server: %s"
-msgstr "서버와 연결 끊어짐: %s"
+msgstr "서버 연결 종료됨: %s"
 
 #: ../../locales/../src/interface/QueueView.cpp:1406
 #: ../../locales/../src/interface/statuslinectrl.cpp:265
 msgid "Disconnecting from previous server"
-msgstr "이전 서버와 연결을 끊는 중"
+msgstr "이전 서버 연결 종료 중"
 
 #: resources.h:985
 msgid "Disconnects from the currently visible server"
-msgstr "현재 보고 있는 서버와 연결 끊음"
+msgstr "현재 보고 있는 서버 연결 종료"
 
 #: resources.h:554
 msgid "Display about dialog"
-msgstr "FileZilla 정보 표시"
+msgstr "FileZilla 정보 보기"
 
 #: resources.h:926
 msgid "Do &not use default editor"
@@ -2830,8 +2821,8 @@ msgid ""
 "Do you really want to check for beta versions?\n"
 "Unless you want to test new features, keep using stable versions."
 msgstr ""
-"베타 버전을 업데이트하시겠습니까?\n"
-"새로 추가된 기능을 시험할 필요가 없으면 안정된 버전을 사용하십시오."
+"베타 버전을 확인하시겠습니까?\n"
+"새로 추가된 기능을 시험하는 경우가 아니면 안정된 버전을 사용하십시오."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1109
 #: ../../locales/../src/interface/Mainfrm.cpp:1133
@@ -2862,7 +2853,7 @@ msgstr "정말 '%s'을(를) 서버로 보내시겠습니까?"
 
 #: resources.h:465
 msgid "Documentation"
-msgstr "내 문서"
+msgstr "설명서"
 
 #: resources.h:693
 msgid "Don't use external IP address on &local connections."
@@ -2884,19 +2875,19 @@ msgstr "다운로드"
 msgid "Download &limit:"
 msgstr "다운로드 제한(&L):"
 
-#: ../../locales/../src/interface/statusbar.cpp:591
-#, fuzzy, c-format
+#: ../../locales/../src/interface/statusbar.cpp:598
+#, c-format
 msgid "Download limit: %s/s"
-msgstr "다운로드 제한(&L):"
+msgstr "다운로드 제한(&L): %s/s"
 
-#: ../../locales/../src/interface/statusbar.cpp:593
+#: ../../locales/../src/interface/statusbar.cpp:600
 msgid "Download limit: none"
-msgstr "다운로드 제한(&L):"
+msgstr "다운로드 제한(&L): 없음"
 
 #: resources.h:440 ../../locales/../src/interface/search.cpp:843
 #: ../../locales/../src/interface/search.cpp:849
 msgid "Download search results"
-msgstr "선택된 디렉터리 다운로드"
+msgstr "검색 결과 다운로드"
 
 #: resources.h:623
 msgid "Download selected directory"
@@ -2904,7 +2895,7 @@ msgstr "선택된 디렉터리 다운로드"
 
 #: resources.h:573
 msgid "Download selected files and directories"
-msgstr "선택된 파일과 폴더 다운로드"
+msgstr "선택된 파일과 디렉터리 다운로드"
 
 #: ../../locales/../src/interface/edithandler.cpp:1236
 msgid "Downloading"
@@ -2914,16 +2905,15 @@ msgstr "다운로드"
 #: ../../locales/../src/interface/updatewizard.cpp:415
 #, c-format
 msgid "Downloading %s"
-msgstr "%s 다운로드 중"
+msgstr "%s 다운로드"
 
 #: ../../locales/../src/interface/search.cpp:952
 msgid "Downloading multiple unrelated directories is not yet supported"
 msgstr ""
 
 #: ../../locales/../src/interface/search.cpp:952
-#, fuzzy
 msgid "Downloading search results"
-msgstr "선택된 디렉터리 다운로드"
+msgstr "검색 결과 다운로드 중"
 
 #: ../../locales/../src/interface/LocalListView.cpp:102
 #: ../../locales/../src/interface/LocalTreeView.cpp:104
@@ -2969,7 +2959,7 @@ msgstr "종료(&X)"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:180
 msgid "E-Mail:"
-msgstr "이메일:"
+msgstr "E메일:"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:605
 msgid "Each filter needs at least one condition."
@@ -3007,11 +2997,11 @@ msgstr "빈 디렉터리 목록"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:26
 msgid "Empty directory."
-msgstr "빈 디렉터리 목록."
+msgstr "빈 디렉터리."
 
 #: ../../locales/../src/interface/settings/optionspage_edit_associations.cpp:53
 msgid "Empty file extension."
-msgstr "빈 파일 확장자"
+msgstr "빈 파일 확장명."
 
 #: ../../locales/../src/interface/filteredit.cpp:206
 #: ../../locales/../src/interface/filteredit.cpp:248
@@ -3049,7 +3039,7 @@ msgstr "암호화 상세"
 
 #: ../../locales/../src/interface/filelistctrl.cpp:531
 msgid "End comparison and change sorting order?"
-msgstr "비교를 중지하고 정렬 순서를 변경하시겠습니까?"
+msgstr "비교를 종료하고 정렬 순서를 변경하시겠습니까?"
 
 #: resources.h:540
 msgid "Enter &custom command..."
@@ -3058,7 +3048,7 @@ msgstr "사용자 명령어 입력(&C)..."
 #: resources.h:485
 #, no-c-format
 msgid "Enter 0 for unlimited speed."
-msgstr "필터셋명 입력"
+msgstr "속도를 제한하지 않으려면 0을 입력하세요."
 
 #: ../../locales/../src/interface/QueueView.cpp:2194
 msgid "Enter command"
@@ -3104,10 +3094,10 @@ msgid ""
 "here, the values in the other fields will be overwritten then."
 msgstr ""
 "서버 주소를 입력하십시오.\n"
-"서버 프로토콜을 지정하려면 호스트 주소 앞에 프로토콜 지정자를 입력하십시오. "
-"프로토콜을 지정하지 않으면 기본 프로토콜(ftp://)이 사용됩니다.\n"
-"사용자는 protocol://user:pass@host:port 형태의 완전한 URLS를 입력할 수 있으"
-"며, 다른 필드의 값에 덮어씁니다."
+"서버 프로토콜을 지정하려면 호스트 앞에 프로토콜 식별자를 붙이십시오. 프로토콜"
+"을 지정하지 않으면 기본 프로토콜(ftp://)이 사용됩니다.\n"
+"또한 여기에 protocol://user:pass@host:port 형태의 완전한 URL을 입력할 수도 있"
+"는데 이때 다른 필드의 값은 덮어쓰게 됩니다."
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:279
 #, c-format
@@ -3123,8 +3113,8 @@ msgid ""
 "Enter the port on which the server listens.\n"
 "The default for FTP is 21, the default for SFTP is 22."
 msgstr ""
-"서버의 응답 포트를 입력하십시오.\n"
-"FTP의 기본 포트는 21번이고, SFTP의 기본 포트는 22번입니다."
+"서버가 응답하는 포트를 입력하세요.\n"
+"FTP의 기본값은 21이고 SFTP의 기본값은 22입니다."
 
 #: ../../locales/../src/interface/loginmanager.cpp:63
 msgid "Enter username and password"
@@ -3186,11 +3176,11 @@ msgstr "xml 파일을 쓰는 중 오류"
 
 #: ../../locales/../src/interface/updatewizard.cpp:335
 msgid "Error, file name cannot be parsed."
-msgstr "이 필터 설정은 삭제할 수 없습니다."
+msgstr "오류: 파일 이름을 해석할 수 없습니다."
 
 #: ../../locales/../src/interface/updatewizard.cpp:351
 msgid "Error, local file exists but cannot be removed"
-msgstr "이 필터 설정은 삭제할 수 없습니다."
+msgstr "오류: 로컬 파일이 존재하지만 제거할 수 없습니다."
 
 #: ../../locales/../src/engine/logging.cpp:213
 #: ../../locales/../src/interface/StatusView.cpp:285
@@ -3201,7 +3191,7 @@ msgstr "오류:"
 
 #: resources.h:477
 msgid "Establish connection in a new tab"
-msgstr "서버에 연결할 수 없음"
+msgstr "새 탭에서 연결하기"
 
 #: resources.h:937
 msgid "Example: png \"c:\\program files\\viewer\\viewer.exe\" -open"
@@ -3271,16 +3261,16 @@ msgid ""
 "FTP uses secondary connections for data transfers. These additional "
 "connections can be established in two ways."
 msgstr ""
-"FTP는 데이터 전송을 위해 추가로 연결이 필요합니다. 이러한 연결에는 두 가지 방"
-"법이 있습니다."
+"FTP는 데이터 전송을 위해 부가적인 연결이 필요합니다. 이러한 연결에는 두 가지 "
+"방법이 있습니다."
 
 #: ../../locales/../src/engine/server.cpp:18
 msgid "FTPES - FTP over explicit TLS/SSL"
-msgstr "명시적 TLS/SSL 상의 FTPES - FTP"
+msgstr "FTPES - 명시적 TLS/SSL을 통한 FTP"
 
 #: ../../locales/../src/engine/server.cpp:17
 msgid "FTPS - FTP over implicit TLS/SSL"
-msgstr "암시적 TLS/SSL 상의 FTPS - FTP"
+msgstr "FTPS - 묵시적 TLS/SSL을 통한 FTP"
 
 #: ../../locales/../src/interface/LocalListView.cpp:535
 #: ../../locales/../src/interface/LocalListView.cpp:617
@@ -3311,7 +3301,7 @@ msgstr "xml 파일의 사본 복사 생성 실패"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:791
 msgid "Failed to create listen socket, aborting"
-msgstr "대기 소켓 생성 실패, 중지 중"
+msgstr "응답 소켓 생성 실패, 중단"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4214
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4218
@@ -3324,19 +3314,19 @@ msgstr "최신 버전의 FileZilla 다운로드에 실패했습니다."
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:665
 msgid "Failed to get 'My Documents' path"
-msgstr "'내 문서'의 경로를 가져올 수 없음"
+msgstr "'내 문서' 경로 찾기 실패"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:651
 msgid "Failed to get desktop path"
-msgstr "바탕 화면의 경로를 가져올 수 없음"
+msgstr "바탕 화면 경로 찾기 실패"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:950
 msgid "Failed to get peer address of control connection, connection closed."
-msgstr "제어 연결의 피어 주소를 가져오는데 실패, 연결이 끊어졌습니다."
+msgstr "제어 연결의 피어 주소를 가져오는데 실패, 연결이 끊겼습니다."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:958
 msgid "Failed to get peer address of data connection, connection closed."
-msgstr "데이터 연결의 피어 주소를 가져오는데 실패, 연결이 끊어졌습니다."
+msgstr "데이터 연결의 피어 주소를 가져오는데 실패, 연결이 끊겼습니다."
 
 #: ../../locales/../src/interface/context_control.cpp:77
 msgid "Failed to initialize FTP engine"
@@ -3360,7 +3350,7 @@ msgstr "개인 키 열기 실패: %s"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
 #, c-format
 msgid "Failed to open \"%s\" for appending/writing"
-msgstr "추가 / 쓰기를 위한 \"%s\" 열기 실패"
+msgstr "쓰기를 위한 \"%s\" 열기 실패"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2661
 #, c-format
@@ -3384,27 +3374,27 @@ msgstr "데이터 수신 실패"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:194
 msgid "Failed to retrieve directory listing"
-msgstr "디렉터리 목록 갱신 실패"
+msgstr "디렉터리 목록 조회 실패"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:719
 msgid "Failed to retrieve external ip address, aborting"
-msgstr "외부 IP 주소 갱신 실패, 중지 중"
+msgstr "외부 IP 주소 조회 실패, 중단"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3912
 msgid "Failed to retrieve external ip address, using local address"
-msgstr "외부 IP 주소 갱신 실패, 로컬 주소 사용"
+msgstr "외부 IP 주소 조회 실패, 로컬 주소 사용"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3934
 msgid "Failed to retrieve local ip address."
-msgstr "로컬 IP 주소 갱신 실패."
+msgstr "로컬 IP 주소 조회 실패."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:688
 msgid "Failed to retrieve local ip address. Aborting"
-msgstr "로컬 IP 주소 갱신 실패. 중지 중"
+msgstr "로컬 IP 주소 조회 실패. 중단"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:616
 msgid "Failed to retrieve the external IP address."
-msgstr "외부 IP 주소 갱신 실패."
+msgstr "외부 IP 주소 조회 실패."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:307
 msgid "Failed to send command."
@@ -3430,7 +3420,7 @@ msgstr "%s (%s) 언어 설정 실패, 시스템 기본 언어를 사용합니다
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 #, c-format
 msgid "Failed to set language to %s, using default system language"
-msgstr "%s 언어 변경 실패, 기본 시스템 언어 사용"
+msgstr "%s 언어 변경 실패, 시스템의 기본 언어 사용"
 
 #: ../../locales/../src/interface/FileZilla.cpp:259
 #, c-format
@@ -3444,11 +3434,11 @@ msgstr "%s 언어 설정 실패, 시스템 기본 언어 사용"
 
 #: ../../locales/../src/interface/settings/optionspage.cpp:215
 msgid "Failed to validate settings"
-msgstr "설정 확인 실패"
+msgstr "설정 검증 실패"
 
 #: ../../locales/../src/engine/tlssocket.cpp:880
 msgid "Failed to verify peer certificate"
-msgstr "데이터 수신 실패"
+msgstr "피어 인증서 검증 실패"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:566
 #, c-format
@@ -3465,7 +3455,7 @@ msgstr "전송 실패"
 
 #: resources.h:684
 msgid "Fall back to active mode"
-msgstr "능동형 모드로 전환"
+msgstr "능동형 모드로 자동 전환"
 
 #: resources.h:368
 msgid "Fil&e:"
@@ -3518,11 +3508,11 @@ msgstr "파일을 찾을 수 없음"
 
 #: resources.h:995
 msgid "File search"
-msgstr "크기"
+msgstr "파일 검색"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:128
 msgid "File transfer aborted by user"
-msgstr "사용자에 의해 전송 중지됨"
+msgstr "사용자에 의해 파일 전송 중단"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:118
 #, c-format
@@ -3531,25 +3521,25 @@ msgstr ""
 
 #: ../../locales/../src/engine/ControlSocket.cpp:139
 msgid "File transfer failed"
-msgstr "파일 전송 성공"
+msgstr "파일 전송 실패"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:122
 #, c-format
 msgid "File transfer failed after transferring %s in %s"
-msgstr ""
+msgstr "%s에서 %s 전송 후 파일 전송 실패"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:134
 msgid "File transfer skipped"
-msgstr "전송 실패"
+msgstr "파일 전송 생략"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:132
 msgid "File transfer successful"
 msgstr "파일 전송 성공"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:115
-#, fuzzy, c-format
+#, c-format
 msgid "File transfer successful, transferred %s in %s"
-msgstr "파일 전송 성공"
+msgstr "파일 전송 성공, %s를 %s에 전송"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1108
 msgid "File transfers still in progress."
@@ -3573,12 +3563,11 @@ msgstr "FileZilla 오류"
 msgid ""
 "FileZilla can now test your configuration to ensure everything is configured "
 "properly."
-msgstr ""
-"FileZilla가 지금 사용자의 모든 설정이 제대로 되었는지 시험할 수 있습니다."
+msgstr "FileZilla는 이제 모든 구성 항목이 잘 구성되었는지 시험할 수 있습니다."
 
 #: resources.h:476
 msgid "FileZilla is already connected to a server."
-msgstr "디렉터리를 비교할 수 없습니다. 서버에 연결되어 있지 않습니다."
+msgstr "FileZilla가 이미 서버에 연결돼 있습니다."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:437
 #: ../../locales/../src/interface/sitemanager.cpp:1061
@@ -3593,7 +3582,7 @@ msgstr "변경된 언어를 적용하려면 FileZilla를 다시 시작해야 합
 
 #: resources.h:516
 msgid "Filelist status &bars"
-msgstr "파일 목록"
+msgstr "파일 목록 상태 표시줄(&b)"
 
 #: ../../locales/../src/interface/edithandler.cpp:1221
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:100
@@ -3655,12 +3644,12 @@ msgstr "파일 크기 형식"
 #: ../../locales/../src/interface/RemoteListView.cpp:359
 #: ../../locales/../src/interface/search.cpp:388
 msgid "Filetype"
-msgstr "종류"
+msgstr "파일 유형"
 
 #: resources.h:938
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:133
 msgid "Filetype associations"
-msgstr "파일 형식 연결"
+msgstr "파일 유형 연결"
 
 #: resources.h:224
 msgid "Filter applies to:"
@@ -3693,7 +3682,7 @@ msgstr "필터 설정이 이미 존재함"
 
 #: resources.h:988
 msgid "Filter the directory listings"
-msgstr "디렉터리 목록 필터"
+msgstr "디렉터리 목록 조회 필터링"
 
 #: ../../locales/../src/interface/filteredit.cpp:338
 #: ../../locales/../src/interface/filteredit.cpp:347
@@ -3727,13 +3716,15 @@ msgstr ""
 
 #: resources.h:701
 msgid "For reliability you should specify a range of at least 10 ports."
-msgstr "확실한 설정을 위해 사용자는 적어도 10개의 포트 범위를 지정해야 합니다."
+msgstr "확실한 설정을 위해 포트 범위는 최소 10개를 지정하도록 합니다."
 
 #: ../../locales/../src/interface/Options.cpp:194
 msgid ""
 "For this session the default settings will be used. Any changes to the "
 "settings will not be saved."
 msgstr ""
+"현재 세션은 기본 설정값을 사용하게 됩니다. 설정 변경 사항은 저장되지 않습니"
+"다."
 
 #: resources.h:108
 msgid "Force &UTF-8"
@@ -3778,7 +3769,7 @@ msgstr "다음의 URL로부터 외부 IP 주소 가져오기:"
 
 #: resources.h:469
 msgid "Getting help"
-msgstr "도움말 가져오기(&G)..."
+msgstr "도움이 필요할 때는"
 
 #: ../../locales/../src/interface/filter.cpp:350
 #: ../../locales/../src/interface/filter.cpp:411
@@ -3803,7 +3794,7 @@ msgstr "높음(&I)"
 
 #: ../../locales/../src/engine/server.cpp:16
 msgid "HTTPS - HTTP over TLS"
-msgstr "암시적 TLS/SSL 상의 FTPS - FTP"
+msgstr "HTTPS - TLS를 통한 HTTP"
 
 #: resources.h:339
 msgid "Hash:"
@@ -3830,7 +3821,7 @@ msgstr "사용 가능한 가장 높은 포트 번호는 1024 ~ 65535입니다."
 #: resources.h:208
 msgid ""
 "Hold the shift key to toggle the filter state on both sides simultaneously."
-msgstr "필터 상태를 연속적으로 전환하려면 Shift 키를 사용하십시오."
+msgstr "Shift 키를 누르고 있으면 양쪽 필터 상태를 동시에 켜고 끌 수 있습니다."
 
 #: resources.h:156
 msgid "Homepage:"
@@ -3850,7 +3841,7 @@ msgstr "호스트가 '['로 시작하는데 닫는 괄호가 없습니다."
 
 #: ../../locales/../src/engine/proxy.cpp:439
 msgid "Host unreachable"
-msgstr "그룹 읽기 가능"
+msgstr "호스트 도달 불가"
 
 #: resources.h:16 resources.h:40 resources.h:120 resources.h:176
 #: resources.h:189
@@ -3885,18 +3876,18 @@ msgid ""
 "you should try active mode. You can set the transfer mode on a per-server "
 "basis in the Site Manager."
 msgstr ""
-"이 마법사 마지막 단계에서 시험이 성공했음에도 특정 서버에 파일을 전송할 수 없"
-"다면, 그 서버 설정이 잘못되어 있는 것입니다. 사용자는 능동형 모드로 시도해야 "
-"합니다. 사용자는 사이트 관리자에서 모든 서버의 기본 전송 모드를 설정할 수 있"
-"습니다."
+"이 마법사 마지막 단계의 자동 시험이 성공했음에도 특정 서버에 파일을 전송할 "
+"수 없다면 그 서버 설정이 잘못됐을 수 있으므로 능동형 모드로 시도해봐야 합니"
+"다. 사이트 관리자에서 전송 모드를 설정하는 것은 서버마다 개별적으로 가능합니"
+"다."
 
 #: resources.h:676
 msgid ""
 "If the fallback option is enabled, you will be able to connect to "
 "misconfigured servers which reject the selected transfer mode."
 msgstr ""
-"자동 전환 옵션을 사용하면 선택된 전송 모드를 거부하는 잘못 구성된 서버에 접속"
-"할 수 있습니다."
+"자동 전환 옵션을 사용하면 서버가 잘못 구성돼 있어서 전송 모드를 거부하더라도 "
+"연결 가능할 수 있습니다."
 
 #: resources.h:187
 msgid ""
@@ -3908,13 +3899,14 @@ msgstr ""
 msgid ""
 "If the problem persists, some router and/or firewall keeps blocking "
 "FileZilla."
-msgstr "이 문제가 계속 발생하면, 라우터 또는 공유기 제조사에 문의하십시오."
+msgstr ""
+"문제가 계속 발생하면 라우터 또는 방화벽이 FileZilla를 차단하는 것입니다."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:563
 msgid ""
 "If the problem persists, some router and/or firewall keeps interrupting the "
 "connection."
-msgstr "이 문제가 계속 발생하면, 라우터 또는 공유기 제조사에 문의하십시오."
+msgstr "문제가 계속 발생하면 라우터 또는 방화벽이 연결을 방해하는 것입니다."
 
 #: resources.h:955
 msgid ""
@@ -3956,35 +3948,34 @@ msgid ""
 "If using timestamp based comparison, consider two files equal if their "
 "timestamp difference does not exceed this threshold."
 msgstr ""
-"시간에 근거한 비교는 두 파일의 시간차가 임계치를 초과하는지 고려하십시오."
+"파일 시간에 근거한 비교는 두 파일의 시간차가 한계값을 초과하지 않으면 같은지 "
+"보는 것입니다."
 
 #: resources.h:924
 msgid "If you change the language, you should restart FileZilla."
-msgstr "언어 설정을 변경하는 경우 FileZilla를 다시 시작해야 합니다."
+msgstr "언어를 변경하는 경우 FileZilla를 다시 시작해야 합니다."
 
 #: resources.h:707
 msgid ""
 "If you click on test, FileZilla will connect to probe.filezilla-project.org "
 "and will perform some simple tests."
 msgstr ""
-"시험 버튼을 누르면, FileZilla는 probe.filezilla-project.org 에 접속하여 몇 가"
-"지 간단한 시험을 수행할 것입니다."
+"[시험]을 누르면 FileZilla는 probe.filezilla-project.org에 연결하여 몇 가지 간"
+"단한 시험을 수행합니다."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1132
 msgid "If you close FileZilla, your changes will be lost."
-msgstr "FileZilla를 닫으면, 변경 내용이 손실됩니다."
+msgstr "FileZilla를 닫으면 변경 내용이 손실됩니다."
 
 #: resources.h:826
 msgid ""
 "If you enter the wrong filetypes, those files may get corrupted when "
 "transferred."
-msgstr ""
-"사용자가 잘못된 파일 형식을 입력하는 경우, 전송 후 파일이 오류를 일으킬 수 있"
-"습니다."
+msgstr "잘못된 파일 유형을 입력하면 해당 파일들은 전송시 손상될 수 있습니다."
 
 #: resources.h:708
 msgid "If you get any errors, your configuration is not correct."
-msgstr "만약 오류가 발생한다면, 설정이 올바르지 않은 것입니다."
+msgstr "오류가 발생하는 경우는 구성이 적절하지 않은 것입니다."
 
 #: resources.h:740
 msgid ""
@@ -4025,15 +4016,16 @@ msgid ""
 "If you use a router, make sure all these ports are forwarded to the machine "
 "you're running FileZilla on."
 msgstr ""
-"만약 라우터를 사용하면, FileZilla가 운영 중인 기기에 모든 포트가 포워드 되게 "
-"하십시오."
+"라우터를 사용하는 경우 모든 해당 포트들이 FileZilla를 실행 중인 머신으로 포워"
+"드될 수 있게 하십시오."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:595
 msgid ""
 "If your router keeps changing the IP address, please contact your router "
 "manufacturer."
 msgstr ""
-"만약 사용자의 라우터 IP 주소가 변경되지 않으면, 라우터 제조사에 문의하십시오."
+"라우터가 지속적으로 IP 주소를 변경하는 것인 경우 라우터 제조사에 문의하십시"
+"오."
 
 #: ../../locales/../src/interface/import.cpp:97
 msgid "Import data from older version"
@@ -4058,16 +4050,16 @@ msgid ""
 "In active mode, FileZilla has to listen on a port for data transfers. You "
 "have to specify which ports FileZilla will use."
 msgstr ""
-"능동형 모드에서는 FileZilla가 데이터 전송 포트를 열고 대기합니다. 사용자는 "
-"FileZilla가 사용할 포트를 지정해야 합니다."
+"능동형 모드의 데이터 전송을 위해서는 FileZilla가 포트를 하나 열고 대기해야 합"
+"니다. 사용자는 FileZilla가 사용할 포트를 지정해야 합니다."
 
 #: resources.h:697
 msgid ""
 "In case you have a router, you will have to forward all available ports, as "
 "FileZilla has no influence on the ports your system chooses."
 msgstr ""
-"사용자가 라우터를 사용하는 경우, 사용자가 모든 포트를 포워드하여야  FileZilla"
-"가 시스템이 정한 포트에 영향을 받지 않습니다."
+"라우터를 사용하는 경우에는 모든 가능 포트를 포워드해야 합니다. FileZilla는 시"
+"스템이 포트를 선택하는 데 영향을 주지 않기 때문입니다."
 
 #: resources.h:253
 msgid ""
@@ -4106,13 +4098,13 @@ msgstr "비밀번호 오류"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:750
 msgid "Initializing TLS..."
-msgstr "TLS 초기화 중..."
+msgstr "TLS 초기화..."
 
 #: ../../locales/../src/engine/server.cpp:850
 #: ../../locales/../src/engine/server.cpp:869
 #: ../../locales/../src/interface/manual_transfer.cpp:187
 msgid "Interactive"
-msgstr "양방향"
+msgstr "인터랙티브"
 
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:126
 msgid "Interface"
@@ -4122,7 +4114,7 @@ msgstr "인터페이스"
 #: ../../locales/../src/interface/QueueView.cpp:1000
 #: ../../locales/../src/interface/QueueView.cpp:1574
 msgid "Interrupted by user"
-msgstr "사용자에 의해 중단됨"
+msgstr "사용자에 의해 중단"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:772
 msgid "Invalid Content-Length"
@@ -4138,8 +4130,8 @@ msgid ""
 "Invalid character sequence received, disabling UTF-8. Select UTF-8 option in "
 "site manager to force UTF-8."
 msgstr ""
-"수신된 문자열이 올바르지 않으면 UTF-8을 해제하십시오. UTF-8 강제 사용은 사이"
-"트 관리자에서 선택하십시오."
+"비정상적인 문자열이 수신되어 UTF-8을 해제합니다. UTF-8 강제 사용은 사이트 관"
+"리자에서 선택하십시오."
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:896
 msgid "Invalid chunk size"
@@ -4163,7 +4155,7 @@ msgstr "잘못된 파일명"
 
 #: ../../locales/../src/engine/server.cpp:159
 msgid "Invalid host, after closing bracket only colon and port may follow."
-msgstr ""
+msgstr "호스트 지정 이상. 닫는 괄호 후에는 콜론 및 포트만 올 수 있습니다."
 
 #: ../../locales/../src/interface/loginmanager.cpp:102
 msgid "Invalid input"
@@ -4185,23 +4177,23 @@ msgid ""
 "ftpes:// for FTP over SSL (explicit)."
 msgstr ""
 "유효하지 않은 프로토콜이 지정되었습니다. 유효한 프로토콜은 다음과 같습니다:\n"
-"ftp:// 보통 FTP,\n"
+"ftp:// 일반 FTP,\n"
 "sftp:// SSH 파일 전송 프로토콜,\n"
-"ftps:// 암시적 SSL 상의 FTP\n"
-"ftpes:// 명시적 SSL 상의 FTP."
+"ftps:// 묵시적 SSL을 통한 FTP\n"
+"ftpes:// 명시적 SSL을 통한 FTP."
 
 #: ../../locales/../src/interface/search.cpp:724
 msgid "Invalid regular expression in search conditions."
-msgstr "잘못된 크기"
+msgstr "검색 조건 정규식 이상"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:633
 msgid "Invalid response code"
-msgstr "잘못된 응답 코드"
+msgstr "응답 코드 이상"
 
 #: ../../locales/../src/interface/search.cpp:718
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid search conditions: %s"
-msgstr "잘못된 크기"
+msgstr "검색 조건 이상: %s"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2561
 #: ../../locales/../src/interface/sitemanager.cpp:2581
@@ -4215,31 +4207,31 @@ msgstr "잘못된 크기"
 #: ../../locales/../src/interface/sitemanager.cpp:3091
 #: ../../locales/../src/interface/sitemanager.cpp:3098
 msgid "Invalid site path"
-msgstr "잘못된 사이트 경로"
+msgstr "사이트 경로 이상"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:638
 msgid "Invalid size in condition"
-msgstr "잘못된 크기"
+msgstr "조건 크기 이상"
 
 #: ../../locales/../src/engine/server.cpp:122
 msgid "Invalid username given."
-msgstr "잘못된 사용자 이름."
+msgstr "잘못된 사용자명 지정."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:181
 msgid "Jurisdiction country:"
-msgstr ""
+msgstr "관할 국가:"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:183
 msgid "Jurisdiction locality:"
-msgstr ""
+msgstr "관할 지역:"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:182
 msgid "Jurisdiction state or province:"
-msgstr ""
+msgstr "관할 주 또는 도"
 
 #: resources.h:906
 msgid "Keep directories on top"
-msgstr "디렉터리 맨 위에"
+msgstr "디렉터리를 상위에 유지"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:657
 msgid ""
@@ -4272,7 +4264,7 @@ msgstr "언어 변경됨"
 #: ../../locales/../src/interface/RemoteListView.cpp:360
 #: ../../locales/../src/interface/search.cpp:389
 msgid "Last modified"
-msgstr "최종 수정 일시"
+msgstr "최종 수정"
 
 #: resources.h:853
 msgid "Layout"
@@ -4304,7 +4296,7 @@ msgstr "라인 길이 초과됨"
 
 #: resources.h:166
 msgid "Linked against"
-msgstr ""
+msgstr "링크된 대상"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:267
 msgid "Listen socket closed"
@@ -4347,15 +4339,15 @@ msgstr "로컬 사이트:"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:177
 msgid "Locality:"
-msgstr "로컬:"
+msgstr "지역:"
 
 #: ../../locales/../src/interface/settings/optionspage_logging.cpp:97
 msgid "Log file"
-msgstr "로그 파일(&L)"
+msgstr "로그 파일"
 
 #: resources.h:250
 msgid "Log of update check:"
-msgstr "자동 업데이트 확인"
+msgstr "업데이트 확인 로그:"
 
 #: resources.h:947
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:140
@@ -4380,7 +4372,7 @@ msgstr ""
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:839
 msgid "Login sequence fully executed yet not logged in. Aborting."
-msgstr "로그인 절차가 완전히 실행되지 못했습니다. 중지 중."
+msgstr "로그인 절차가 완전히 실행되지 못했습니다. 중단합니다."
 
 #: ../../locales/../src/interface/cmdline.cpp:95
 msgid "Logontype has to be either 'ask' or 'interactive' (without the quotes)."
@@ -4444,15 +4436,15 @@ msgstr "수동 전송"
 
 #: resources.h:433
 msgid "Match all of the following"
-msgstr "아래의 모든 필터 적용"
+msgstr "아래와 모두 일치"
 
 #: resources.h:434
 msgid "Match any of the following"
-msgstr "아래의 모든 필터 적용"
+msgstr "아래와 하나라도 일치"
 
 #: resources.h:435
 msgid "Match none of the following"
-msgstr "아래의 모든 필터 적용"
+msgstr "아래와 하나도 일치 안함"
 
 #: resources.h:797
 msgid "Maximum simultaneous &transfers:"
@@ -4465,11 +4457,11 @@ msgstr "메시지 로그"
 
 #: resources.h:864
 msgid "Message log position"
-msgstr "메시지 로그(&M)"
+msgstr "메시지 로그 위치"
 
 #: resources.h:954
 msgid "MiB"
-msgstr ""
+msgstr "MB"
 
 #: resources.h:96
 msgid "Minutes"
@@ -4526,7 +4518,7 @@ msgstr "필터 이름 입력 필요"
 
 #: ../../locales/../src/interface/search.cpp:708
 msgid "Need to enter valid remote path"
-msgstr "필터 이름 입력 필요"
+msgstr "적합한 원격 경로 입력 필요"
 
 #: ../../locales/../src/interface/sitemanager.cpp:1095
 msgid "Need to specify a character encoding"
@@ -4575,7 +4567,7 @@ msgstr "새 디렉터리"
 #: ../../locales/../src/interface/welcome_dialog.cpp:43
 #, c-format
 msgid "New features and improvements in %s"
-msgstr ""
+msgstr "%s의 새 기능 및 개선 사항"
 
 #: ../../locales/../src/interface/filteredit.cpp:129
 msgid "New filter"
@@ -4597,7 +4589,7 @@ msgstr "전송 대기열 옆"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:878
 msgid "No"
-msgstr "아니오"
+msgstr "아니요"
 
 #: ../../locales/../src/interface/export.cpp:26
 msgid "No category to export selected"
@@ -4605,11 +4597,11 @@ msgstr "내보낼 항목이 선택되지 않았음"
 
 #: ../../locales/../src/interface/QueueView.cpp:2205
 msgid "No command given, aborting."
-msgstr "명령어가 없습니다, 중지됨."
+msgstr "명령어가 없어서 중단."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3879
 msgid "No external IP address set, trying default."
-msgstr "외부 IP 주소가 설정되지 않았습니다. 기본값으로 시도합니다."
+msgstr "외부 IP 주소가 설정되지 않아 기본값으로 시도."
 
 #: ../../locales/../src/interface/edithandler.cpp:1210
 msgid "No files are currently being edited."
@@ -4627,7 +4619,7 @@ msgstr "호스트가 없습니다. 호스트를 입력하십시오."
 
 #: ../../locales/../src/interface/settings/optionspage_themes.cpp:101
 msgid "No images available"
-msgstr "가능한 이미지 없음"
+msgstr "이미지 없음"
 
 #: ../../locales/../src/interface/QueueView.cpp:3054
 msgid "No more files in the queue!"
@@ -4636,20 +4628,20 @@ msgstr "대기열에 남은 파일 없음!"
 #: ../../locales/../src/interface/filter.cpp:335
 #: ../../locales/../src/interface/filter.cpp:404
 msgid "No name for the filterset given."
-msgstr "필터셋에 이름이 없습니다."
+msgstr "필터셋에 이름이 없음."
 
 #: resources.h:429
 msgid "No program associated with filetype"
-msgstr "파일형식에 연결된 프로그램이 없음"
+msgstr "파일 유형에 연결된 프로그램이 없음"
 
 #: resources.h:419
 #, c-format
 msgid "No program has been associated to edit files with the extension '%s'."
-msgstr ""
+msgstr "확장명이 '%s'인 파일을 편집할 연동 프로그램이 없습니다."
 
 #: ../../locales/../src/interface/search.cpp:566
 msgid "No search results"
-msgstr "선택된 디렉터리 다운로드"
+msgstr "검색 결과 없음"
 
 #: ../../locales/../src/interface/sitemanager.cpp:2098
 #: ../../locales/../src/interface/sitemanager.cpp:2110
@@ -4683,40 +4675,40 @@ msgstr "아직 선택 안 됨"
 #: ../../locales/../src/interface/queue.cpp:971
 #: ../../locales/../src/interface/sitemanager.cpp:1387
 msgid "Normal"
-msgstr "보통"
+msgstr "일반"
 
 #: ../../locales/../src/interface/queueview_failed.cpp:370
 msgid "Not all items could be requeued for viewing/editing."
-msgstr "보기 / 편집에 모든 항목이 요구될 수 없습니다."
+msgstr "모든 항목을 보기/편집으로 다시 대기시킬 수는 없습니다."
 
 #: ../../locales/../src/interface/state.cpp:199
 #: ../../locales/../src/interface/state.cpp:504
 msgid "Not connected"
-msgstr "연결됨"
+msgstr "연결 안됨"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2312
 msgid "Not connected to any server"
-msgstr "서버에 연결되지 않음"
+msgstr "연결된 서버 없음"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:561
 msgid "Not connected to any server."
-msgstr "어느 서버에도 연결되지 않았습니다."
+msgstr "연결된 서버 없음."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:27
 msgid "Not connected."
-msgstr "연결됨"
+msgstr "연결 안됨"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:655
 msgid "Note that this feature is only supported using the FTP protocol."
-msgstr "이 기능은 FTP 프로토콜 이용 시에만 지원됩니다."
+msgstr "이 기능은 FTP 프로토콜 사용 시에만 지원됩니다."
 
 #: resources.h:778
 msgid "Note: This only works with plain, unencrypted FTP connections."
-msgstr "알림: 이 기능은 일반 비 암호화된 FTP 연결에서만 동작합니다."
+msgstr "비고: 이 기능은 일반 비 암호화된 FTP 연결에서만 동작합니다."
 
 #: resources.h:795
 msgid "Note: Using a generic proxy forces passive mode on FTP connections."
-msgstr ""
+msgstr "비고: 일반 프록시를 사용하면 FTP가 무조건 수동형 모드로 연결됩니다."
 
 #: resources.h:895
 msgid "Number of decimal places:"
@@ -4745,8 +4737,8 @@ msgid ""
 "On the following pages, the selected transfer mode will be configured, as "
 "well as the fallback mode if enabled."
 msgstr ""
-"이후의 페이지에서는 선택하신 전송 모드를 구성하되 자동 전환 모드를 설정한 경"
-"우 해당 모드도 구성됩니다."
+"이후의 페이지에서는 선택하신 전송 모드를 구성하게 되는데 자동 전환 모드를 설"
+"정한 경우에는 다른 모드도 구성하게 됩니다."
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:888
 msgid "Once"
@@ -4760,7 +4752,7 @@ msgstr "서버로 전송되는 정보는 사용자의 FileZilla와 운영체계 
 
 #: resources.h:646
 msgid "Open directory in system's file manager"
-msgstr ""
+msgstr "디렉터리를 시스템의 파일 관리자로 열기"
 
 #: resources.h:968 resources.h:969
 msgid "Open the Site Manager"
@@ -4788,7 +4780,7 @@ msgstr "열기 실패"
 
 #: resources.h:494
 msgid "Opens a new tab"
-msgstr ""
+msgstr "새 탭 열기"
 
 #: resources.h:491
 msgid "Opens the Site Manager"
@@ -4798,6 +4790,7 @@ msgstr "사이트 관리자 열기"
 msgid ""
 "Opens the directory listing filter dialog. Right-click to toggle filters."
 msgstr ""
+"디렉터리 목록 필터 대화 창을 엽니다. 오른쪽 클릭하면 필터 여부를 전환합니다."
 
 #: resources.h:170
 #, fuzzy
@@ -4826,27 +4819,27 @@ msgstr "새 파일이면 덮어쓰기(&I)"
 
 #: resources.h:259 resources.h:269 resources.h:833 resources.h:842
 msgid "Overwrite file"
-msgstr "덮어쓰기(&O)"
+msgstr "파일 덮어쓰기"
 
 #: resources.h:261 resources.h:271 resources.h:835 resources.h:844
 msgid "Overwrite file if size differs"
-msgstr "크기가 다르면 덮어쓰기"
+msgstr "파일 크기가 다르면 덮어쓰기"
 
 #: resources.h:262 resources.h:272 resources.h:836 resources.h:845
 msgid "Overwrite file if size differs or source file is newer"
-msgstr "크기가 다르거나 새 파일이면 덮어쓰기"
+msgstr "파일 크기가 다르거나 원본 파일이 더 최신이면 덮어쓰기"
 
 #: resources.h:260 resources.h:270 resources.h:834 resources.h:843
 msgid "Overwrite file if source file newer"
-msgstr "새 파일이면 덮어쓰기(&E)"
+msgstr "원본 파일이 더 최신이면 덮어쓰기"
 
 #: resources.h:60
 msgid "Overwrite if &different size"
-msgstr "크기가 다르면 덮어쓰기"
+msgstr "크기가 다르면 덮어쓰기(&d)"
 
 #: resources.h:61
 msgid "Overwrite if different si&ze or source newer"
-msgstr "크기가 다르거나 새 파일이면 덮어쓰기"
+msgstr "크기가 다르거나 원본이 더 최신이면 덮어쓰기(&z)"
 
 #: resources.h:133
 msgid "Owner permissions"
@@ -4855,7 +4848,7 @@ msgstr "소유자 권한"
 #: ../../locales/../src/interface/RemoteListView.cpp:362
 #: ../../locales/../src/interface/search.cpp:391
 msgid "Owner/Group"
-msgstr "소유자 / 그룹"
+msgstr "소유자/그룹"
 
 #: resources.h:867
 msgid ""
@@ -4980,9 +4973,7 @@ msgstr "라우터의 'DMZ mode' 혹은 'Game mode' 설정을 해제하여 주십
 msgid ""
 "Please ensure you have a stable internet connection and carefully check your "
 "settings again."
-msgstr ""
-"안정적인 인터넷 연결을 확인한 후, 서버가 운영 중인지 http://filezilla-"
-"project.org/probe.php에서 확인하십시오."
+msgstr "인터넷 연결이 안정적인지 점검하고 설정 값들을 다시 잘 확인하십시오."
 
 #: ../../locales/../src/interface/settings/optionspage_dateformatting.cpp:70
 msgid "Please enter a custom date format."
@@ -4994,9 +4985,9 @@ msgstr "사용자 시간 형식을 입력하십시오."
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:111
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:54
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter a download speed limit greater or equal to 0 %s/s."
-msgstr "0 KB/s 이상의 값으로 다운로드 속도 제한값을 입력하십시오."
+msgstr "다운로드 속도 제한 값을 0 %s/s 이상으로 입력해주세요."
 
 #: ../../locales/../src/interface/filteredit.cpp:134
 msgid "Please enter a name for the new filter."
@@ -5075,9 +5066,9 @@ msgstr "최소 7일 이상으로 업데이트 주기를 입력하십시오."
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:118
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:62
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter an upload speed limit greater or equal to 0 %s/s."
-msgstr "0 KB/s 이상의 값으로 업로드 속도 제한값을 입력하십시오."
+msgstr "업로드 속도 제한 값을 0 %s/s 이상으로 입력해주세요."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:573
 msgid ""
@@ -5150,17 +5141,18 @@ msgid ""
 "trojans or other malware. This might raise a false alarm you can safely "
 "discard."
 msgstr ""
-"서버가 선택한 데이터 포트를 FileZilla가 바꿀 수 없습니다. 서버는 사용자의 방"
-"화벽이 트로이안이나 악성웨어로 여길 수 있는 포트를 선택할지도 모릅니다. 이 경"
-"우 잘못된 안전 보고를 하기도 합니다."
+"서버가 선택하는 포트는 FileZilla와 아무 관련이 없으므로 주의하십시오. 즉, 서"
+"버는 임의로 포트를 선택할 수 있는데 사용자의 방화벽은 이것을 트로이안이나 악"
+"성웨어에서 사용하는 것으로 여길 수도 있습니다. 이 경우 잘못된 경고가 나타나기"
+"도 하는데 사용자는 이를 무시하면 됩니다."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:705
 msgid ""
 "Please note that preserving timestamps on uploads on FTP, FTPS and FTPES "
 "servers only works if they support the MFMT command."
 msgstr ""
-"FTP, FTPS 및 FTPES으로 업로드 시 시간 보호는 MFMT 명령어가 지원될 때만 동작됩"
-"니다."
+"FTP 및 FTPS, FTPES로 업로드할 때 파일 시간을 보존하는 것은 서버가 MFMT 명령어"
+"를 지원할 때만 작동하는 것이므로 주의하십시오."
 
 #: resources.h:734
 msgid ""
@@ -5196,7 +5188,7 @@ msgstr ""
 
 #: resources.h:455
 msgid "Please select an action:"
-msgstr "항상 이 동작을 사용(&A)"
+msgstr "동작을 선택해주세요."
 
 #: resources.h:301
 msgid "Please select the categories you would like to import."
@@ -5247,8 +5239,8 @@ msgid ""
 "Please visit http://filezilla-project.org for more information about "
 "FileZilla."
 msgstr ""
-"더 많은 FileZilla의 정보를 보려면 http://filezilla-project.org 사이트를 방문"
-"하십시오."
+"http://filezilla-project.org 사이트를 방문하시면 FileZilla에 대해 많은 정보"
+"를 구할 수 있습니다."
 
 #: ../../locales/../src/interface/updatewizard.cpp:1074
 #: ../../locales/../src/interface/updatewizard.cpp:1090
@@ -5256,12 +5248,12 @@ msgid ""
 "Please visit http://filezilla-project.org to download the most recent "
 "version."
 msgstr ""
-"최신 버전을 다운로드하려면 http://filezilla-project.org 사이트를 방문하십시"
-"오."
+"http://filezilla-project.org 사이트를 방문하시면 최신 버전을 다운로드하실 수 "
+"있습니다."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:178
 msgid "Postal code:"
-msgstr ""
+msgstr "우편 번호:"
 
 #: ../../locales/../src/interface/sitemanager.cpp:1913
 #: ../../locales/../src/interface/sitemanager.cpp:2131
@@ -5270,11 +5262,11 @@ msgstr "기 정의된 사이트"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:704
 msgid "Preserving file timestamps"
-msgstr "파일 시간 보호"
+msgstr "파일 시간 보존"
 
 #: ../../locales/../src/interface/settings/optionspage_themes.cpp:223
 msgid "Preview:"
-msgstr "미리보기"
+msgstr "미리 보기:"
 
 #: ../../locales/../src/engine/tlssocket.cpp:920
 msgid "Primary connection and data connection certificates don't match."
@@ -5350,7 +5342,7 @@ msgstr "공인 키 인증"
 
 #: resources.h:8 resources.h:32
 msgid "Public key algorithm:"
-msgstr "공인 키 알고리즘:"
+msgstr "공인 키 앨거리듬:"
 
 #: resources.h:141
 msgid "Public permissions"
@@ -5360,18 +5352,18 @@ msgstr "공개 권한"
 msgid "Queue has been fully processed"
 msgstr "대기열이 전부 처리되었음"
 
-#: ../../locales/../src/interface/statusbar.cpp:451
-#, fuzzy, c-format
+#: ../../locales/../src/interface/statusbar.cpp:458
+#, c-format
 msgid "Queue: %s MiB"
-msgstr "대기열: %s%d MiB"
+msgstr "대기열: %s MB"
 
-#: ../../locales/../src/interface/statusbar.cpp:381
-#, fuzzy, c-format
+#: ../../locales/../src/interface/statusbar.cpp:388
+#, c-format
 msgid "Queue: %s%s"
-msgstr "대기열: %s%d %c"
+msgstr "대기열: %s%s"
 
-#: ../../locales/../src/interface/statusbar.cpp:377
-#: ../../locales/../src/interface/statusbar.cpp:442
+#: ../../locales/../src/interface/statusbar.cpp:384
+#: ../../locales/../src/interface/statusbar.cpp:449
 msgid "Queue: empty"
 msgstr "대기열: 비었음"
 
@@ -5439,7 +5431,7 @@ msgstr[0] "정말 %d 디렉터리 및 그 하위 내용을 삭제하시겠습니
 #, c-format
 msgid "Really delete %d file?"
 msgid_plural "Really delete %d files?"
-msgstr[0] "정말 %d 파일을 삭제하시겠습니까?"
+msgstr[0] "정말 파일 %d개를 삭제하시겠습니까?"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1662
 #: ../../locales/../src/interface/search.cpp:1051
@@ -5476,7 +5468,7 @@ msgid ""
 "If you continue, your connection will be disconnected."
 msgstr ""
 "서버에 연결된 후에는 재연결 정보를 비울 수 없습니다.\n"
-"계속 하면, 연결이 끊깁니다."
+"계속 하면, 연결이 종료됩니다."
 
 #: resources.h:735
 msgid "Reconnection settings"
@@ -5511,7 +5503,7 @@ msgstr "리모트 파일"
 #: ../../locales/../src/interface/search.cpp:718
 #: ../../locales/../src/interface/search.cpp:724
 msgid "Remote file search"
-msgstr "리모트 파일"
+msgstr "리모트 파일 검색"
 
 #: resources.h:205
 msgid "Remote filters:"
@@ -5522,30 +5514,30 @@ msgid "Remote path"
 msgstr "리모트 경로"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:422
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Remote path cannot be parsed. Make sure it is a valid absolute path and is "
 "supported by the current site's servertype (%s)."
 msgstr ""
-"기본 리모트 경로를 해석할 수 없습니다. 올바르거나 선택된 서버 형식에 의해 지"
-"원되는지 확인하십시오."
+"리모트 경로를 해석할 수 없습니다. 해당 경로가 적절한 절대 경로인지, 현재 사이"
+"트의 서버 유형(%s)에서 지원하는 것인지 확인하십시오."
 
 #: ../../locales/../src/interface/sitemanager.cpp:1184
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Remote path cannot be parsed. Make sure it is a valid absolute path and is "
 "supported by the servertype (%s) selected on the parent site."
 msgstr ""
-"기본 리모트 경로를 해석할 수 없습니다. 올바르거나 선택된 서버 형식에 의해 지"
-"원되는지 확인하십시오."
+"리모트 경로를 해석할 수 없습니다. 해당 경로가 적절한 절대 경로인지, 상위 사이"
+"트에서 선택한 서버 유형(%s)에서 지원하는 것인지 확인하십시오."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:424
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:428
 #: ../../locales/../src/interface/sitemanager.cpp:1186
 msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
 msgstr ""
-"기본 리모트 경로를 해석할 수 없습니다. 올바르거나 선택된 서버 형식에 의해 지"
-"원되는지 확인하십시오."
+"리모트 경로를 해석할 수 없습니다. 해당 경로가 적절한 절대 경로인지 확인하십시"
+"오."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:346
 msgid "Remote path could not be parsed."
@@ -5553,7 +5545,7 @@ msgstr "리모트 경로를 해석할 수 없습니다."
 
 #: resources.h:444
 msgid "Remote path handling:"
-msgstr "리모트 경로:"
+msgstr "리모트 경로 처리:"
 
 #: resources.h:312
 msgid "Remote path:"
@@ -5592,7 +5584,7 @@ msgstr "'%s' -> '%s' 이름 바꾸기"
 
 #: resources.h:471
 msgid "Reporting bugs and feature requests"
-msgstr ""
+msgstr "버그 및 기능 요청 등록하기"
 
 #: resources.h:617 resources.h:620
 msgid "Reset and requeue selected files"
@@ -5602,11 +5594,11 @@ msgstr "선택된 파일 초기화"
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:497
 #, c-format
 msgid "Resolving address of %s"
-msgstr "%s 주소 해석 중"
+msgstr "%s 주소 해석"
 
 #: ../../locales/../src/interface/updatewizard.cpp:1159
 msgid "Resolving hostname"
-msgstr "호스트명 해석 중"
+msgstr "호스트명 해석"
 
 #: ../../locales/../src/engine/logging.cpp:215
 #: ../../locales/../src/interface/netconfwizard.cpp:395
@@ -5618,30 +5610,30 @@ msgstr "응답:"
 
 #: resources.h:438
 msgid "Results:"
-msgstr "시험 결과"
+msgstr "결과"
 
 #: resources.h:263 resources.h:273 resources.h:837 resources.h:846
 msgid "Resume file transfer"
-msgstr "리모트 파일"
+msgstr "파일 전송 재개"
 
 #: resources.h:852
 msgid ""
 "Resuming ASCII files can cause problems if server uses a different line "
 "ending format than the client."
 msgstr ""
-"서버가 클라이언트와 다른 라인 엔딩 형식을 사용하고 있다면 아스키 파일 이어받"
-"기는 문제를 일으킬 수 있습니다."
+"서버가 클라이언트와 다른 라인 엔딩 형식을 사용하는 경우 아스키 파일 전송 재개"
+"는 문제를 일으킬 수 있습니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1276
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:955
 msgid "Retrieving directory listing..."
-msgstr "디렉터리 목록 갱신 중..."
+msgstr "디렉터리 목록 조회..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3897
 #: ../../locales/../src/interface/netconfwizard.cpp:707
 #, c-format
 msgid "Retrieving external IP address from %s"
-msgstr "%s(으)로부터 외부 IP 주소 갱신"
+msgstr "%s에서 외부 IP 주소 조회"
 
 #: ../../locales/../src/engine/tlssocket.cpp:901
 msgid "Root certificate is not trusted"
@@ -5657,7 +5649,7 @@ msgstr "시스템 종료(&H)"
 
 #: resources.h:436
 msgid "S&top"
-msgstr "자동(&A)"
+msgstr "중지(&t)"
 
 #: resources.h:515
 msgid "S&ynchronized browsing"
@@ -5681,28 +5673,28 @@ msgstr "업로드할 파일 검사"
 
 #: resources.h:432
 msgid "Search &conditions:"
-msgstr "잘못된 크기"
+msgstr "검색 조건(&c):"
 
 #: resources.h:430
 msgid "Search &directory:"
-msgstr "디렉터리 입력"
+msgstr "검색 디렉터리(&d):"
 
 #: resources.h:994
 msgid "Search for files recursively."
-msgstr ""
+msgstr "하위 경로까지 파일 검색."
 
 #: resources.h:539
 msgid "Search server for files"
-msgstr "필터에 없는 모든 파일(&O):"
+msgstr "서버에서 파일 검색"
 
-#: ../../locales/../src/interface/statusbar.cpp:518
+#: ../../locales/../src/interface/statusbar.cpp:525
 msgid "Security information"
 msgstr "보안 정보"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:564
 #: ../../locales/../src/interface/netconfwizard.cpp:577
 msgid "See also: http://wiki.filezilla-project.org/Network_Configuration"
-msgstr "기본값: http://ip.filezilla-project.org/ip.php"
+msgstr "참고: http://wiki.filezilla-project.org/Network_Configuration"
 
 #: resources.h:374
 msgid "Sele&ct server"
@@ -5719,7 +5711,7 @@ msgstr "테마 선택"
 #: resources.h:830
 msgid ""
 "Select default action to perform if target file of a transfer already exists."
-msgstr "전송 중인 타겟 파일이 이미 존재할 경우 기본 동작을 선택하십시오."
+msgstr "전송 대상 파일이 이미 존재할 경우 수행할 기본 동작을 선택하십시오."
 
 #: ../../locales/../src/interface/edithandler.cpp:1693
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:162
@@ -5731,8 +5723,8 @@ msgid ""
 "Select default file exists action if the target file already exists. This "
 "selection is valid only for the current session."
 msgstr ""
-"타겟이 이미 존재할 경우 중복 파일 동작을 선택하십시오. 이 선택은 현재 세션에"
-"서만 유효합니다."
+"대상 파일이 이미 존재할 경우 중복 파일에 대한 기본 동작을 선택하십시오. 이 선"
+"택은 현재 세션에서만 유효합니다."
 
 #: ../../locales/../src/interface/defaultfileexistsdlg.cpp:16
 msgid ""
@@ -5780,16 +5772,15 @@ msgstr "변환될 파일명 선택"
 #: resources.h:420
 #, no-c-format
 msgid "Select how these files should be opened."
-msgstr "선택된 파일이 이미 열려 있습니다."
+msgstr "파일 열기 방법을 선택해주세요."
 
 #: ../../locales/../src/interface/search.cpp:831
-#, fuzzy
 msgid "Select target download directory"
-msgstr "%d개 디렉터리 선택됨."
+msgstr "대상 다운로드 디렉터리 선택"
 
 #: ../../locales/../src/interface/manual_transfer.cpp:241
 msgid "Select target filename"
-msgstr "타겟 파일이름 선택"
+msgstr "대상 파일명 선택"
 
 #: resources.h:290
 msgid "Select the categories to export:"
@@ -5805,44 +5796,44 @@ msgid "Selected %d directory with its contents for transfer."
 msgid_plural "Selected %d directories with their contents for transfer."
 msgstr[0] "%d 디렉터리 및 그 내용을 전송하도록 선택함."
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:47
+#: ../../locales/../src/interface/filelist_statusbar.cpp:51
 #, c-format
 msgid "Selected %d directory."
 msgid_plural "Selected %d directories."
-msgstr[0] "%d개 디렉터리 선택됨."
+msgstr[0] "디렉터리 %d개 선택됨."
 
 #: ../../locales/../src/interface/search.cpp:796
-#, fuzzy, c-format
+#, c-format
 msgid "Selected %d file for transfer."
 msgid_plural "Selected %d files for transfer."
-msgstr[0] "%d개 파일 선택됨. 총 크기: %s"
+msgstr[0] "전송할 파일 %d개 선택."
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:54
+#: ../../locales/../src/interface/filelist_statusbar.cpp:58
 #, c-format
 msgid "Selected %d file. Total size: %s"
 msgid_plural "Selected %d files. Total size: %s"
-msgstr[0] "%d개 파일 선택됨. 총 크기: %s"
+msgstr[0] "파일 %d개 선택됨. 총 크기: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:52
+#: ../../locales/../src/interface/filelist_statusbar.cpp:56
 #, c-format
 msgid "Selected %d file. Total size: At least %s"
 msgid_plural "Selected %d files. Total size: At least %s"
-msgstr[0] "%d개 파일 선택됨. 총 크기: 최소 %s"
+msgstr[0] "파일 %d개 선택됨. 총 크기: 최소 %s"
 
 #: ../../locales/../src/interface/search.cpp:803
-#, fuzzy, c-format
+#, c-format
 msgid "Selected %s and %s for transfer."
-msgstr "%s 와(과) %s 선택됨. 총 크기: %s"
+msgstr "%s, %s 선택, 전송 예정."
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:64
+#: ../../locales/../src/interface/filelist_statusbar.cpp:68
 #, c-format
 msgid "Selected %s and %s. Total size: %s"
-msgstr "%s 와(과) %s 선택됨. 총 크기: %s"
+msgstr "%s, %s 선택. 총 크기: %s"
 
-#: ../../locales/../src/interface/filelist_statusbar.cpp:62
+#: ../../locales/../src/interface/filelist_statusbar.cpp:66
 #, c-format
 msgid "Selected %s and %s. Total size: At least %s"
-msgstr "%s 와(과) %s 선택됨. 총 크기: 최소 %s"
+msgstr "%s, %s 선택. 총 크기: 최소 %s"
 
 #: ../../locales/../src/interface/edithandler.cpp:1634
 #: ../../locales/../src/interface/edithandler.cpp:1713
@@ -5898,7 +5889,7 @@ msgstr "일련 번호:"
 
 #: resources.h:81 resources.h:88
 msgid "Server &Type:"
-msgstr "서버 종류(&T)"
+msgstr "서버 종류(&T):"
 
 #: ../../locales/../src/engine/tlssocket.cpp:727
 msgid "Server did not properly shut down TLS connection"
@@ -5907,7 +5898,7 @@ msgstr ""
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4296
 #, c-format
 msgid "Server does not support resume of files > %d GB."
-msgstr "서버가 %d GB 이상의 파일의 이어서 전송을 지원하지 않습니다."
+msgstr "서버가 %d GB 이상의 파일의 전송 재개를 지원하지 않습니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4292
 #, c-format
@@ -5915,16 +5906,16 @@ msgid ""
 "Server does not support resume of files > %d GB. End transfer since file "
 "sizes match."
 msgstr ""
-"서버가 %d GB 이상의 파일의 이어서 전송을 지원하지 않습니다. 파일 전송을 종료"
-"합니다."
+"서버가 %d GB가 넘는 파일의 전송 재개를 지원하지 않습니다. 해당 파일 크기가 되"
+"어 전송을 종료합니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2528
 msgid "Server does not support resume of files > 2GB."
-msgstr "서버가 2GB 이상의 파일의 이어서 전송을 지원하지 않습니다."
+msgstr "서버가 2GB가 넘는 파일의 전송 재개를 지원하지 않습니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2523
 msgid "Server does not support resume of files > 4GB."
-msgstr "서버가 4GB 이상의 파일의 이어서 전송을 지원하지 않습니다."
+msgstr "서버가 4GB가 넘는 파일의 전송 재개를 지원하지 않습니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4307
 #, c-format
@@ -5932,8 +5923,8 @@ msgid ""
 "Server may not support resume of files > %d GB. End transfer since file "
 "sizes match."
 msgstr ""
-"서버가 %dGB 이상의 파일의 이어서 전송을 지원하지 않을 수 있습니다. 파일 전송"
-"을 종료합니다."
+"서버가 %dGB가 넘는 파일의 전송 재개를 지원하지 않을 수 있습니다. 해당 파일 크"
+"기가 되어 전송을 종료합니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:841
 msgid ""
@@ -5946,8 +5937,8 @@ msgid ""
 "Server sent an additional login prompt. You need to use the interactive "
 "login type."
 msgstr ""
-"서버가 추가적인 로그인 프롬프트를 보냈습니다. 양방향 로그인 형식을 사용해야 "
-"합니다."
+"서버가 추가적인 로그인 프롬프트를 보냈습니다. 인터랙티브 로그인 유형을 사용해"
+"야 합니다."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3839
 msgid "Server sent passive reply with unroutable address. Passive mode failed."
@@ -5973,7 +5964,7 @@ msgstr ""
 #: ../../locales/../src/interface/netconfwizard.cpp:510
 #: ../../locales/../src/interface/netconfwizard.cpp:521
 msgid "Server sent unexpected reply."
-msgstr "서버가 잘못된 응답을 보냈습니다."
+msgstr "서버가 예기치 않은 응답을 보냈습니다."
 
 #: resources.h:350
 msgid "Server to client MAC:"
@@ -5989,7 +5980,7 @@ msgstr "서버 종류(&T)"
 
 #: ../../locales/../src/interface/queue.cpp:1184
 msgid "Server/Local file"
-msgstr "서버 / 로컬 파일"
+msgstr "서버/로컬 파일"
 
 #: resources.h:310 resources.h:372
 msgid "Server:"
@@ -6019,7 +6010,7 @@ msgstr "설정"
 
 #: resources.h:967
 msgid "Show &raw directory listing"
-msgstr "디렉터리 목록의 원래 내용 표시(&R)"
+msgstr "디렉터리 목록의 원시 데이터 보임(&R)"
 
 #: resources.h:550
 msgid "Show &welcome dialog..."
@@ -6031,7 +6022,7 @@ msgstr "양쪽 디렉터리 트리를 표시하고 비교를 계속 하시겠습
 
 #: ../../locales/../src/interface/cmdline.cpp:6
 msgid "Shows this help dialog"
-msgstr "이 도움말 대화 창 보이기"
+msgstr "이 도움말 대화 창 보기"
 
 #: ../../locales/../src/interface/QueueView.cpp:3119
 msgid "Shutdown now"
@@ -6111,7 +6102,7 @@ msgstr "알 수 없는 크기"
 
 #: resources.h:265 resources.h:275 resources.h:839 resources.h:848
 msgid "Skip file"
-msgstr "파일 열기(&P)"
+msgstr "파일 건너뜀"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1270
 #: ../../locales/../src/engine/ControlSocket.cpp:1289
@@ -6119,7 +6110,7 @@ msgstr "파일 열기(&P)"
 #: ../../locales/../src/engine/ControlSocket.cpp:1380
 #, c-format
 msgid "Skipping download of %s"
-msgstr "%s 다운로드 취소 중"
+msgstr "%s 다운로드 건너뛰기"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1274
 #: ../../locales/../src/engine/ControlSocket.cpp:1293
@@ -6131,19 +6122,19 @@ msgstr "%s 업로드 취소 중"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1131
 msgid "Some files are still being edited or need to be uploaded."
-msgstr "일부 파일은 아직 편집 중이거나 업로드 되어야 합니다."
+msgstr "아직 편집 중이거나 업로드할 파일이 남아 있습니다."
 
 #: resources.h:682 resources.h:758
 msgid ""
 "Some misconfigured remote servers which are behind a router, may reply with "
 "their local IP address."
 msgstr ""
-"라우터 후방의 일부 잘못 설정된 리모트 서버가 로컬 IP 주소를 응답할 수 있습니"
-"다."
+"간혹 잘못 구성된 리모트 서버가 라우터에 연동돼 있을 때 그 응답이 서버의 로컬 "
+"IP 주소일 수도 있습니다."
 
 #: resources.h:907
 msgid "Sort directories inline"
-msgstr "디렉터리 인라인 정렬"
+msgstr "디렉터리 함께 정렬"
 
 #: ../../locales/../src/interface/filelistctrl.cpp:530
 msgid "Sort order cannot be changed if comparing directories."
@@ -6159,19 +6150,19 @@ msgstr "정렬 모드(&M):"
 
 #: ../../locales/../src/interface/RemoteTreeView.cpp:100
 msgid "Source and path of the drop operation are identical"
-msgstr "드롭 동작의 소스 및 경로는 동일합니다."
+msgstr "끌어다놓기 동작의 원본과 경로가 동일함"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:315
 msgid "Source and target file may not be the same"
-msgstr "소스 및 타겟 파일이 동일하지 않은 것 같습니다."
+msgstr "원본 및 대상 파일이 동일하지 않은 것 같습니다."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:139
 msgid "Source and target of the drop operation are identical"
-msgstr "드롭 동작의 소스 및 타겟은 동일합니다."
+msgstr "끌어다놓기 동작의 원본과 대상이 동일합니다."
 
 #: resources.h:49
 msgid "Source file:"
-msgstr "소스 파일:"
+msgstr "원본 파일:"
 
 #: resources.h:488 ../../locales/../src/interface/speedlimits_dialog.cpp:54
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:62
@@ -6182,13 +6173,13 @@ msgstr "속도 제한"
 msgid "Speed limits"
 msgstr "속도 제한"
 
-#: ../../locales/../src/interface/statusbar.cpp:584
+#: ../../locales/../src/interface/statusbar.cpp:591
 msgid "Speed limits are disabled, click to change."
-msgstr ""
+msgstr "속도 제한은 중지돼 있습니다. 변경하려면 클릭하세요."
 
-#: ../../locales/../src/interface/statusbar.cpp:588
+#: ../../locales/../src/interface/statusbar.cpp:595
 msgid "Speed limits are enabled, click to change."
-msgstr ""
+msgstr "속도 제한이 사용 중입니다. 변경하려면 클릭하세요."
 
 #: resources.h:390
 msgid "Start transfer &immediately"
@@ -6202,13 +6193,13 @@ msgstr "열려진 사이트 관리자로 시작"
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
 #, c-format
 msgid "Starting download of %s"
-msgstr "%s 다운로드 시작 중"
+msgstr "%s 다운로드 시작"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2213
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1637
 #, c-format
 msgid "Starting upload of %s"
-msgstr "%s 업로드 시작 중"
+msgstr "%s 업로드 시작"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:176
 msgid "State or province:"
@@ -6291,15 +6282,15 @@ msgstr "시스템"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:332
 msgid "TLS/SSL connection established, sending HTTP request"
-msgstr "연결 완료. HTTP 요청 보내는 중..."
+msgstr "TLS/SSL 연결 수립, HTTP 요청 보냄..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:403
 msgid "TLS/SSL connection established, waiting for welcome message..."
-msgstr "TLS/SSL 연결 완료. 환영 메시지를 기다리는 중..."
+msgstr "TLS/SSL 연결 수립, 환영 메시지 기다림..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:407
 msgid "TLS/SSL connection established."
-msgstr "TLS/SSL 연결 완료."
+msgstr "TLS/SSL 연결 수립."
 
 #: ../../locales/../src/engine/proxy.cpp:445
 msgid "TTL expired"
@@ -6307,11 +6298,11 @@ msgstr "TTL 만기됨"
 
 #: resources.h:47
 msgid "Target file already exists"
-msgstr "타겟 파일이 이미 존재함"
+msgstr "대상 파일이 이미 존재함"
 
 #: resources.h:53
 msgid "Target file:"
-msgstr "타겟 파일:"
+msgstr "대상 파일:"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:1873
 msgid "Target filename already exists, really continue?"
@@ -6323,7 +6314,7 @@ msgstr "시험 결과"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4313
 msgid "Testing resume capabilities of server"
-msgstr "서버의 이어서 전송 여부 검사"
+msgstr "서버의 전송 재개 기능 여부 시험"
 
 #: ../../locales/../src/interface/sitemanager.cpp:312
 msgid ""
@@ -6355,13 +6346,13 @@ msgstr "사용자가 입력한 주소: %s"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:812
 #: ../../locales/../src/interface/sitemanager.cpp:2991
 msgid "The bookmark could not be added."
-msgstr "리모트 경로를 해석할 수 없습니다."
+msgstr "북마크를 추가하지 못했습니다."
 
 #: ../../locales/../src/interface/sitemanager.cpp:3078
 msgid "The bookmarks could not be cleared."
-msgstr "리모트 경로를 해석할 수 없습니다."
+msgstr "북마크를 비우지 못했습니다."
 
-#: ../../locales/../src/interface/statusbar.cpp:480
+#: ../../locales/../src/interface/statusbar.cpp:487
 msgid "The connection is encrypted. Click icon for details."
 msgstr "연결이 암호화 되었습니다. 상세 정보는 아이콘을 클릭하십시오."
 
@@ -6388,7 +6379,7 @@ msgstr "입력된 필터명이 이미 존재합니다."
 #: ../../locales/../src/interface/settings/optionspage_filetype.cpp:160
 #, c-format
 msgid "The extension '%s' does already exist in the list"
-msgstr "'%s' 확장자가 이미 존재함"
+msgstr "'%s' 확장자명이 이미 존재함"
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:246
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:253
@@ -6413,12 +6404,12 @@ msgstr ""
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:222
 #, c-format
 msgid "The file '%s' could not be loaded or does not contain a private key."
-msgstr "'%s' 파일은 열 수 없거나 개인 키를 가지고 있지 않습니다."
+msgstr "'%s' 파일은 열지 못하거나 개인 키가 들어있지 않습니다."
 
 #: ../../locales/../src/interface/xmlfunctions.cpp:60
 #, c-format
 msgid "The file '%s' could not be loaded."
-msgstr "'%s' 파일은 열 수 없거나 개인 키를 가지고 있지 않습니다."
+msgstr "'%s' 파일을 열지 못했습니다."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2057
 #: ../../locales/../src/interface/LocalListView.cpp:2189
@@ -6428,8 +6419,8 @@ msgid ""
 "The file '%s' could not be opened:\n"
 "No program has been associated on your system with this file type."
 msgstr ""
-"'%s' 파일을 열 수 없음: \n"
-"이 파일 형식에 연결된 프로그램이 없습니다."
+"'%s' 파일을 열 수 없음:\n"
+"이 파일 유형에 연결된 프로그램이 없습니다."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2102
 #: ../../locales/../src/interface/LocalListView.cpp:2202
@@ -6438,7 +6429,7 @@ msgid ""
 "The file '%s' could not be opened:\n"
 "The associated command failed"
 msgstr ""
-"'%s' 파일을 열 수 없음: \n"
+"'%s' 파일을 열 수 없음:\n"
 "연결된 명령어 실패"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:268
@@ -6471,12 +6462,12 @@ msgid ""
 "Would you like to convert it into an unprotected file?"
 msgstr ""
 "'%s' 파일은 비밀번호로 보호되어 있습니다. 비밀번호로 보호된 키 파일은 "
-"FileZilla에서 아직 지원되지 않습니다.\n"
-"지원되는 보호되지 않는 형식으로 변환하시겠습니까?"
+"FileZilla에서 아직 지원하지 않습니다.\n"
+"보호되지 않는 파일로 변환하시겠습니까?"
 
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:144
 msgid "The file selected as default editor does not exist."
-msgstr "선택된 편집기는 존재하지 않음"
+msgstr "기본 편집기로 선택한 파일이 존재하지 않습니다."
 
 #: ../../locales/../src/interface/import.cpp:96
 msgid ""
@@ -6494,7 +6485,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/listctrlex.cpp:734
 msgid "The filename column can neither be hidden nor moved."
-msgstr "파일명 열은 숨기거나 이동될 수 없습니다."
+msgstr "파일명 열은 숨기거나 이동할 수 없습니다."
 
 #: ../../locales/../src/interface/listctrlex.cpp:784
 msgid "The filename column cannot be hidden."
@@ -6516,11 +6507,11 @@ msgstr "아래 파일들이 현재 편집 중임:"
 
 #: resources.h:462
 msgid "The free open source FTP solution"
-msgstr ""
+msgstr "자유 오픈 소스 FTP 솔루션"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:290
 msgid "The global bookmarks could not be saved."
-msgstr "리모트 경로를 해석할 수 없습니다."
+msgstr "전역 북마크를 저장하지 못했습니다."
 
 #: resources.h:965
 msgid ""
@@ -6533,7 +6524,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/settings/optionspage_logging.cpp:78
 msgid "The limit needs to be between 1 and 2000 MiB"
-msgstr "임계치 비교에는 0 ~ 1440분의 값을 입력해야 합니다."
+msgstr "제한 값은 1 ~ 2000 MB 사이여야 합니다."
 
 #: ../../locales/../src/interface/state.cpp:275
 #, c-format
@@ -6564,7 +6555,7 @@ msgstr ""
 msgid ""
 "The most recent version has been downloaded. Please install it the same way "
 "you installed this version."
-msgstr "최신 버전이 다운로드 되었습니다. 이 버전을 설치하십시오."
+msgstr "최신 버전이 다운로드됐습니다. 이전 버전과 같은 방법으로 설치하십시오."
 
 #: ../../locales/../src/interface/QueueView.cpp:1930
 #: ../../locales/../src/interface/QueueView.cpp:1957
@@ -6612,15 +6603,15 @@ msgstr ""
 
 #: ../../locales/../src/interface/sitemanager.cpp:2871
 msgid "The server could not be added."
-msgstr "파일명 열은 숨길 수 없습니다."
+msgstr "서버를 추가하지 못했습니다."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:574
 msgid "The server sent an unexpected or unrecognized reply."
-msgstr "서버가 알 수 없는 응답을 보냈습니다."
+msgstr "서버가 예기치 않았거나 인식할 수 없는 응답을 보냈습니다."
 
 #: resources.h:105
 msgid "The server uses following charset encoding for filenames:"
-msgstr "서버가 파일명을 위해 다음의 문자셋 인코딩을 사용:"
+msgstr "서버에서 파일명에 사용하는 문자셋 인코딩:"
 
 #: resources.h:2
 msgid ""
@@ -6638,9 +6629,8 @@ msgid ""
 "actually trying to connect to another computer pretending to be the server."
 msgstr ""
 "서버의 호스트 키가 저장된 키와 일치하지 않습니다. 이는 관리자가 호스트 키를 "
-"바꾸었거나, 사용자가 실제로 서버를 사칭하는 다른 컴퓨터에 접속을 시도한 경우"
-"입니다.\n"
-"만약 호스트 키가 변경되지 않았으면, 서버 관리자에게 문의하십시오."
+"바꿨거나 사용자가 실제로는 서버를 사칭하는 다른 컴퓨터에 연결하는 것입니다.\n"
+"호스트 키 변경에 해당하는 경우가 아니라면 서버 관리자에게 문의하십시오."
 
 #: resources.h:174
 msgid ""
@@ -6670,7 +6660,7 @@ msgid ""
 "The target file already exists.\n"
 "Please choose an action."
 msgstr ""
-"타겟 파일이 이미 존재합니다.\n"
+"대상 파일이 이미 존재합니다.\n"
 "동작을 선택하십시오."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:846
@@ -6700,8 +6690,8 @@ msgid ""
 "This only works if you are not behind a router, else your system would just "
 "return your internal address."
 msgstr ""
-"이 기능은 라우터 후단이 아닐 경우에만 동작합니다. 그렇지 않으면, 시스템은 단"
-"지 사용자의 내부 주소만 반환할 것입니다."
+"이 기능은 라우터에 연동되지 않은 경우만 작동합니다. 그렇지 않으면 사용자의 내"
+"부 주소밖에 알아내지 못합니다."
 
 #: resources.h:665
 msgid ""
@@ -6730,7 +6720,7 @@ msgstr "시간 초과"
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
 "seconds."
-msgstr "시간대 옵셋: 서버: %d 초. 로컬: %d 초. 시간차: %d 초."
+msgstr "시간대 오차: 서버: %d 초. 로컬: %d 초. 차이: %d 초."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:174
 msgid "Title:"
@@ -6738,7 +6728,7 @@ msgstr "제목:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:2322
 msgid "To compare directories, both file lists have to be aligned."
-msgstr "디렉터리를 비교하려면, 양쪽 파일 목록이 정렬되어야 합니다."
+msgstr "디렉터리를 비교하려면 양쪽 파일 목록이 정렬되어야 합니다."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:2323
 msgid "To do this, the directory trees need to be both shown or both hidden."
@@ -6759,6 +6749,12 @@ msgid ""
 "Green: File is newer than the unmarked file on other side\n"
 "Red: File sizes different"
 msgstr ""
+"디렉터리 비교 여부 설정. 오른쪽 클릭하면 비교 모드를 변경합니다.\n"
+"\n"
+"색:\n"
+"노란색: 파일이 한쪽에만 존재함\n"
+"녹색: 파일이 반대쪽에 표시되지 않은 파일보다 새 파일임\n"
+"빨간색: 파일 크기가 다름"
 
 #: resources.h:992
 msgid ""
@@ -6766,29 +6762,29 @@ msgid ""
 "If enabled, navigating the local directory hierarchy will also change the "
 "directory on the server accordingly and vice versa."
 msgstr ""
-"탐색 동기화 기능 전환.\n"
-"작동하면 로컬 디렉터리 간에 이동할 때 그에 따라 서버의 디렉터리도 이동하게 되"
+"탐색 동기화 여부 설정.\n"
+"설정하면 로컬 디렉터리 간에 이동할 때 그에 따라 서버의 디렉터리도 이동하게 되"
 "며 그 반대도 마찬가지입니다."
 
 #: resources.h:980 resources.h:981
 msgid "Toggles processing of the transfer queue"
-msgstr "전송 대기열 처리 전환"
+msgstr "전송 대기열 처리 여부"
 
 #: resources.h:972 resources.h:973
 msgid "Toggles the display of the local directory tree"
-msgstr "로컬 디렉터리 트리 표시 전환"
+msgstr "로컬 디렉터리 트리 표시 여부"
 
 #: resources.h:970 resources.h:971
 msgid "Toggles the display of the message log"
-msgstr "메시지 로그 표시 전환"
+msgstr "메시지 로그 표시 여부"
 
 #: resources.h:974 resources.h:975
 msgid "Toggles the display of the remote directory tree"
-msgstr "서버 디렉터리 트리 표시 전환"
+msgstr "서버 디렉터리 트리 표시 여부"
 
 #: resources.h:976 resources.h:977
 msgid "Toggles the display of the transfer queue"
-msgstr "전송 대기열 표시 전환"
+msgstr "전송 대기열 표시 여부"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:605
 msgid "Too long header line"
@@ -6814,7 +6810,7 @@ msgstr "전송 방향(&D)"
 
 #: resources.h:525
 msgid "Transfer &type"
-msgstr "전송 형식(&T)"
+msgstr "전송 유형(&T)"
 
 #: resources.h:736
 msgid "Transfer Mode"
@@ -6822,7 +6818,7 @@ msgstr "전송 모드"
 
 #: resources.h:869
 msgid "Transfer Queue"
-msgstr "전송 대기열(&T)"
+msgstr "전송 대기열"
 
 #: resources.h:97
 msgid "Transfer Settings"
@@ -6830,9 +6826,9 @@ msgstr "전송 설정"
 
 #: ../../locales/../src/engine/transfersocket.cpp:493
 #: ../../locales/../src/engine/transfersocket.cpp:517
-#, fuzzy, c-format
+#, c-format
 msgid "Transfer connection interrupted: %s"
-msgstr "사용자에 의해 접속 시도 중단됨"
+msgstr "전송 연결 장애: %s"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:621
 msgid "Transferred data got tainted."
@@ -6854,11 +6850,11 @@ msgstr "전송 완료"
 
 #: resources.h:827
 msgid "Treat files &without extension as ASCII file"
-msgstr "확장자가 없으면 아스키 파일로 취급(&W)"
+msgstr "확장자명이 없으면 아스키 파일로 취급(&W)"
 
 #: resources.h:823
 msgid "Treat the &following filetypes as ASCII files:"
-msgstr "다음의 확장자를 가진 파일은 아스키 파일로 취급(&F)"
+msgstr "다음의 파일 유형을 아스키 파일로 취급(&F)"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:875
 msgid "Trust changed Hostkey: "
@@ -6882,15 +6878,15 @@ msgstr "이 호스트를 신뢰하고 연결에 사용하시겠습니까?"
 
 #: resources.h:395 ../../locales/../src/interface/edithandler.cpp:1222
 msgid "Type"
-msgstr "형식"
+msgstr "유형"
 
 #: resources.h:762
 msgid "Type of FTP Proxy:"
-msgstr "FTP 프록시 형식:"
+msgstr "FTP 프록시 유형:"
 
 #: resources.h:787
 msgid "Type of generic proxy:"
-msgstr "FTP 프록시 형식:"
+msgstr "일반 프록시 유형:"
 
 #: resources.h:330
 msgid "U&pload"
@@ -6903,7 +6899,7 @@ msgstr "업로드 제한(&P):"
 
 #: resources.h:931
 msgid "U&se filetype associations if available"
-msgstr "가능한 경우 파일 연결 형식 사용(&S)"
+msgstr "가능한 경우 파일 연동 체계 사용(&S)"
 
 #: resources.h:884
 msgid "U&se system defaults"
@@ -6929,12 +6925,12 @@ msgstr "알 수 없음"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:698
 msgid "Unknown FTP proxy type, cannot generate login sequence."
-msgstr "FTP 프록시 형식을 알 수 없습니다. 로그인 할 수 없습니다."
+msgstr "FTP 프록시 유형을 알 수 없습니다. 로그인 할 수 없습니다."
 
 #: ../../locales/../src/engine/proxy.cpp:368
 #, c-format
 msgid "Unknown SOCKS protocol version: %d"
-msgstr ""
+msgstr "알 수 없는 SOCKS 프로토콜 버전: %d"
 
 #: resources.h:1
 msgid "Unknown certificate"
@@ -7009,14 +7005,14 @@ msgstr "업로드"
 msgid "Upload failed"
 msgstr "업로드 실패"
 
-#: ../../locales/../src/interface/statusbar.cpp:596
-#, fuzzy, c-format
+#: ../../locales/../src/interface/statusbar.cpp:603
+#, c-format
 msgid "Upload limit: %s/s"
-msgstr "업로드 제한(&P):"
+msgstr "업로드 제한: %s/s"
 
-#: ../../locales/../src/interface/statusbar.cpp:598
+#: ../../locales/../src/interface/statusbar.cpp:605
 msgid "Upload limit: none"
-msgstr "업로드 제한(&P):"
+msgstr "업로드 제한: 없음"
 
 #: resources.h:642
 msgid "Upload selected directory"
@@ -7072,7 +7068,7 @@ msgstr "서버가 UTF-8을 지원하면 사용, 아니면 로컬 문자셋 사�
 
 #: resources.h:257 resources.h:267
 msgid "Use default action"
-msgstr "기본값 사용(&D)"
+msgstr "기본 동작 사용(&D)"
 
 #: resources.h:370
 msgid "Use server currently connected to"
@@ -7102,8 +7098,7 @@ msgstr "서버의 외부 IP 주소 사용"
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
-"만약 사용자가 라우터를 사용하고 고정 IP 주소를 가지고 있으면, 이것을 사용하십"
-"시오."
+"라우터에 연동되어 있고 고정 외부 IP 주소가 있는 경우 여기에 입력하세요."
 
 #: resources.h:692
 msgid ""
@@ -7112,8 +7107,8 @@ msgid ""
 "time. Only the version of FileZilla you're using is submitted to the server."
 msgstr ""
 "유동 IP 주소인 경우 이 설정을 사용하십시오. FileZilla는 사용자가 처음 능동형 "
-"모드를 사용할 때 세션 당 한번만 위 서버에 접속합니다. FileZilla의 버전만 서버"
-"로 제공됩니다."
+"모드를 사용할 때 세션 당 한번만 위 서버에 접속합니다. 서버로 제공되는 정보는 "
+"FileZilla의 버전뿐입니다."
 
 #: resources.h:121
 msgid "User:"
@@ -7140,11 +7135,11 @@ msgstr "이 마법사를 사용하면 FileZilla의 업데이트를 확인할 수
 
 #: resources.h:5 resources.h:29
 msgid "Valid from:"
-msgstr "다음으로부터 유효:"
+msgstr "유효 시작일:"
 
 #: resources.h:6 resources.h:30
 msgid "Valid to:"
-msgstr "다음에게 유효:"
+msgstr "유효 종료일:"
 
 #: ../../locales/../src/interface/cmdline.cpp:16
 msgid "Verbose log messages from wxWidgets"
@@ -7152,7 +7147,7 @@ msgstr "wxWidgets으로부터 상세 로그 메시지"
 
 #: ../../locales/../src/engine/tlssocket.cpp:1062
 msgid "Verifying certificate..."
-msgstr "인증서 검사 중..."
+msgstr "인증서 검증..."
 
 #: resources.h:168
 #, fuzzy
@@ -7169,7 +7164,7 @@ msgstr "숨김 설정 보기, 그러나 서버에 의해 지원되지 않음"
 
 #: resources.h:915
 msgid "View/Edit"
-msgstr "보기 / 편집"
+msgstr "보기/편집"
 
 #: resources.h:354
 msgid "Visible columns"
@@ -7193,11 +7188,11 @@ msgstr "비밀번호 대기 중"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:268
 msgid "Waiting for transfer to be cancelled"
-msgstr "전송 취소 대기 중"
+msgstr "전송이 취소되도록 기다림"
 
 #: ../../locales/../src/engine/engineprivate.cpp:203
 msgid "Waiting to retry..."
-msgstr "재시도 대기 중..."
+msgstr "재시도 대기..."
 
 #: ../../locales/../src/interface/FileZilla.cpp:308
 msgid ""
@@ -7241,12 +7236,12 @@ msgid ""
 "\n"
 "Do you really want to check for nightly builds?"
 msgstr ""
-"주의, 나이트 빌드 사용에 따른 책임은 사용자에게 있습니다.\n"
-"나이트 빌드에 관한 지원은 하지 않습니다.\n"
-"나이트 빌드는 제대로 작동하지 않을 수 있으며, 사용자 시스템에 손상을 줄 수 있"
+"주의: 야간 빌드 사용에 따른 책임은 사용자에게 있습니다.\n"
+"야간 빌드에 대한 지원은 하지 않습니다.\n"
+"야간 빌드는 제대로 작동하지 않을 수 있으며 사용자 시스템에 손상을 줄 수도 있"
 "습니다.\n"
 "\n"
-"나이트 빌드의 업데이트를 확인하시겠습니까?"
+"정말 야간 빌드 업데이트를 확인하시겠습니까?"
 
 #: resources.h:185
 msgid "Warning: Potential security breach!"
@@ -7254,7 +7249,7 @@ msgstr "경고: 잠재적인 보안 침투!"
 
 #: resources.h:474
 msgid "Welcome to FileZilla"
-msgstr "FileZilla 닫기"
+msgstr "FileZilla 안내"
 
 #: resources.h:463
 msgid "What's new"
@@ -7262,7 +7257,7 @@ msgstr "새 소식"
 
 #: resources.h:240
 msgid "What's new:"
-msgstr "새 소식"
+msgstr "새 소식:"
 
 #: resources.h:815
 msgid ""
@@ -7297,21 +7292,21 @@ msgstr "예"
 msgid ""
 "You are already using the most recent version of FileZilla. Please check "
 "again in future."
-msgstr "최신 버전의 FileZilla입니다. 다음에 다시 확인해 주십시오."
+msgstr "사용 중인 FileZilla는 이미 최신 버전입니다. 다음에 다시 확인해주세요."
 
 #: resources.h:472
 msgid "You can always open this dialog again through the help menu."
-msgstr ""
+msgstr "이 대화 창은 도움말 메뉴에서 다시 열 수 있습니다."
 
 #: ../../locales/../src/engine/server.cpp:49
 msgid "You can leave the port field empty to use the default port."
-msgstr ""
+msgstr "포트 필드를 비워두면 기본 포트를 사용합니다."
 
 #: resources.h:146
 msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
-msgstr "원본 파일의 권한을 유지하기 위해 어디에서라도 x를 사용할 수 있습니다."
+msgstr "원래 파일의 권한을 유지하려면 해당 자리에 x를 지정하면 됩니다."
 
 #: ../../locales/../src/interface/import.cpp:29
 msgid "You cannot import settings from FileZilla's own settings directory."
@@ -7322,6 +7317,8 @@ msgid ""
 "You cannot replace an invalid character with another invalid character. "
 "Please enter a character that is allowed in filenames."
 msgstr ""
+"비정상 글자를 다시 비정상 글자로 바꿀 수 없습니다. 파일명에 사용할 수 있는 글"
+"자를 입력해주세요."
 
 #: ../../locales/../src/interface/asyncrequestqueue.cpp:268
 msgid "You did not enter a new name for the file. Overwrite the file instead?"
@@ -7329,20 +7326,21 @@ msgstr "새 파일명을 입력하지 않았습니다. 덮어쓰시겠습니까?
 
 #: resources.h:453
 msgid "You have selected at least one symbolic link."
-msgstr ""
+msgstr "심볼릭 링크가 하나 이상 선택되었습니다."
 
 #: ../../locales/../src/interface/LocalListView.cpp:2036
 #: ../../locales/../src/interface/RemoteListView.cpp:2612
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
 "continue?"
-msgstr ""
+msgstr "10개 이상의 파일을 선택하여 편집하려고 합니다. 정말 편집하시겠습니까?"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2156
 msgid ""
 "You have selected more than 10 files or directories to open, do you really "
 "want to continue?"
 msgstr ""
+"10개 이상의 파일이나 디렉터리를 선택하여 열려고 합니다. 정말 여시겠습니까?"
 
 #: ../../locales/../src/interface/manual_transfer.cpp:417
 #: ../../locales/../src/interface/sitemanager.cpp:1040
@@ -7351,7 +7349,7 @@ msgstr "호스트명을 입력해야 합니다."
 
 #: ../../locales/../src/interface/search.cpp:843
 msgid "You have to enter a local directory."
-msgstr "유효한 IP 주소를 입력해야 합니다."
+msgstr "로컬 디렉터리를 입력해야 합니다."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:149
 #: ../../locales/../src/interface/settings/optionspage_connection_active.cpp:89
@@ -7360,7 +7358,7 @@ msgstr "유효한 IP 주소를 입력해야 합니다."
 
 #: ../../locales/../src/interface/search.cpp:849
 msgid "You have to enter a writable local directory."
-msgstr "유효한 IP 주소를 입력해야 합니다."
+msgstr "쓰기 가능한 로컬 디렉터리를 입력해야 합니다."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:504
 #: ../../locales/../src/interface/sitemanager.cpp:1137
@@ -7377,8 +7375,7 @@ msgid ""
 "You likely have a router or firewall which erroneously modified the "
 "transferred data."
 msgstr ""
-"사용자는 아마 전송되는 데이터에 오류를 일으키는 라우터나 방화벽을 가지고 있습"
-"니다."
+"사용자의 라우터나 방화벽이 전송 데이터를 수정하는 오류가 있는 것 같습니다."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:52
 msgid "You need to enter a name for the bookmark."
@@ -7390,7 +7387,7 @@ msgstr "로그 파일 이름을 입력해야 합니다."
 
 #: ../../locales/../src/interface/edithandler.cpp:1629
 msgid "You need to enter a properly quoted command."
-msgstr "프록시 호스트를 입력해야 합니다."
+msgstr "명령을 따옴표로 적절히 묶어 입력해야 합니다."
 
 #: ../../locales/../src/interface/settings/optionspage_ftpproxy.cpp:82
 #: ../../locales/../src/interface/settings/optionspage_proxy.cpp:70
@@ -7399,13 +7396,13 @@ msgstr "프록시 호스트를 입력해야 합니다."
 
 #: ../../locales/../src/interface/settings/optionspage_proxy.cpp:75
 msgid "You need to enter a proxy port in the range from 1 to 65535"
-msgstr "프록시 호스트를 입력해야 합니다."
+msgstr "프록시 포트는 1 ~ 65535 범위로 입력해야 합니다."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:438
 #: ../../locales/../src/interface/sitemanager.cpp:1197
 msgid "You need to enter at least one path, empty bookmarks are not supported."
-msgstr ""
+msgstr "경로 하나는 입력해야 합니다. 북마크를 공백으로 만들 수 없습니다."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:80
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:445
@@ -7451,11 +7448,11 @@ msgstr ""
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:68
 msgid "begins with"
-msgstr "다음과 시작"
+msgstr "다음으로 시작"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:66
 msgid "contains"
-msgstr "포함"
+msgstr "다음을 포함"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:71
 msgid "does not contain"
@@ -7487,8 +7484,9 @@ msgid ""
 "Please make sure this executable exists in the same directory as the main "
 "FileZilla executable."
 msgstr ""
-"fzsftp를 시작할 수 없음.\n"
-"이 실행 파일이 존재하는지 확인하십시오."
+"fzputtygen 시작 못함.\n"
+"이 실행 파일이 FileZilla 실행 파일과 같은 디렉터리 내에 존재하는지 확인하십시"
+"오."
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1558
 msgid "fzsftp could not be started"
@@ -7532,7 +7530,7 @@ msgstr "<"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:70
 msgid "matches regex"
-msgstr "정규표현식 일치"
+msgstr "정규식 일치"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:89
 msgid "owner executable"
