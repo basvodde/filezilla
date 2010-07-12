@@ -611,6 +611,20 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 #endif
 		m_MonthNamesMap[_T("des")] = 12;
 
+		//Lithuanian
+		m_MonthNamesMap[_T("sau")] = 1;
+		m_MonthNamesMap[_T("vas")] = 2;
+		m_MonthNamesMap[_T("kov")] = 3;
+		m_MonthNamesMap[_T("bal")] = 4;
+		m_MonthNamesMap[_T("geg")] = 5;
+		m_MonthNamesMap[_T("bir")] = 6;
+		m_MonthNamesMap[_T("lie")] = 7;
+		m_MonthNamesMap[_T("rgp")] = 8;
+		m_MonthNamesMap[_T("rgs")] = 9;
+		m_MonthNamesMap[_T("spa")] = 10;
+		m_MonthNamesMap[_T("lap")] = 11;
+		m_MonthNamesMap[_T("grd")] = 12;
+
 		//There are more languages and thus month
 		//names, but as long as nobody reports a
 		//problem, I won't add them, there are way
