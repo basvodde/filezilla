@@ -135,7 +135,6 @@ protected:
 	wxString Validate(unsigned int nID, wxString value);
 
 	void SetXmlValue(unsigned int nID, wxString value);
-	bool GetXmlValue(unsigned int nID, wxString &value, TiXmlElement* settings = 0);
 
 	// path is element path below document root, separated by slashes
 	void SetServer(wxString path, const CServer& server);
@@ -143,7 +142,10 @@ protected:
 
 	void CreateSettingsXmlElement();
 
-	void LoadGlobalDefaultOptions();
+	void GetNameOptionMap(std::map<std::string, int>& nameOptionMap) const; //Give me C++1x
+	void LoadOptions(const std::map<std::string, int>& nameOptionMap, TiXmlElement* settings = 0);
+	void LoadGlobalDefaultOptions(const std::map<std::string, int>& nameOptionMap);
+	void LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::string, int>& nameOptionMap);
 
 	void Save();
 

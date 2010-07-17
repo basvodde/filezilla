@@ -199,7 +199,17 @@ COptions::COptions()
 	else
 		CreateSettingsXmlElement();
 
-	LoadGlobalDefaultOptions();
+	std::map<std::string, int> nameOptionMap;
+	GetNameOptionMap(nameOptionMap);
+
+	LoadGlobalDefaultOptions(nameOptionMap);
+	LoadOptions(nameOptionMap);
+}
+
+void COptions::GetNameOptionMap(std::map<std::string, int>& nameOptionMap) const
+{
+	for (int i = 0; i < OPTIONS_NUM; ++i)
+		nameOptionMap.insert(std::make_pair(options[i].name, i));
 }
 
 COptions::~COptions()
@@ -221,16 +231,8 @@ int COptions::GetOptionVal(unsigned int nID)
 	if (m_optionsCache[nID].cached)
 		return m_optionsCache[nID].numValue;
 
-	wxString value;
-	long numValue = 0;
-	if (options[nID].internal || !GetXmlValue(nID, value))
-		options[nID].defaultValue.ToLong(&numValue);
-	else
-	{
-		value.ToLong(&numValue);
-		numValue = Validate(nID, numValue);
-	}
-
+	long numValue;
+	options[nID].defaultValue.ToLong(&numValue);
 	m_optionsCache[nID].numValue = numValue;
 	m_optionsCache[nID].cached = true;
 
@@ -248,16 +250,10 @@ wxString COptions::GetOption(unsigned int nID)
 	if (m_optionsCache[nID].cached)
 		return m_optionsCache[nID].strValue;
 
-	wxString value;
-	if (options[nID].internal || !GetXmlValue(nID, value))
-		value = options[nID].defaultValue;
-	else
-		Validate(nID, value);
-
-	m_optionsCache[nID].strValue = value;
+	m_optionsCache[nID].strValue = options[nID].defaultValue;
 	m_optionsCache[nID].cached = true;
 
-	return value;
+	return m_optionsCache[nID].strValue;
 }
 
 bool COptions::SetOption(unsigned int nID, int value)
@@ -400,9 +396,9 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 			if (strcmp(attribute, options[nID].name))
 				continue;
 
-			setting->RemoveAttribute("type");
+			//setting->RemoveAttribute("type");
 			setting->Clear();
-			setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
+			//setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
 			setting->LinkEndChild(new TiXmlText(utf8));
 
 			delete [] utf8;
@@ -412,61 +408,11 @@ void COptions::SetXmlValue(unsigned int nID, wxString value)
 	wxASSERT(options[nID].name[0]);
 	TiXmlElement *setting = new TiXmlElement("Setting");
 	setting->SetAttribute("name", options[nID].name);
-	setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
+	//setting->SetAttribute("type", (options[nID].type == string) ? "string" : "number");
 	setting->LinkEndChild(new TiXmlText(utf8));
 	settings->LinkEndChild(setting);
 
 	delete [] utf8;
-}
-
-bool COptions::GetXmlValue(unsigned int nID, wxString &value, TiXmlElement *settings /*=0*/)
-{
-	if (!settings)
-	{
-		if (!m_pXmlFile)
-			return false;
-
-		settings = m_pXmlFile->GetElement()->FirstChildElement("Settings");
-		if (!settings)
-		{
-			TiXmlNode *node = m_pXmlFile->GetElement()->LinkEndChild(new TiXmlElement("Settings"));
-			if (!node)
-				return false;
-			settings = node->ToElement();
-			if (!settings)
-				return false;
-		}
-	}
-
-	TiXmlNode *node = 0;
-	while ((node = settings->IterateChildren("Setting", node)))
-	{
-		TiXmlElement *setting = node->ToElement();
-		if (!setting)
-			continue;
-
-		const char *attribute = setting->Attribute("name");
-		if (!attribute)
-			continue;
-		if (strcmp(attribute, options[nID].name))
-			continue;
-
-		TiXmlNode *text = setting->FirstChild();
-		if (!text)
-		{
-			value.clear();
-			return true;
-		}
-
-		if (!text->ToText())
-			return false;
-
-		value = ConvLocal(text->Value());
-
-		return true;
-	}
-
-	return false;
 }
 
 int COptions::Validate(unsigned int nID, int value)
@@ -693,19 +639,79 @@ COptions* COptions::Get()
 
 void COptions::Import(TiXmlElement* pElement)
 {
-	for (int i = 0; i < OPTIONS_NUM; i++)
-	{
-		if (options[i].internal)
-			continue;
-		wxString value;
-		if (!GetXmlValue(i, value, pElement))
-			continue;
+	std::map<std::string, int> nameOptionMap;
+	GetNameOptionMap(nameOptionMap);
+	LoadOptions(nameOptionMap, pElement);
+}
 
-		SetOption(i, value);
+void COptions::LoadOptions(const std::map<std::string, int>& nameOptionMap, TiXmlElement* settings /*=0*/)
+{
+	if (!settings)
+	{
+		if (!m_pXmlFile)
+			return;
+
+		settings = m_pXmlFile->GetElement()->FirstChildElement("Settings");
+		if (!settings)
+		{
+			TiXmlNode *node = m_pXmlFile->GetElement()->LinkEndChild(new TiXmlElement("Settings"));
+			if (!node)
+				return;
+			settings = node->ToElement();
+			if (!settings)
+				return;
+		}
+	}
+
+	TiXmlNode *node = 0;
+	while ((node = settings->IterateChildren("Setting", node)))
+	{
+		TiXmlElement *setting = node->ToElement();
+		if (!setting)
+			continue;
+		LoadOptionFromElement(setting, nameOptionMap);
 	}
 }
 
-void COptions::LoadGlobalDefaultOptions()
+void COptions::LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::string, int>& nameOptionMap)
+{
+	const char* name = pOption->Attribute("name");
+	if (!name)
+		return;
+
+	std::map<std::string, int>::const_iterator iter = nameOptionMap.find(name);
+	if (iter != nameOptionMap.end())
+	{
+		wxString value;
+		if (options[iter->second].internal)
+			return;
+	
+		TiXmlNode *text = pOption->FirstChild();
+		if (!text)
+			return;
+
+		if (!text->ToText())
+			return;
+
+		value = ConvLocal(text->Value());
+
+		if (options[iter->second].type == number)
+		{
+			long numValue = 0;
+			value.ToLong(&numValue);
+			numValue = Validate(iter->second, numValue);
+			m_optionsCache[iter->second].numValue = numValue;
+		}
+		else
+		{
+			value = Validate(iter->second, value);
+			m_optionsCache[iter->second].strValue = value;
+		}
+		m_optionsCache[iter->second].cached = true;
+	}
+}
+
+void COptions::LoadGlobalDefaultOptions(const std::map<std::string, int>& nameOptionMap)
 {
 	const wxString& defaultsDir = wxGetApp().GetDefaultsDir();
 	if (defaultsDir == _T(""))
@@ -742,8 +748,9 @@ void COptions::LoadGlobalDefaultOptions()
 					v = 0;
 				default_options[i].value_number = v;
 			}
-
 		}
+
+		LoadOptionFromElement(pSetting, nameOptionMap);
 	}
 }
 
