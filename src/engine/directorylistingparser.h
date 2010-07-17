@@ -43,8 +43,8 @@ public:
 
 	CDirectoryListing Parse(const CServerPath &path);
 
-	void AddData(char *pData, int len);
-	void AddLine(const wxChar* pLine);
+	bool AddData(char *pData, int len);
+	bool AddLine(const wxChar* pLine);
 
 	void Reset();
 
@@ -53,9 +53,9 @@ public:
 	void SetServer(const CServer& server) { m_server = server; };
 
 protected:
-	CLine *GetLine(bool breakAtEnd = false);
+	CLine *GetLine(bool breakAtEnd, bool& error);
 
-	void ParseData(bool partial);
+	bool ParseData(bool partial);
 
 	bool ParseLine(CLine *pLine, const enum ServerType serverType, bool concatenated);
 

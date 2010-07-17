@@ -13,7 +13,7 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 #ifdef LISTDEBUG
 static char data[][150]={
 	"" // Has to be terminated with empty string
-};
+};a
 
 #endif
 
@@ -683,9 +683,10 @@ CDirectoryListingParser::~CDirectoryListingParser()
 	delete m_prevLine;
 }
 
-void CDirectoryListingParser::ParseData(bool partial)
+bool CDirectoryListingParser::ParseData(bool partial)
 {
-	CLine *pLine = GetLine(partial);
+	bool error = false;
+	CLine *pLine = GetLine(partial, error);
 	while (pLine)
 	{
 		bool res = ParseLine(pLine, m_server.GetType(), false);
@@ -715,17 +716,23 @@ void CDirectoryListingParser::ParseData(bool partial)
 			m_prevLine = 0;
 			delete pLine;
 		}
-		pLine = GetLine(partial);
+		pLine = GetLine(partial, error);
 	};
+
+	return !error;
 }
 
 CDirectoryListing CDirectoryListingParser::Parse(const CServerPath &path)
 {
-	ParseData(false);
-
 	CDirectoryListing listing;
 	listing.path = path;
 	listing.m_firstListTime = CTimeEx::Now();
+
+	if (!ParseData(false))
+	{
+		listing.m_failed = true;
+		return listing;
+	}
 
 	if (!m_fileList.empty())
 	{
@@ -2022,7 +2029,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 	return true;
 }
 
-void CDirectoryListingParser::AddData(char *pData, int len)
+bool CDirectoryListingParser::AddData(char *pData, int len)
 {
 	t_list item;
 	item.p = pData;
@@ -2030,10 +2037,10 @@ void CDirectoryListingParser::AddData(char *pData, int len)
 
 	m_DataList.push_back(item);
 
-	ParseData(true);
+	return ParseData(true);
 }
 
-void CDirectoryListingParser::AddLine(const wxChar* pLine)
+bool CDirectoryListingParser::AddLine(const wxChar* pLine)
 {
 	if (m_pControlSocket)
 		m_pControlSocket->LogMessageRaw(RawList, pLine);
@@ -2042,7 +2049,7 @@ void CDirectoryListingParser::AddLine(const wxChar* pLine)
 		pLine++;
 
 	if (!*pLine)
-		return;
+		return false;
 
 	const int len = wxStrlen(pLine);
 
@@ -2053,9 +2060,11 @@ void CDirectoryListingParser::AddLine(const wxChar* pLine)
 	CLine line(p, len);
 
 	ParseLine(&line, m_server.GetType(), false);
+
+	return true;
 }
 
-CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
+CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/, bool &error)
 {
 	while (!m_DataList.empty())
 	{
@@ -2102,6 +2111,12 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 				iter++;
 				if (iter == m_DataList.end())
 				{
+					if (reslen > 10000)
+					{
+						m_pControlSocket->LogMessage(::Error, _("Received a line exceeding 10000 characters, aborting."));
+						error = true;
+						return 0;
+					}
 					if (breakAtEnd)
 						return 0;
 					break;
@@ -2109,6 +2124,13 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/)
 				len = iter->len;
 				currentOffset = 0;
 			}
+		}
+
+		if (reslen > 10000)
+		{
+			m_pControlSocket->LogMessage(::Error, _("Received a line exceeding 10000 characters, aborting."));
+			error = true;
+			return 0;
 		}
 		m_currentOffset = currentOffset;
 

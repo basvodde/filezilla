@@ -287,7 +287,12 @@ void CTransferSocket::OnReceive()
 
 			if (numread > 0)
 			{
-				m_pDirectoryListingParser->AddData(pBuffer, numread);
+				if (!m_pDirectoryListingParser->AddData(pBuffer, numread))
+				{
+					TransferEnd(transfer_failure);
+					return;
+				}
+
 				m_pEngine->SetActive(CFileZillaEngine::recv);
 				if (!m_madeProgress)
 				{

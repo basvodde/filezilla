@@ -106,8 +106,8 @@ wxString CSizeFormatBase::Format(COptionsBase* pOptions, const wxLongLong& size,
 		}
 
 		places.Printf(_T("%d"), remainder);
-		const int len = places.Len();
-		for (int i = len; i < num_decimal_places; i++)
+		const size_t len = places.Len();
+		for (size_t i = len; i < num_decimal_places; i++)
 			places = _T("0") + places;
 	}
 
