@@ -398,6 +398,9 @@ bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connec
 	XRCCTRL(*this, "ID_TRANSFERMODE_ACTIVE", wxRadioButton)->Update();
 	XRCCTRL(*this, "ID_TRANSFERMODE_PASSIVE", wxRadioButton)->Update();
 
+	wxTreeItemId item = pTree->GetSelection();
+	if (!item.IsOk())
+		pTree->SelectItem(m_ownSites);
 	SetCtrlState();
 
 	m_pWindowStateManager = new CWindowStateManager(this);
