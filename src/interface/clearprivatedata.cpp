@@ -7,7 +7,6 @@
 #include "commandqueue.h"
 #include "Options.h"
 #include "ipcmutex.h"
-#include "filezillaapp.h"
 #include "queue.h"
 #include "recursive_operation.h"
 
@@ -172,12 +171,12 @@ bool CClearPrivateDataDialog::ClearReconnect()
 void CClearPrivateDataDialog::RemoveXmlFile(const wxString& name)
 {
 	{
-		wxFileName fn(wxGetApp().GetSettingsDir(), name + _T(".xml"));
+		wxFileName fn(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), name + _T(".xml"));
 		if (fn.FileExists())
 			wxRemoveFile(fn.GetFullPath());
 	}
 	{
-		wxFileName fn(wxGetApp().GetSettingsDir(), name + _T("xml~"));
+		wxFileName fn(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), name + _T("xml~"));
 		if (fn.FileExists())
 			wxRemoveFile(fn.GetFullPath());
 	}

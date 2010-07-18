@@ -81,18 +81,13 @@ enum interfaceOptions
 	OPTION_SPEED_DISPLAY,
 	OPTION_TOOLBAR_HIDDEN,
 
+	// Default/internal options
+	OPTION_DEFAULT_SETTINGSDIR,
+	OPTION_DEFAULT_KIOSKMODE,
+	OPTION_DEFAULT_DISABLEUPDATECHECK,
+
 	// Has to be last element
 	OPTIONS_NUM
-};
-
-enum defaultOptions
-{
-	DEFAULT_SETTINGSDIR,
-	DEFAULT_KIOSKMODE,
-	DEFAULT_DISABLEUPDATECHECK,
-
-	// Has to be last element
-	DEFAULTS_NUM
 };
 
 struct t_OptionsCache
@@ -109,9 +104,6 @@ class COptions : public wxEvtHandler, public COptionsBase
 public:
 	virtual int GetOptionVal(unsigned int nID);
 	virtual wxString GetOption(unsigned int nID);
-
-	int GetDefaultVal(unsigned int nID) const;
-	wxString GetDefault(unsigned int nID) const;
 
 	virtual bool SetOption(unsigned int nID, int value);
 	virtual bool SetOption(unsigned int nID, wxString value);
@@ -145,7 +137,9 @@ protected:
 	void GetNameOptionMap(std::map<std::string, int>& nameOptionMap) const; //Give me C++1x
 	void LoadOptions(const std::map<std::string, int>& nameOptionMap, TiXmlElement* settings = 0);
 	void LoadGlobalDefaultOptions(const std::map<std::string, int>& nameOptionMap);
-	void LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::string, int>& nameOptionMap);
+	void LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::string, int>& nameOptionMap, bool allowDefault);
+	void InitSettingsDir();
+	void SetDefaultValues();
 
 	void Save();
 

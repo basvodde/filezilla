@@ -1,6 +1,5 @@
 #include <filezilla.h>
 #include "xmlfunctions.h"
-#include "filezillaapp.h"
 #include "Options.h"
 #include <wx/ffile.h>
 #include <wx/log.h>
@@ -21,7 +20,7 @@ CXmlFile::CXmlFile(const wxFileName& fileName /*=wxFileName()*/)
 
 void CXmlFile::SetFileName(const wxString& name)
 {
-	m_fileName = wxFileName(wxGetApp().GetSettingsDir(), name + _T(".xml"));
+	m_fileName = wxFileName(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), name + _T(".xml"));
 	m_modificationTime = wxDateTime();
 }
 
@@ -39,7 +38,7 @@ CXmlFile::~CXmlFile()
 
 TiXmlElement* CXmlFile::Load(const wxString& name)
 {
-	wxFileName fileName(wxGetApp().GetSettingsDir(), name + _T(".xml"));
+	wxFileName fileName(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), name + _T(".xml"));
 	return Load(fileName);
 }
 
@@ -672,7 +671,7 @@ void SetServer(TiXmlElement *node, const CServer& server)
 		if (pOptions)
 		{
 			initialized = true;
-			if (pOptions->GetDefaultVal(DEFAULT_KIOSKMODE) != 0)
+			if (pOptions->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 0)
 				kiosk_mode = true;
 		}
 	}

@@ -1996,7 +1996,7 @@ bool CMainFrame::ConnectToSite(CSiteManagerItemData_Site* const pData)
 void CMainFrame::CheckChangedSettings()
 {
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	if (!COptions::Get()->GetOptionVal(OPTION_DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		if (!m_pUpdateWizard)
 		{
@@ -2640,7 +2640,7 @@ void CMainFrame::PostInitialize()
 {
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
 	// Need to do this after welcome screen to avoid simultaneous display of multiple dialogs
-	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
+	if (!COptions::Get()->GetOptionVal(OPTION_DEFAULT_DISABLEUPDATECHECK) && COptions::Get()->GetOptionVal(OPTION_UPDATECHECK))
 	{
 		m_pUpdateWizard = new CUpdateWizard(this);
 		m_pUpdateWizard->InitAutoUpdateCheck();

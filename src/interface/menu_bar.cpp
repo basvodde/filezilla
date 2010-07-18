@@ -40,7 +40,7 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 
 	
 #if FZ_MANUALUPDATECHECK
-	if (COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK))
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_DISABLEUPDATECHECK))
 #endif
 	{
 		wxMenu *helpMenu;

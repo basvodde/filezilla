@@ -4,7 +4,6 @@
 #include "ipcmutex.h"
 #include "Options.h"
 #include "queue.h"
-#include "filezillaapp.h"
 
 CImportDialog::CImportDialog(wxWindow* parent, CQueueView* pQueueView)
 	: m_parent(parent), m_pQueueView(pQueueView)
@@ -23,7 +22,7 @@ void CImportDialog::Show()
 
 	wxFileName fn(dlg.GetPath());
 	const wxString& path = fn.GetPath();
-	const wxString& settings = wxGetApp().GetSettingsDir();
+	const wxString& settings(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR));
 	if (path == settings)
 	{
 		wxMessageBox(_("You cannot import settings from FileZilla's own settings directory."), _("Error importing"), wxICON_ERROR, m_parent);

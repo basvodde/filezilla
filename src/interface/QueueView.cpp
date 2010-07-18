@@ -1915,14 +1915,14 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 void CQueueView::SaveQueue()
 {
 	// Kiosk mode doesn't save queue
-	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 		return;
 
 	// We have to synchronize access to queue.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("queue.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("queue.xml"));
 	CXmlFile xml(file);
 	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
@@ -1949,7 +1949,7 @@ void CQueueView::LoadQueue()
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("queue.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("queue.xml"));
 	CXmlFile xml(file);
 	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
@@ -1968,7 +1968,7 @@ void CQueueView::LoadQueue()
 
 	pDocument->RemoveChild(pQueue);
 
-	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 		return;
 
 	wxString error;

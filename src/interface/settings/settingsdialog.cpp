@@ -132,7 +132,7 @@ bool CSettingsDialog::LoadPages()
 	ADD_PAGE(_("File editing"), COptionsPageEdit, page_none);
 	ADD_PAGE(_("Filetype associations"), COptionsPageEditAssociations, page_edit);
 #if FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
-	if (!COptions::Get()->GetDefaultVal(DEFAULT_DISABLEUPDATECHECK))
+	if (!COptions::Get()->GetOptionVal(OPTION_DEFAULT_DISABLEUPDATECHECK))
 	{
 		ADD_PAGE(_("Update Check"), COptionsPageUpdateCheck, page_none);
 	}

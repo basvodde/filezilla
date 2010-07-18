@@ -6,6 +6,7 @@
 #include "xmlfunctions.h"
 #include <wx/regex.h>
 #include "Mainfrm.h"
+#include "Options.h"
 #include "inputdialog.h"
 #include "state.h"
 
@@ -186,7 +187,7 @@ void CFilterDialog::SaveFilters()
 {
 	CInterProcessMutex mutex(MUTEX_FILTERS);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("filters.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("filters.xml"));
 	CXmlFile xml(file);
 	TiXmlElement* pDocument = xml.Load();
 	if (!pDocument)
@@ -970,7 +971,7 @@ void CFilterManager::LoadFilters()
 
 	CInterProcessMutex mutex(MUTEX_FILTERS);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("filters.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("filters.xml"));
 	if (!file.FileExists())
 	{
 		wxFileName defaults(wxGetApp().GetResourceDir(), _T("defaultfilters.xml"));

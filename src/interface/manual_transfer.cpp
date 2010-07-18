@@ -430,7 +430,7 @@ bool CManualTransfer::VerifyServer()
 		return false;
 	}
 
-	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) != 0 &&
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 0 &&
 		(logon_type == ACCOUNT || logon_type == NORMAL))
 	{
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetFocus();

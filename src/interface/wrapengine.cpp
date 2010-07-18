@@ -802,7 +802,7 @@ int CWrapEngine::GetWidthFromCache(const char* name)
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("layout.xml"));
 	TiXmlElement* pDocument = GetXmlFile(file);
 
 	if (!pDocument)
@@ -852,7 +852,7 @@ void CWrapEngine::SetWidthToCache(const char* name, int width)
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("layout.xml"));
 	TiXmlElement* pDocument = GetXmlFile(file);
 
 	if (!pDocument)
@@ -935,7 +935,7 @@ bool CWrapEngine::LoadCache()
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("layout.xml"));
 	CXmlFile xml(file);
 	TiXmlElement* pDocument = xml.Load();
 
@@ -1089,7 +1089,7 @@ bool CWrapEngine::LoadCache()
 			languageElement->RemoveChild(dialog);
 	}
 
-	if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 	{
 		m_use_cache = cacheValid;
 		return true;
@@ -1114,7 +1114,7 @@ void CWrapEngine::ClearCache()
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_LAYOUT);
 
-	wxFileName file(wxGetApp().GetSettingsDir(), _T("layout.xml"));
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("layout.xml"));
 	if (file.FileExists())
 		wxRemoveFile(file.GetFullPath());
 }

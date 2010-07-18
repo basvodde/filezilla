@@ -61,15 +61,6 @@
 	#include "prefix.h"
 #endif
 
-#ifdef __WXMSW__
-	#include <shlobj.h>
-
-	// Needed for MinGW:
-	#ifndef SHGFP_TYPE_CURRENT
-		#define SHGFP_TYPE_CURRENT 0
-	#endif
-#endif
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -227,7 +218,6 @@ bool CFileZillaApp::OnInit()
 	}
 
 	InitDefaultsDir();
-	InitSettingsDir();
 
 	COptions::Init();
 
@@ -558,101 +548,9 @@ bool CFileZillaApp::InitDefaultsDir()
 		m_defaultsDir = _T("/etc/filezilla");
 	else
 #endif
-		m_defaultsDir = GetDataDir(_T("/fzdefaults.xml"));
+	m_defaultsDir = GetDataDir(_T("/fzdefaults.xml"));
 
 	return m_defaultsDir != _T("");
-}
-
-wxString CFileZillaApp::GetSettingsDirFromDefaults()
-{
-	if (GetDefaultsDir() == _T(""))
-		return _T("");
-
-	wxFileName fn(GetDefaultsDir(), _T("fzdefaults.xml"));
-	if (!fn.IsOk() || !fn.FileExists())
-		return _T("");
-
-	CXmlFile file(fn);
-	TiXmlElement* element = file.Load();
-	if (!element)
-		return _T("");
-
-	TiXmlElement* settings = element->FirstChildElement("Settings");
-	if (!settings)
-		return _T("");
-
-	TiXmlElement* setting = FindElementWithAttribute(settings, "Setting", "name", "Config Location");
-	if (!setting)
-		return _T("");
-
-	wxString location = GetTextElement(setting);
-	if (location == _T(""))
-		return _T("");
-
-	wxStringTokenizer tokenizer(location, _T("/\\"), wxTOKEN_RET_EMPTY_ALL);
-	location = _T("");
-	while (tokenizer.HasMoreTokens())
-	{
-		wxString token = tokenizer.GetNextToken();
-		if (token[0] == '$')
-		{
-			if (token[1] == '$')
-				token = token.Mid(1);
-			else
-			{
-				wxString value;
-				if (wxGetEnv(token.Mid(1), &value))
-					token = value;
-			}
-		}
-		location += token;
-		const wxChar delimiter = tokenizer.GetLastDelimiter();
-		if (delimiter)
-			location += delimiter;
-
-	}
-
-	wxFileName norm(location, _T(""));
-	norm.Normalize(wxPATH_NORM_ALL, fn.GetPath());
-
-	location = norm.GetFullPath();
-	return location;
-}
-
-bool CFileZillaApp::InitSettingsDir()
-{
-	m_settingsDir = GetSettingsDirFromDefaults();
-
-	wxFileName fn;
-	if (m_settingsDir != _T(""))
-		fn = wxFileName(m_settingsDir, _T(""));
-	else
-	{
-
-#ifdef __WXMSW__
-		wxChar buffer[MAX_PATH * 2 + 1];
-
-		if (SUCCEEDED(SHGetFolderPath(0, CSIDL_APPDATA, 0, SHGFP_TYPE_CURRENT, buffer)))
-		{
-			fn = wxFileName(buffer, _T(""));
-			fn.AppendDir(_T("FileZilla"));
-		}
-		else
-		{
-			// Fall back to directory where the executable is
-			if (GetModuleFileName(0, buffer, MAX_PATH * 2))
-				fn = buffer;
-		}
-#else
-		fn = wxFileName(wxGetHomeDir(), _T(""));
-		fn.AppendDir(_T(".filezilla"));
-#endif
-	}
-	if (!fn.DirExists())
-		wxMkdir(fn.GetPath(), 0700);
-	m_settingsDir = fn.GetPath();
-
-	return true;
 }
 
 bool CFileZillaApp::LoadLocales()

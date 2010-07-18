@@ -574,7 +574,7 @@ public:
 		if (!CSiteManager::UnescapeSitePath(lastSelection, m_lastSelection))
 			m_lastSelection.clear();
 		m_wrong_sel_depth = 0;
-		m_kiosk = COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE);
+		m_kiosk = COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE);
 	}
 
 	virtual ~CSiteManagerXmlHandler_Tree()
@@ -871,7 +871,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		// to the same file or one is reading while the other one writes.
 		CInterProcessMutex mutex(MUTEX_SITEMANAGER);
 
-		wxFileName file(wxGetApp().GetSettingsDir(), _T("sitemanager.xml"));
+		wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("sitemanager.xml"));
 		CXmlFile xml(file);
 
 		TiXmlElement* pDocument = xml.Load();
@@ -899,7 +899,7 @@ bool CSiteManager::Save(TiXmlElement *pElement /*=0*/, wxTreeItemId treeId /*=wx
 		wxString error;
 		if (!xml.Save(&error))
 		{
-			if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+			if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 				return res;
 			wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFullPath().c_str(), error.c_str());
 			wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
@@ -1053,7 +1053,7 @@ bool CSiteManager::Verify()
 			return false;
 		}
 
-		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) != 0 &&
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 0 &&
 			!IsPredefinedItem(item) &&
 			(logon_type == ACCOUNT || logon_type == NORMAL))
 		{
@@ -2920,7 +2920,7 @@ wxString CSiteManager::AddServer(CServer server)
 	wxString error;
 	if (!file.Save(&error))
 	{
-		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 			return _T("");
 
 		wxString msg = wxString::Format(_("Could not write \"%s\", any changes to the Site Manager could not be saved: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
@@ -3047,7 +3047,7 @@ bool CSiteManager::AddBookmark(wxString sitePath, const wxString& name, const wx
 	wxString error;
 	if (!file.Save(&error))
 	{
-		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 			return true;
 
 		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
@@ -3109,7 +3109,7 @@ bool CSiteManager::ClearBookmarks(wxString sitePath)
 	wxString error;
 	if (!file.Save(&error))
 	{
-		if (COptions::Get()->GetDefaultVal(DEFAULT_KIOSKMODE) == 2)
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 			return true;
 
 		wxString msg = wxString::Format(_("Could not write \"%s\", the selected sites could not be exported: %s"), file.GetFileName().GetFullPath().c_str(), error.c_str());
