@@ -182,7 +182,9 @@ void CMenuBar::UpdateBookmarkMenu()
 				id = *ids;
 				ids++;
 			}
-			pMenu->Append(id, *iter);
+			wxString name(*iter);
+			name.Replace(_T("&"), _T("&&"));
+			pMenu->Append(id, name);
 
 			m_bookmark_menu_id_map_global[id] = *iter;
 		}
@@ -212,7 +214,9 @@ void CMenuBar::UpdateBookmarkMenu()
 			id = *ids;
 			ids++;
 		}
-		pMenu->Append(id, *iter);
+		wxString name(*iter);
+		name.Replace(_T("&"), _T("&&"));
+		pMenu->Append(id, name);
 
 		m_bookmark_menu_id_map_site[id] = *iter;
 	}

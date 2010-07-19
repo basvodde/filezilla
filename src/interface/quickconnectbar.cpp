@@ -151,7 +151,9 @@ void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 			iter != m_recentServers.end();
 			iter++, i++)
 		{
-			pMenu->Append(10 + i, iter->FormatServer());
+			wxString name(iter->FormatServer());
+			name.Replace(_T("&"), _T("&&"));
+			pMenu->Append(10 + i, name);
 		}
 	}
 	else
