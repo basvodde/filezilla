@@ -141,11 +141,11 @@ void CQuickconnectBar::OnQuickconnectDropdown(wxCommandEvent& event)
 	pMenu->Append(2, _("Clear quickconnect bar"));
 	pMenu->Append(3, _("Clear history"));
 
+	m_recentServers = CRecentServerList::GetMostRecentServers();
 	if (!m_recentServers.empty())
 	{
 		pMenu->AppendSeparator();
 
-		m_recentServers = CRecentServerList::GetMostRecentServers();
 		unsigned int i = 0;
 		for (std::list<CServer>::const_iterator iter = m_recentServers.begin();
 			iter != m_recentServers.end();
