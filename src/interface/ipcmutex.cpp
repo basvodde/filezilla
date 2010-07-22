@@ -1,6 +1,6 @@
 #include <filezilla.h>
 #include "ipcmutex.h"
-#include "filezillaapp.h"
+#include "Options.h"
 
 #ifndef __WXMSW__
 #include <errno.h>
@@ -20,7 +20,7 @@ CInterProcessMutex::CInterProcessMutex(enum t_ipcMutexType mutexType, bool initi
 	if (!m_instanceCount)
 	{
 		// Open file only if this is the first instance
-		wxFileName fn(wxGetApp().GetSettingsDir(), _T("lockfile"));
+		wxFileName fn(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("lockfile"));
 		m_fd = open(fn.GetFullPath().mb_str(), O_CREAT | O_RDWR, 0644);
 	}
 	m_instanceCount++;
