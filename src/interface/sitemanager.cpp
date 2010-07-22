@@ -409,12 +409,14 @@ bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connec
 	pTree->SetDropTarget(new CSiteManagerDropTarget(this));
 
 #ifdef __WXGTK__
-	CSiteManagerItemData* data = 0;
-	wxTreeItemId item = pTree->GetSelection();
-	if (item.IsOk())
-		data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
-	if (!data)
-		XRCCTRL(*this, "wxID_OK", wxButton)->SetFocus();
+	{
+		CSiteManagerItemData* data = 0;
+		wxTreeItemId item = pTree->GetSelection();
+		if (item.IsOk())
+			data = reinterpret_cast<CSiteManagerItemData* >(pTree->GetItemData(item));
+		if (!data)
+			XRCCTRL(*this, "wxID_OK", wxButton)->SetFocus();
+	}
 #endif
 
 	m_connected_sites = connected_sites;
