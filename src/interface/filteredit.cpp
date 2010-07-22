@@ -71,7 +71,7 @@ bool CFilterEditDialog::Create(wxWindow* parent, const std::vector<CFilter>& fil
 	if (!Load(parent, _T("ID_EDITFILTER")))
 		return false;
 
-	int conditions = filter_name | filter_size | filter_path | filter_meta;
+	int conditions = filter_name | filter_size | filter_path | filter_meta | filter_date;
 	if (has_foreign_type)
 		conditions |= filter_foreign;
 	if (!CreateListControl(conditions))

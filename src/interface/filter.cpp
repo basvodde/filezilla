@@ -731,6 +731,7 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 			break;
 		case filter_path:
 			match = StringMatch(path, condition.strValue, condition.condition, filter.matchCase, condition.pRegEx);
+			break;
 		case filter_size:
 			if (size == -1)
 				continue;
@@ -832,6 +833,8 @@ bool CFilterManager::FilenameFilteredByFilter(const CFilter& filter, const wxStr
 					match = true;
 			}
 #endif //__WXMSW__
+			break;
+		case filter_date:
 			break;
 		default:
 			wxFAIL_MSG(_T("Unhandled filter type"));

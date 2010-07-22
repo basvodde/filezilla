@@ -71,6 +71,59 @@ IMPLEMENT_APP(CFileZillaApp);
 IMPLEMENT_APP_NO_MAIN(CFileZillaApp);
 #endif //__WXGTK__
 
+class CDirentry1
+{
+public:
+	wxString name;
+	wxLongLong size;
+	wxString permissions;
+	wxString ownerGroup;
+	bool dir;
+	bool link;
+	wxString target; // Set to linktarget it link is true
+
+	enum _timestamp
+	{
+		timestamp_none,
+		timestamp_date,
+		timestamp_time,
+		timestamp_seconds
+	} hasTimestamp;
+
+	wxDateTime time;
+
+	bool unsure; // May be true on cached items if any changes were made to the file
+
+	wxString dump() const;
+	bool operator==(const CDirentry &op) const;
+};
+
+class CDirentry2
+{
+public:
+	wxString name;
+	wxLongLong size;
+	wxString permissions;
+	wxString ownerGroup;
+
+	enum _flags
+	{
+		dir = 1,
+		link = 2,
+		unsure = 4,
+
+		timestamp_date = 0x10,
+		timestamp_time = 0x20,
+		timestamp_seconds = 0x40
+	} flags;
+
+	wxString target; // Set to linktarget it link is true
+
+	wxDateTime time;
+
+	wxString dump() const;
+	bool operator==(const CDirentry &op) const;
+};
 CFileZillaApp::CFileZillaApp()
 {
 	m_pWrapEngine = 0;
@@ -124,6 +177,8 @@ bool IsServiceRunning(const wxString& serviceName)
 
 bool CheckForWin2003FirewallBug()
 {
+			wxMessageBox(wxString::Format(_T("wxDateTime %d"), sizeof(wxDateTime)));
+
 	const wxString os = ::wxGetOsDescription();
 	if (os.Find(_T("Windows Server 2003")) == -1)
 		return false;

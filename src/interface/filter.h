@@ -11,6 +11,8 @@ enum t_filterType
 	filter_attributes = 0x04,
 	filter_permissions = 0x08,
 	filter_path = 0x10,
+	filter_date = 0x20,
+	filter_time = 0x40,
 #ifdef __WXMSW__
 	filter_meta = filter_attributes,
 	filter_foreign = filter_permissions,

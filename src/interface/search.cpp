@@ -567,7 +567,7 @@ bool CSearchDialog::Load()
 
 	GetSizer()->Add(pStatusBar, 0, wxGROW);
 
-	if (!CreateListControl(filter_name | filter_size | filter_path))
+	if (!CreateListControl(filter_name | filter_size | filter_path | filter_date))
 		return false;
 
 	m_results = new CSearchDialogFileList(this, m_pState, 0);
