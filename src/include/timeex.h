@@ -11,12 +11,12 @@
 class CTimeEx
 {
 public:
-	CTimeEx(wxDateTime time);
+	CTimeEx(const wxDateTime& time);
 	CTimeEx();
 
 	static CTimeEx Now();
 
-	wxDateTime GetTime() { return m_time; }
+	wxDateTime GetTime() const { return m_time; }
 
 	bool IsValid() const { return m_time.IsValid(); }
 

@@ -253,10 +253,10 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			if (entry.name != dir.restrict)
 				continue;
 		}
-		else if (filter.FilenameFiltered(m_filters, entry.name, path, entry.dir, entry.size, false, 0))
+		else if (filter.FilenameFiltered(m_filters, entry.name, path, entry.is_dir(), entry.size, false, 0))
 			continue;
 
-		if (entry.dir && (!entry.link || m_operationMode != recursive_delete))
+		if (entry.is_dir() && (!entry.is_link() || m_operationMode != recursive_delete))
 		{
 			if (dir.recurse)
 			{
@@ -270,7 +270,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				{
 					dirToVisit.localDir += CQueueView::ReplaceInvalidCharacters(entry.name) + CLocalFileSystem::path_separator;
 				}
-				if (entry.link)
+				if (entry.is_link())
 				{
 					dirToVisit.link = 1;
 					dirToVisit.recurse = false;
@@ -305,12 +305,12 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		{
 			const int applyType = m_pChmodDlg->GetApplyType();
 			if (!applyType ||
-				(!entry.dir && applyType == 1) ||
-				(entry.dir && applyType == 2))
+				(!entry.is_dir() && applyType == 1) ||
+				(entry.is_dir() && applyType == 2))
 			{
 				char permissions[9];
 				bool res = m_pChmodDlg->ConvertPermissions(entry.permissions, permissions);
-				wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0, entry.dir);
+				wxString newPerms = m_pChmodDlg->GetPermissions(res ? permissions : 0, entry.is_dir());
 				m_pState->m_pCommandQueue->ProcessCommand(new CChmodCommand(pDirectoryListing->path, entry.name, newPerms));
 			}
 		}

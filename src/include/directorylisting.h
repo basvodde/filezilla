@@ -10,21 +10,52 @@ public:
 	wxLongLong size;
 	wxString permissions;
 	wxString ownerGroup;
-	bool dir;
-	bool link;
+
+	enum _flags
+	{
+		flag_dir = 1,
+		flag_link = 2,
+		flag_unsure = 4, // May be set on cached items if any changes were made to the file
+
+		flag_timestamp_date = 0x10,
+		flag_timestamp_time = 0x20,
+		flag_timestamp_seconds = 0x40,
+
+		flag_timestamp_mask = 0x70
+	};
+	int flags;
+
+	inline bool is_dir() const
+	{
+		return (flags & flag_dir) != 0;
+	}
+	inline bool is_link() const
+	{
+		return (flags & flag_link) != 0;
+	}
+
+	inline bool is_unsure() const
+	{
+		return (flags & flag_unsure) != 0;
+	}
+
+	inline bool has_date() const
+	{
+		return (flags & flag_timestamp_date) != 0;
+	}
+	inline bool has_time() const
+	{
+		return (flags & flag_timestamp_time) != 0;
+	}
+	inline bool has_seconds() const
+	{
+		return (flags & flag_timestamp_seconds) != 0;
+	}
+
+
 	wxString target; // Set to linktarget it link is true
 
-	enum _timestamp
-	{
-		timestamp_none,
-		timestamp_date,
-		timestamp_time,
-		timestamp_seconds
-	} hasTimestamp;
-
 	wxDateTime time;
-
-	bool unsure; // May be true on cached items if any changes were made to the file
 
 	wxString dump() const;
 	bool operator==(const CDirentry &op) const;

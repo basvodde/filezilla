@@ -9,7 +9,7 @@ CTimeEx::CTimeEx()
 	m_offset = 0;
 }
 
-CTimeEx::CTimeEx(wxDateTime time)
+CTimeEx::CTimeEx(const wxDateTime& time)
 {
 	m_time = time;
 	m_offset = 0;

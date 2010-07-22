@@ -50,7 +50,6 @@ protected:
 		CCacheEntry(const CCacheEntry &entry);
 		~CCacheEntry() { };
 		CDirectoryListing listing;
-		wxDateTime createTime;
 		CTimeEx modificationTime;
 
 		CCacheEntry& operator=(const CCacheEntry &a);

@@ -1646,12 +1646,12 @@ int CFtpControlSocket::ListParseResponse()
 		const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M%S"));
 		if (res && date.IsValid())
 		{
-			wxASSERT(pData->directoryListing[pData->mdtm_index].hasTimestamp != CDirentry::timestamp_none);
+			wxASSERT(pData->directoryListing[pData->mdtm_index].has_date());
 			wxDateTime listTime = pData->directoryListing[pData->mdtm_index].time;
 			listTime -= wxTimeSpan(0, m_pCurrentServer->GetTimezoneOffset(), 0);
 
 			int serveroffset = (date - listTime).GetSeconds().GetLo();
-			if (pData->directoryListing[pData->mdtm_index].hasTimestamp != CDirentry::timestamp_seconds)
+			if (!pData->directoryListing[pData->mdtm_index].has_seconds())
 			{
 				// Round offset to full minutes
 				if (serveroffset < 0)
@@ -1672,7 +1672,7 @@ int CFtpControlSocket::ListParseResponse()
 			for (int i = 0; i < count; i++)
 			{
 				CDirentry& entry = pData->directoryListing[i];
-				if (entry.hasTimestamp < CDirentry::timestamp_time)
+				if (!entry.has_time())
 					continue;
 
 				entry.time += span;
@@ -1715,7 +1715,7 @@ int CFtpControlSocket::ListCheckTimezoneDetection(CDirectoryListing& listing)
 			const int count = listing.GetCount();
 			for (int i = 0; i < count; i++)
 			{
-				if (!listing[i].dir && listing[i].hasTimestamp >= CDirentry::timestamp_time)
+				if (!listing[i].is_dir() && listing[i].has_time())
 				{
 					pData->opState = list_mdtm;
 					pData->directoryListing = listing;
@@ -2379,18 +2379,18 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 			}
 			else
 			{
-				if (entry.unsure)
+				if (entry.is_unsure())
 					pData->opState = filetransfer_waitlist;
 				else
 				{
 					if (matchedCase)
 					{
 						pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-						if (entry.hasTimestamp != CDirentry::timestamp_none)
+						if (entry.has_date())
 							pData->fileTime = entry.time;
 
 						if (pData->download &&
-							entry.hasTimestamp < CDirentry::timestamp_time &&
+							!entry.has_time() &&
 							m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 							CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 						{
@@ -2448,14 +2448,14 @@ int CFtpControlSocket::FileTransferSubcommandResult(int prevResult)
 			}
 			else
 			{
-				if (matchedCase && !entry.unsure)
+				if (matchedCase && !entry.is_unsure())
 				{
 					pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-					if (entry.hasTimestamp != CDirentry::timestamp_none)
+					if (entry.has_date())
 						pData->fileTime = entry.time;
 
 					if (pData->download &&
-						entry.hasTimestamp < CDirentry::timestamp_time &&
+						!entry.has_time() &&
 						m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 						CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 					{
@@ -2868,11 +2868,11 @@ bool CFtpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotific
 						if (matched_case)
 						{
 							pData->remoteFileSize = entry.size.GetLo() + ((wxFileOffset)entry.size.GetHi() << 32);
-							if (entry.hasTimestamp != CDirentry::timestamp_none)
+							if (entry.has_date())
 								pData->fileTime = entry.time;
 
 							if (pData->download &&
-								entry.hasTimestamp < CDirentry::timestamp_time &&
+								!entry.has_time() &&
 								m_pEngine->GetOptions()->GetOptionVal(OPTION_PRESERVE_TIMESTAMPS) &&
 								CServerCapabilities::GetCapability(*m_pCurrentServer, mdtm_command) == yes)
 							{
