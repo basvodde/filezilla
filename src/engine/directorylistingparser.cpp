@@ -979,6 +979,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry, bool e
 
 		if (expect_date)
 		{
+			entry.flags &= ~CDirentry::flag_timestamp_mask;
 			if (!ParseUnixDateTime(pLine, index, entry))
 				continue;
 		}
