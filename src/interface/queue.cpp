@@ -285,15 +285,15 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	m_parent = parent;
 	m_priority = priority_normal;
 
-	m_download = download;
+	flags = 0;
+	if (download)
+		flags |= flag_download;
 	m_queued = queued;
-	m_active = false;
 	m_errorCount = 0;
 	m_remove = false;
 	m_pEngineData = 0;
 	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 	m_edit = CEditHandler::none;
-	m_madeProgress = false;
 	m_onetime_action = CFileExistsNotification::unknown;
 }
 
@@ -323,16 +323,17 @@ enum QueuePriority CFileItem::GetPriority() const
 
 void CFileItem::SetActive(const bool active)
 {
-	if (active && !m_active)
+	if (active && !IsActive())
 	{
 		AddChild(new CStatusItem);
+		flags |= flag_active;
 	}
-	else if (!active && m_active)
+	else if (!active && IsActive())
 	{
 		CQueueItem* pItem = GetChild(0, false);
 		RemoveChild(pItem);
+		flags &= ~flag_active;
 	}
-	m_active = active;
 }
 
 void CFileItem::SaveItem(TiXmlElement* pElement) const
@@ -345,7 +346,7 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 	AddTextElement(file, "LocalFile", m_localFile);
 	AddTextElement(file, "RemoteFile", m_remoteFile);
 	AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
-	AddTextElementRaw(file, "Download", m_download ? "1" : "0");
+	AddTextElementRaw(file, "Download", Download() ? "1" : "0");
 	if (m_size != -1)
 		AddTextElement(file, "Size", m_size.ToString());
 	if (m_errorCount)
@@ -392,21 +393,24 @@ void CFolderItem::SaveItem(TiXmlElement* pElement) const
 {
 	TiXmlElement *file = new TiXmlElement("Folder");
 
-	if (m_download)
+	if (Download())
 		AddTextElement(file, "LocalFile", m_localFile);
 	else
 	{
 		AddTextElement(file, "RemoteFile", m_remoteFile);
 		AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
 	}
-	AddTextElementRaw(file, "Download", m_download ? "1" : "0");
+	AddTextElementRaw(file, "Download", Download() ? "1" : "0");
 
 	pElement->LinkEndChild(file);
 }
 
 void CFolderItem::SetActive(const bool active)
 {
-	m_active = active;
+	if (active)
+		flags |= flag_active;
+	else
+		flags &= ~flag_active;
 }
 
 CServerItem::CServerItem(const CServer& server)

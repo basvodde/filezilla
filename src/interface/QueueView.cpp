@@ -719,7 +719,7 @@ void CQueueView::ProcessNotification(t_EngineData* pEngineData, CNotification* p
 					pEngineData->pItem->GetType() == QueueItemType_File)
 				{
 					CFileItem* pItem = (CFileItem*)pEngineData->pItem;
-					pItem->m_madeProgress = true;
+					pItem->set_made_progress(true);
 				}
 				pEngineData->pStatusLineCtrl->SetTransferStatus(pStatus);
 			}
@@ -989,10 +989,10 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 				reason = remove;
 			else
 			{
-				if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress)
+				if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->made_progress())
 				{
 					CFileItem* pItem = (CFileItem*)pEngineData->pItem;
-					pItem->m_madeProgress = false;
+					pItem->set_made_progress(false);
 					pItem->m_onetime_action = CFileExistsNotification::resume;
 				}
 				reason = reset;
@@ -1073,12 +1073,12 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		// Increase error count only if item didn't make any progress. This keeps
 		// user interaction at a minimum if connection is unstable.
 
-		if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->m_madeProgress &&
+		if (pEngineData->pItem->GetType() == QueueItemType_File && ((CFileItem*)pEngineData->pItem)->made_progress() &&
 			(replyCode & FZ_REPLY_WRITEFAILED) != FZ_REPLY_WRITEFAILED)
 		{
 			// Don't increase error count if there has been progress
 			CFileItem* pItem = (CFileItem*)pEngineData->pItem;
-			pItem->m_madeProgress = false;
+			pItem->set_made_progress(false);
 			pItem->m_onetime_action = CFileExistsNotification::resume;
 		}
 		else
@@ -1236,7 +1236,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			if (reason == failure)
 			{
 				pFileItem->m_onetime_action = CFileExistsNotification::unknown;
-				pFileItem->m_madeProgress = false;
+				pFileItem->set_made_progress(false);
 			}
 		}
 

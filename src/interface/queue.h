@@ -148,14 +148,14 @@ public:
 	CServerPath GetRemotePath() const { return m_remotePath; }
 	wxLongLong GetSize() const { return m_size; }
 	void SetSize(wxLongLong size) { m_size = size; }
-	bool Download() const { return m_download; }
-	bool Queued() const { return m_queued; }
+	inline bool Download() const { return flags & flag_download; }
+	inline bool Queued() const { return m_queued; }
 
 	wxString GetIndent() { return m_indent; }
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_File; }
 
-	bool IsActive() const { return m_active; }
+	bool IsActive() const { return (flags & flag_active) != 0; }
 	virtual void SetActive(bool active);
 	
 	virtual void SaveItem(TiXmlElement* pElement) const;
@@ -179,19 +179,32 @@ public:
 
 	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
 
-	bool m_madeProgress;
+	inline bool made_progress() const { return (flags & flag_made_progress) != 0; }
+	inline void set_made_progress(bool made_progress)
+	{
+		if (made_progress)
+			flags |= flag_made_progress;
+		else
+			flags &= ~flag_made_progress;
+	}
 
 	enum CFileExistsNotification::OverwriteAction m_onetime_action;
 
 protected:
+	enum
+	{
+		flag_download = 0x01,
+		flag_active = 0x02,
+		flag_made_progress = 0x04
+	};
+	int flags;
+
 	enum QueuePriority m_priority;
 
-	bool m_download;
 	wxString m_localFile;
 	wxString m_remoteFile;
 	CServerPath m_remotePath;
 	wxLongLong m_size;
-	bool m_active;
 };
 
 class CFolderItem : public CFileItem
