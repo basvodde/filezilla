@@ -985,7 +985,7 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		enum ResetReason reason;
 		if (pEngineData->pItem)
 		{
-			if (pEngineData->pItem->m_remove)
+			if (pEngineData->pItem->pending_remove())
 				reason = remove;
 			else
 			{
@@ -1162,7 +1162,7 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 	if (!m_activeMode)
 	{
 		enum ResetReason reason;
-		if (pEngineData->pItem && pEngineData->pItem->m_remove)
+		if (pEngineData->pItem && pEngineData->pItem->pending_remove())
 			reason = remove;
 		else
 			reason = reset;
@@ -1259,7 +1259,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 
 		if (reason == reset)
 		{
-			if (!data.pItem->Queued())
+			if (!data.pItem->queued())
 				reinterpret_cast<CServerItem*>(data.pItem->GetTopLevelItem())->QueueImmediateFile(data.pItem);
 		}
 		else if (reason == failure)
@@ -1804,7 +1804,7 @@ void CQueueView::ProcessUploadFolderItems()
 
 	CFolderScanItem* pItem = m_queuedFolders[1].front();
 
-	if (pItem->Queued())
+	if (pItem->queued())
 		pItem->m_statusMessage = _("Scanning for files to add to queue");
 	else
 		pItem->m_statusMessage = _("Scanning for files to upload");
@@ -1829,9 +1829,9 @@ void CQueueView::OnFolderThreadComplete(wxCommandEvent& event)
 	if (pItem->m_dir_is_empty)
 	{
 		CServerItem* pServerItem = (CServerItem*)pItem->GetTopLevelItem();
-		CFileItem* fileItem = new CFolderItem(pServerItem, pItem->Queued(), pItem->m_current_remote_path, _T(""));
+		CFileItem* fileItem = new CFolderItem(pServerItem, pItem->queued(), pItem->m_current_remote_path, _T(""));
 		InsertItem(pServerItem, fileItem);
-		QueueFile_Finish(!pItem->Queued());
+		QueueFile_Finish(!pItem->queued());
 	}
 	m_queuedFolders[1].pop_front();
 
@@ -2313,7 +2313,7 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 			CFileItem* pFile = (CFileItem*)pItem;
 			if (pFile->IsActive())
 			{
-				pFile->m_remove = true;
+				pFile->set_pending_remove(true);
 				StopItem(pFile);
 				continue;
 			}
@@ -2349,7 +2349,7 @@ bool CQueueView::StopItem(CFileItem* item)
 	if (item->m_pEngineData->state == t_EngineData::waitprimary)
 	{
 		enum ResetReason reason;
-		if (item->m_pEngineData->pItem && item->m_pEngineData->pItem->m_remove)
+		if (item->m_pEngineData->pItem && item->m_pEngineData->pItem->pending_remove())
 			reason = remove;
 		else
 			reason = reset;
@@ -2389,7 +2389,7 @@ bool CQueueView::StopItem(CServerItem* pServerItem)
 			CFileItem* pFile = (CFileItem*)pItem;
 			if (pFile->IsActive())
 			{
-				pFile->m_remove = true;
+				pFile->set_pending_remove(true);
 				StopItem(pFile);
 				continue;
 			}
@@ -2421,7 +2421,7 @@ void CQueueView::OnFolderThreadFiles(wxCommandEvent& event)
 
 	std::list<CFolderProcessingEntry*> entryList;
 	m_pFolderProcessingThread->GetFiles(entryList);
-	int added = QueueFiles(entryList, pItem->Queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
+	int added = QueueFiles(entryList, pItem->queued(), false, (CServerItem*)pItem->GetTopLevelItem(), pItem->m_defaultFileExistsAction);
 	m_pFolderProcessingThread->CheckFinished();
 
 	pItem->m_count += added;

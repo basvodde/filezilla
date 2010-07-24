@@ -288,9 +288,9 @@ CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxSt
 	flags = 0;
 	if (download)
 		flags |= flag_download;
-	m_queued = queued;
+	if (queued)
+		flags |= flag_queued;
 	m_errorCount = 0;
-	m_remove = false;
 	m_pEngineData = 0;
 	m_defaultFileExistsAction = CFileExistsNotification::unknown;
 	m_edit = CEditHandler::none;
@@ -363,7 +363,7 @@ bool CFileItem::TryRemoveAll()
 	if (!IsActive())
 		return true;
 
-	m_remove = true;
+	set_pending_remove(true);
 	return false;
 }
 
@@ -446,12 +446,12 @@ void CServerItem::AddFileItemToList(CFileItem* pItem)
 	if (!pItem)
 		return;
 
-	m_fileList[pItem->m_queued ? 0 : 1][pItem->GetPriority()].push_back(pItem);
+	m_fileList[pItem->queued() ? 0 : 1][pItem->GetPriority()].push_back(pItem);
 }
 
 void CServerItem::RemoveFileItemFromList(CFileItem* pItem)
 {
-	std::list<CFileItem*>& fileList = m_fileList[pItem->m_queued ? 0 : 1][pItem->GetPriority()];
+	std::list<CFileItem*>& fileList = m_fileList[pItem->queued() ? 0 : 1][pItem->GetPriority()];
 	for (std::list<CFileItem*>::iterator iter = fileList.begin(); iter != fileList.end(); iter++)
 	{
 		if (*iter == pItem)
@@ -561,12 +561,12 @@ void CServerItem::QueueImmediateFiles()
 		for (std::list<CFileItem*>::reverse_iterator iter = fileList.rbegin(); iter != fileList.rend(); iter++)
 		{
 			CFileItem* item = *iter;
-			wxASSERT(!item->m_queued);
+			wxASSERT(!item->queued());
 			if (item->IsActive())
 				activeList.push_front(item);
 			else
 			{
-				item->m_queued = true;
+				item->set_queued(true);
 				m_fileList[0][i].push_front(item);
 			}
 		}
@@ -576,7 +576,7 @@ void CServerItem::QueueImmediateFiles()
 
 void CServerItem::QueueImmediateFile(CFileItem* pItem)
 {
-	if (pItem->m_queued)
+	if (pItem->queued())
 		return;
 
 	std::list<CFileItem*>& fileList = m_fileList[1][pItem->GetPriority()];
@@ -585,7 +585,7 @@ void CServerItem::QueueImmediateFile(CFileItem* pItem)
 		if (*iter != pItem)
 			continue;
 
-		pItem->m_queued = true;
+		pItem->set_queued(true);
 		fileList.erase(iter);
 		m_fileList[0][pItem->GetPriority()].push_front(pItem);
 		return;
@@ -707,7 +707,7 @@ void CServerItem::SetPriority(enum QueuePriority priority)
 
 void CServerItem::SetChildPriority(CFileItem* pItem, enum QueuePriority oldPriority, enum QueuePriority newPriority)
 {
-	int i = pItem->Queued() ? 0 : 1;
+	int i = pItem->queued() ? 0 : 1;
 
 	for (std::list<CFileItem*>::iterator iter = m_fileList[i][oldPriority].begin(); iter != m_fileList[i][oldPriority].end(); iter++)
 	{
@@ -862,12 +862,12 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 				return pFileItem->GetIndent() + pFileItem->GetLocalFile();
 			case 1:
 				if (pFileItem->Download())
-					if (pFileItem->Queued())
+					if (pFileItem->queued())
 						return _T("<--");
 					else
 						return _T("<<--");
 				else
-					if (pFileItem->Queued())
+					if (pFileItem->queued())
 						return _T("-->");
 					else
 						return _T("-->>");
@@ -914,12 +914,12 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 				return _T("  ") + pFolderItem->GetLocalPath();
 			case 1:
 				if (pFolderItem->Download())
-					if (pFolderItem->Queued())
+					if (pFolderItem->queued())
 						return _T("<--");
 					else
 						return _T("<<--");
 				else
-					if (pFolderItem->Queued())
+					if (pFolderItem->queued())
 						return _T("-->");
 					else
 						return _T("-->>");
@@ -944,12 +944,12 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 				break;
 			case 1:
 				if (pFolderItem->Download())
-					if (pFolderItem->Queued())
+					if (pFolderItem->queued())
 						return _T("<--");
 					else
 						return _T("<<--");
 				else
-					if (pFolderItem->Queued())
+					if (pFolderItem->queued())
 						return _T("-->");
 					else
 						return _T("-->>");

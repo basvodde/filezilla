@@ -149,7 +149,24 @@ public:
 	wxLongLong GetSize() const { return m_size; }
 	void SetSize(wxLongLong size) { m_size = size; }
 	inline bool Download() const { return flags & flag_download; }
-	inline bool Queued() const { return m_queued; }
+	
+	inline bool queued() const { return (flags & flag_queued) != 0; }
+	inline void set_queued(bool q)
+	{
+		if (q)
+			flags |= flag_queued;
+		else
+			flags &= ~flag_queued;
+	}
+
+	inline bool pending_remove() const { return (flags & flag_remove) != 0; }
+	inline void set_pending_remove(bool remove)
+	{
+		if (remove)
+			flags |= flag_remove;
+		else
+			flags &= ~flag_remove;
+	}
 
 	wxString GetIndent() { return m_indent; }
 
@@ -166,9 +183,7 @@ public:
 	void SetLocalFile(const wxString &file);
 	void SetRemoteFile(const wxString &file);
 
-	bool m_queued;
 	int m_errorCount;
-	bool m_remove;
 	CEditHandler::fileType m_edit;
 
 	wxString m_statusMessage;
@@ -195,7 +210,9 @@ protected:
 	{
 		flag_download = 0x01,
 		flag_active = 0x02,
-		flag_made_progress = 0x04
+		flag_made_progress = 0x04,
+		flag_queued = 0x08,
+		flag_remove = 0x10
 	};
 	int flags;
 
@@ -230,13 +247,14 @@ public:
 	wxString GetLocalPath() const { return m_localPath; }
 	CServerPath GetRemotePath() const { return m_remotePath; }
 	bool Download() const { return m_download; }
-	bool Queued() const { return m_queued; }
 	int GetCount() const { return m_count; }
 	virtual bool TryRemoveAll();
 
+	bool queued() const { return m_queued; }
+	void set_queued(bool q) { m_queued = q; }
+
 	wxString m_statusMessage;
 
-	bool m_queued;
 	volatile bool m_remove;
 	bool m_active;
 
@@ -249,6 +267,7 @@ public:
 	CServerPath m_current_remote_path;
 
 protected:
+	bool m_queued;
 	wxString m_localPath;
 	CServerPath m_remotePath;
 	bool m_download;
