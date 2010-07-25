@@ -56,6 +56,16 @@ void CCommandQueue::ProcessNextCommand()
 
 	m_inside_commandqueue = true;
 
+	if (m_CommandList.empty()) {
+		// Possible sequence of events:
+		// - Engine emits listing and operation finished
+		// - Connection gets terminated
+		// - Interface cannot obtain listing since not connected
+		// - Yet getting operation successful
+		// To keep things flowing, we need to advance the recursive operation.
+		m_pState->GetRecursiveOperationHandler()->NextOperation();
+	}
+
 	while (!m_CommandList.empty())
 	{
 		CCommand *pCommand = m_CommandList.front();

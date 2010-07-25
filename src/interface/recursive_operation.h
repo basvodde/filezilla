@@ -94,6 +94,8 @@ protected:
 	CQueueView* m_pQueue;
 
 	std::list<CFilter> m_filters;
+
+	friend class CCommandQueue;
 };
 
 #endif //__RECURSIVE_OPERATION_H__
