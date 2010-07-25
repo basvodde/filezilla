@@ -222,7 +222,7 @@ void COptions::GetNameOptionMap(std::map<std::string, int>& nameOptionMap) const
 	for (int i = 0; i < OPTIONS_NUM; ++i)
 	{
 		if (options[i].flags != internal)
-			nameOptionMap.insert(std::make_pair(options[i].name, i));
+			nameOptionMap.insert(std::make_pair(std::string(options[i].name), i));
 	}
 }
 
