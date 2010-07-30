@@ -383,9 +383,9 @@ if test "$buildmain" = "yes"; then
     ])
 
   if test "$with_dbus" = "auto"; then
-    if echo $WX_CPPFLAGS | grep __WXMAC__; then
+    if echo $WX_CPPFLAGS | grep __WXMAC__ > /dev/null 2>&1; then
       with_dbus="no"
-    elif echo $WX_CPPFLAGS | grep __WXMSW__; then
+    elif echo $WX_CPPFLAGS | grep __WXMSW__ > /dev/null 2>&1; then
       with_dbus="no"
     else
       with_dbus="yes"
@@ -415,7 +415,7 @@ if test "$buildmain" = "yes"; then
   AC_MSG_RESULT([$with_dbus])
 
   # We want xdg-open on *nix
-  if echo "$WX_CPPFLAGS" | grep __WXGTK__; then
+  if echo "$WX_CPPFLAGS" | grep __WXGTK__ > /dev/null 2>&1; then
 
     AC_PATH_PROG(xdgopen, xdg-open)
     if test -z "$xdgopen"; then
