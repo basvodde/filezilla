@@ -7,6 +7,8 @@
 #include "option_change_event_handler.h"
 #include "sizeformatting.h"
 
+#include <string>
+
 #ifdef __WXMSW__
 	#include <shlobj.h>
 
