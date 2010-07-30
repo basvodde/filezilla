@@ -1276,7 +1276,7 @@ void CLocalListView::OnKeyDown(wxKeyEvent& event)
 #endif
 
 	const int code = event.GetKeyCode();
-	if (code == WXK_DELETE)
+	if (code == WXK_DELETE || code == WXK_NUMPAD_DELETE)
 	{
 		if (GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) == -1)
 		{

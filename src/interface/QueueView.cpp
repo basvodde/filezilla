@@ -3254,7 +3254,7 @@ bool CQueueView::IsOtherEngineConnected(t_EngineData* pEngineData)
 
 void CQueueView::OnChar(wxKeyEvent& event)
 {
-	if (event.GetKeyCode() == WXK_DELETE)
+	if (event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE)
 	{
 		wxCommandEvent cmdEvt;
 		OnRemoveSelected(cmdEvt);

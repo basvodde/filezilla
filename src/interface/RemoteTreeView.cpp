@@ -1344,7 +1344,7 @@ void CRemoteTreeView::OnChar(wxKeyEvent& event)
 	wxCommandEvent cmdEvt;
 	if (event.GetKeyCode() == WXK_F2)
 		OnMenuRename(cmdEvt);
-	else if (event.GetKeyCode() == WXK_DELETE)
+	else if (event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE)
 		OnMenuDelete(cmdEvt);
 	else
 		event.Skip();

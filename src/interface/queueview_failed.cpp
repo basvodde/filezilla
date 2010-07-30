@@ -372,7 +372,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 
 void CQueueViewFailed::OnChar(wxKeyEvent& event)
 {
-	if (event.GetKeyCode() == WXK_DELETE)
+	if (event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE)
 	{
 		wxCommandEvent cmdEvt;
 		OnRemoveSelected(cmdEvt);
