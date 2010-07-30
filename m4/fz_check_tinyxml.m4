@@ -18,10 +18,10 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
         with_tinyxml=system
       fi
     ])
-])
-AC_DEFUN([FZ_CHECK_TINYXML], [
+
   AC_LANG_PUSH(C++)
 
+  dnl Check tinyxml.h header
   if test "x$with_tinyxml" != "xbuiltin"; then
     AC_CHECK_HEADER(
       [tinyxml.h],
@@ -35,10 +35,10 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
       ])
   fi
 
+  dnl Check for shared library
   if test "x$with_tinyxml" != "xbuiltin"; then
     AC_HAVE_LIBRARY(tinyxml,
       [
-         with_tinyxml=system
       ],
       [
         if test "x$with_tinyxml" = "xsystem"; then
@@ -48,6 +48,39 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
         fi
       ])
   fi
+
+  dnl Check for known bug in TiXmlBase::EncodeString,
+  dnl see http://sourceforge.net/tracker/index.php?func=detail&aid=3031828&group_id=13559&atid=313559
+  if test "x$with_tinyxml" != "xbuiltin"; then
+    fz_tinyxml_oldlibs=$LIBS
+    LIBS="$LIBS -ltinyxml"
+    AC_RUN_IFELSE([
+      AC_LANG_PROGRAM([
+          #include <tinyxml.h>
+        ], [
+          TIXML_STRING input("foo&#xxx;");
+          TIXML_STRING output;
+
+          TiXmlBase::EncodeString(input, &output);
+
+          if (output != "foo&amp#xxx;")
+            return 1;
+          return 0;
+        ])
+      ], [
+         with_tinyxml=system
+      ], [
+        if test "x$with_tinyxml" = "xsystem"; then
+          AC_MSG_ERROR([Broken version TinyXML library detected. See http://sourceforge.net/tracker/index.php?func=detail&aid=3031828&group_id=13559&atid=313559 for details. If you cannot fix the version of TinyXML installed on your system, you can use the copy of TinyXML distributed with FileZilla by passing --with-tinyxml=builtin as argument to configure.])
+        else
+          with_tinyxml=builtin
+        fi
+      ], [
+        dnl Cannot run script if cross-compiling
+      ])
+    LIBS="$fz_tinyxml_oldlibs"
+  fi
+
   AC_LANG_POP
 
   if test "x$with_tinyxml" = "xsystem"; then
