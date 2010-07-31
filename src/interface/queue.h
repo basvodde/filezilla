@@ -135,7 +135,7 @@ struct t_EngineData;
 class CFileItem : public CQueueItem
 {
 public:
-	CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
+	CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const wxString& localFile,
 			const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size);
 	virtual ~CFileItem();
 
@@ -145,6 +145,7 @@ public:
 
 	wxString GetLocalFile() const { return m_localFile; }
 	wxString GetRemoteFile() const { return m_remoteFile; }
+	wxString GetLocalPath() const { return m_localPath; }
 	CServerPath GetRemotePath() const { return m_remotePath; }
 	wxLongLong GetSize() const { return m_size; }
 	void SetSize(wxLongLong size) { m_size = size; }
@@ -220,14 +221,15 @@ protected:
 
 	wxString m_localFile;
 	wxString m_remoteFile;
-	CServerPath m_remotePath;
+	const wxString m_localPath;
+	const CServerPath m_remotePath;
 	wxLongLong m_size;
 };
 
 class CFolderItem : public CFileItem
 {
 public:
-	CFolderItem(CServerItem* parent, bool queued, const wxString& localFile);
+	CFolderItem(CServerItem* parent, bool queued, const wxString& localPath);
 	CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile);
 	
 	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }

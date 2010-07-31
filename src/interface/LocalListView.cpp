@@ -580,11 +580,9 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 		return;
 	}
 
-	wxFileName fn(m_dir, data->name);
-
 	const bool queue_only = action == 1;
 
-	m_pQueue->QueueFile(queue_only, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+	m_pQueue->QueueFile(queue_only, false, m_dir, data->name, data->name, path, *pServer, data->size);
 	m_pQueue->QueueFile_Finish(true);
 }
 
@@ -1175,7 +1173,10 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		{
 			wxFileName fn(m_dir, data->name);
 
-			m_pQueue->QueueFile(queue_only, false, fn.GetFullPath(), data->name, path, *pServer, data->size);
+			int x = sizeof(CServerPath);
+			int y = sizeof(wxLongLong);
+			int z = sizeof(wxString);
+			m_pQueue->QueueFile(queue_only, false, m_dir, data->name, data->name, path, *pServer, data->size);
 			added = true;
 		}
 	}
@@ -2237,13 +2238,13 @@ void CLocalListView::OnVolumesEnumerated(wxCommandEvent& event)
 		wxString drive = iter->volume;
 
 		unsigned int item, index;
-		for (item = 1; item < m_indexMapping.size(); item++)
+		for (item = 1; item < m_indexMapping.size(); ++item)
 		{
 			index = m_indexMapping[item];
 			if (m_fileData[index].name == drive || m_fileData[index].name.Left(drive.Len() + 1) == drive + _T(" "))
 				break;
 		}
-		if (item == m_indexMapping.size())
+		if (item >= m_indexMapping.size())
 			continue;
 
 		m_fileData[index].label = drive + _T(" (") + iter->volumeName + _T(")");

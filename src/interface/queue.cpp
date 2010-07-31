@@ -278,9 +278,12 @@ int CQueueItem::GetItemIndex() const
 	return index + pParent->GetItemIndex();
 }
 
-CFileItem::CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localFile,
+CFileItem::CFileItem(CServerItem* parent, bool queued, bool download,
+					 const wxString& localPath, const wxString& localFile,
 					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
-	: m_localFile(localFile), m_remoteFile(remoteFile), m_remotePath(remotePath), m_size(size)
+	: m_localPath(localPath), m_localFile(localFile)
+	, m_remoteFile(remoteFile), m_remotePath(remotePath)
+	, m_size(size)
 {
 	m_parent = parent;
 	m_priority = priority_normal;
@@ -343,7 +346,7 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 
 	TiXmlElement *file = pElement->LinkEndChild(new TiXmlElement("File"))->ToElement();
 
-	AddTextElement(file, "LocalFile", m_localFile);
+	AddTextElement(file, "LocalFile", m_localPath + m_localFile);
 	AddTextElement(file, "RemoteFile", m_remoteFile);
 	AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
 	AddTextElementRaw(file, "Download", Download() ? "1" : "0");
@@ -379,13 +382,13 @@ void CFileItem::SetRemoteFile(const wxString &file)
 	m_remoteFile = file;
 }
 
-CFolderItem::CFolderItem(CServerItem* parent, bool queued, const wxString& localFile)
-	: CFileItem(parent, queued, true, localFile, _T(""), CServerPath(), -1)
+CFolderItem::CFolderItem(CServerItem* parent, bool queued, const wxString& localPath)
+	: CFileItem(parent, queued, true, localPath, _T(""), _T(""), CServerPath(), -1)
 {
 }
 
 CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile)
-	: CFileItem(parent, queued, false, _T(""), remoteFile, remotePath, -1)
+	: CFileItem(parent, queued, false, _T(""), _T(""), remoteFile, remotePath, -1)
 {
 }
 
@@ -859,7 +862,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			switch (column)
 			{
 			case 0:
-				return pFileItem->GetIndent() + pFileItem->GetLocalFile();
+				return pFileItem->GetIndent() + pFileItem->GetLocalPath() + pFileItem->GetLocalFile();
 			case 1:
 				if (pFileItem->Download())
 					if (pFileItem->queued())
@@ -940,7 +943,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			{
 			case 0:
 				if (pFolderItem->Download())
-					return pFolderItem->GetIndent() + pFolderItem->GetLocalFile();
+					return pFolderItem->GetIndent() + pFolderItem->GetLocalPath() + pFolderItem->GetLocalFile();
 				break;
 			case 1:
 				if (pFolderItem->Download())

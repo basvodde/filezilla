@@ -93,7 +93,7 @@ public:
 	CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
 
-	bool QueueFile(const bool queueOnly, const bool download, const wxString& localFile, const wxString& remoteFile,
+	bool QueueFile(const bool queueOnly, const bool download, const wxString& localPath, const wxString& localFile, const wxString& remoteFile,
 	const CServerPath& remotePath, const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit = CEditHandler::none);
 	void QueueFile_Finish(const bool start); // Need to be called after QueueFile
 	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);

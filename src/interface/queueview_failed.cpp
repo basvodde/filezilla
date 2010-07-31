@@ -116,12 +116,12 @@ void CQueueViewFailed::OnRemoveSelected(wxCommandEvent& event)
 			CFileItem* pFileItem = (CFileItem*)pItem;
 			if (pFileItem->m_edit == CEditHandler::remote && pEditHandler)
 			{
-				wxFileName fn(pFileItem->GetLocalFile());
+				wxFileName fn(pFileItem->GetLocalPath(), pFileItem->GetLocalFile());
 				if (pFileItem->m_edit == CEditHandler::local)
 				{
-					enum CEditHandler::fileState state = pEditHandler->GetFileState(pFileItem->GetLocalFile());
+					enum CEditHandler::fileState state = pEditHandler->GetFileState(fn.GetFullPath());
 					if (state == CEditHandler::upload_and_remove_failed)
-						pEditHandler->Remove(pFileItem->GetLocalFile());
+						pEditHandler->Remove(fn.GetFullPath());
 				}
 				else
 				{
@@ -199,7 +199,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 				pFileItem->m_errorCount = 0;
 				pFileItem->m_statusMessage.Clear();
 
-				if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalFile()))
+				if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalPath() + pFileItem->GetLocalFile()))
 				{
 					failedToRequeueAll = true;
 					RemoveItem(pItem, true, false, false);
@@ -274,7 +274,7 @@ void CQueueViewFailed::OnRequeueSelected(wxCommandEvent& event)
 			pFileItem->m_errorCount = 0;
 			pFileItem->m_statusMessage.Clear();
 
-			if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalFile()))
+			if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalPath() + pFileItem->GetLocalFile()))
 			{
 				failedToRequeueAll = true;
 				RemoveItem(pItem, true, false, false);

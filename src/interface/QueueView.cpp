@@ -519,7 +519,8 @@ CQueueView::~CQueueView()
 #endif
 }
 
-bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxString& localFile,
+bool CQueueView::QueueFile(const bool queueOnly, const bool download,
+						   const wxString& localPath, const wxString& localFile,
 						   const wxString& remoteFile, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit /*=CEditHandler::none*/)
 {
@@ -536,7 +537,7 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download, const wxSt
 	}
 	else
 	{
-		fileItem = new CFileItem(pServerItem, queueOnly, download, localFile, remoteFile, remotePath, size);
+		fileItem = new CFileItem(pServerItem, queueOnly, download, localPath, localFile, remoteFile, remotePath, size);
 		if (download)
 			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(remoteFile, remotePath.GetType());
 		else
@@ -589,7 +590,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, con
 			continue;
 
 		CFileItem* fileItem;
-		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath + ReplaceInvalidCharacters(iter->name), iter->name, dataObject.GetServerPath(), iter->size);
+		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath, ReplaceInvalidCharacters(iter->name), iter->name, dataObject.GetServerPath(), iter->size);
 		fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(iter->name, dataObject.GetServerPath().GetType());
 
 		InsertItem(pServerItem, fileItem);
@@ -847,7 +848,7 @@ bool CQueueView::TryStartNextTransfer()
 
 		while (newFileItem && newFileItem->Download() && newFileItem->GetType() == QueueItemType_Folder)
 		{
-			wxFileName fn(newFileItem->GetLocalFile(), _T(""));
+			wxFileName fn(newFileItem->GetLocalPath(), newFileItem->GetLocalFile());
 			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
 			const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
 			for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
@@ -1215,7 +1216,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			{
 				const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
 				for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
-					(*iter)->RefreshLocalFile(pFileItem->GetLocalFile());
+					(*iter)->RefreshLocalFile(pFileItem->GetLocalPath() + pFileItem->GetLocalFile());
 			}
 
 			if (pFileItem->m_edit != CEditHandler::none && reason != retry && reason != reset)
@@ -1228,7 +1229,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 					pEditHandler->FinishTransfer(reason == success, pFileItem->GetRemoteFile(), pFileItem->GetRemotePath(), pServerItem->GetServer());
 				}
 				else
-					pEditHandler->FinishTransfer(reason == success, pFileItem->GetLocalFile());
+					pEditHandler->FinishTransfer(reason == success, pFileItem->GetLocalPath() + pFileItem->GetLocalFile());
 				if (reason == success)
 					pFileItem->m_edit = CEditHandler::none;
 			}
@@ -1468,7 +1469,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			fileItem->m_statusMessage = _("Transferring");
 			RefreshItem(engineData.pItem);
 
-			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalFile(), fileItem->GetRemotePath(),
+			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalPath() + fileItem->GetLocalFile(), fileItem->GetRemotePath(),
 												fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
 			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
@@ -1890,7 +1891,8 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 				continue;
 			}
 
-			CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, pFolderScanItem->m_current_local_path + CLocalFileSystem::path_separator + entry->name, entry->name, pFolderScanItem->m_current_remote_path, entry->size);
+			wxASSERT(pFolderScanItem->m_current_local_path.Last() == CLocalPath::path_separator);
+			CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, pFolderScanItem->m_current_local_path, entry->name, entry->name, pFolderScanItem->m_current_remote_path, entry->size);
 
 			if (download)
 				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->name, pFolderScanItem->m_current_remote_path.GetType());
@@ -1991,6 +1993,9 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 			m_insertionCount = 0;
 			CServerItem *pServerItem = CreateServerItem(server);
 
+			wxString previousLocalPath;
+			CServerPath previousRemotePath;
+
 			for (TiXmlElement* pFile = pServer->FirstChildElement("File"); pFile; pFile = pFile->NextSiblingElement("File"))
 			{
 				wxString localFile = GetTextElement(pFile, "LocalFile");
@@ -2007,7 +2012,16 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 				if (localFile != _T("") && remoteFile != _T("") && remotePath.SetSafePath(safeRemotePath) &&
 					size >= -1 && priority < PRIORITY_COUNT)
 				{
-					CFileItem* fileItem = new CFileItem(pServerItem, true, download, localFile, remoteFile, remotePath, size);
+					wxFileName fn(localFile);
+
+					// CServerPath and wxString are reference counted.
+					// Save some memory here by re-using the old copy
+					if (fn.GetPath() != previousLocalPath)
+						previousLocalPath = fn.GetPath();
+					if (previousRemotePath != remotePath)
+						previousRemotePath = remotePath;
+
+					CFileItem* fileItem = new CFileItem(pServerItem, true, download, previousLocalPath, fn.GetFullName(), remoteFile, previousRemotePath, size);
 					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);
 					fileItem->m_errorCount = errorCount;
@@ -3313,9 +3327,9 @@ void CQueueView::RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString&
 	CFileItem* pFile = (CFileItem*)pEngineData->pItem;
 	if (local)
 	{
-		wxFileName fn(pFile->GetLocalFile());
+		wxFileName fn(pFile->GetLocalPath(), pFile->GetLocalFile());
 		fn.SetFullName(newName);
-		pFile->SetLocalFile(fn.GetFullPath());
+		pFile->SetLocalFile(fn.GetFullName());
 	}
 	else
 		pFile->SetRemoteFile(newName);

@@ -228,7 +228,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		}
 		else if (m_operationMode == recursive_addtoqueue)
 		{
-			m_pQueue->QueueFile(true, true, dir.localDir, _T(""), CServerPath(), *pServer, -1);
+			m_pQueue->QueueFile(true, true, dir.localDir, _T(""), _T(""), CServerPath(), *pServer, -1);
 			m_pQueue->QueueFile_Finish(false);
 		}
 	}
@@ -288,7 +288,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			case recursive_download_flatten:
 				{
 					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true,
-						dir.localDir + CQueueView::ReplaceInvalidCharacters(entry.name),
+						dir.localDir, CQueueView::ReplaceInvalidCharacters(entry.name),
 						entry.name, pDirectoryListing->path, *pServer, entry.size);
 					added = true;
 				}
@@ -431,7 +431,8 @@ void CRecursiveOperation::LinkIsNotDir()
 		if (local_file.Last() == CLocalFileSystem::path_separator)
 			local_file.RemoveLast();
 	}
-	m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue || m_operationMode == recursive_addtoqueue_flatten, true, local_file, dir.subdir, dir.parent, *pServer, -1);
+	wxFileName fn(local_file);
+	m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue || m_operationMode == recursive_addtoqueue_flatten, true, fn.GetPath(), fn.GetFullName(), dir.subdir, dir.parent, *pServer, -1);
 	m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
 
 	NextOperation();

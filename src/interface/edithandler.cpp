@@ -802,7 +802,7 @@ bool CEditHandler::UploadFile(enum fileType type, std::list<t_fileData>::iterato
 	wxASSERT(m_pQueue);
 	wxULongLong size = fn.GetSize();
 	
-	m_pQueue->QueueFile(false, false, fn.GetFullPath(), iter->name, iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), type);
+	m_pQueue->QueueFile(false, false, fn.GetPath(), fn.GetFullName(), iter->name, iter->remotePath, iter->server, wxLongLong(size.GetHi(), size.GetLo()), type);
 	m_pQueue->QueueFile_Finish(true);
 
 	return true;

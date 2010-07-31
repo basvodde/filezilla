@@ -357,7 +357,8 @@ void CManualTransfer::OnOK(wxCommandEvent& event)
 	else
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
 
-	m_pQueueView->QueueFile(!start, download, local_file, remote_file, path, *m_pServer, -1);
+	wxFileName fn(local_file);
+	m_pQueueView->QueueFile(!start, download, fn.GetPath(), fn.GetFullName(), remote_file, path, *m_pServer, -1);
 
 	// Restore old data type
 	COptions::Get()->SetOption(OPTION_ASCIIBINARY, old_data_type);

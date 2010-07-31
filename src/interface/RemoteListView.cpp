@@ -1277,7 +1277,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 				return;
 			}
 
-			m_pQueue->QueueFile(queue_only, true, local_path.GetPath() + CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
+			m_pQueue->QueueFile(queue_only, true, local_path.GetPath(), CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
 			m_pQueue->QueueFile_Finish(true);
 		}
 	}
@@ -1541,7 +1541,7 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 		}
 		else
 		{
-			m_pQueue->QueueFile(queueOnly, true, local_parent.GetPath() + CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
+			m_pQueue->QueueFile(queueOnly, true, local_parent.GetPath(), CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
 			added = true;
 		}
 	}
@@ -2708,7 +2708,8 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 			continue;
 		}
 
-		m_pQueue->QueueFile(false, true, file, entry.name, path, server, entry.size, CEditHandler::remote);
+		wxFileName fn(file);
+		m_pQueue->QueueFile(false, true, fn.GetPath(), fn.GetFullName(), entry.name, path, server, entry.size, CEditHandler::remote);
 		m_pQueue->QueueFile_Finish(true);
 	}
 }
@@ -3014,8 +3015,7 @@ void CRemoteListView::LinkIsNotDir(const CServerPath& path, const wxString& link
 
 	if (m_pLinkResolveState->remote_path == path && m_pLinkResolveState->link == link)
 	{
-		wxFileName fn(m_pLinkResolveState->local_path, link);
-		m_pQueue->QueueFile(false, true, fn.GetFullPath(), link, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);
+		m_pQueue->QueueFile(false, true, m_pLinkResolveState->local_path, CQueueView::ReplaceInvalidCharacters(link), link, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);
 		m_pQueue->QueueFile_Finish(true);
 	}
 
