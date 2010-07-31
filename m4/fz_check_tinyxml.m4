@@ -36,10 +36,11 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
   fi
 
   dnl Check for shared library
+
   if test "x$with_tinyxml" != "xbuiltin"; then
+    dnl Oddity: in AC_CHECK_HEADER I can leave the true case empty, but not in AC_HAVE_LIBRARY
     AC_HAVE_LIBRARY(tinyxml,
-      [
-      ],
+      [true],
       [
         if test "x$with_tinyxml" = "xsystem"; then
           AC_MSG_ERROR([tinyxml sytem library not found but requested. If you do not have TinyXML installed as system library, you can use the copy of TinyXML distributed with FileZilla by passing --with-tinyxml=builtin as argument to configure.])
@@ -77,6 +78,7 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
         fi
       ], [
         dnl Cannot run script if cross-compiling
+        true
       ])
     LIBS="$fz_tinyxml_oldlibs"
   fi
