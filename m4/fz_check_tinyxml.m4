@@ -12,7 +12,7 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
       fi
     ],
     [
-      if echo $host_os | grep -i "cygwin\|mingw\|mac" > /dev/null 2>&1 ; then
+      if echo $host_os | grep -i "cygwin\|mingw\|mac\|apple" > /dev/null 2>&1 ; then
         with_tinyxml=auto
       else
         with_tinyxml=system

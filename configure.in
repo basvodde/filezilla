@@ -280,7 +280,7 @@ if test "$buildmain" = "yes"; then
   AH_TEMPLATE(ENABLE_BINRELOC, [Define ENABLE_BINRELOC on systems where the executable
                                 location can be obtained using /proc/self/maps])
   AC_MSG_CHECKING([whether to use BinReloc])
-  if echo $host_os | grep -i "cygwin\|mingw\|mac" > /dev/null 2>&1 ; then
+  if echo $host_os | grep -i "cygwin\|mingw\|mac\|apple" > /dev/null 2>&1 ; then
     use_binreloc=no
   else
     use_binreloc=yes
