@@ -253,7 +253,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			if (entry.name != dir.restrict)
 				continue;
 		}
-		else if (filter.FilenameFiltered(m_filters, entry.name, path, entry.is_dir(), entry.size, false, 0))
+		else if (filter.FilenameFiltered(m_filters, entry.name, path, entry.is_dir(), entry.size, false, 0, entry.has_date() ? &entry.time : 0))
 			continue;
 
 		if (entry.is_dir() && (!entry.is_link() || m_operationMode != recursive_delete))

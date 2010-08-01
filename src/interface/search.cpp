@@ -662,7 +662,7 @@ void CSearchDialog::ProcessDirectoryListing()
 	{
 		const CDirentry& entry = (*listing)[i];
 
-		if (m_search_filter.filters.size() && !CFilterManager::FilenameFilteredByFilter(m_search_filter, entry.name, listing->path.GetPath(), entry.is_dir(), entry.size, 0))
+		if (m_search_filter.filters.size() && !CFilterManager::FilenameFilteredByFilter(m_search_filter, entry.name, listing->path.GetPath(), entry.is_dir(), entry.size, 0, entry.has_date() ? &entry.time : 0))
 			continue;
 
 		CSearchFileData data;

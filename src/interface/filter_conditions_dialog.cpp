@@ -73,6 +73,7 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 
 		sizeConditionTypes.Add(_("greater than"));
 		sizeConditionTypes.Add(_("equals"));
+		sizeConditionTypes.Add(_("does not equal"));
 		sizeConditionTypes.Add(_("less than"));
 
 		attributeSetTypes.Add(_("is set"));
@@ -97,6 +98,7 @@ bool CFilterConditionsDialog::CreateListControl(int conditions /*=common*/)
 
 		dateConditionTypes.Add(_("before"));
 		dateConditionTypes.Add(_("equals"));
+		dateConditionTypes.Add(_("does not equal"));
 		dateConditionTypes.Add(_("after"));
 	}
 
@@ -298,6 +300,8 @@ void CFilterConditionsDialog::OnFilterTypeChange(wxCommandEvent& event)
 	filter.type = type;
 
 	if (filter.type == filter_size && filter.condition > 3)
+		filter.condition = 0;
+	else if (filter.type == filter_date && filter.condition > 3)
 		filter.condition = 0;
 	delete m_filterControls[item].pCondition;
 	m_filterControls[item].pCondition = 0;
@@ -570,6 +574,8 @@ CFilter CFilterConditionsDialog::GetFilter()
 			if (controls.pValue->GetValue() == _T(""))
 				continue;
 			condition.strValue = controls.pValue->GetValue();
+			if (!condition.date.ParseFormat(condition.strValue, _T("%Y-%m-%d")) || !condition.date.IsValid())
+				continue;
 			break;
 		default:
 			wxFAIL_MSG(_T("Unhandled condition"));

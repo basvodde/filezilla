@@ -399,7 +399,7 @@ regular_dir:
 			data.hasTime = data.lastModified.IsValid();
 
 			m_fileData.push_back(data);
-			if (!filter.FilenameFiltered(data.name, dirname, data.dir, data.size, true, data.attributes))
+			if (!filter.FilenameFiltered(data.name, dirname, data.dir, data.size, true, data.attributes, data.hasTime ? &data.lastModified : 0))
 			{
 				if (data.dir)
 					totalDirCount++;
@@ -1441,7 +1441,7 @@ void CLocalListView::ApplyCurrentFilter()
 		const CLocalFileData& data = m_fileData[i];
 		if (data.flags == fill)
 			continue;
-		if (filter.FilenameFiltered(data.name, m_dir, data.dir, data.size, true, data.attributes))
+		if (filter.FilenameFiltered(data.name, m_dir, data.dir, data.size, true, data.attributes, data.hasTime ? &data.lastModified : 0))
 		{
 			hidden++;
 			continue;
@@ -1678,7 +1678,7 @@ void CLocalListView::RefreshFile(const wxString& file)
 	data.hasTime = data.lastModified.IsValid();
 
 	CFilterManager filter;
-	if (filter.FilenameFiltered(data.name, m_dir, data.dir, data.size, true, data.attributes))
+	if (filter.FilenameFiltered(data.name, m_dir, data.dir, data.size, true, data.attributes, data.hasTime ? &data.lastModified : 0))
 		return;
 
 	CancelLabelEdit();

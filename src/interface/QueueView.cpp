@@ -1876,7 +1876,7 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 		{
 			const t_newEntry* entry = (const t_newEntry*)*iter;
 
-			if (filters.FilenameFiltered(entry->name, pFolderScanItem->m_current_local_path, entry->dir, entry->size, true, entry->attributes))
+			if (filters.FilenameFiltered(entry->name, pFolderScanItem->m_current_local_path, entry->dir, entry->size, true, entry->attributes, &entry->time))
 			{
 				delete entry;
 				continue;
