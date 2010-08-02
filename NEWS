@@ -10,6 +10,16 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.3.4-rc1 (2010-08-02)
+
++ Filter/search by modification date
++ Add "does not equal" option to size filter
++ Reduced memory consumption when working with very large queues and directory hierarchies
+- Fix bug in TinyXML that could lead to corrupt XML documents
+- Abort directory listing parsing if encountering a line with more than 10k characters
+- Fix stalling recursive operations if FileZilla gets disconnected
+- Set correct initial control state in site manager if there are no sites
+
 3.3.3 (2010-06-13)
 
 - Fix transfer statusbar regression introduced in the release candidate
