@@ -4,11 +4,11 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: FileZilla 3.3.1\n"
+"Project-Id-Version: FileZilla 3.3.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-20 11:35+0200\n"
-"PO-Revision-Date: 2010-01-23 13:08+0100\n"
-"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
+"POT-Creation-Date: 2010-08-02 16:08+0200\n"
+"PO-Revision-Date: 2010-07-30 15:09+0100\n"
+"Last-Translator: Martin Srebotnjak  <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -91,7 +91,7 @@ msgstr[1] "%d datoteka. Skupna velikost: najmanj %s"
 msgstr[2] "%d datoteki. Skupna velikost: najmanj %s"
 msgstr[3] "%d datoteke. Skupna velikost: najmanj %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2823
+#: ../../locales/../src/interface/QueueView.cpp:2837
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d datotek dodanih v vrsto"
@@ -100,10 +100,10 @@ msgstr "%d datotek dodanih v vrsto"
 #, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "%d sekund"
+msgstr[1] "%d sekunda"
+msgstr[2] "%d sekundi"
+msgstr[3] "%d sekunde"
 
 #: resources.h:769
 msgid "%h - Host"
@@ -115,24 +115,24 @@ msgid "%p - Password"
 msgstr "%p - Geslo"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:177
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%d B/s)"
-msgstr "%s bajtov (%d B/s)"
+msgstr "%s (%d B/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:175
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%d.%d KB/s)"
-msgstr "%s bajtov (%d,%d KB/s)"
+msgstr "%s (%d,%d KB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:173
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%d.%d MB/s)"
-msgstr "%s bajtov (%d,%d MB/s)"
+msgstr "%s (%d,%d MB/s)"
 
 #: ../../locales/../src/interface/statuslinectrl.cpp:180
-#, fuzzy, c-format
+#, c-format
 msgid "%s (? B/s)"
-msgstr "%s bajtov (? B/s)"
+msgstr "%s (? B/s)"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:38
 #, c-format
@@ -188,7 +188,7 @@ msgstr "%s bajtov (%d,%d KB/s)"
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s bajtov (%d,%d MB/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:804
+#: ../../locales/../src/interface/FileZilla.cpp:702
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -202,7 +202,7 @@ msgstr ""
 "Prosimo, prenesite FileZillo znova. Če se ta težava ponavlja, sporočite "
 "hrošča."
 
-#: ../../locales/../src/interface/FileZilla.cpp:898
+#: ../../locales/../src/interface/FileZilla.cpp:796
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -341,13 +341,12 @@ msgid "&Close FileZilla"
 msgstr "&Zapri FileZillo"
 
 #: resources.h:664
-#, fuzzy
 msgid "&Configure speed limits..."
-msgstr "&Omogoči omejitve hitrosti"
+msgstr "&Prilagodi omejitve hitrosti ..."
 
 #: resources.h:531
 msgid "&Configure..."
-msgstr ""
+msgstr "&Prilagodi ..."
 
 #: resources.h:112
 msgid "&Connect"
@@ -424,7 +423,7 @@ msgstr "&Razveži s strežnikom"
 
 #: resources.h:868
 msgid "&Display momentary transfer speed instead of average speed"
-msgstr ""
+msgstr "&Prikaži trenutno hitrost prenosa namesto povprečne hitrosti"
 
 #: resources.h:890
 msgid "&Display size in bytes"
@@ -631,7 +630,6 @@ msgid "&Log to file"
 msgstr "&Beleži v datoteko"
 
 #: resources.h:82
-#, fuzzy
 msgid "&Logon Type:"
 msgstr "&Vrsta prijave:"
 
@@ -901,17 +899,17 @@ msgid "&Site Manager..."
 msgstr "Upravljalnik &strežnikov ..."
 
 #: resources.h:397
+#, fuzzy
 msgid "&Site-specific bookmark"
-msgstr "Zaznamek določenega strežnika"
+msgstr "Zaznamki določenega strežnika"
 
 #: resources.h:64
 msgid "&Skip"
 msgstr "&Preskoči"
 
 #: resources.h:532
-#, fuzzy
 msgid "&Speed limits"
-msgstr "Omejitve hitrosti"
+msgstr "&Omejitve hitrosti"
 
 #: resources.h:448
 msgid "&Start transfer immediately"
@@ -1032,8 +1030,8 @@ msgstr "'%s' ne obstaja ali pa dostop do nje ni mogoč."
 msgid "'%s' is not a directory."
 msgstr "'%s' ni mapa."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:429
-#: ../../locales/../src/interface/sitemanager.cpp:1052
+#: ../../locales/../src/interface/manual_transfer.cpp:430
+#: ../../locales/../src/interface/sitemanager.cpp:1057
 msgid "'Account' logontype not supported by selected protocol"
 msgstr "Izbrani protokol ne podpira prijave v račun"
 
@@ -1090,9 +1088,9 @@ msgid "(example: %Y-%m-%d)"
 msgstr "(primer: %Y-%m-%d)"
 
 #: resources.h:482 resources.h:484 resources.h:806 resources.h:808
-#, fuzzy, c-format
+#, c-format
 msgid "(in %s/s)"
-msgstr "(v KB/s)"
+msgstr "(v %s/s)"
 
 #: ../../locales/../src/interface/updatewizard.cpp:896
 msgid ", %H:%M:%S left"
@@ -1155,18 +1153,16 @@ msgid "3 - Verbose"
 msgstr "3 - Obširno"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:148
-#, fuzzy
 msgid "32 bit system"
-msgstr "&Ponovno zaženi sistem"
+msgstr "32-bitni sistem"
 
 #: resources.h:964
 msgid "4 - Debug"
 msgstr "4 - Razhrošči"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:146
-#, fuzzy
 msgid "64 bit system"
-msgstr "&Ponovno zaženi sistem"
+msgstr "64-bitni sistem"
 
 #: ../../locales/../src/interface/updatewizard.cpp:28
 msgid "< &Back"
@@ -1205,13 +1201,13 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "Predhodno odprta datoteka je bila spremenjena."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2086
+#: ../../locales/../src/interface/LocalListView.cpp:2087
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr "Datoteka s tem imenom je že v urejanju. Želite ponovno odpreti '%s'?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2082
+#: ../../locales/../src/interface/LocalListView.cpp:2083
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
 msgid "A file with that name is already being transferred."
 msgstr "Datoteka s tem imenom se že prenaša."
@@ -1223,7 +1219,7 @@ msgstr ""
 "Datoteka s tem imenom je še vedno v urejanju. Prosim, da jo zaprete in "
 "poskusite znova."
 
-#: ../../locales/../src/interface/FileZilla.cpp:784
+#: ../../locales/../src/interface/FileZilla.cpp:682
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -1313,10 +1309,10 @@ msgstr "Nad seznami datotek"
 #: ../../locales/../src/interface/manual_transfer.cpp:156
 #: ../../locales/../src/interface/manual_transfer.cpp:157
 #: ../../locales/../src/interface/manual_transfer.cpp:190
-#: ../../locales/../src/interface/manual_transfer.cpp:544
 #: ../../locales/../src/interface/manual_transfer.cpp:545
-#: ../../locales/../src/interface/sitemanager.cpp:1387
-#: ../../locales/../src/interface/sitemanager.cpp:1388
+#: ../../locales/../src/interface/manual_transfer.cpp:546
+#: ../../locales/../src/interface/sitemanager.cpp:1392
+#: ../../locales/../src/interface/sitemanager.cpp:1393
 msgid "Account"
 msgstr "račun"
 
@@ -1402,7 +1398,7 @@ msgstr "Napredne možnosti:"
 msgid "Algorithm:"
 msgstr "Algoritem:"
 
-#: ../../locales/../src/interface/QueueView.cpp:3025
+#: ../../locales/../src/interface/QueueView.cpp:3039
 msgid "All files have been successfully transferred"
 msgstr "Vse datoteke so bile uspešno prenesene"
 
@@ -1410,7 +1406,7 @@ msgstr "Vse datoteke so bile uspešno prenesene"
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "Vsa vrata v danem razponu morajo biti med 1024 in 65535."
 
-#: ../../locales/../src/interface/QueueView.cpp:3021
+#: ../../locales/../src/interface/QueueView.cpp:3035
 #, c-format
 msgid "All transfers have finished. %d file could not be transferred."
 msgid_plural "All transfers have finished. %d files could not be transferred."
@@ -1455,7 +1451,7 @@ msgstr ""
 "Za prenos najsodobnejše različice lahko obiščete tudi http://filezilla-"
 "project.org."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2304
+#: ../../locales/../src/interface/sitemanager.cpp:2309
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1465,9 +1461,9 @@ msgstr "Datoteka z istim imenom že obstaja na ciljnem mestu."
 #: ../../locales/../src/interface/manual_transfer.cpp:155
 #: ../../locales/../src/interface/manual_transfer.cpp:193
 #: ../../locales/../src/interface/manual_transfer.cpp:209
-#: ../../locales/../src/interface/manual_transfer.cpp:543
-#: ../../locales/../src/interface/sitemanager.cpp:1386
-#: ../../locales/../src/interface/sitemanager.cpp:1628
+#: ../../locales/../src/interface/manual_transfer.cpp:544
+#: ../../locales/../src/interface/sitemanager.cpp:1391
+#: ../../locales/../src/interface/sitemanager.cpp:1633
 msgid "Anonymous"
 msgstr "anonimna"
 
@@ -1476,11 +1472,11 @@ msgid ""
 "Another remote operation is already in progress, cannot change directory now."
 msgstr "Druga oddaljena operacija že poteka, mape zdaj ni mogoče spremeniti."
 
-#: ../../locales/../src/interface/sitemanager.cpp:880
+#: ../../locales/../src/interface/sitemanager.cpp:885
 msgid "Any changes made in the Site Manager could not be saved."
 msgstr "Spremembe upravljalnika strežnikov niso bile shranjene."
 
-#: ../../locales/../src/interface/sitemanager.cpp:727
+#: ../../locales/../src/interface/sitemanager.cpp:732
 msgid ""
 "Any changes made in the Site Manager will not be saved unless you repair the "
 "file."
@@ -1488,11 +1484,11 @@ msgstr ""
 "Nobena sprememba upravljalnika strežnikov ne bo shranjena, če ne popravite "
 "datoteke."
 
-#: ../../locales/../src/interface/filter.cpp:194
+#: ../../locales/../src/interface/filter.cpp:195
 msgid "Any changes made to the filters could not be saved."
 msgstr "Sprememb nad filtri ni bilo mogoče shraniti."
 
-#: ../../locales/../src/interface/filter.cpp:992
+#: ../../locales/../src/interface/filter.cpp:996
 msgid "Any changes made to the filters will not be saved."
 msgstr "Spremembe, opravljene na filtrih, ne bodo shranjene."
 
@@ -1512,7 +1508,7 @@ msgstr "Uporabi le na &trenutni vrsti"
 msgid "Apply to &files only"
 msgstr "Uporabi le na &datotekah"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:80
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:81
 #: ../../locales/../src/interface/updatewizard.cpp:322
 msgid "Archive"
 msgstr "Arhiv"
@@ -1547,7 +1543,7 @@ msgstr "Zastavljanje vprašanj na forumih FileZilla"
 msgid "Associated program not found:"
 msgstr "Povezanega programa ni mogoče najti:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:623
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:641
 msgid "At least one filter condition is incomplete"
 msgstr "Vsaj en pogoj filtra ni popoln"
 
@@ -1555,7 +1551,7 @@ msgstr "Vsaj en pogoj filtra ni popoln"
 msgid "At this point, all required information has been gathered."
 msgstr "Na tej točki so zbrani vsi potrebni podatki."
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:110
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:115
 msgid "Attribute"
 msgstr "Atribut"
 
@@ -1618,7 +1614,7 @@ msgid "Blackboard"
 msgstr "Tabla"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:264
-#: ../../locales/../src/interface/menu_bar.cpp:305
+#: ../../locales/../src/interface/menu_bar.cpp:309
 #: ../../locales/../src/interface/sitemanager.cpp:390
 msgid "Bookmark"
 msgstr "Zaznamek"
@@ -1682,17 +1678,17 @@ msgstr "Povezave vrste datotek po &meri:"
 msgid "Calculating timezone offset of server..."
 msgstr "Izračunavanje zamika časovnega pasu strežnika ..."
 
-#: ../../locales/../src/engine/transfersocket.cpp:731
+#: ../../locales/../src/engine/transfersocket.cpp:736
 msgid "Can't read from file"
 msgstr "Iz datoteke ni mogoče brati"
 
-#: ../../locales/../src/engine/transfersocket.cpp:710
-#: ../../locales/../src/engine/transfersocket.cpp:784
+#: ../../locales/../src/engine/transfersocket.cpp:715
+#: ../../locales/../src/engine/transfersocket.cpp:789
 msgid "Can't write data to file."
 msgstr "V datoteko ni mogoče zapisovati podatkov."
 
-#: ../../locales/../src/engine/transfersocket.cpp:708
-#: ../../locales/../src/engine/transfersocket.cpp:782
+#: ../../locales/../src/engine/transfersocket.cpp:713
+#: ../../locales/../src/engine/transfersocket.cpp:787
 #, c-format
 msgid "Can't write data to file: %s"
 msgstr "V datoteko ni mogoče zapisovati podatkov: %s"
@@ -1739,7 +1735,7 @@ msgstr ""
 "Primerjava map ni bila možna, vključeni so različni filtri za krajevne in "
 "oddaljene mape"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2760
+#: ../../locales/../src/interface/RemoteListView.cpp:2761
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Primerjava map ni mogoča, niste povezani s strežnikom."
 
@@ -1747,18 +1743,18 @@ msgstr "Primerjava map ni mogoča, niste povezani s strežnikom."
 msgid "Cannot create new filter"
 msgstr "Novega filtra ni mogoče ustvariti"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2064
-#: ../../locales/../src/interface/LocalListView.cpp:2195
+#: ../../locales/../src/interface/LocalListView.cpp:2065
+#: ../../locales/../src/interface/LocalListView.cpp:2196
 #: ../../locales/../src/interface/RemoteListView.cpp:2594
 #: ../../locales/../src/interface/RemoteListView.cpp:2640
 msgid "Cannot edit file"
 msgstr "Datoteke ni mogoče urediti"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1980
+#: ../../locales/../src/interface/LocalListView.cpp:1981
 msgid "Cannot edit file, not connected to any server."
 msgstr "Urejanje datoteke ni mogoče, niste povezani s strežnikom."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1991
+#: ../../locales/../src/interface/LocalListView.cpp:1992
 msgid "Cannot edit file, remote path unknown."
 msgstr "Datoteke ni mogoče urediti, oddaljena pot ni znana."
 
@@ -1775,7 +1771,7 @@ msgstr ""
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Vrstice Quickconnect ni mogoče naložiti iz datoteke virov."
 
-#: ../../locales/../src/interface/import.cpp:39
+#: ../../locales/../src/interface/import.cpp:38
 msgid "Cannot load file, not a valid XML file."
 msgstr "Datoteke ni mogoče uvoziti, saj ni veljavna datoteka XML."
 
@@ -1788,7 +1784,7 @@ msgid "Cannot load toolbar from resource file"
 msgstr "Orodne vrstice ni mogoče naložiti iz datoteke virov."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:705
-#: ../../locales/../src/interface/sitemanager.cpp:1280
+#: ../../locales/../src/interface/sitemanager.cpp:1285
 msgid "Cannot rename entry"
 msgstr "Vnosa ni mogoče preimenovati"
 
@@ -1796,12 +1792,12 @@ msgstr "Vnosa ni mogoče preimenovati"
 msgid "Cannot rename file"
 msgstr "Datoteke ni mogoče preimenovati"
 
-#: ../../locales/../src/interface/filter.cpp:335
-#: ../../locales/../src/interface/filter.cpp:404
+#: ../../locales/../src/interface/filter.cpp:336
+#: ../../locales/../src/interface/filter.cpp:405
 msgid "Cannot save filterset"
 msgstr "Nabora filtrov ni mogoče shraniti"
 
-#: ../../locales/../src/interface/filter.cpp:295
+#: ../../locales/../src/interface/filter.cpp:296
 msgid "Cannot select filter"
 msgstr "Filtra ni mogoče izbrati"
 
@@ -1815,7 +1811,7 @@ msgstr "Povezave vrste datotek ni mogoče nastaviti"
 msgid "Cannot show dialog"
 msgstr "Pogovornega okna ni mogoče pokazati"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2082
+#: ../../locales/../src/interface/LocalListView.cpp:2083
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
 msgid "Cannot view/edit selected file"
 msgstr "Izbrane datoteke ni mogoče pokazati/urejati"
@@ -1857,7 +1853,7 @@ msgid "Changing logfile settings requires restart of FileZilla."
 msgstr ""
 "Spremembe nastavitev beleženja v dnevnik zahtevajo ponoven zagon FileZille."
 
-#: ../../locales/../src/interface/FileZilla.cpp:784
+#: ../../locales/../src/interface/FileZilla.cpp:682
 msgid "Character encoding issue"
 msgstr "Napaka kodiranja znakov"
 
@@ -1897,13 +1893,13 @@ msgstr "Preverjanje obstoja posodobitev"
 msgid "Checksum mismatch of downloaded file."
 msgstr "Neujemanje kontrolne vsote prenesene datoteke s strežnika."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1558
+#: ../../locales/../src/interface/sitemanager.cpp:1563
 msgid "Choose the default local directory"
 msgstr "Izberite privzeto krajevno mapo"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:127
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:370
-#: ../../locales/../src/interface/sitemanager.cpp:2710
+#: ../../locales/../src/interface/sitemanager.cpp:2715
 msgid "Choose the local directory"
 msgstr "Izberite krajevno mapo"
 
@@ -1947,11 +1943,11 @@ msgstr "Počisti čakalno &vrsto prenosov"
 msgid "Clear history"
 msgstr "Počisti zgodovino"
 
-#: resources.h:280 ../../locales/../src/interface/clearprivatedata.cpp:35
-#: ../../locales/../src/interface/clearprivatedata.cpp:41
-#: ../../locales/../src/interface/clearprivatedata.cpp:47
-#: ../../locales/../src/interface/clearprivatedata.cpp:78
-#: ../../locales/../src/interface/clearprivatedata.cpp:104
+#: resources.h:280 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: ../../locales/../src/interface/clearprivatedata.cpp:40
+#: ../../locales/../src/interface/clearprivatedata.cpp:46
+#: ../../locales/../src/interface/clearprivatedata.cpp:77
+#: ../../locales/../src/interface/clearprivatedata.cpp:103
 msgid "Clear private data"
 msgstr "Počisti zasebne podatke"
 
@@ -2076,7 +2072,7 @@ msgstr "Prevedeno z:"
 msgid "Compiler flags:"
 msgstr "Zastavice prevajalnika:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:81
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:82
 msgid "Compressed"
 msgstr "Stisnjeno"
 
@@ -2109,8 +2105,8 @@ msgid "Confirm deletion"
 msgstr "Potrditev brisanja"
 
 #: ../../locales/../src/engine/local_filesys.cpp:136
-#: ../../locales/../src/interface/LocalListView.cpp:2035
-#: ../../locales/../src/interface/LocalListView.cpp:2155
+#: ../../locales/../src/interface/LocalListView.cpp:2036
+#: ../../locales/../src/interface/LocalListView.cpp:2156
 #: ../../locales/../src/interface/RemoteListView.cpp:1665
 #: ../../locales/../src/interface/RemoteListView.cpp:2611
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1121
@@ -2133,9 +2129,9 @@ msgstr "Povezani z navedenim strežnikom iz upravljalnika strežnikov"
 msgid "Connected"
 msgstr "Povezano"
 
-#: ../../locales/../src/interface/QueueView.cpp:1431
+#: ../../locales/../src/interface/QueueView.cpp:1432
 msgid "Connecting"
-msgstr "Povezovanje v teku ..."
+msgstr "Povezovanje v teku"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:207
 #: ../../locales/../src/interface/statuslinectrl.cpp:271
@@ -2164,7 +2160,7 @@ msgstr "Povezovanje s strežnikom"
 msgid "Connection"
 msgstr "Povezava"
 
-#: ../../locales/../src/interface/QueueView.cpp:1049
+#: ../../locales/../src/interface/QueueView.cpp:1050
 msgid "Connection attempt failed"
 msgstr "Poskus povezave ni uspel"
 
@@ -2253,13 +2249,13 @@ msgid "Cop&y"
 msgstr "Kop&iraj"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:643
-#: ../../locales/../src/interface/sitemanager.cpp:1858
+#: ../../locales/../src/interface/sitemanager.cpp:1863
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Kopija (%d) %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:620
-#: ../../locales/../src/interface/sitemanager.cpp:1835
+#: ../../locales/../src/interface/sitemanager.cpp:1840
 #, c-format
 msgid "Copy of %s"
 msgstr "Kopija %s"
@@ -2320,7 +2316,7 @@ msgstr ""
 msgid "Could not establish connection to server"
 msgstr "Povezave s strežnikom ni mogoče vzpostaviti"
 
-#: ../../locales/../src/interface/FileZilla.cpp:497
+#: ../../locales/../src/interface/FileZilla.cpp:487
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -2337,7 +2333,6 @@ msgid "Could not generate custom login sequence."
 msgstr "Prijavnega zaporedja po meri ni mogoče ustvariti."
 
 #: ../../locales/../src/engine/tlssocket.cpp:1017
-#, fuzzy
 msgid ""
 "Could not get distinguished name of certificate issuer, "
 "gnutls_x509_get_issuer_dn failed"
@@ -2346,7 +2341,6 @@ msgstr ""
 "uspel."
 
 #: ../../locales/../src/engine/tlssocket.cpp:992
-#, fuzzy
 msgid ""
 "Could not get distinguished name of certificate subject, gnutls_x509_get_dn "
 "failed"
@@ -2379,8 +2373,8 @@ msgstr ""
 "Strukture za vrstniška potrdila ni mogoče inicializirati, "
 "gnutls_x509_crt_init ni uspel."
 
-#: ../../locales/../src/interface/import.cpp:120
-#: ../../locales/../src/interface/import.cpp:311
+#: ../../locales/../src/interface/import.cpp:119
+#: ../../locales/../src/interface/import.cpp:310
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2456,7 +2450,7 @@ msgstr "Naslova strežnika ni mogoče razbrati:"
 msgid "Could not read from socket: %s"
 msgstr "Ni mogoče brati z vrat: %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2629
+#: ../../locales/../src/interface/sitemanager.cpp:2634
 msgid "Could not read server item."
 msgstr "Elementa strežnika ni mogoče prebrati."
 
@@ -2482,13 +2476,13 @@ msgstr "V/I niti ni mogoče razmnožiti"
 msgid "Could not start proxy handshake: %s"
 msgstr "Rokovanja s posredovalnim strežnikom ni mogoče začeti: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1100
-#: ../../locales/../src/interface/QueueView.cpp:1105
+#: ../../locales/../src/interface/QueueView.cpp:1101
+#: ../../locales/../src/interface/QueueView.cpp:1106
 msgid "Could not start transfer"
 msgstr "Prenosa ni mogoče začeti"
 
-#: ../../locales/../src/interface/sitemanager.cpp:904
-#: ../../locales/../src/interface/sitemanager.cpp:2926
+#: ../../locales/../src/interface/sitemanager.cpp:909
+#: ../../locales/../src/interface/sitemanager.cpp:2931
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2508,8 +2502,8 @@ msgid "Could not write \"%s\", the global bookmarks could no be saved: %s"
 msgstr ""
 "Pisanje \"%s\" ni bilo možno, splošnih zaznamkov ni bilo mogoče shraniti: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1941
-#: ../../locales/../src/interface/QueueView.cpp:1977
+#: ../../locales/../src/interface/QueueView.cpp:1943
+#: ../../locales/../src/interface/QueueView.cpp:1979
 #, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
@@ -2518,9 +2512,9 @@ msgstr ""
 "Pisanje \"%s\" ni bilo možno, zato vrsta ni bila shranjena.\n"
 "%s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2691
-#: ../../locales/../src/interface/sitemanager.cpp:3053
-#: ../../locales/../src/interface/sitemanager.cpp:3115
+#: ../../locales/../src/interface/sitemanager.cpp:2696
+#: ../../locales/../src/interface/sitemanager.cpp:3058
+#: ../../locales/../src/interface/sitemanager.cpp:3120
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr ""
@@ -2537,7 +2531,7 @@ msgstr "Ni mogoče pisati \"%s\": %s"
 msgid "Could not write keyfile: %s"
 msgstr "Datoteke ključa ni mogoče zapisati: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1094
+#: ../../locales/../src/interface/QueueView.cpp:1095
 msgid "Could not write to local file"
 msgstr "V krajevno datoteko ni mogoče pisati"
 
@@ -2567,19 +2561,19 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Ustvari novo podmapo v trenutni mapi"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1189
+#: ../../locales/../src/interface/LocalListView.cpp:1190
 #: ../../locales/../src/interface/LocalTreeView.cpp:1188
 #: ../../locales/../src/interface/RemoteListView.cpp:1569
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1272
 msgid "Create directory"
 msgstr "Ustvari mapo"
 
-#: ../../locales/../src/interface/QueueView.cpp:1504
+#: ../../locales/../src/interface/QueueView.cpp:1505
 msgid "Creating directory"
 msgstr "Ustvarjanje mape"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3281
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2049
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2047
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Ustvarjanje mape '%s' ..."
@@ -2589,14 +2583,13 @@ msgid "Critical error"
 msgstr "Kritična napaka"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:137
-#, fuzzy
 msgid "Critical file transfer error"
-msgstr "Kritična napaka"
+msgstr "Kritična napaka pri prenosu datoteke"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:120
-#, fuzzy, c-format
+#, c-format
 msgid "Critical file transfer error after transferring %s in %s"
-msgstr "Kritična napaka"
+msgstr "Kritična napaka pri prenosu datoteke po prenesenih %s v %s"
 
 #: ../../locales/../src/interface/state.cpp:370
 #, c-format
@@ -2621,11 +2614,11 @@ msgstr "Trenutno je vrsta prenosa nastavljena na dvojiško."
 
 #: resources.h:767 resources.h:886
 msgid "Cus&tom"
-msgstr "Po &meri ..."
+msgstr "Po &meri"
 
-#: ../../locales/../src/interface/filter.cpp:98
+#: ../../locales/../src/interface/filter.cpp:99
 msgid "Custom filter set"
-msgstr "Sklop filtrov po meri ..."
+msgstr "Sklop filtrov po meri"
 
 #: resources.h:375 resources.h:376
 msgid "Custom server"
@@ -2659,7 +2652,7 @@ msgstr "Dejanje nad &mapami ob dvokliku:"
 msgid "DOS-like with virtual paths"
 msgstr "Podobno DOS-u z navideznimi potmi"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2069
+#: ../../locales/../src/interface/LocalListView.cpp:2070
 #: ../../locales/../src/interface/RemoteListView.cpp:2645
 msgid "Dangerous filetype"
 msgstr "Nevarna vrsta datoteke"
@@ -2672,6 +2665,10 @@ msgstr "Podatki"
 #: ../../locales/../src/interface/netconfwizard.cpp:1051
 msgid "Data socket closed too early."
 msgstr "Podatkovna vrata prehitro zaprta."
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:130
+msgid "Date"
+msgstr "Datum"
 
 #: resources.h:877
 msgid "Date formatting"
@@ -2716,14 +2713,13 @@ msgstr "Dejanje privzeta datoteka obstaja"
 msgid "Default r&emote directory:"
 msgstr "Privzeta &oddaljena mapa:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1151
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:1156
 msgid ""
 "Default remote path cannot be parsed. Make sure it is a valid absolute path "
 "for the selected server type."
 msgstr ""
-"Privzete oddaljene poti ni mogoče razčleniti. Preverite, da je veljavna in "
-"da jo izbrana vrsta strežnikov podpira."
+"Privzete oddaljene poti ni mogoče razčleniti. Preverite, da je veljavna "
+"absolutna pot za izbrano vrsto strežnikov."
 
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:78
 msgid "Default system language"
@@ -2767,7 +2763,7 @@ msgstr[3] ""
 "Časovno zamikanje povezave za %d sekunde zaradi predhodnjega neuspešnega "
 "poskusa povezave ..."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1313
+#: ../../locales/../src/interface/sitemanager.cpp:1318
 msgid "Delete Site Manager entry"
 msgstr "Izbriši vnos Upravljalnika strežnikov"
 
@@ -2807,7 +2803,7 @@ msgstr "Podrobnosti za nov ključ:"
 msgid "Dire&ctories"
 msgstr "&Mape"
 
-#: ../../locales/../src/interface/queue.cpp:1185
+#: ../../locales/../src/interface/queue.cpp:1192
 msgid "Direction"
 msgstr "Smer"
 
@@ -2874,8 +2870,8 @@ msgstr "Razveži s strežnikom"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:223
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:936
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:938
-#: ../../locales/../src/interface/QueueView.cpp:1047
-#: ../../locales/../src/interface/QueueView.cpp:1091
+#: ../../locales/../src/interface/QueueView.cpp:1048
+#: ../../locales/../src/interface/QueueView.cpp:1092
 msgid "Disconnected from server"
 msgstr "Razvezan s strežnikom"
 
@@ -2885,7 +2881,7 @@ msgstr "Razvezan s strežnikom"
 msgid "Disconnected from server: %s"
 msgstr "Razvezani s strežnikom: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1406
+#: ../../locales/../src/interface/QueueView.cpp:1407
 #: ../../locales/../src/interface/statuslinectrl.cpp:265
 msgid "Disconnecting from previous server"
 msgstr "Prekini povezavo s prejšnjim strežnikom"
@@ -2921,22 +2917,22 @@ msgstr ""
 msgid "Do you really want to close FileZilla?"
 msgstr "Resnično želite zapreti FileZillo?"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:35
+#: ../../locales/../src/interface/clearprivatedata.cpp:34
 msgid ""
 "Do you really want to delete all Site Manager entries and the transfer queue?"
 msgstr ""
 "Resnično želite izbrisati vse vnose v upravljalniku strežnikov in v čakalni "
 "vrsti prenosov?"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:47
+#: ../../locales/../src/interface/clearprivatedata.cpp:46
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Resnično želite izbrisati vse vnose v upravljalniku strežnikov?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1315
+#: ../../locales/../src/interface/sitemanager.cpp:1320
 msgid "Do you really want to delete selected entry?"
 msgstr "Resnično želite izbrisati izbrani vnos?"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:41
+#: ../../locales/../src/interface/clearprivatedata.cpp:40
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Resnično želite izbrisati čakalno vrsto prenosov?"
 
@@ -2970,14 +2966,13 @@ msgid "Download &limit:"
 msgstr "Omejitev prenosov &s strežnika:"
 
 #: ../../locales/../src/interface/statusbar.cpp:598
-#, fuzzy, c-format
+#, c-format
 msgid "Download limit: %s/s"
-msgstr "Omejitev prenosov &s strežnika:"
+msgstr "Omejitev prenosov s strežnika: %s/s"
 
 #: ../../locales/../src/interface/statusbar.cpp:600
-#, fuzzy
 msgid "Download limit: none"
-msgstr "Omejitev prenosov &s strežnika:"
+msgstr "Omejitev prenosov s strežnika: brez"
 
 #: resources.h:440 ../../locales/../src/interface/search.cpp:843
 #: ../../locales/../src/interface/search.cpp:849
@@ -3047,14 +3042,15 @@ msgid "E&xecute"
 msgstr "&Izvedi"
 
 #: resources.h:500
+#, fuzzy
 msgid "E&xit"
-msgstr "Izhod"
+msgstr "&Izvedi"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:180
 msgid "E-Mail:"
 msgstr "E-poštni naslov:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:605
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:623
 msgid "Each filter needs at least one condition."
 msgstr "Vsak filter potrebuje vsaj en pogoj."
 
@@ -3069,8 +3065,8 @@ msgstr ""
 "Uredite datoteko z nastavljenim urejevalnikom in prenesite spremembe na "
 "strežnik."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1980
-#: ../../locales/../src/interface/LocalListView.cpp:1991
+#: ../../locales/../src/interface/LocalListView.cpp:1981
+#: ../../locales/../src/interface/LocalListView.cpp:1992
 msgid "Editing failed"
 msgstr "Urejanje ni uspelo"
 
@@ -3078,7 +3074,7 @@ msgstr "Urejanje ni uspelo"
 msgid "Email:"
 msgstr "E-pošta:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2205
+#: ../../locales/../src/interface/QueueView.cpp:2219
 msgid "Empty command"
 msgstr "Prazen ukaz"
 
@@ -3120,7 +3116,7 @@ msgstr "Om&ogoči vse"
 msgid "Enable invalid character &filtering"
 msgstr "Omogoči &filtriranje neveljavnih znakov"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:82
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:83
 msgid "Encrypted"
 msgstr "Šifrirano"
 
@@ -3141,11 +3137,11 @@ msgid "Enter &custom command..."
 msgstr "Vnesi ukaz &po meri ..."
 
 #: resources.h:485
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enter 0 for unlimited speed."
-msgstr "Vnesite ime za sklop filtrov"
+msgstr "Vnesite 0 za neomejeno hitrost."
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2208
 msgid "Enter command"
 msgstr "Vnesite ukaz"
 
@@ -3163,11 +3159,11 @@ msgstr "Vstopi v mapo"
 msgid "Enter filter name"
 msgstr "Vnesite ime filtra"
 
-#: ../../locales/../src/interface/filter.cpp:328
+#: ../../locales/../src/interface/filter.cpp:329
 msgid "Enter name for filterset"
 msgstr "Vnesite ime za sklop filtrov"
 
-#: ../../locales/../src/interface/filter.cpp:390
+#: ../../locales/../src/interface/filter.cpp:391
 msgid "Enter new name for filterset"
 msgstr "Vnesite novo ime za sklop filtrov"
 
@@ -3221,9 +3217,9 @@ msgstr "Vnesite uporabniško ime in geslo"
 msgid "Error exporting settings"
 msgstr "Napaka pri izvažanju nastavitev"
 
-#: ../../locales/../src/interface/import.cpp:29
-#: ../../locales/../src/interface/import.cpp:39
-#: ../../locales/../src/interface/import.cpp:109
+#: ../../locales/../src/interface/import.cpp:28
+#: ../../locales/../src/interface/import.cpp:38
+#: ../../locales/../src/interface/import.cpp:108
 msgid "Error importing"
 msgstr "Napaka pri uvažanju"
 
@@ -3232,23 +3228,23 @@ msgstr "Napaka pri uvažanju"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:723
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:764
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:813
-#: ../../locales/../src/interface/filter.cpp:195
-#: ../../locales/../src/interface/filter.cpp:993
-#: ../../locales/../src/interface/import.cpp:121
-#: ../../locales/../src/interface/import.cpp:312
-#: ../../locales/../src/interface/Options.cpp:195
-#: ../../locales/../src/interface/QueueView.cpp:1931
-#: ../../locales/../src/interface/QueueView.cpp:1958
+#: ../../locales/../src/interface/filter.cpp:196
+#: ../../locales/../src/interface/filter.cpp:997
+#: ../../locales/../src/interface/import.cpp:120
+#: ../../locales/../src/interface/import.cpp:311
+#: ../../locales/../src/interface/Options.cpp:212
+#: ../../locales/../src/interface/QueueView.cpp:1933
+#: ../../locales/../src/interface/QueueView.cpp:1960
 #: ../../locales/../src/interface/search.cpp:1115
 #: ../../locales/../src/interface/search.cpp:1136
-#: ../../locales/../src/interface/sitemanager.cpp:728
-#: ../../locales/../src/interface/sitemanager.cpp:881
-#: ../../locales/../src/interface/sitemanager.cpp:2092
-#: ../../locales/../src/interface/sitemanager.cpp:2590
-#: ../../locales/../src/interface/sitemanager.cpp:2766
-#: ../../locales/../src/interface/sitemanager.cpp:2872
-#: ../../locales/../src/interface/sitemanager.cpp:2992
-#: ../../locales/../src/interface/sitemanager.cpp:3079
+#: ../../locales/../src/interface/sitemanager.cpp:733
+#: ../../locales/../src/interface/sitemanager.cpp:886
+#: ../../locales/../src/interface/sitemanager.cpp:2097
+#: ../../locales/../src/interface/sitemanager.cpp:2595
+#: ../../locales/../src/interface/sitemanager.cpp:2771
+#: ../../locales/../src/interface/sitemanager.cpp:2877
+#: ../../locales/../src/interface/sitemanager.cpp:2997
+#: ../../locales/../src/interface/sitemanager.cpp:3084
 #: ../../locales/../src/interface/wrapengine.cpp:945
 msgid "Error loading xml file"
 msgstr "Napaka pri nalaganju datoteke xml"
@@ -3260,21 +3256,20 @@ msgstr "Napaka pri zagonu programa"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:323
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:851
-#: ../../locales/../src/interface/QueueView.cpp:1942
-#: ../../locales/../src/interface/QueueView.cpp:1978
-#: ../../locales/../src/interface/sitemanager.cpp:905
-#: ../../locales/../src/interface/sitemanager.cpp:2692
-#: ../../locales/../src/interface/sitemanager.cpp:2927
-#: ../../locales/../src/interface/sitemanager.cpp:3054
-#: ../../locales/../src/interface/sitemanager.cpp:3116
+#: ../../locales/../src/interface/QueueView.cpp:1944
+#: ../../locales/../src/interface/QueueView.cpp:1980
+#: ../../locales/../src/interface/sitemanager.cpp:910
+#: ../../locales/../src/interface/sitemanager.cpp:2697
+#: ../../locales/../src/interface/sitemanager.cpp:2932
+#: ../../locales/../src/interface/sitemanager.cpp:3059
+#: ../../locales/../src/interface/sitemanager.cpp:3121
 #: ../../locales/../src/interface/wrapengine.cpp:1104
 msgid "Error writing xml file"
 msgstr "Napaka pri pisanju datoteke xml"
 
 #: ../../locales/../src/interface/updatewizard.cpp:335
-#, fuzzy
 msgid "Error, file name cannot be parsed."
-msgstr "Napaka, krajevna datoteka obstaja, a je ni mogoče odstraniti."
+msgstr "Napaka, imena datoteke ni mogoče razčleniti."
 
 #: ../../locales/../src/interface/updatewizard.cpp:351
 msgid "Error, local file exists but cannot be removed"
@@ -3335,12 +3330,12 @@ msgid "F&ilter name:"
 msgstr "&Ime filtra:"
 
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:117
-#: ../../locales/../src/interface/sitemanager.cpp:1626
+#: ../../locales/../src/interface/sitemanager.cpp:1631
 msgid "FTP"
 msgstr "FTP"
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:67
-#: ../../locales/../src/interface/quickconnectbar.cpp:189
+#: ../../locales/../src/interface/quickconnectbar.cpp:197
 msgid "FTP Engine not initialized, can't connect"
 msgstr "Pogon FTP ni inicializiran, povezava ni možna"
 
@@ -3374,16 +3369,16 @@ msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr "FTPS - FTP prek implicitnega TLS/SSL"
 
 #: ../../locales/../src/interface/LocalListView.cpp:535
-#: ../../locales/../src/interface/LocalListView.cpp:617
-#: ../../locales/../src/interface/LocalListView.cpp:2276
+#: ../../locales/../src/interface/LocalListView.cpp:615
+#: ../../locales/../src/interface/LocalListView.cpp:2277
 #: ../../locales/../src/interface/LocalTreeView.cpp:910
 #: ../../locales/../src/interface/viewheader.cpp:520
 msgid "Failed to change directory"
 msgstr "Sprememba mape ni uspela"
 
+#: ../../locales/../src/interface/FileZilla.cpp:260
+#: ../../locales/../src/interface/FileZilla.cpp:268
 #: ../../locales/../src/interface/FileZilla.cpp:270
-#: ../../locales/../src/interface/FileZilla.cpp:278
-#: ../../locales/../src/interface/FileZilla.cpp:280
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 msgid "Failed to change language"
 msgstr "Sprememba jezika ni uspela"
@@ -3392,11 +3387,11 @@ msgstr "Sprememba jezika ni uspela"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Preverjanje za novejše različice FileZille ni uspelo."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2304
+#: ../../locales/../src/interface/sitemanager.cpp:2309
 msgid "Failed to copy or move sites"
 msgstr "Kopiranje ali premikanje strežnikov ni uspelo"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:512
+#: ../../locales/../src/interface/xmlfunctions.cpp:511
 msgid "Failed to create backup copy of xml file"
 msgstr "Varnostne kopije datoteke xml ni mogoče ustvariti."
 
@@ -3504,14 +3499,14 @@ msgstr "Zunanjega naslova IP ni mogoče pridobiti."
 msgid "Failed to send command."
 msgstr "Ukaza ni mogoče poslati."
 
-#: ../../locales/../src/interface/FileZilla.cpp:278
+#: ../../locales/../src/interface/FileZilla.cpp:268
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language"
 msgstr ""
 "Jezika ni bilo mogoče nastaviti na %s (%s), zato je v uporabi privzeti "
 "sistemski jezik."
 
-#: ../../locales/../src/interface/FileZilla.cpp:263
+#: ../../locales/../src/interface/FileZilla.cpp:253
 #, c-format
 msgid ""
 "Failed to set language to %s (%s), using default system language (%s, %s)."
@@ -3519,14 +3514,14 @@ msgstr ""
 "Jezika ni bilo mogoče nastaviti na %s (%s), zato je v uporabi privzeti "
 "sistemski jezik (%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:251
+#: ../../locales/../src/interface/FileZilla.cpp:241
 #, c-format
 msgid "Failed to set language to %s (%s), using default system language."
 msgstr ""
 "Jezika ni bilo mogoče nastaviti na %s (%s), zato je v uporabi privzeti "
 "sistemski jezik."
 
-#: ../../locales/../src/interface/FileZilla.cpp:280
+#: ../../locales/../src/interface/FileZilla.cpp:270
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 #, c-format
 msgid "Failed to set language to %s, using default system language"
@@ -3534,14 +3529,14 @@ msgstr ""
 "Jezika ni bilo mogoče nastaviti na %s, zato je v uporabi privzeti sistemski "
 "jezik."
 
-#: ../../locales/../src/interface/FileZilla.cpp:259
+#: ../../locales/../src/interface/FileZilla.cpp:249
 #, c-format
 msgid "Failed to set language to %s, using default system language (%s, %s)."
 msgstr ""
 "Jezika ni bilo mogoče nastaviti na %s, zato je v uporabi privzeti sistemski "
 "jezik (%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:248
+#: ../../locales/../src/interface/FileZilla.cpp:238
 #, c-format
 msgid "Failed to set language to %s, using default system language."
 msgstr ""
@@ -3561,7 +3556,7 @@ msgstr "Preverjanje vrstniškega potrdila ni uspelo."
 msgid "Failed to write to file %s"
 msgstr "Zapisovanje v datoteko %s ni uspelo"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:530
+#: ../../locales/../src/interface/xmlfunctions.cpp:529
 msgid "Failed to write xml file"
 msgstr "V datoteko xml ni mogoče pisati."
 
@@ -3591,7 +3586,7 @@ msgstr "Datoteka"
 msgid "File Types"
 msgstr "Vrsta datotek"
 
-#: ../../locales/../src/interface/import.cpp:109
+#: ../../locales/../src/interface/import.cpp:108
 msgid "File does not contain any importable data."
 msgstr "Datoteka ne vsebuje nobenih podatkov za uvoz."
 
@@ -3616,8 +3611,8 @@ msgid "File lists"
 msgstr "Seznami datotek"
 
 #: ../../locales/../src/interface/edithandler.cpp:1713
-#: ../../locales/../src/interface/FileZilla.cpp:805
-#: ../../locales/../src/interface/FileZilla.cpp:899
+#: ../../locales/../src/interface/FileZilla.cpp:703
+#: ../../locales/../src/interface/FileZilla.cpp:797
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "File not found"
 msgstr "Datoteke ni mogoče najti"
@@ -3627,38 +3622,35 @@ msgid "File search"
 msgstr "Iskanje datotek"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:128
-#, fuzzy
 msgid "File transfer aborted by user"
 msgstr "Prenos je prekinil uporabnik"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:118
 #, c-format
 msgid "File transfer aborted by user after transferring %s in %s"
-msgstr ""
+msgstr "Prenos datoteke je prekinil uporabnik po prenesenih %s v %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:139
-#, fuzzy
 msgid "File transfer failed"
-msgstr "Prenos datoteke je bil uspešen"
+msgstr "Prenos datoteke ni uspel"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:122
 #, c-format
 msgid "File transfer failed after transferring %s in %s"
-msgstr ""
+msgstr "Prenos datoteke ni uspel po prenesenih %s v %s"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:134
-#, fuzzy
 msgid "File transfer skipped"
-msgstr "Neuspeli prenosi"
+msgstr "Prenos datoteke preskočen"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:132
 msgid "File transfer successful"
 msgstr "Prenos datoteke je bil uspešen"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:115
-#, fuzzy, c-format
+#, c-format
 msgid "File transfer successful, transferred %s in %s"
-msgstr "Prenos datoteke je bil uspešen"
+msgstr "Prenos datoteke je bil uspešen, preneseno %s v %s"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:1108
 msgid "File transfers still in progress."
@@ -3672,9 +3664,9 @@ msgstr "Datoteka se bo prenesla kot datoteka ASCII."
 msgid "File would transfer with binary data type."
 msgstr "Datoteka se bo prenesla kot dvojiška datoteka."
 
-#: ../../locales/../src/interface/FileZilla.cpp:498
+#: ../../locales/../src/interface/FileZilla.cpp:488
 #: ../../locales/../src/interface/quickconnectbar.cpp:67
-#: ../../locales/../src/interface/quickconnectbar.cpp:189
+#: ../../locales/../src/interface/quickconnectbar.cpp:197
 msgid "FileZilla Error"
 msgstr "Napaka FileZilla"
 
@@ -3690,8 +3682,8 @@ msgstr ""
 msgid "FileZilla is already connected to a server."
 msgstr "FileZilla je že povezan s strežnikom."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:437
-#: ../../locales/../src/interface/sitemanager.cpp:1061
+#: ../../locales/../src/interface/manual_transfer.cpp:438
+#: ../../locales/../src/interface/sitemanager.cpp:1066
 msgid ""
 "FileZilla is running in kiosk mode.\n"
 "'Normal' and 'Account' logontypes are not available in this mode."
@@ -3709,7 +3701,7 @@ msgid "Filelist status &bars"
 msgstr "&Vrstice stanj seznama datotek"
 
 #: ../../locales/../src/interface/edithandler.cpp:1221
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:100
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:105
 #: ../../locales/../src/interface/LocalListView.cpp:264
 #: ../../locales/../src/interface/RemoteListView.cpp:357
 #: ../../locales/../src/interface/search.cpp:385
@@ -3722,7 +3714,7 @@ msgid "Filename &filters..."
 msgstr "&Filtri imen datotek ..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3079
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2312
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2310
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "Za mapo %s in datoteko %s ni mogoče sestaviti imena datoteke"
@@ -3739,12 +3731,12 @@ msgstr "Nespremenjeno ime datoteke"
 msgid "Filename:"
 msgstr "Ime datoteke:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1368
+#: ../../locales/../src/interface/LocalListView.cpp:1369
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr ""
 "Imena datotek ne smejo vsebovati nobenega od naslednjih znakov: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1343
+#: ../../locales/../src/interface/LocalListView.cpp:1344
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3756,7 +3748,7 @@ msgstr ""
 msgid "Files currently being edited"
 msgstr "Trenutno urejevane datoteke"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:105
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:110
 #: ../../locales/../src/interface/LocalListView.cpp:265
 #: ../../locales/../src/interface/RemoteListView.cpp:358
 #: ../../locales/../src/interface/search.cpp:387
@@ -3802,8 +3794,8 @@ msgstr "Izpusti vse, ki ustrezajo kateremu od naslednjih pogojev"
 msgid "Filter out items matching none of the following"
 msgstr "Izpusti vse, ki ne ustrezajo nobenemu od naslednjih pogojev"
 
-#: ../../locales/../src/interface/filter.cpp:350
-#: ../../locales/../src/interface/filter.cpp:411
+#: ../../locales/../src/interface/filter.cpp:351
+#: ../../locales/../src/interface/filter.cpp:412
 msgid "Filter set already exists"
 msgstr "Sklop filtrov že obstaja"
 
@@ -3846,7 +3838,7 @@ msgid "For reliability you should specify a range of at least 10 ports."
 msgstr ""
 "Zavoljo zanesljivosti je priporočljivo, da navedete obseg vsaj desetih vrat."
 
-#: ../../locales/../src/interface/Options.cpp:194
+#: ../../locales/../src/interface/Options.cpp:211
 msgid ""
 "For this session the default settings will be used. Any changes to the "
 "settings will not be saved."
@@ -3897,10 +3889,10 @@ msgstr "Pridobi zunanji naslov IP iz naslednjega URL:"
 
 #: resources.h:469
 msgid "Getting help"
-msgstr "Kako do pomoči ..."
+msgstr "Kako do pomoči"
 
-#: ../../locales/../src/interface/filter.cpp:350
-#: ../../locales/../src/interface/filter.cpp:411
+#: ../../locales/../src/interface/filter.cpp:351
+#: ../../locales/../src/interface/filter.cpp:412
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr ""
 "Ime danega sklopa filtrov že obstaja, želite prepisati obstoječi sklop "
@@ -3930,17 +3922,17 @@ msgstr "HTTPS - HTTP prek TLS"
 msgid "Hash:"
 msgstr "Izvleček:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:83
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:84
 msgid "Hidden"
 msgstr "Skrito"
 
-#: resources.h:811 ../../locales/../src/interface/queue.cpp:892
-#: ../../locales/../src/interface/queue.cpp:973
+#: resources.h:811 ../../locales/../src/interface/queue.cpp:899
+#: ../../locales/../src/interface/queue.cpp:980
 msgid "High"
 msgstr "visoka"
 
-#: ../../locales/../src/interface/queue.cpp:894
-#: ../../locales/../src/interface/queue.cpp:975
+#: ../../locales/../src/interface/queue.cpp:901
+#: ../../locales/../src/interface/queue.cpp:982
 msgid "Highest"
 msgstr "najvišja"
 
@@ -4028,6 +4020,8 @@ msgid ""
 "If the host key change was not expected, please contact the server "
 "administrator."
 msgstr ""
+"Če sprememba ključa gostitelja ni pričakovana, stopite v stik s skrbinkom "
+"sistema."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:554
 msgid ""
@@ -4173,7 +4167,7 @@ msgstr ""
 "Če bo vaš usmerjevalnik še naprej zamenjaval naslov IP, prosimo, povprašajte "
 "proizvajalca svojega usmerjevalnika."
 
-#: ../../locales/../src/interface/import.cpp:97
+#: ../../locales/../src/interface/import.cpp:96
 msgid "Import data from older version"
 msgstr "Uvozi podatke iz starejše različice"
 
@@ -4181,8 +4175,8 @@ msgstr "Uvozi podatke iz starejše različice"
 msgid "Import settings"
 msgstr "Uvozi nastavitve"
 
-#: ../../locales/../src/interface/import.cpp:82
-#: ../../locales/../src/interface/import.cpp:85
+#: ../../locales/../src/interface/import.cpp:81
+#: ../../locales/../src/interface/import.cpp:84
 msgid "Import successful"
 msgstr "Uvoz uspešen."
 
@@ -4241,7 +4235,7 @@ msgstr ""
 "Nepopolna veriga, vrhnje potrdilo ni samopodpisano potrdilo avtoritete "
 "podpisov"
 
-#: ../../locales/../src/interface/QueueView.cpp:1043
+#: ../../locales/../src/interface/QueueView.cpp:1044
 msgid "Incorrect password"
 msgstr "Nepravilno geslo"
 
@@ -4260,8 +4254,8 @@ msgid "Interface"
 msgstr "Vmesnik"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:219
-#: ../../locales/../src/interface/QueueView.cpp:1000
-#: ../../locales/../src/interface/QueueView.cpp:1574
+#: ../../locales/../src/interface/QueueView.cpp:1001
+#: ../../locales/../src/interface/QueueView.cpp:1575
 msgid "Interrupted by user"
 msgstr "Prekinil uporabnik"
 
@@ -4297,8 +4291,8 @@ msgstr "Prejeti neveljavni podatki"
 msgid "Invalid date"
 msgstr "Neveljaven datum"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1343
-#: ../../locales/../src/interface/LocalListView.cpp:1368
+#: ../../locales/../src/interface/LocalListView.cpp:1344
+#: ../../locales/../src/interface/LocalListView.cpp:1369
 msgid "Invalid filename"
 msgstr "Neveljavno ime datoteke"
 
@@ -4348,21 +4342,21 @@ msgstr "Neveljavna odzivna koda"
 msgid "Invalid search conditions: %s"
 msgstr "Neveljavni pogoji iskanja: %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2561
-#: ../../locales/../src/interface/sitemanager.cpp:2581
-#: ../../locales/../src/interface/sitemanager.cpp:2598
-#: ../../locales/../src/interface/sitemanager.cpp:2605
-#: ../../locales/../src/interface/sitemanager.cpp:2612
-#: ../../locales/../src/interface/sitemanager.cpp:2629
-#: ../../locales/../src/interface/sitemanager.cpp:2778
-#: ../../locales/../src/interface/sitemanager.cpp:3004
-#: ../../locales/../src/interface/sitemanager.cpp:3011
-#: ../../locales/../src/interface/sitemanager.cpp:3091
-#: ../../locales/../src/interface/sitemanager.cpp:3098
+#: ../../locales/../src/interface/sitemanager.cpp:2566
+#: ../../locales/../src/interface/sitemanager.cpp:2586
+#: ../../locales/../src/interface/sitemanager.cpp:2603
+#: ../../locales/../src/interface/sitemanager.cpp:2610
+#: ../../locales/../src/interface/sitemanager.cpp:2617
+#: ../../locales/../src/interface/sitemanager.cpp:2634
+#: ../../locales/../src/interface/sitemanager.cpp:2783
+#: ../../locales/../src/interface/sitemanager.cpp:3009
+#: ../../locales/../src/interface/sitemanager.cpp:3016
+#: ../../locales/../src/interface/sitemanager.cpp:3096
+#: ../../locales/../src/interface/sitemanager.cpp:3103
 msgid "Invalid site path"
 msgstr "Neveljavna pot na strežniku"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:638
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:656
 msgid "Invalid size in condition"
 msgstr "Neustrezna velikost v pogoju"
 
@@ -4512,17 +4506,12 @@ msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Cannot fall back to local charset since using proxy."
 msgstr ""
-"Prijavni podatki vsebujejo znake, ki niso v kodni tabeli ASCII, strežnik pa "
-"morda ne razpoznava znakov UTF-8. Ker uporabljate posredovalni strežnik, ni "
-"mogoče poskusiti še s krajevno kodno tabelo ..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:810
 msgid ""
 "Login data contains non-ASCII characters and server might not be UTF-8 "
 "aware. Trying local charset."
 msgstr ""
-"Prijavni podatki vsebujejo znake, ki niso v kodni tabeli ASCII, strežnik pa "
-"morda ne rapoznava znakov UTF-8. Poskus s krajevno kodno tabelo ..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:839
 msgid "Login sequence fully executed yet not logged in. Aborting."
@@ -4545,13 +4534,13 @@ msgstr ""
 "Vrsta prijave (logontype) lahko uporabite le z FTP URL. Argument mora biti '%"
 "s' ali '%s'."
 
-#: ../../locales/../src/interface/queue.cpp:887
-#: ../../locales/../src/interface/queue.cpp:968
+#: ../../locales/../src/interface/queue.cpp:894
+#: ../../locales/../src/interface/queue.cpp:975
 msgid "Low"
 msgstr "nizko"
 
-#: ../../locales/../src/interface/queue.cpp:885
-#: ../../locales/../src/interface/queue.cpp:966
+#: ../../locales/../src/interface/queue.cpp:892
+#: ../../locales/../src/interface/queue.cpp:973
 msgid "Lowest"
 msgstr "najnižje"
 
@@ -4563,7 +4552,7 @@ msgstr "Najnižja vrata na voljo morajo imeti številko med 1024 in 65535."
 msgid "MAC:"
 msgstr "MAC:"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:64
+#: ../../locales/../src/interface/xmlfunctions.cpp:63
 msgid "Make sure the file can be accessed and is a well-formed XML document."
 msgstr ""
 "Preverite, da je do datoteke mogoče dostopati in da gre za pravilno "
@@ -4646,9 +4635,9 @@ msgstr "Moj računalnik"
 msgid "My Documents"
 msgstr "Moji dokumenti"
 
-#: ../../locales/../src/interface/sitemanager.cpp:715
-#: ../../locales/../src/interface/sitemanager.cpp:717
-#: ../../locales/../src/interface/sitemanager.cpp:2132
+#: ../../locales/../src/interface/sitemanager.cpp:720
+#: ../../locales/../src/interface/sitemanager.cpp:722
+#: ../../locales/../src/interface/sitemanager.cpp:2137
 msgid "My Sites"
 msgstr "Moji naslovi"
 
@@ -4662,12 +4651,12 @@ msgid "Name"
 msgstr "Ime"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:705
-#: ../../locales/../src/interface/sitemanager.cpp:1280
+#: ../../locales/../src/interface/sitemanager.cpp:1285
 msgid "Name already exists"
 msgstr "Ime že obstaja"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:828
-#: ../../locales/../src/interface/sitemanager.cpp:3028
+#: ../../locales/../src/interface/sitemanager.cpp:3033
 msgid "Name of bookmark already exists."
 msgstr "Ime zaznamka že obstaja."
 
@@ -4683,7 +4672,7 @@ msgstr "Vnesite ime filtra"
 msgid "Need to enter valid remote path"
 msgstr "Vnesti morate veljavno oddaljeno pot"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1095
+#: ../../locales/../src/interface/sitemanager.cpp:1100
 msgid "Need to specify a character encoding"
 msgstr "Kodiranje znakov mora biti izbrano"
 
@@ -4716,8 +4705,8 @@ msgstr "Nov &zaznamek"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:549
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:572
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:828
-#: ../../locales/../src/interface/sitemanager.cpp:2469
-#: ../../locales/../src/interface/sitemanager.cpp:3028
+#: ../../locales/../src/interface/sitemanager.cpp:2474
+#: ../../locales/../src/interface/sitemanager.cpp:3033
 msgid "New bookmark"
 msgstr "Nov zaznamek"
 
@@ -4736,13 +4725,13 @@ msgstr "Nove zmožnosti in izboljšave v %s"
 msgid "New filter"
 msgstr "Nov filter"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1009
+#: ../../locales/../src/interface/sitemanager.cpp:1014
 msgid "New folder"
 msgstr "Nova mapa"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2445
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2905
+#: ../../locales/../src/interface/sitemanager.cpp:2450
+#: ../../locales/../src/interface/sitemanager.cpp:2896
+#: ../../locales/../src/interface/sitemanager.cpp:2910
 msgid "New site"
 msgstr "Nov naslov"
 
@@ -4758,7 +4747,7 @@ msgstr "Ne"
 msgid "No category to export selected"
 msgstr "Nobena kategorija izvoza ni izbrana"
 
-#: ../../locales/../src/interface/QueueView.cpp:2205
+#: ../../locales/../src/interface/QueueView.cpp:2219
 msgid "No command given, aborting."
 msgstr "Ukaz ni bil podan, prekinjanje."
 
@@ -4784,12 +4773,12 @@ msgstr "Gostitelj ni podan, prosimo, vnesite gostitelja."
 msgid "No images available"
 msgstr "Slike niso na voljo"
 
-#: ../../locales/../src/interface/QueueView.cpp:3054
+#: ../../locales/../src/interface/QueueView.cpp:3068
 msgid "No more files in the queue!"
 msgstr "V vrsti ni več datotek!"
 
-#: ../../locales/../src/interface/filter.cpp:335
-#: ../../locales/../src/interface/filter.cpp:404
+#: ../../locales/../src/interface/filter.cpp:336
+#: ../../locales/../src/interface/filter.cpp:405
 msgid "No name for the filterset given."
 msgstr "Ime za sklop filtrov ni podano."
 
@@ -4806,9 +4795,9 @@ msgstr "Za urejanje datotek s končnico '%s' ni trenutno povezan noben program."
 msgid "No search results"
 msgstr "Ni rezultatov iskanja"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2098
-#: ../../locales/../src/interface/sitemanager.cpp:2110
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2103
+#: ../../locales/../src/interface/sitemanager.cpp:2115
+#: ../../locales/../src/interface/sitemanager.cpp:2146
 msgid "No sites available"
 msgstr "Ni strežnikov na voljo"
 
@@ -4833,10 +4822,10 @@ msgstr "Nič še ni izbrano"
 #: ../../locales/../src/engine/server.cpp:865
 #: ../../locales/../src/interface/manual_transfer.cpp:156
 #: ../../locales/../src/interface/manual_transfer.cpp:181
-#: ../../locales/../src/interface/manual_transfer.cpp:544
-#: ../../locales/../src/interface/queue.cpp:890
-#: ../../locales/../src/interface/queue.cpp:971
-#: ../../locales/../src/interface/sitemanager.cpp:1387
+#: ../../locales/../src/interface/manual_transfer.cpp:545
+#: ../../locales/../src/interface/queue.cpp:897
+#: ../../locales/../src/interface/queue.cpp:978
+#: ../../locales/../src/interface/sitemanager.cpp:1392
 msgid "Normal"
 msgstr "običajna"
 
@@ -4859,9 +4848,8 @@ msgid "Not connected to any server."
 msgstr "Niste povezani z nobenim strežnikom."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:27
-#, fuzzy
 msgid "Not connected."
-msgstr "Nepovezani"
+msgstr "Nepovezani."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:655
 msgid "Note that this feature is only supported using the FTP protocol."
@@ -4939,10 +4927,10 @@ msgstr "Odpri pogovorno okno nastavitev FileZille"
 msgid "Opened as:"
 msgstr "Odprta kot:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2057
-#: ../../locales/../src/interface/LocalListView.cpp:2102
-#: ../../locales/../src/interface/LocalListView.cpp:2189
-#: ../../locales/../src/interface/LocalListView.cpp:2202
+#: ../../locales/../src/interface/LocalListView.cpp:2058
+#: ../../locales/../src/interface/LocalListView.cpp:2103
+#: ../../locales/../src/interface/LocalListView.cpp:2190
+#: ../../locales/../src/interface/LocalListView.cpp:2203
 #: ../../locales/../src/interface/RemoteListView.cpp:2633
 msgid "Opening failed"
 msgstr "Odpiranje ni uspelo"
@@ -4962,11 +4950,10 @@ msgstr ""
 "Odpre pogovorno okno filtra izpisa mape. Z desnim klikom preklapljate filtre."
 
 #: resources.h:170
-#, fuzzy
 msgid "Operating system"
-msgstr "Pojavila se je težava z operacijskim sistemom"
+msgstr "Operacijski sistem"
 
-#: ../../locales/../src/interface/FileZilla.cpp:317
+#: ../../locales/../src/interface/FileZilla.cpp:307
 msgid "Operating system problem detected"
 msgstr "Pojavila se je težava z operacijskim sistemom"
 
@@ -4996,7 +4983,7 @@ msgstr "Prepiši, če sta različne velikosti"
 
 #: resources.h:262 resources.h:272 resources.h:836 resources.h:845
 msgid "Overwrite file if size differs or source file is newer"
-msgstr "Prepiši, če sta različne velikosti ali če je vir novejši "
+msgstr "Prepiši, če sta različne velikosti ali če je vir novejši"
 
 #: resources.h:260 resources.h:270 resources.h:834 resources.h:843
 msgid "Overwrite file if source file newer"
@@ -5007,8 +4994,9 @@ msgid "Overwrite if &different size"
 msgstr "Prepiši, če sta &različne velikosti"
 
 #: resources.h:61
+#, fuzzy
 msgid "Overwrite if different si&ze or source newer"
-msgstr "Prepiši, če sta različne &velikosti ali če je vir novejši "
+msgstr "Prepiši, če sta &različne velikosti"
 
 #: resources.h:133
 msgid "Owner permissions"
@@ -5071,13 +5059,13 @@ msgstr "Pasiven način je nastavljen kot privzeti način prenosa."
 msgid "Password required"
 msgstr "Potrebno je geslo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:120
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:125
 #: ../../locales/../src/interface/search.cpp:386
 msgid "Path"
 msgstr "Pot"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3166
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2357
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2355
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "Za mapo %s in podmapo %s ni mogoče izdelati poti"
@@ -5093,7 +5081,7 @@ msgstr "Poti"
 msgid "Pending removal"
 msgstr "Čaka na odstranitev"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:115
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:120
 msgid "Permission"
 msgstr "Dovoljenje"
 
@@ -5104,7 +5092,7 @@ msgstr "Dovoljenja"
 
 #: resources.h:169
 msgid "Platform:"
-msgstr ""
+msgstr "Platforma:"
 
 #: resources.h:249
 msgid ""
@@ -5160,13 +5148,18 @@ msgstr "Prosimo, vnesite zapis datuma po meri."
 msgid "Please enter a custom time format."
 msgstr "Prosimo, vnesite zapis časa po meri."
 
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:672
+msgid ""
+"Please enter a date of the form YYYY-MM-DD such as for example 2010-07-18."
+msgstr "Vnesite datum v obliki LLLL-MM-DD, kot je npr. 2010-07-18."
+
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:111
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:54
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter a download speed limit greater or equal to 0 %s/s."
 msgstr ""
 "Prosimo, vnesite omejitev hitrosti prenosa s strežnika, ki je večja ali "
-"enaka 0 KB/s."
+"enaka 0 %s/s."
 
 #: ../../locales/../src/interface/filteredit.cpp:134
 msgid "Please enter a name for the new filter."
@@ -5176,7 +5169,7 @@ msgstr "Prosimo, vnesite ime za nov filter."
 msgid "Please enter a new name for the copied filter."
 msgstr "Prosimo, vnesite ime za kopirani filter."
 
-#: ../../locales/../src/interface/filter.cpp:388
+#: ../../locales/../src/interface/filter.cpp:389
 #, c-format
 msgid "Please enter a new name for the filter set \"%s\""
 msgstr "Prosimo, vnesite novo ime za nabor filtrov \"%s\""
@@ -5210,7 +5203,7 @@ msgstr "Prosimo, vnesite številko med 0 in 10 za število hkratnih prenosov."
 msgid "Please enter a password for this server:"
 msgstr "Prosimo, vnesite geslo za ta strežnik:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2208
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -5228,7 +5221,7 @@ msgstr ""
 "Prosimo, vnesite pretek časa med 5 in 9999 sekundami ali 0 za onemogočen čas "
 "preteka."
 
-#: ../../locales/../src/interface/filter.cpp:328
+#: ../../locales/../src/interface/filter.cpp:329
 msgid "Please enter a unique name for this filter set"
 msgstr "Prosimo, vnesite ime za ta sklop filtrov"
 
@@ -5250,11 +5243,11 @@ msgstr "Prosimo, vnesite interval posodabljanja z najmanj 7 dnevi"
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:118
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:62
-#, fuzzy, c-format
+#, c-format
 msgid "Please enter an upload speed limit greater or equal to 0 %s/s."
 msgstr ""
 "Prosimo, vnesite omejitev hitrosti prenosa na strežnik, ki je večja ali "
-"enaka 0 KB/s."
+"enaka 0 %s/s."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:573
 msgid ""
@@ -5264,7 +5257,7 @@ msgstr ""
 "Prosimo, vnestite surov ukaz FTP.\n"
 "Z uporabo surovih ukazov se medpomnilnik mape počisti."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1189
+#: ../../locales/../src/interface/LocalListView.cpp:1190
 #: ../../locales/../src/interface/LocalTreeView.cpp:1188
 #: ../../locales/../src/interface/RemoteListView.cpp:1569
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1272
@@ -5306,7 +5299,7 @@ msgstr ""
 "Prosimo, preverite, da FileZilla lahko vzpostavlja odhodne povezave in da "
 "ste pravilno vnesli naslov razčlenilnika naslovov."
 
-#: ../../locales/../src/interface/FileZilla.cpp:269
+#: ../../locales/../src/interface/FileZilla.cpp:259
 msgid "Please make sure the requested locale is installed on your system."
 msgstr ""
 "Preverite, prosim, da je zahtevana krajevna nastavitev nameščena v vašem "
@@ -5445,8 +5438,8 @@ msgstr ""
 msgid "Postal code:"
 msgstr "Poštna številka:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1913
-#: ../../locales/../src/interface/sitemanager.cpp:2131
+#: ../../locales/../src/interface/sitemanager.cpp:1918
+#: ../../locales/../src/interface/sitemanager.cpp:2136
 msgid "Predefined Sites"
 msgstr "Vnaprej določeni strežniki"
 
@@ -5470,7 +5463,7 @@ msgstr "Izpiši podatke o različici na stdout in zapri"
 msgid "Prioritize directories (default)"
 msgstr "Mape obravnavaj prioritetno (privzeto)"
 
-#: ../../locales/../src/interface/queue.cpp:1188
+#: ../../locales/../src/interface/queue.cpp:1195
 msgid "Priority"
 msgstr "Prioriteta"
 
@@ -5542,7 +5535,7 @@ msgstr "Algoritem javnega ključa:"
 msgid "Public permissions"
 msgstr "Javna dovoljenja"
 
-#: ../../locales/../src/interface/QueueView.cpp:3109
+#: ../../locales/../src/interface/QueueView.cpp:3123
 msgid "Queue has been fully processed"
 msgstr "Vrsta je bila v celoti obdelana"
 
@@ -5605,7 +5598,7 @@ msgstr ""
 msgid "Rea&d"
 msgstr "Pre&beri"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:84
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:85
 msgid "Read-only"
 msgstr "Samo za branje"
 
@@ -5648,7 +5641,7 @@ msgstr "Resnično želite izbrisati vse izbrane datotek in/ali mape?"
 msgid "Reason"
 msgstr "Razlog"
 
-#: ../../locales/../src/interface/QueueView.cpp:3117
+#: ../../locales/../src/interface/QueueView.cpp:3131
 msgid "Reboot now"
 msgstr "Ponovno zaženi računalnik zdaj"
 
@@ -5656,13 +5649,18 @@ msgstr "Ponovno zaženi računalnik zdaj"
 msgid "Rec&urse into subdirectories"
 msgstr "Raz&vejaj v podmape"
 
+#: ../../locales/../src/engine/directorylistingparser.cpp:2107
+#: ../../locales/../src/engine/directorylistingparser.cpp:2122
+msgid "Received a line exceeding 10000 characters, aborting."
+msgstr "Prejeta vrstica, ki presega 10000 znakov, prekinjanje."
+
 #: ../../locales/../src/interface/netconfwizard.cpp:998
 #: ../../locales/../src/interface/netconfwizard.cpp:1007
 #: ../../locales/../src/interface/netconfwizard.cpp:1031
 msgid "Received data tainted"
 msgstr "Preneseni podatki okvarjeni"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:78
+#: ../../locales/../src/interface/clearprivatedata.cpp:77
 msgid ""
 "Reconnect information cannot be cleared while connected to a server.\n"
 "If you continue, your connection will be disconnected."
@@ -5695,7 +5693,7 @@ msgstr "Oddaljeno"
 msgid "Remote certificate not trusted."
 msgstr "Oddaljeno potrdilo ni vredno zaupanja."
 
-#: resources.h:366 ../../locales/../src/interface/queue.cpp:1186
+#: resources.h:366 ../../locales/../src/interface/queue.cpp:1193
 msgid "Remote file"
 msgstr "Oddaljena datoteka"
 
@@ -5723,7 +5721,7 @@ msgstr ""
 "Oddaljene poti ni mogoče razčleniti. Preverite, da je veljavna absolutna pot "
 "in da jo izbrana vrsta strežnikov (%s) podpira."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1184
+#: ../../locales/../src/interface/sitemanager.cpp:1189
 #, c-format
 msgid ""
 "Remote path cannot be parsed. Make sure it is a valid absolute path and is "
@@ -5735,7 +5733,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:424
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:428
-#: ../../locales/../src/interface/sitemanager.cpp:1186
+#: ../../locales/../src/interface/sitemanager.cpp:1191
 msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
 msgstr ""
 "Oddaljene poti ni mogoče razčleniti. Preverite, da je veljavna absolutna pot."
@@ -5778,7 +5776,7 @@ msgid "Rename selected files and directories"
 msgstr "Preimenuj izbrane datoteke in mape"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3512
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2559
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2557
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Preimenovanje iz '%s' v '%s'"
@@ -5864,11 +5862,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Želite shraniti nastavitve?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1808
+#: ../../locales/../src/interface/QueueView.cpp:1809
 msgid "Scanning for files to add to queue"
 msgstr "Iskanje datotek za dodajanje v vrsto"
 
-#: ../../locales/../src/interface/QueueView.cpp:1810
+#: ../../locales/../src/interface/QueueView.cpp:1811
 msgid "Scanning for files to upload"
 msgstr "Iskanje datotek za prenos na strežnik"
 
@@ -5956,11 +5954,11 @@ msgid "Select file for exported settings"
 msgstr "Izberite datoteko za izvoz nastavitev"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2673
+#: ../../locales/../src/interface/sitemanager.cpp:2678
 msgid "Select file for exported sites"
 msgstr "Izberite datoteko za izvoz strežnikov"
 
-#: ../../locales/../src/interface/import.cpp:16
+#: ../../locales/../src/interface/import.cpp:15
 msgid "Select file to import settings from"
 msgstr "Izberite datoteko za uvoz nastavitev"
 
@@ -6059,7 +6057,7 @@ msgstr "Izbrani %s in %s. Skupna velikost: najmanj %s"
 msgid "Selected editor does not exist."
 msgstr "Izbrani urejevalnik ne obstaja."
 
-#: resources.h:319 ../../locales/../src/interface/LocalListView.cpp:2086
+#: resources.h:319 ../../locales/../src/interface/LocalListView.cpp:2087
 msgid "Selected file already being edited"
 msgstr "Urejanje izbrane datoteke je že v teku"
 
@@ -6075,11 +6073,11 @@ msgstr "Izbrana datoteka je že naložena."
 msgid "Selected file still being edited"
 msgstr "Izbrana datoteka je še vedno v urejevanju"
 
-#: ../../locales/../src/interface/filter.cpp:295
+#: ../../locales/../src/interface/filter.cpp:296
 msgid "Selected filter only works for local files."
 msgstr "Izbrani filter deluje le na krajevnih datotekah."
 
-#: ../../locales/../src/interface/menu_bar.cpp:305
+#: ../../locales/../src/interface/menu_bar.cpp:309
 msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
@@ -6109,7 +6107,6 @@ msgid "Serial number:"
 msgstr "Serijska številka:"
 
 #: resources.h:81 resources.h:88
-#, fuzzy
 msgid "Server &Type:"
 msgstr "&Vrsta strežnika:"
 
@@ -6202,7 +6199,7 @@ msgstr "Strežnik na cifro odjemalca:"
 msgid "Server&type:"
 msgstr "&Vrsta strežnika:"
 
-#: ../../locales/../src/interface/queue.cpp:1184
+#: ../../locales/../src/interface/queue.cpp:1191
 msgid "Server/Local file"
 msgstr "Strežnik/krajevna datoteka"
 
@@ -6219,12 +6216,12 @@ msgid "Set &Priority"
 msgstr "Nastavi &prioriteto"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3664
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2437
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2435
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "Nastavi dovoljenja iz '%s' v '%s'"
 
-#: ../../locales/../src/engine/transfersocket.cpp:858
+#: ../../locales/../src/engine/transfersocket.cpp:863
 msgid "SetSocketBufferSize called without socket"
 msgstr "SetSocketBufferSize klican brez vrat"
 
@@ -6248,7 +6245,7 @@ msgstr "Želite prikaz obeh dreves map in nadaljevati s primerjavo?"
 msgid "Shows this help dialog"
 msgstr "Pokaži to pogovorno okno pomoči"
 
-#: ../../locales/../src/interface/QueueView.cpp:3119
+#: ../../locales/../src/interface/QueueView.cpp:3133
 msgid "Shutdown now"
 msgstr "Izključi računalnik zdaj"
 
@@ -6260,43 +6257,42 @@ msgstr "Vnosi &Upravljalnika strežnikov"
 msgid "Site Manager"
 msgstr "Upravljalnik strežnikov"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1040
-#: ../../locales/../src/interface/sitemanager.cpp:1052
-#: ../../locales/../src/interface/sitemanager.cpp:1061
-#: ../../locales/../src/interface/sitemanager.cpp:1078
-#: ../../locales/../src/interface/sitemanager.cpp:1095
-#: ../../locales/../src/interface/sitemanager.cpp:1108
-#: ../../locales/../src/interface/sitemanager.cpp:1127
-#: ../../locales/../src/interface/sitemanager.cpp:1137
-#: ../../locales/../src/interface/sitemanager.cpp:1151
-#: ../../locales/../src/interface/sitemanager.cpp:1162
-#: ../../locales/../src/interface/sitemanager.cpp:1187
-#: ../../locales/../src/interface/sitemanager.cpp:1197
-#: ../../locales/../src/interface/sitemanager.cpp:1206
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:1045
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#: ../../locales/../src/interface/sitemanager.cpp:1066
+#: ../../locales/../src/interface/sitemanager.cpp:1083
+#: ../../locales/../src/interface/sitemanager.cpp:1100
+#: ../../locales/../src/interface/sitemanager.cpp:1113
+#: ../../locales/../src/interface/sitemanager.cpp:1132
+#: ../../locales/../src/interface/sitemanager.cpp:1142
+#: ../../locales/../src/interface/sitemanager.cpp:1156
+#: ../../locales/../src/interface/sitemanager.cpp:1167
+#: ../../locales/../src/interface/sitemanager.cpp:1192
+#: ../../locales/../src/interface/sitemanager.cpp:1202
+#: ../../locales/../src/interface/sitemanager.cpp:1211
 msgid "Site Manager - Invalid data"
-msgstr "Upravljalnik strežnikov je že odprt"
+msgstr "Upravljalnik strežnikov - neveljavni podatki"
 
 #: ../../locales/../src/interface/sitemanager.cpp:313
 msgid "Site Manager already open"
 msgstr "Upravljalnik strežnikov je že odprt"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2581
-#: ../../locales/../src/interface/sitemanager.cpp:2598
-#: ../../locales/../src/interface/sitemanager.cpp:2612
-#: ../../locales/../src/interface/sitemanager.cpp:3011
-#: ../../locales/../src/interface/sitemanager.cpp:3098
+#: ../../locales/../src/interface/sitemanager.cpp:2586
+#: ../../locales/../src/interface/sitemanager.cpp:2603
+#: ../../locales/../src/interface/sitemanager.cpp:2617
+#: ../../locales/../src/interface/sitemanager.cpp:3016
+#: ../../locales/../src/interface/sitemanager.cpp:3103
 msgid "Site does not exist."
 msgstr "Mesto ne obstaja."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2561
+#: ../../locales/../src/interface/sitemanager.cpp:2566
 msgid "Site path has to begin with 0 or 1."
 msgstr "Pot strežnika se mora začeti z 0 ali 1."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2605
-#: ../../locales/../src/interface/sitemanager.cpp:2778
-#: ../../locales/../src/interface/sitemanager.cpp:3004
-#: ../../locales/../src/interface/sitemanager.cpp:3091
+#: ../../locales/../src/interface/sitemanager.cpp:2610
+#: ../../locales/../src/interface/sitemanager.cpp:2783
+#: ../../locales/../src/interface/sitemanager.cpp:3009
+#: ../../locales/../src/interface/sitemanager.cpp:3096
 msgid "Site path is malformed."
 msgstr "Pot strežnika je neprimerno oblikovana."
 
@@ -6315,7 +6311,7 @@ msgstr ""
 "Upravljalnikom strežnikov.\n"
 "Želite dodati trenutno povezavo upravljalniku strežnikov?"
 
-#: ../../locales/../src/interface/queue.cpp:1187
+#: ../../locales/../src/interface/queue.cpp:1194
 msgid "Size"
 msgstr "Velikost"
 
@@ -6396,7 +6392,6 @@ msgstr "Izvorna datoteka:"
 
 #: resources.h:488 ../../locales/../src/interface/speedlimits_dialog.cpp:54
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:62
-#, fuzzy
 msgid "Speed Limits"
 msgstr "Omejitve hitrosti"
 
@@ -6406,11 +6401,11 @@ msgstr "Omejitve hitrosti"
 
 #: ../../locales/../src/interface/statusbar.cpp:591
 msgid "Speed limits are disabled, click to change."
-msgstr ""
+msgstr "Omejitve hitrosti so izključene, kliknite za spremembo."
 
 #: ../../locales/../src/interface/statusbar.cpp:595
 msgid "Speed limits are enabled, click to change."
-msgstr ""
+msgstr "Omejitve hitrosti so vključene, kliknite za spremembo."
 
 #: resources.h:390
 msgid "Start transfer &immediately"
@@ -6509,7 +6504,7 @@ msgstr "Skladenjska napaka"
 msgid "Syntax error in command line"
 msgstr "Skladenjska napaka v ukazni vrstici"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:85
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:86
 msgid "System"
 msgstr "Sistem"
 
@@ -6560,7 +6555,7 @@ msgstr ""
 "Želite nadaljevati? Nobena sprememba v upravljalniku strežnikov zato ne bo "
 "shranjena."
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:104
+#: ../../locales/../src/interface/clearprivatedata.cpp:103
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Please close it or the data cannot be deleted."
@@ -6568,7 +6563,7 @@ msgstr ""
 "Upravljalnik strežnikov je odprt v drugem programu FileZille 3.\n"
 "Zaprite ga ali pa podatki ne bodo izbrisani."
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:422
+#: ../../locales/../src/interface/xmlfunctions.cpp:421
 #, c-format
 msgid "The XML document is not well-formed: %s"
 msgstr "Dokument XML ni pravilno oblikovan: %s"
@@ -6579,11 +6574,11 @@ msgid "The address you entered was: %s"
 msgstr "Naslov, ki ste ga vnesli: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:812
-#: ../../locales/../src/interface/sitemanager.cpp:2991
+#: ../../locales/../src/interface/sitemanager.cpp:2996
 msgid "The bookmark could not be added."
 msgstr "Zaznamka ni mogoče dodati."
 
-#: ../../locales/../src/interface/sitemanager.cpp:3078
+#: ../../locales/../src/interface/sitemanager.cpp:3083
 msgid "The bookmarks could not be cleared."
 msgstr "Zaznamkov ni mogoče počistiti."
 
@@ -6626,8 +6621,8 @@ msgstr ""
 "Datoteka %s že obstaja.\n"
 "Prosimo, vnesite novo ime:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2063
-#: ../../locales/../src/interface/LocalListView.cpp:2194
+#: ../../locales/../src/interface/LocalListView.cpp:2064
+#: ../../locales/../src/interface/LocalListView.cpp:2195
 #: ../../locales/../src/interface/RemoteListView.cpp:2639
 #, c-format
 msgid ""
@@ -6644,13 +6639,13 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr "Datoteke '%s' ni mogoče naložiti ali pa ne vsebuje zasebnega ključa."
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:60
+#: ../../locales/../src/interface/xmlfunctions.cpp:59
 #, c-format
 msgid "The file '%s' could not be loaded."
 msgstr "Datoteke '%s' ni mogoče naložiti."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2057
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2058
+#: ../../locales/../src/interface/LocalListView.cpp:2190
 #: ../../locales/../src/interface/RemoteListView.cpp:2633
 #, c-format
 msgid ""
@@ -6660,8 +6655,8 @@ msgstr ""
 "Datoteke '%s' ni mogoče odpreti:\n"
 "S to vrsto datotek ni v vašem sistemu povezan noben program."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2102
-#: ../../locales/../src/interface/LocalListView.cpp:2202
+#: ../../locales/../src/interface/LocalListView.cpp:2103
+#: ../../locales/../src/interface/LocalListView.cpp:2203
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6707,7 +6702,7 @@ msgstr ""
 msgid "The file selected as default editor does not exist."
 msgstr "Datoteka, izbrana kot privzeti urejevalnik, ne obstaja."
 
-#: ../../locales/../src/interface/import.cpp:96
+#: ../../locales/../src/interface/import.cpp:95
 msgid ""
 "The file you have selected contains site manager data from a previous "
 "version of FileZilla.\n"
@@ -6798,8 +6793,8 @@ msgstr ""
 "Prenesli ste najnovejšo različico. Namestite jo na enak način, kot ste "
 "namestili to različico."
 
-#: ../../locales/../src/interface/QueueView.cpp:1930
-#: ../../locales/../src/interface/QueueView.cpp:1957
+#: ../../locales/../src/interface/QueueView.cpp:1932
+#: ../../locales/../src/interface/QueueView.cpp:1959
 msgid "The queue will not be saved."
 msgstr "Vrsta ne bo shranjena."
 
@@ -6813,7 +6808,7 @@ msgstr ""
 "Želite izključiti sinhrono brskanje in nadaljevati s spreminjanjem oddaljene "
 "mape?"
 
-#: ../../locales/../src/interface/import.cpp:85
+#: ../../locales/../src/interface/import.cpp:84
 msgid "The selected categories have been imported."
 msgstr "Izbrane kategorije so bile uvožene."
 
@@ -6833,7 +6828,7 @@ msgstr ""
 "Izbrana datoteka je še vedno odprta z nekim drugim programom, zato jo prej "
 "zaprite."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2069
+#: ../../locales/../src/interface/LocalListView.cpp:2070
 #: ../../locales/../src/interface/RemoteListView.cpp:2645
 msgid ""
 "The selected file would be executed directly.\n"
@@ -6844,7 +6839,7 @@ msgstr ""
 "To je lahko nevarno in poškoduje vaš sistem.\n"
 "Resnično želite nadaljevati?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2871
+#: ../../locales/../src/interface/sitemanager.cpp:2876
 msgid "The server could not be added."
 msgstr "Strežnika ni mogoče dodati."
 
@@ -6865,7 +6860,6 @@ msgstr ""
 "da se prepričate, če lahko zaupate strežniku."
 
 #: resources.h:186
-#, fuzzy
 msgid ""
 "The server's host key does not match the key that has been cached. This "
 "means that either the administrator has changed the host key, or you are "
@@ -6873,9 +6867,7 @@ msgid ""
 msgstr ""
 "Ključ gostitelj strežnika se ne ujema s ključem, ki je shranjen. To pomeni, "
 "da je oskrbnik zamenjal ključ gostitelja ali pa se skušate povezati z drugim "
-"računalnikom, ki se izdaja, da je strežnik.\n"
-"Če sprememba ključa gostitelja ni pričakovana, prosimo, povprašajte "
-"oskrbnika strežnika o podrobnostih."
+"računalnikom, ki se izdaja, da je strežnik."
 
 #: resources.h:174
 msgid ""
@@ -6885,7 +6877,7 @@ msgstr ""
 "Strežnikov ključ gostitelja ni shranjen v registru. Nimate nobenih "
 "zagotovil, da je strežnik računalnik, za katerega mislite, da je."
 
-#: ../../locales/../src/interface/import.cpp:82
+#: ../../locales/../src/interface/import.cpp:81
 msgid ""
 "The settings have been imported. You have to restart FileZilla for all "
 "settings to have effect."
@@ -6893,12 +6885,11 @@ msgstr ""
 "Nastavitve so bile uvožene. Da bi začele veljati, morate zapreti in ponovno "
 "zagnati FileZillo."
 
-#: ../../locales/../src/interface/QueueView.cpp:3107
+#: ../../locales/../src/interface/QueueView.cpp:3121
 msgid "The system will soon reboot unless you click Cancel."
 msgstr "Sistem se bo v kratkem ponovno zagnal, če ne kliknete Prekliči."
 
-#: ../../locales/../src/interface/QueueView.cpp:3105
-#, fuzzy
+#: ../../locales/../src/interface/QueueView.cpp:3119
 msgid "The system will soon shut down unless you click Cancel."
 msgstr "Sistem se bo v kratkem izključil, če ne kliknete Prekliči."
 
@@ -6918,11 +6909,11 @@ msgstr "Preizkus ni uspel. Resnično želite shraniti nastavitve?"
 msgid "Themes"
 msgstr "Teme"
 
-#: ../../locales/../src/interface/filter.cpp:447
+#: ../../locales/../src/interface/filter.cpp:448
 msgid "This filter set cannot be removed."
 msgstr "Tega sklopa filtrov ni mogoče odstraniti."
 
-#: ../../locales/../src/interface/filter.cpp:382
+#: ../../locales/../src/interface/filter.cpp:383
 msgid "This filter set cannot be renamed."
 msgstr "Tega sklopa filtrov ni mogoče preimenovati."
 
@@ -6957,8 +6948,8 @@ msgstr "Oblikovanje zapisa časa"
 msgid "Time&out in seconds:"
 msgstr "Pretek &časa v sekundah:"
 
-#: resources.h:729 ../../locales/../src/interface/QueueView.cpp:1045
-#: ../../locales/../src/interface/QueueView.cpp:1089
+#: resources.h:729 ../../locales/../src/interface/QueueView.cpp:1046
+#: ../../locales/../src/interface/QueueView.cpp:1090
 msgid "Timeout"
 msgstr "Pretek časa"
 
@@ -7070,17 +7061,15 @@ msgid "Transfer Mode"
 msgstr "Način prenosa"
 
 #: resources.h:869
-#, fuzzy
 msgid "Transfer Queue"
-msgstr "&Čakalna vrsta prenosov"
+msgstr "Vrsta prenosov"
 
 #: resources.h:97
-#, fuzzy
 msgid "Transfer Settings"
 msgstr "Nastavitve prenosov"
 
-#: ../../locales/../src/engine/transfersocket.cpp:493
-#: ../../locales/../src/engine/transfersocket.cpp:517
+#: ../../locales/../src/engine/transfersocket.cpp:498
+#: ../../locales/../src/engine/transfersocket.cpp:522
 #, c-format
 msgid "Transfer connection interrupted: %s"
 msgstr "Povezava prenosa prekinjena: %s"
@@ -7089,7 +7078,7 @@ msgstr "Povezava prenosa prekinjena: %s"
 msgid "Transferred data got tainted."
 msgstr "Preneseni podatki so bili okvarjeni."
 
-#: ../../locales/../src/interface/QueueView.cpp:1468
+#: ../../locales/../src/interface/QueueView.cpp:1469
 #: ../../locales/../src/interface/statuslinectrl.cpp:274
 msgid "Transferring"
 msgstr "Prenašanje v teku"
@@ -7098,8 +7087,8 @@ msgstr "Prenašanje v teku"
 msgid "Transfers"
 msgstr "Prenosi"
 
-#: ../../locales/../src/interface/QueueView.cpp:3022
-#: ../../locales/../src/interface/QueueView.cpp:3025
+#: ../../locales/../src/interface/QueueView.cpp:3036
+#: ../../locales/../src/interface/QueueView.cpp:3039
 msgid "Transfers finished"
 msgstr "Dokočani prenosi"
 
@@ -7157,8 +7146,9 @@ msgid "U&se filetype associations if available"
 msgstr "Upora&bi povezave z vrstami datotek, če so na voljo"
 
 #: resources.h:884
+#, fuzzy
 msgid "U&se system defaults"
-msgstr "U&porabi sistemsko pri&vzeto"
+msgstr "Uporabi sistemske pri&vzeto"
 
 #: resources.h:764
 msgid "USER@&HOST"
@@ -7193,7 +7183,7 @@ msgstr "Neznana različica protokola SOCKS: %d"
 msgid "Unknown certificate"
 msgstr "Neznano potrdilo"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:410
+#: ../../locales/../src/interface/xmlfunctions.cpp:409
 msgid ""
 "Unknown error opening the file. Make sure the file can be accessed and is a "
 "well-formed XML document."
@@ -7214,7 +7204,7 @@ msgstr ""
 "Neznana različica protokola SOCKS pri pod-pogajanju overjanja uporabniškega "
 "imena/gesla: %d"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:455
+#: ../../locales/../src/interface/xmlfunctions.cpp:454
 msgid ""
 "Unknown root element, the file does not appear to be generated by FileZilla."
 msgstr ""
@@ -7268,14 +7258,13 @@ msgid "Upload failed"
 msgstr "Prenos na strežnik ni uspel"
 
 #: ../../locales/../src/interface/statusbar.cpp:603
-#, fuzzy, c-format
+#, c-format
 msgid "Upload limit: %s/s"
-msgstr "Omejitev prenosa &na strežnik:"
+msgstr "Omejitev prenosa na strežnik: %s/s"
 
 #: ../../locales/../src/interface/statusbar.cpp:605
-#, fuzzy
 msgid "Upload limit: none"
-msgstr "Omejitev prenosa &na strežnik:"
+msgstr "Omejitev prenosa na strežnik: brez"
 
 #: resources.h:642
 msgid "Upload selected directory"
@@ -7378,8 +7367,8 @@ msgstr ""
 msgid "User:"
 msgstr "Uporabnik:"
 
-#: ../../locales/../src/interface/manual_transfer.cpp:493
-#: ../../locales/../src/interface/sitemanager.cpp:1127
+#: ../../locales/../src/interface/manual_transfer.cpp:494
+#: ../../locales/../src/interface/sitemanager.cpp:1132
 msgid "Username cannot be a series of spaces"
 msgstr "Uporabniško ime ne sme biti niz presledkov"
 
@@ -7416,9 +7405,8 @@ msgid "Verifying certificate..."
 msgstr "Preverjanje potrdila ..."
 
 #: resources.h:168
-#, fuzzy
 msgid "Version:"
-msgstr "&Različica %s"
+msgstr "Različica:"
 
 #: resources.h:812
 msgid "Very high"
@@ -7440,15 +7428,15 @@ msgstr "Vidni stolpci"
 msgid "W&rite"
 msgstr "&Zapiši"
 
-#: ../../locales/../src/interface/QueueView.cpp:1767
+#: ../../locales/../src/interface/QueueView.cpp:1768
 msgid "Waiting"
 msgstr "Čakanje"
 
-#: ../../locales/../src/interface/QueueView.cpp:1375
+#: ../../locales/../src/interface/QueueView.cpp:1376
 msgid "Waiting for browsing connection"
 msgstr "Čakanje na povezavo za brskanje"
 
-#: ../../locales/../src/interface/QueueView.cpp:1418
+#: ../../locales/../src/interface/QueueView.cpp:1419
 msgid "Waiting for password"
 msgstr "Čakanje na geslo"
 
@@ -7460,7 +7448,7 @@ msgstr "Čakanje na prekinitev prenosa"
 msgid "Waiting to retry..."
 msgstr "Čakanje na ponoven poskus ..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:308
+#: ../../locales/../src/interface/FileZilla.cpp:298
 msgid ""
 "Warning!\n"
 "\n"
@@ -7569,7 +7557,7 @@ msgstr "Vedno znova lahko odprete to okno prek menija pomoči."
 
 #: ../../locales/../src/engine/server.cpp:49
 msgid "You can leave the port field empty to use the default port."
-msgstr ""
+msgstr "Polje vrat lahko pustite prazno, uporabljena bodo privzeta vrata."
 
 #: resources.h:146
 msgid ""
@@ -7579,7 +7567,7 @@ msgstr ""
 "Uporabite lahko x na vsakem mestu, kjer želite ohraniti dovoljenje, kot ga "
 "ima izvorna datoteka."
 
-#: ../../locales/../src/interface/import.cpp:29
+#: ../../locales/../src/interface/import.cpp:28
 msgid "You cannot import settings from FileZilla's own settings directory."
 msgstr "Nastavitev ne morete uvoziti iz lastne mape nastavitev FileZille."
 
@@ -7600,7 +7588,7 @@ msgstr ""
 msgid "You have selected at least one symbolic link."
 msgstr "Izbrali ste najmanj eno simbolično povezavo."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2036
+#: ../../locales/../src/interface/LocalListView.cpp:2037
 #: ../../locales/../src/interface/RemoteListView.cpp:2612
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
@@ -7608,7 +7596,7 @@ msgid ""
 msgstr ""
 "Izbrali ste več kot deset datotek za urejanje, resnično želite nadaljevati?"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2156
+#: ../../locales/../src/interface/LocalListView.cpp:2157
 msgid ""
 "You have selected more than 10 files or directories to open, do you really "
 "want to continue?"
@@ -7616,8 +7604,8 @@ msgstr ""
 "Izbrali ste več kot deset datotek ali map za odpiranje, resnično želite "
 "nadaljevati?"
 
-#: ../../locales/../src/interface/manual_transfer.cpp:417
-#: ../../locales/../src/interface/sitemanager.cpp:1040
+#: ../../locales/../src/interface/manual_transfer.cpp:418
+#: ../../locales/../src/interface/sitemanager.cpp:1045
 msgid "You have to enter a hostname."
 msgstr "Vnesti morate ime gostitelja."
 
@@ -7634,13 +7622,13 @@ msgstr "Vnesti morate veljaven naslov IP."
 msgid "You have to enter a writable local directory."
 msgstr "Vnesti morate krajevno mapo, v katero je mogoče pisati."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:504
-#: ../../locales/../src/interface/sitemanager.cpp:1137
+#: ../../locales/../src/interface/manual_transfer.cpp:505
+#: ../../locales/../src/interface/sitemanager.cpp:1142
 msgid "You have to enter an account name"
 msgstr "Vnesti morate ime računa."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:474
-#: ../../locales/../src/interface/sitemanager.cpp:1108
+#: ../../locales/../src/interface/manual_transfer.cpp:475
+#: ../../locales/../src/interface/sitemanager.cpp:1113
 msgid "You have to specify a user name"
 msgstr "Vnesti morate uporabniško ime."
 
@@ -7675,13 +7663,13 @@ msgstr "Vnesti morate vrata posredovalnega strežnika med 1 in 65535."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:438
-#: ../../locales/../src/interface/sitemanager.cpp:1197
+#: ../../locales/../src/interface/sitemanager.cpp:1202
 msgid "You need to enter at least one path, empty bookmarks are not supported."
 msgstr "Vnesti morate vsaj eno pot, prazni zaznamki niso podprti."
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:80
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:445
-#: ../../locales/../src/interface/sitemanager.cpp:1206
+#: ../../locales/../src/interface/sitemanager.cpp:1211
 msgid ""
 "You need to enter both a local and a remote path to enable synchronized "
 "browsing for this bookmark."
@@ -7689,7 +7677,7 @@ msgstr ""
 "Vnesti morate tako krajevno kot oddaljeno pot, da omogočite sinhrono "
 "brskanje za ta zaznamek."
 
-#: ../../locales/../src/interface/sitemanager.cpp:1162
+#: ../../locales/../src/interface/sitemanager.cpp:1167
 msgid ""
 "You need to enter both a local and a remote path to enable synchronized "
 "browsing for this site."
@@ -7721,23 +7709,32 @@ msgstr ""
 "Pri povezovanju z drugimi strežniki ne bi smeli imeti težav, prenosi datotek "
 "bi morali delovati pravilno."
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:68
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:100
+msgid "after"
+msgstr "po"
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:98
+msgid "before"
+msgstr "pred"
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:69
 msgid "begins with"
 msgstr "se začne z"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:66
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:67
 msgid "contains"
 msgstr "vsebuje"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:71
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:72
 msgid "does not contain"
-msgstr ""
+msgstr "ne vsebuje"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:69
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:70
 msgid "ends with"
 msgstr "se konča z"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:74
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:75
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:99
 msgid "equals"
 msgstr "je enak"
 
@@ -7771,51 +7768,51 @@ msgstr "fzsftp ni mogoče zagnati"
 msgid "gnutls_certificate_get_peers returned no certificates"
 msgstr "gnutls_certificate_get_peers ni vrnil nobenega potrdila"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:73
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:74
 msgid "greater than"
 msgstr "je večje kot"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:92
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:93
 msgid "group executable"
 msgstr "skupini izvršljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:90
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:91
 msgid "group readable"
 msgstr "skupini berljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:91
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:92
 msgid "group writeable"
 msgstr "skupini zapisljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:67
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:68
 msgid "is equal to"
 msgstr "je enako"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:77
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:78
 msgid "is set"
 msgstr "je nastavljeno"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:78
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:79
 msgid "is unset"
 msgstr "ni nastavljeno"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:75
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:76
 msgid "less than"
 msgstr "je manjše kot"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:70
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:71
 msgid "matches regex"
 msgstr "se ujema z regularnim izrazom"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:89
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:90
 msgid "owner executable"
 msgstr "lastniku izvršljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:87
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:88
 msgid "owner readable"
 msgstr "lastniku berljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:88
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:89
 msgid "owner writeable"
 msgstr "lastniku zapisljivo"
 
@@ -7823,15 +7820,15 @@ msgstr "lastniku zapisljivo"
 msgid "unknown"
 msgstr "neznano"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:95
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:96
 msgid "world executable"
 msgstr "vsem izvršljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:93
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:94
 msgid "world readable"
 msgstr "vsem berljivo"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:94
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:95
 msgid "world writeable"
 msgstr "vsem zapisljivo"
 
