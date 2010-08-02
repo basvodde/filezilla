@@ -1429,7 +1429,7 @@ bool CLocalTreeView::CheckSubdirStatus(wxTreeItemId& item, const wxString& path)
 			CFilterManager filter;
 
 			const int attributes = S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-			if (!filter.FilenameFiltered(_T("localhost"), path, true, size, true, attributes))
+			if (!filter.FilenameFiltered(_T("localhost"), path, true, size, true, attributes, 0))
 			{
 				if (!child)
 					AppendItem(item, _T(""));

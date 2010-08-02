@@ -1171,11 +1171,6 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		}
 		else
 		{
-			wxFileName fn(m_dir, data->name);
-
-			int x = sizeof(CServerPath);
-			int y = sizeof(wxLongLong);
-			int z = sizeof(wxString);
 			m_pQueue->QueueFile(queue_only, false, m_dir, data->name, data->name, path, *pServer, data->size);
 			added = true;
 		}
