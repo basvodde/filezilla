@@ -683,14 +683,15 @@ void COptions::LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::
 		if (!allowDefault && options[iter->second].flags == default_only)
 			return;
 
+		wxString value;
+
 		TiXmlNode *text = pOption->FirstChild();
-		if (!text)
-			return;
+		if (text) {
+			if (!text->ToText())
+				return;
 
-		if (!text->ToText())
-			return;
-
-		wxString value(ConvLocal(text->Value()));
+			value = ConvLocal(text->Value());
+		}
 
 		if (options[iter->second].type == number)
 		{
