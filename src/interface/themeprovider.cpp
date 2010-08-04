@@ -9,6 +9,8 @@ CThemeProvider::CThemeProvider()
 	wxArtProvider::Push(this);
 
 	m_themePath = GetThemePath();
+
+	RegisterOption(OPTION_THEME);
 }
 
 wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
@@ -259,4 +261,14 @@ wxString CThemeProvider::GetThemePath()
 
 	wxASSERT(wxFile::Exists(resourceDir + _T("theme.xml")));
 	return resourceDir;
+}
+
+void CThemeProvider::OnOptionChanged(int option)
+{
+	wxASSERT(option == OPTION_THEME);
+
+	m_themePath = GetThemePath();
+
+	wxArtProvider::Remove(this);
+	wxArtProvider::Push(this);
 }

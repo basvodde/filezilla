@@ -1469,15 +1469,14 @@ void CMainFrame::OnMenuEditSettings(wxCommandEvent& event)
 	wxString newThemeSize = pOptions->GetOption(OPTION_THEME_ICONSIZE);
 	wxString newLang = pOptions->GetOption(OPTION_LANGUAGE);
 
-	if (oldTheme != newTheme)
-	{
-		wxArtProvider::Delete(m_pThemeProvider);
-		m_pThemeProvider = new CThemeProvider();
-	}
 	if (oldTheme != newTheme ||
 		oldThemeSize != newThemeSize ||
 		oldLang != newLang)
+	{
 		CreateToolBar();
+		if (m_pToolBar)
+			m_pToolBar->UpdateToolbarState();
+	}
 
 	if (oldLang != newLang ||
 		oldTimestamps != newTimestamps)
