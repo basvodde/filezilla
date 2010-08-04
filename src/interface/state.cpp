@@ -792,7 +792,7 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 		else if (type == CLocalFileSystem::dir)
 		{
 			if (copy)
-				RecursiveCopy(file, path.GetPath());
+				RecursiveCopy(CLocalPath(file), path);
 			else
 			{
 				CLocalPath sourcePath(file);
