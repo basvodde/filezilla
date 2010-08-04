@@ -711,25 +711,24 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 
 	for (unsigned int i = 0; i < files.Count(); i++)
 	{
-		if (wxFile::Exists(files[i]))
+		wxLongLong size;
+		bool is_link;
+		CLocalFileSystem::local_fileType type = CLocalFileSystem::GetFileInfo(files[i], is_link, &size, 0, 0);
+		if (type == CLocalFileSystem::file)
 		{
-			const wxFileName name(files[i]);
-			const wxLongLong size = name.GetSize().GetValue();
-			m_pMainFrame->GetQueue()->QueueFile(queueOnly, false, name.GetPath(), name.GetFullName(), name.GetFullName(), path, *m_pServer, size);
+			wxString localFile;
+			const CLocalPath localPath(files[i], &localFile);
+			m_pMainFrame->GetQueue()->QueueFile(queueOnly, false, localPath, localFile, localFile, path, *m_pServer, size);
 			m_pMainFrame->GetQueue()->QueueFile_Finish(!queueOnly);
 		}
-		else if (wxDir::Exists(files[i]))
+		else if (type == CLocalFileSystem::dir)
 		{
-			wxString dir = files[i];
-			if (dir.Last() == CLocalPath::path_separator && dir.Len() > 1)
-				dir.RemoveLast();
-			int pos = dir.Find(CLocalPath::path_separator, true);
-			if (pos != -1 && pos != (int)dir.Len() - 1)
+			CLocalPath localPath(files[i]);
+			if (localPath.HasParent())
 			{
-				wxString lastSegment = dir.Mid(pos + 1);
 				CServerPath target = path;
-				target.AddSegment(lastSegment);
-				m_pMainFrame->GetQueue()->QueueFolder(queueOnly, false, dir, target, *m_pServer);
+				target.AddSegment(localPath.GetLastSegment());
+				m_pMainFrame->GetQueue()->QueueFolder(queueOnly, false, localPath, target, *m_pServer);
 			}
 		}
 	}
@@ -774,29 +773,32 @@ void CState::HandleDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 #else
 	for (unsigned int i = 0; i < files.Count(); i++)
 	{
-		const wxString& file = files[i];
-		if (wxFile::Exists(file))
+		const wxString& file(files[i]);
+
+		wxLongLong size;
+		bool is_link;
+		CLocalFileSystem::local_fileType type = CLocalFileSystem::GetFileInfo(file, is_link, &size, 0, 0);
+		if (type == CLocalFileSystem::file)
 		{
-			int pos = file.Find(CLocalPath::path_separator, true);
-			if (pos == -1 || pos == (int)file.Len() - 1)
+			wxString name;
+			CLocalPath sourcePath(file, &name);
+			if (name.empty())
 				continue;
-			const wxString& name = file.Mid(pos + 1);
 			if (copy)
 				wxCopyFile(file, path.GetPath() + name);
 			else
 				wxRenameFile(file, path.GetPath() + name);
 		}
-		else if (wxDir::Exists(file))
+		else if (type == CLocalFileSystem::dir)
 		{
 			if (copy)
 				RecursiveCopy(file, path.GetPath());
 			else
 			{
-				int pos = file.Find(CLocalPath::path_separator, true);
-				if (pos == -1 || pos == (int)file.Len() - 1)
+				CLocalPath sourcePath(file);
+				if (!sourcePath.HasParent())
 					continue;
-				const wxString& name = file.Mid(pos + 1);
-				wxRenameFile(file, path.GetPath() + name);
+				wxRenameFile(file, path.GetPath() + sourcePath.GetLastSegment());
 			}
 		}
 	}
@@ -883,7 +885,7 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, co
 	}
 
 	if (hasFiles)
-		m_pMainFrame->GetQueue()->QueueFiles(queueOnly, path.GetPath(), *pRemoteDataObject);
+		m_pMainFrame->GetQueue()->QueueFiles(queueOnly, path, *pRemoteDataObject);
 
 	if (!hasDirs)
 		return true;
@@ -893,7 +895,9 @@ bool CState::DownloadDroppedFiles(const CRemoteDataObject* pRemoteDataObject, co
 		if (!iter->dir)
 			continue;
 
-		m_pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, path.GetPath() + CQueueView::ReplaceInvalidCharacters(iter->name), iter->link);
+		CLocalPath newPath(path);
+		newPath.AddSegment(CQueueView::ReplaceInvalidCharacters(iter->name));
+		m_pRecursiveOperation->AddDirectoryToVisit(pRemoteDataObject->GetServerPath(), iter->name, newPath, iter->link);
 	}
 
 	if (m_pComparisonManager->IsComparing())

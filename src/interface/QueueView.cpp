@@ -215,7 +215,7 @@ public:
 		m_processing_entries = false;
 
 		t_dirPair* pair = new t_dirPair;
-		pair->localPath = pFolderItem->GetLocalPath().c_str();
+		pair->localPath = pFolderItem->GetLocalPath().GetPath().c_str();
 		pair->remotePath.SetSafePath(pFolderItem->GetRemotePath().GetSafePath().c_str());
 		m_dirsToCheck.push_back(pair);
 	}
@@ -252,14 +252,14 @@ public:
 		CServerPath remotePath;
 	};
 
-	void ProcessDirectory(const wxString& localPath, CServerPath remotePath, const wxString& name)
+	void ProcessDirectory(const CLocalPath& localPath, CServerPath remotePath, const wxString& name)
 	{
 		wxMutexLocker locker(m_sync);
 
 		t_dirPair* pair = new t_dirPair;
 
 		{
-			pair->localPath = (localPath + CLocalFileSystem::path_separator + name).c_str();
+			pair->localPath = (localPath.GetPath() + name).c_str();
 
 			remotePath.AddSegment(name);
 			pair->remotePath.SetSafePath(remotePath.GetSafePath().c_str());
@@ -520,7 +520,7 @@ CQueueView::~CQueueView()
 }
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download,
-						   const wxString& localPath, const wxString& localFile,
+						   const CLocalPath& localPath, const wxString& localFile,
 						   const wxString& remoteFile, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit /*=CEditHandler::none*/)
 {
@@ -530,7 +530,11 @@ bool CQueueView::QueueFile(const bool queueOnly, const bool download,
 	if (localFile == _T("") || remotePath.IsEmpty())
 	{
 		if (download)
-			fileItem = new CFolderItem(pServerItem, queueOnly, localFile);
+		{
+			CLocalPath p(localPath);
+			p.AddSegment(localFile);
+			fileItem = new CFolderItem(pServerItem, queueOnly, p);
+		}
 		else
 			fileItem = new CFolderItem(pServerItem, queueOnly, remotePath, remoteFile);
 		wxASSERT(edit == CEditHandler::none);
@@ -578,7 +582,7 @@ void CQueueView::QueueFile_Finish(const bool start)
 		RefreshListOnly(false);
 }
 
-bool CQueueView::QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject)
+bool CQueueView::QueueFiles(const bool queueOnly, const CLocalPath& localPath, const CRemoteDataObject& dataObject)
 {
 	CServerItem* pServerItem = CreateServerItem(dataObject.GetServer());
 
@@ -848,11 +852,12 @@ bool CQueueView::TryStartNextTransfer()
 
 		while (newFileItem && newFileItem->Download() && newFileItem->GetType() == QueueItemType_Folder)
 		{
-			wxFileName fn(newFileItem->GetLocalPath(), newFileItem->GetLocalFile());
-			wxFileName::Mkdir(fn.GetPath(), 0777, wxPATH_MKDIR_FULL);
+			CLocalPath localPath(newFileItem->GetLocalPath());
+			localPath.AddSegment(newFileItem->GetLocalFile());
+			wxFileName::Mkdir(localPath.GetPath(), 0777, wxPATH_MKDIR_FULL);
 			const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
 			for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
-				(*iter)->RefreshLocalFile(fn.GetFullPath());
+				(*iter)->RefreshLocalFile(localPath.GetPath());
 			if (RemoveItem(newFileItem, true))
 			{
 				// Server got deleted. Unfortunately we have to start over now
@@ -1216,7 +1221,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 			{
 				const std::vector<CState*> *pStates = CContextManager::Get()->GetAllStates();
 				for (std::vector<CState*>::const_iterator iter = pStates->begin(); iter != pStates->end(); iter++)
-					(*iter)->RefreshLocalFile(pFileItem->GetLocalPath() + pFileItem->GetLocalFile());
+					(*iter)->RefreshLocalFile(pFileItem->GetLocalPath().GetPath() + pFileItem->GetLocalFile());
 			}
 
 			if (pFileItem->m_edit != CEditHandler::none && reason != retry && reason != reset)
@@ -1229,7 +1234,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 					pEditHandler->FinishTransfer(reason == success, pFileItem->GetRemoteFile(), pFileItem->GetRemotePath(), pServerItem->GetServer());
 				}
 				else
-					pEditHandler->FinishTransfer(reason == success, pFileItem->GetLocalPath() + pFileItem->GetLocalFile());
+					pEditHandler->FinishTransfer(reason == success, pFileItem->GetLocalPath().GetPath() + pFileItem->GetLocalFile());
 				if (reason == success)
 					pFileItem->m_edit = CEditHandler::none;
 			}
@@ -1469,7 +1474,7 @@ void CQueueView::SendNextCommand(t_EngineData& engineData)
 			fileItem->m_statusMessage = _("Transferring");
 			RefreshItem(engineData.pItem);
 
-			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalPath() + fileItem->GetLocalFile(), fileItem->GetRemotePath(),
+			int res = engineData.pEngine->Command(CFileTransferCommand(fileItem->GetLocalPath().GetPath() + fileItem->GetLocalFile(), fileItem->GetRemotePath(),
 												fileItem->GetRemoteFile(), fileItem->Download(), fileItem->m_transferSettings));
 			wxASSERT((res & FZ_REPLY_BUSY) != FZ_REPLY_BUSY);
 			if (res == FZ_REPLY_WOULDBLOCK)
@@ -1758,7 +1763,7 @@ void CQueueView::DisplayQueueSize()
 	pStatusBar->DisplayQueueSize(m_totalQueueSize, m_filesWithUnknownSize != 0);
 }
 
-bool CQueueView::QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server)
+bool CQueueView::QueueFolder(bool queueOnly, bool download, const CLocalPath& localPath, const CServerPath& remotePath, const CServer& server)
 {
 	CServerItem* pServerItem = CreateServerItem(server);
 
@@ -1867,7 +1872,7 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 			}
 
 			const CFolderProcessingThread::t_dirPair* entry = (const CFolderProcessingThread::t_dirPair*)*iter;
-			pFolderScanItem->m_current_local_path = entry->localPath;
+			pFolderScanItem->m_current_local_path = CLocalPath(entry->localPath);
 			pFolderScanItem->m_current_remote_path = entry->remotePath;
 			pFolderScanItem->m_dir_is_empty = true;
 			delete entry;
@@ -1876,7 +1881,7 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 		{
 			const t_newEntry* entry = (const t_newEntry*)*iter;
 
-			if (filters.FilenameFiltered(entry->name, pFolderScanItem->m_current_local_path, entry->dir, entry->size, true, entry->attributes, &entry->time))
+			if (filters.FilenameFiltered(entry->name, pFolderScanItem->m_current_local_path.GetPath(), entry->dir, entry->size, true, entry->attributes, &entry->time))
 			{
 				delete entry;
 				continue;
@@ -1891,7 +1896,6 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 				continue;
 			}
 
-			wxASSERT(pFolderScanItem->m_current_local_path.Last() == CLocalPath::path_separator);
 			CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, pFolderScanItem->m_current_local_path, entry->name, entry->name, pFolderScanItem->m_current_remote_path, entry->size);
 
 			if (download)
@@ -1993,7 +1997,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 			m_insertionCount = 0;
 			CServerItem *pServerItem = CreateServerItem(server);
 
-			wxString previousLocalPath;
+			CLocalPath previousLocalPath;
 			CServerPath previousRemotePath;
 
 			for (TiXmlElement* pFile = pServer->FirstChildElement("File"); pFile; pFile = pFile->NextSiblingElement("File"))
@@ -2012,16 +2016,20 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 				if (localFile != _T("") && remoteFile != _T("") && remotePath.SetSafePath(safeRemotePath) &&
 					size >= -1 && priority < PRIORITY_COUNT)
 				{
-					wxFileName fn(localFile);
+					wxString localFileName;
+					CLocalPath localPath(localFile, &localFileName);
+
+					if (localFileName.empty())
+						continue;
 
 					// CServerPath and wxString are reference counted.
 					// Save some memory here by re-using the old copy
-					if (fn.GetPath() != previousLocalPath)
-						previousLocalPath = fn.GetPath();
+					if (localPath != previousLocalPath)
+						previousLocalPath = localPath;
 					if (previousRemotePath != remotePath)
 						previousRemotePath = remotePath;
 
-					CFileItem* fileItem = new CFileItem(pServerItem, true, download, previousLocalPath, fn.GetFullName(), remoteFile, previousRemotePath, size);
+					CFileItem* fileItem = new CFileItem(pServerItem, true, download, localPath, localFileName, remoteFile, previousRemotePath, size);
 					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);
 					fileItem->m_errorCount = errorCount;
@@ -2041,7 +2049,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 					wxString localFile = GetTextElement(pFolder, "LocalFile");
 					if (localFile == _T(""))
 						continue;
-					folderItem = new CFolderItem(pServerItem, true, localFile);
+					folderItem = new CFolderItem(pServerItem, true, CLocalPath(localFile));
 				}
 				else
 				{
@@ -3327,7 +3335,7 @@ void CQueueView::RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString&
 	CFileItem* pFile = (CFileItem*)pEngineData->pItem;
 	if (local)
 	{
-		wxFileName fn(pFile->GetLocalPath(), pFile->GetLocalFile());
+		wxFileName fn(pFile->GetLocalPath().GetPath(), pFile->GetLocalFile());
 		fn.SetFullName(newName);
 		pFile->SetLocalFile(fn.GetFullName());
 	}

@@ -357,8 +357,16 @@ void CManualTransfer::OnOK(wxCommandEvent& event)
 	else
 		COptions::Get()->SetOption(OPTION_ASCIIBINARY, 0);
 
-	wxFileName fn(local_file);
-	m_pQueueView->QueueFile(!start, download, fn.GetPath(), fn.GetFullName(), remote_file, path, *m_pServer, -1);
+	wxString name;
+	CLocalPath localPath(local_file, &name);
+
+	if (name.empty())
+	{
+		wxMessageBox(_("Local file is not a valid filename."), _("Manual transfer"), wxICON_EXCLAMATION);
+		return;
+	}
+
+	m_pQueueView->QueueFile(!start, download, localPath, name, remote_file, path, *m_pServer, -1);
 
 	// Restore old data type
 	COptions::Get()->SetOption(OPTION_ASCIIBINARY, old_data_type);

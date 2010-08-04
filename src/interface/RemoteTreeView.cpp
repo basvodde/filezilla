@@ -1037,7 +1037,7 @@ void CRemoteTreeView::OnMenuChmod(wxCommandEvent& event)
 
 		if (pChmodDlg->Recursive())
 			// Start recursion
-			pRecursiveOperation->AddDirectoryToVisit(path, _T(""), _T(""));
+			pRecursiveOperation->AddDirectoryToVisit(path, _T(""), CLocalPath());
 	}
 	else
 	{
@@ -1094,7 +1094,7 @@ void CRemoteTreeView::OnMenuDownload(wxCommandEvent& event)
 	localDir.AddSegment(CQueueView::ReplaceInvalidCharacters(name));
 
 	CRecursiveOperation* pRecursiveOperation = m_pState->GetRecursiveOperationHandler();
-	pRecursiveOperation->AddDirectoryToVisit(path, _T(""), localDir.GetPath());
+	pRecursiveOperation->AddDirectoryToVisit(path, _T(""), localDir);
 
 	CServerPath currentPath;
 	const wxTreeItemId selected = GetSelection();

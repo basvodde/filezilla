@@ -16,7 +16,7 @@ public:
 	// correct, empty() will return true.
 	// If file is given and path not terminated by a separator,
 	// the filename portion is returned in file.
-	CLocalPath(const wxString& path, wxString* file = 0);
+	explicit CLocalPath(const wxString& path, wxString* file = 0);
 	bool SetPath(const wxString& path, wxString* file = 0);
 
 	// Always terminated by a separator

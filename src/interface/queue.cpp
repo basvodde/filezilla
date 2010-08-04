@@ -279,7 +279,7 @@ int CQueueItem::GetItemIndex() const
 }
 
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download,
-					 const wxString& localPath, const wxString& localFile,
+					 const CLocalPath& localPath, const wxString& localFile,
 					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
 	: m_localFile(localFile), m_remoteFile(remoteFile)
 	, m_localPath(localPath), m_remotePath(remotePath)
@@ -346,7 +346,7 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 
 	TiXmlElement *file = pElement->LinkEndChild(new TiXmlElement("File"))->ToElement();
 
-	AddTextElement(file, "LocalFile", m_localPath + m_localFile);
+	AddTextElement(file, "LocalFile", m_localPath.GetPath() + m_localFile);
 	AddTextElement(file, "RemoteFile", m_remoteFile);
 	AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
 	AddTextElementRaw(file, "Download", Download() ? "1" : "0");
@@ -382,13 +382,13 @@ void CFileItem::SetRemoteFile(const wxString &file)
 	m_remoteFile = file;
 }
 
-CFolderItem::CFolderItem(CServerItem* parent, bool queued, const wxString& localPath)
+CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CLocalPath& localPath)
 	: CFileItem(parent, queued, true, localPath, _T(""), _T(""), CServerPath(), -1)
 {
 }
 
 CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile)
-	: CFileItem(parent, queued, false, _T(""), _T(""), remoteFile, remotePath, -1)
+	: CFileItem(parent, queued, false, CLocalPath(), _T(""), remoteFile, remotePath, -1)
 {
 }
 
@@ -725,7 +725,7 @@ void CServerItem::SetChildPriority(CFileItem* pItem, enum QueuePriority oldPrior
 	wxFAIL;
 }
 
-CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath)
+CFolderScanItem::CFolderScanItem(CServerItem* parent, bool queued, bool download, const CLocalPath& localPath, const CServerPath& remotePath)
 {
 	m_parent = parent;
 
@@ -862,7 +862,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			switch (column)
 			{
 			case 0:
-				return pFileItem->GetIndent() + pFileItem->GetLocalPath() + pFileItem->GetLocalFile();
+				return pFileItem->GetIndent() + pFileItem->GetLocalPath().GetPath() + pFileItem->GetLocalFile();
 			case 1:
 				if (pFileItem->Download())
 					if (pFileItem->queued())
@@ -914,7 +914,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			switch (column)
 			{
 			case 0:
-				return _T("  ") + pFolderItem->GetLocalPath();
+				return _T("  ") + pFolderItem->GetLocalPath().GetPath();
 			case 1:
 				if (pFolderItem->Download())
 					if (pFolderItem->queued())
@@ -943,7 +943,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			{
 			case 0:
 				if (pFolderItem->Download())
-					return pFolderItem->GetIndent() + pFolderItem->GetLocalPath() + pFolderItem->GetLocalFile();
+					return pFolderItem->GetIndent() + pFolderItem->GetLocalPath().GetPath() + pFolderItem->GetLocalFile();
 				break;
 			case 1:
 				if (pFolderItem->Download())

@@ -582,7 +582,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 	const bool queue_only = action == 1;
 
-	m_pQueue->QueueFile(queue_only, false, m_dir, data->name, data->name, path, *pServer, data->size);
+	m_pQueue->QueueFile(queue_only, false, CLocalPath(m_dir), data->name, data->name, path, *pServer, data->size);
 	m_pQueue->QueueFile_Finish(true);
 }
 
@@ -1165,13 +1165,13 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		{
 			path.ChangePath(data->name);
 
-			wxFileName fn(m_dir, _T(""));
-			fn.AppendDir(data->name);
-			m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, fn.GetPath(), path, *pServer);
+			CLocalPath localPath(m_dir);
+			localPath.AddSegment(data->name);
+			m_pQueue->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, localPath, path, *pServer);
 		}
 		else
 		{
-			m_pQueue->QueueFile(queue_only, false, m_dir, data->name, data->name, path, *pServer, data->size);
+			m_pQueue->QueueFile(queue_only, false, CLocalPath(m_dir), data->name, data->name, path, *pServer, data->size);
 			added = true;
 		}
 	}

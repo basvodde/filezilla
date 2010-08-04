@@ -93,12 +93,12 @@ public:
 	CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsyncRequestQueue* pAsyncRequestQueue);
 	virtual ~CQueueView();
 
-	bool QueueFile(const bool queueOnly, const bool download, const wxString& localPath, const wxString& localFile, const wxString& remoteFile,
+	bool QueueFile(const bool queueOnly, const bool download, const CLocalPath& localPath, const wxString& localFile, const wxString& remoteFile,
 	const CServerPath& remotePath, const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit = CEditHandler::none);
 	void QueueFile_Finish(const bool start); // Need to be called after QueueFile
-	bool QueueFiles(const bool queueOnly, const wxString& localPath, const CRemoteDataObject& dataObject);
+	bool QueueFiles(const bool queueOnly, const CLocalPath& localPath, const CRemoteDataObject& dataObject);
 	int QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, bool queueOnly, bool download, CServerItem* pServerItem, const enum CFileExistsNotification::OverwriteAction defaultFileExistsAction);
-	bool QueueFolder(bool queueOnly, bool download, const wxString& localPath, const CServerPath& remotePath, const CServer& server);
+	bool QueueFolder(bool queueOnly, bool download, const CLocalPath& localPath, const CServerPath& remotePath, const CServer& server);
 
 	bool IsEmpty() const;
 	int IsActive() const { return m_activeMode; }

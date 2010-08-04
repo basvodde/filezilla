@@ -998,7 +998,7 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 
 		CServerPath remote_path = m_results->m_fileData[*iter].path;
 		const wxString localName = CQueueView::ReplaceInvalidCharacters(entry.name);
-		m_pQueue->QueueFile(!start, true, target_path.GetPath(), localName, entry.name, remote_path, *pServer, entry.size);
+		m_pQueue->QueueFile(!start, true, target_path, localName, entry.name, remote_path, *pServer, entry.size);
 	}
 	m_pQueue->QueueFile_Finish(start);
 
@@ -1014,7 +1014,7 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 		if (!flatten && iter->HasParent())
 			target_path.AddSegment(iter->GetLastSegment());
 
-		m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisit(*iter, _T(""), target_path.GetPath(), false);
+		m_pState->GetRecursiveOperationHandler()->AddDirectoryToVisit(*iter, _T(""), target_path, false);
 		std::list<CFilter> filters; // Empty, recurse into everything
 		m_pState->GetRecursiveOperationHandler()->StartRecursiveOperation(mode, *iter, filters, true, m_original_dir);
 	}

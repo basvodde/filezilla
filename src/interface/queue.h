@@ -135,7 +135,7 @@ struct t_EngineData;
 class CFileItem : public CQueueItem
 {
 public:
-	CFileItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const wxString& localFile,
+	CFileItem(CServerItem* parent, bool queued, bool download, const CLocalPath& localPath, const wxString& localFile,
 			const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size);
 	virtual ~CFileItem();
 
@@ -145,8 +145,8 @@ public:
 
 	wxString GetLocalFile() const { return m_localFile; }
 	wxString GetRemoteFile() const { return m_remoteFile; }
-	wxString GetLocalPath() const { return m_localPath; }
-	CServerPath GetRemotePath() const { return m_remotePath; }
+	const CLocalPath& GetLocalPath() const { return m_localPath; }
+	const CServerPath& GetRemotePath() const { return m_remotePath; }
 	wxLongLong GetSize() const { return m_size; }
 	void SetSize(wxLongLong size) { m_size = size; }
 	inline bool Download() const { return flags & flag_download; }
@@ -221,7 +221,7 @@ protected:
 
 	wxString m_localFile;
 	wxString m_remoteFile;
-	const wxString m_localPath;
+	const CLocalPath m_localPath;
 	const CServerPath m_remotePath;
 	wxLongLong m_size;
 };
@@ -229,7 +229,7 @@ protected:
 class CFolderItem : public CFileItem
 {
 public:
-	CFolderItem(CServerItem* parent, bool queued, const wxString& localPath);
+	CFolderItem(CServerItem* parent, bool queued, const CLocalPath& localPath);
 	CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile);
 	
 	virtual enum QueueItemType GetType() const { return QueueItemType_Folder; }
@@ -242,11 +242,11 @@ public:
 class CFolderScanItem : public CQueueItem
 {
 public:
-	CFolderScanItem(CServerItem* parent, bool queued, bool download, const wxString& localPath, const CServerPath& remotePath);
+	CFolderScanItem(CServerItem* parent, bool queued, bool download, const CLocalPath& localPath, const CServerPath& remotePath);
 	virtual ~CFolderScanItem() { }
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_FolderScan; }
-	wxString GetLocalPath() const { return m_localPath; }
+	CLocalPath GetLocalPath() const { return m_localPath; }
 	CServerPath GetRemotePath() const { return m_remotePath; }
 	bool Download() const { return m_download; }
 	int GetCount() const { return m_count; }
@@ -265,12 +265,12 @@ public:
 	enum CFileExistsNotification::OverwriteAction m_defaultFileExistsAction;
 
 	bool m_dir_is_empty;
-	wxString m_current_local_path;
+	CLocalPath m_current_local_path;
 	CServerPath m_current_remote_path;
 
 protected:
 	bool m_queued;
-	wxString m_localPath;
+	CLocalPath m_localPath;
 	CServerPath m_remotePath;
 	bool m_download;
 };

@@ -29,7 +29,7 @@ public:
 	void StartRecursiveOperation(enum OperationMode mode, const CServerPath& startDir, const std::list<CFilter> &filters, bool allowParent = false, const CServerPath& finalDir = CServerPath());
 	void StopRecursiveOperation();
 
-	void AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const wxString& localDir = _T(""), bool is_link = false);
+	void AddDirectoryToVisit(const CServerPath& path, const wxString& subdir, const CLocalPath& localDir = CLocalPath(), bool is_link = false);
 	void AddDirectoryToVisitRestricted(const CServerPath& path, const wxString& restrict, bool recurse);
 
 	enum OperationMode GetOperationMode() const { return m_operationMode; }
@@ -61,7 +61,7 @@ protected:
 		CNewDir();
 		CServerPath parent;
 		wxString subdir;
-		wxString localDir;
+		CLocalPath localDir;
 		bool doVisit;
 
 		bool recurse;

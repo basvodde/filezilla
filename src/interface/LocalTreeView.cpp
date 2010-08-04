@@ -1151,9 +1151,9 @@ void CLocalTreeView::OnMenuUpload(wxCommandEvent& event)
 	if (!m_contextMenuItem.IsOk())
 		return;
 
-	wxString path = GetDirFromItem(m_contextMenuItem);
+	CLocalPath path(GetDirFromItem(m_contextMenuItem));
 
-	if (!CLocalPath(path).HasParent())
+	if (!path.HasParent())
 		return;
 
 	if (!m_pState->IsRemoteConnected())
@@ -1167,8 +1167,6 @@ void CLocalTreeView::OnMenuUpload(wxCommandEvent& event)
 	if (!remotePath.ChangePath(GetItemText(m_contextMenuItem)))
 		return;
 
-	if (path.Last() == wxFileName::GetPathSeparator())
-		path.RemoveLast();
 	m_pQueueView->QueueFolder(event.GetId() == XRCID("ID_ADDTOQUEUE"), false, path, remotePath, server);
 }
 

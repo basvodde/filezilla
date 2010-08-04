@@ -102,7 +102,7 @@ protected:
 		CServer server;
 		CServerPath remote_path;
 		wxString link;
-		wxString local_path;
+		CLocalPath local_path;
 	} *m_pLinkResolveState;
 
 	DECLARE_EVENT_TABLE()
