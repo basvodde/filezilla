@@ -188,7 +188,7 @@ END_EVENT_TABLE()
 COptions::COptions()
 {
 	m_theOptions = this;
-
+	m_pXmlFile = 0;
 	m_pLastServer = 0;
 
 	m_acquired = false;
