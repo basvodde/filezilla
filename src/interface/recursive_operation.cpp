@@ -263,7 +263,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 				dirToVisit.localDir = dir.localDir;
 				dirToVisit.start_dir = dir.start_dir;
 				
-				if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
+				if (m_operationMode == recursive_download || m_operationMode == recursive_addtoqueue)
 					dirToVisit.localDir.AddSegment(CQueueView::ReplaceInvalidCharacters(entry.name));
 				if (entry.is_link())
 				{
