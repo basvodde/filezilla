@@ -727,7 +727,8 @@ void CRemoteListView::SetDirectoryListing(const CSharedPointer<const CDirectoryL
 		if (UpdateDirectoryListing(pDirectoryListing))
 		{
 			wxASSERT(GetItemCount() == (int)m_indexMapping.size());
-			wxASSERT(GetItemCount() == (int)m_fileData.size());
+			wxASSERT(GetItemCount() <= (int)m_fileData.size());
+			wxASSERT(CFilterManager::HasActiveFilters() || GetItemCount() == (int)m_fileData.size());
 			wxASSERT(m_pDirectoryListing->GetCount() + 1 >= (unsigned int)GetItemCount());
 			wxASSERT(m_indexMapping[0] == m_pDirectoryListing->GetCount());
 
