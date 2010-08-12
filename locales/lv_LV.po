@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-20 11:35+0200\n"
-"PO-Revision-Date: 2010-04-16 18:15+0200\n"
+"POT-Creation-Date: 2010-08-10 23:53+0200\n"
+"PO-Revision-Date: 2010-08-12 11:13+0200\n"
 "Last-Translator: Ivo Simsons <ssimss@gmail.com>\n"
 "Language-Team: Latvian <ssimss@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -85,7 +85,7 @@ msgstr[0] "%d datne. Kopējais izmērs: Vismaz %s"
 msgstr[1] "%d datnes. Kopējais izmērs: Vismaz %s"
 msgstr[2] "%d datnes. Kopējais izmērs: Vismaz %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2823
+#: ../../locales/../src/interface/QueueView.cpp:2845
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d datnes pievienotas rindai"
@@ -180,7 +180,7 @@ msgstr "%s baiti (%d.%d KB/s)"
 msgid "%s bytes (%d.%d MB/s)"
 msgstr "%s baiti (%d.%d MB/s)"
 
-#: ../../locales/../src/interface/FileZilla.cpp:804
+#: ../../locales/../src/interface/FileZilla.cpp:702
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -190,7 +190,7 @@ msgid ""
 "bug report."
 msgstr ""
 
-#: ../../locales/../src/interface/FileZilla.cpp:898
+#: ../../locales/../src/interface/FileZilla.cpp:796
 #, c-format
 msgid ""
 "%s could not be found. Without this component of FileZilla, SFTP will not "
@@ -246,7 +246,7 @@ msgstr "&Pievienot rindai"
 
 #: resources.h:94
 msgid "&Adjust server timezone offset:"
-msgstr "&Uzstādiet servera laika zonas nobīdi:"
+msgstr "&Uzstādiet servera laika joslas nobīdi:"
 
 #: resources.h:23
 msgid "&Always trust certificate in future sessions."
@@ -466,7 +466,7 @@ msgstr "&Kodējums:"
 
 #: resources.h:609
 msgid "&Enter custom command..."
-msgstr "&Ievadīt pielāgotu komandu"
+msgstr "&Ievadīt pielāgotu komandu..."
 
 #: resources.h:136
 msgid "&Execute"
@@ -608,9 +608,8 @@ msgid "&Local directory:"
 msgstr "&Lokālais direktorijs"
 
 #: resources.h:949
-#, fuzzy
 msgid "&Log to file"
-msgstr "Lokālā datne"
+msgstr "&Reģistrēt datnē"
 
 #: resources.h:82
 msgid "&Logon Type:"
@@ -795,9 +794,8 @@ msgid "&Reopen local file"
 msgstr "Serveris / lokālā datne"
 
 #: resources.h:816
-#, fuzzy
 msgid "&Replace invalid characters with:"
-msgstr "Filtra validēšana neizdevās"
+msgstr "&Aizstāt nederīgas rakstzīmes ar:"
 
 #: resources.h:552
 msgid "&Report a bug..."
@@ -865,7 +863,7 @@ msgstr "Uzstādījumi"
 
 #: resources.h:505
 msgid "&Settings..."
-msgstr "&Uzstādījumi"
+msgstr "&Uzstādījumi..."
 
 #: resources.h:958
 msgid "&Show debug menu"
@@ -876,9 +874,8 @@ msgid "&Show message"
 msgstr "&Rādīt ziņojumu"
 
 #: resources.h:948
-#, fuzzy
 msgid "&Show timestamps in message log"
-msgstr "&Atkļūdošanas informācija ziņojumu žurnālā:"
+msgstr "&Rādīt laikspiedolus ziņojumu žurnālā"
 
 #: resources.h:490
 msgid "&Site Manager..."
@@ -929,9 +926,8 @@ msgid "&Treat dotfiles as ASCII files"
 msgstr ""
 
 #: resources.h:329
-#, fuzzy
 msgid "&Unedit"
-msgstr "&Rediģēt"
+msgstr "&Atrediģēt"
 
 #: resources.h:194
 msgid "&Update cached key for this host"
@@ -992,7 +988,7 @@ msgstr "&Skatīt/Rediģēt"
 
 #: resources.h:933
 msgid "&Watch locally edited files and prompt to upload modifications"
-msgstr ""
+msgstr "&Sekot lokāli rediģēdātām datnēm un piedāvāt augšupielādēt izmaiņas"
 
 #: resources.h:135
 msgid "&Write"
@@ -1002,21 +998,21 @@ msgstr "&Rakstīt"
 msgid "&Yes"
 msgstr "&Jā"
 
-#: ../../locales/../src/engine/local_path.cpp:441
-#: ../../locales/../src/engine/local_path.cpp:491
+#: ../../locales/../src/engine/local_path.cpp:444
+#: ../../locales/../src/engine/local_path.cpp:494
 #, c-format
 msgid "'%s' does not exist or cannot be accessed."
 msgstr "'%s' neeksistē, vai arī tam nevar piekļūt."
 
-#: ../../locales/../src/engine/local_path.cpp:457
-#: ../../locales/../src/engine/local_path.cpp:478
-#: ../../locales/../src/engine/local_path.cpp:485
+#: ../../locales/../src/engine/local_path.cpp:460
+#: ../../locales/../src/engine/local_path.cpp:481
+#: ../../locales/../src/engine/local_path.cpp:488
 #, c-format
 msgid "'%s' is not a directory."
 msgstr "'%s' nav direktorijs."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:429
-#: ../../locales/../src/interface/sitemanager.cpp:1052
+#: ../../locales/../src/interface/manual_transfer.cpp:438
+#: ../../locales/../src/interface/sitemanager.cpp:1057
 msgid "'Account' logontype not supported by selected protocol"
 msgstr ""
 
@@ -1134,18 +1130,16 @@ msgid "3 - Verbose"
 msgstr "3 - Izplūdis"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:148
-#, fuzzy
 msgid "32 bit system"
-msgstr "R&estartēt sistēmu"
+msgstr "32 bitu sistēma"
 
 #: resources.h:964
 msgid "4 - Debug"
 msgstr "4 - Atkļūdot"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:146
-#, fuzzy
 msgid "64 bit system"
-msgstr "R&estartēt sistēmu"
+msgstr "64 bitu sistēma"
 
 #: ../../locales/../src/interface/updatewizard.cpp:28
 msgid "< &Back"
@@ -1181,23 +1175,25 @@ msgstr ""
 msgid "A file previously opened has been changed."
 msgstr "Iepriekš atvērta datne ir mainījusies."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2086
+#: ../../locales/../src/interface/LocalListView.cpp:2082
 #, c-format
 msgid ""
 "A file with that name is already being edited. Do you want to reopen '%s'?"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:2082
+#: ../../locales/../src/interface/LocalListView.cpp:2078
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
 msgid "A file with that name is already being transferred."
-msgstr ""
+msgstr "Datne ar šādu vārdu jau tiek pārsūtīta."
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2665
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr ""
+"Datne ar šādu vārdu joprojām tiek rediģēta. Lūdzu aizveriet to un mēģiniet "
+"vēlreiz."
 
-#: ../../locales/../src/interface/FileZilla.cpp:784
+#: ../../locales/../src/interface/FileZilla.cpp:682
 msgid ""
 "A local filename could not be decoded.\n"
 "Please make sure the LC_CTYPE (or LC_ALL) environment variable is set "
@@ -1208,7 +1204,7 @@ msgstr ""
 
 #: resources.h:236
 msgid "A newer version of FileZilla is available:"
-msgstr "Ir pieejama jaunāka FileZilla versija: "
+msgstr "Ir pieejama jaunāka FileZilla versija:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:656
 msgid ""
@@ -1273,10 +1269,10 @@ msgstr "Virs datņu sarakstiem"
 #: ../../locales/../src/interface/manual_transfer.cpp:156
 #: ../../locales/../src/interface/manual_transfer.cpp:157
 #: ../../locales/../src/interface/manual_transfer.cpp:190
-#: ../../locales/../src/interface/manual_transfer.cpp:544
-#: ../../locales/../src/interface/manual_transfer.cpp:545
-#: ../../locales/../src/interface/sitemanager.cpp:1387
-#: ../../locales/../src/interface/sitemanager.cpp:1388
+#: ../../locales/../src/interface/manual_transfer.cpp:553
+#: ../../locales/../src/interface/manual_transfer.cpp:554
+#: ../../locales/../src/interface/sitemanager.cpp:1392
+#: ../../locales/../src/interface/sitemanager.cpp:1393
 msgid "Account"
 msgstr "Konts"
 
@@ -1330,7 +1326,7 @@ msgstr "Aktīvā režīma IP"
 
 #: resources.h:449
 msgid "Add files to &queue only"
-msgstr "Pievienot tikai datnes &queue "
+msgstr "Tikai pievienot datnes &rindai"
 
 #: resources.h:625 resources.h:644
 msgid "Add selected directory to the transfer queue"
@@ -1360,7 +1356,7 @@ msgstr "Izvērstas opcijas:"
 msgid "Algorithm:"
 msgstr "Algoritms:"
 
-#: ../../locales/../src/interface/QueueView.cpp:3025
+#: ../../locales/../src/interface/QueueView.cpp:3047
 msgid "All files have been successfully transferred"
 msgstr "Visas datnes ir veiksmīgi pārsūtītas"
 
@@ -1368,7 +1364,7 @@ msgstr "Visas datnes ir veiksmīgi pārsūtītas"
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:3021
+#: ../../locales/../src/interface/QueueView.cpp:3043
 #, c-format
 msgid "All transfers have finished. %d file could not be transferred."
 msgid_plural "All transfers have finished. %d files could not be transferred."
@@ -1408,7 +1404,7 @@ msgstr ""
 "Lūdzu apmeklējiet http://filezilla-project.org, lai lejupielādētu aktuālāko "
 "versiju."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2304
+#: ../../locales/../src/interface/sitemanager.cpp:2309
 msgid ""
 "An item with the same name as the dragged item already exists at the target "
 "location."
@@ -1418,33 +1414,32 @@ msgstr ""
 #: ../../locales/../src/interface/manual_transfer.cpp:155
 #: ../../locales/../src/interface/manual_transfer.cpp:193
 #: ../../locales/../src/interface/manual_transfer.cpp:209
-#: ../../locales/../src/interface/manual_transfer.cpp:543
-#: ../../locales/../src/interface/sitemanager.cpp:1386
-#: ../../locales/../src/interface/sitemanager.cpp:1628
+#: ../../locales/../src/interface/manual_transfer.cpp:552
+#: ../../locales/../src/interface/sitemanager.cpp:1391
+#: ../../locales/../src/interface/sitemanager.cpp:1633
 msgid "Anonymous"
 msgstr "Anonīms"
 
-#: ../../locales/../src/interface/state.cpp:1027
+#: ../../locales/../src/interface/state.cpp:1031
 msgid ""
 "Another remote operation is already in progress, cannot change directory now."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:880
+#: ../../locales/../src/interface/sitemanager.cpp:885
 msgid "Any changes made in the Site Manager could not be saved."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:727
+#: ../../locales/../src/interface/sitemanager.cpp:732
 msgid ""
 "Any changes made in the Site Manager will not be saved unless you repair the "
 "file."
 msgstr ""
 
-#: ../../locales/../src/interface/filter.cpp:194
-#, fuzzy
+#: ../../locales/../src/interface/filter.cpp:210
 msgid "Any changes made to the filters could not be saved."
-msgstr "nevar palaist fzsftp"
+msgstr "Jebkādas izmaiņas, kas veiktas filtriem, nevar saglabāt."
 
-#: ../../locales/../src/interface/filter.cpp:992
+#: ../../locales/../src/interface/filter.cpp:1045
 msgid "Any changes made to the filters will not be saved."
 msgstr ""
 
@@ -1464,7 +1459,7 @@ msgstr "Pielietot tikai aktuālajai rindai"
 msgid "Apply to &files only"
 msgstr "Pielietot tikai &datnēm"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:80
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:82
 #: ../../locales/../src/interface/updatewizard.cpp:322
 msgid "Archive"
 msgstr "Arhīvs"
@@ -1499,7 +1494,7 @@ msgstr ""
 msgid "Associated program not found:"
 msgstr "Asociētā programma netika atrasta:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:623
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:653
 msgid "At least one filter condition is incomplete"
 msgstr "Vismaz viens filtra nosacījums ir nederīgs"
 
@@ -1507,7 +1502,7 @@ msgstr "Vismaz viens filtra nosacījums ir nederīgs"
 msgid "At this point, all required information has been gathered."
 msgstr "Uz doto brīdi visa nepieciešamā informācija ir savākta."
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:110
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:117
 msgid "Attribute"
 msgstr "Atribūti"
 
@@ -1552,8 +1547,8 @@ msgstr "Pamata lietošanas instrukcijas"
 msgid "Behaviour"
 msgstr "Rīcība"
 
-#: ../../locales/../src/interface/edithandler.cpp:1251
-#: ../../locales/../src/interface/edithandler.cpp:1279
+#: ../../locales/../src/interface/edithandler.cpp:1260
+#: ../../locales/../src/interface/edithandler.cpp:1288
 msgid "Being edited"
 msgstr "Tiek rediģēts"
 
@@ -1570,7 +1565,7 @@ msgid "Blackboard"
 msgstr "Tāfele"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:264
-#: ../../locales/../src/interface/menu_bar.cpp:305
+#: ../../locales/../src/interface/menu_bar.cpp:309
 #: ../../locales/../src/interface/sitemanager.cpp:390
 msgid "Bookmark"
 msgstr "Grāmatzīme"
@@ -1608,7 +1603,7 @@ msgstr "A&tcelt pašreizējo darbību"
 
 #: resources.h:235
 msgid "C&heck for nightly builds of FileZilla"
-msgstr "P&ārbaudīt FileZilla nakts būvējumus "
+msgstr "P&ārbaudīt FileZilla nakts būvējumus"
 
 #: resources.h:611
 msgid "C&lear all"
@@ -1629,19 +1624,19 @@ msgstr "P&ielāgotās datņu tipu asociācijas:"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1607
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1270
 msgid "Calculating timezone offset of server..."
-msgstr ""
+msgstr "Aprēķina servera laika joslu nobīdi..."
 
-#: ../../locales/../src/engine/transfersocket.cpp:731
+#: ../../locales/../src/engine/transfersocket.cpp:736
 msgid "Can't read from file"
 msgstr "Nevar nolasīt datni."
 
-#: ../../locales/../src/engine/transfersocket.cpp:710
-#: ../../locales/../src/engine/transfersocket.cpp:784
+#: ../../locales/../src/engine/transfersocket.cpp:715
+#: ../../locales/../src/engine/transfersocket.cpp:789
 msgid "Can't write data to file."
 msgstr "Nevar ierakstīt informāciju datnē."
 
-#: ../../locales/../src/engine/transfersocket.cpp:708
-#: ../../locales/../src/engine/transfersocket.cpp:782
+#: ../../locales/../src/engine/transfersocket.cpp:713
+#: ../../locales/../src/engine/transfersocket.cpp:787
 #, c-format
 msgid "Can't write data to file: %s"
 msgstr "Nevar ierakstīt informāciju datnē: %s"
@@ -1662,7 +1657,7 @@ msgstr "Atcelt pašreizējo darbību"
 msgid "Cancels the current operation"
 msgstr "Atceļ pašreizējo darbību"
 
-#: ../../locales/../src/engine/local_path.cpp:451
+#: ../../locales/../src/engine/local_path.cpp:454
 #, c-format
 msgid "Cannot access '%s', no media inserted or drive not ready."
 msgstr ""
@@ -1685,7 +1680,7 @@ msgid ""
 "directories are enabled"
 msgstr ""
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2760
+#: ../../locales/../src/interface/RemoteListView.cpp:2763
 msgid "Cannot compare directories, not connected to a server."
 msgstr "Nevar salīdzināt direktorijus, nav savienojuma ar serveri."
 
@@ -1693,20 +1688,20 @@ msgstr "Nevar salīdzināt direktorijus, nav savienojuma ar serveri."
 msgid "Cannot create new filter"
 msgstr "Nevar izveidot jaunu filtru"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2064
-#: ../../locales/../src/interface/LocalListView.cpp:2195
+#: ../../locales/../src/interface/LocalListView.cpp:2060
+#: ../../locales/../src/interface/LocalListView.cpp:2191
 #: ../../locales/../src/interface/RemoteListView.cpp:2594
 #: ../../locales/../src/interface/RemoteListView.cpp:2640
 msgid "Cannot edit file"
 msgstr "Nevar rediģēt datni"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1980
+#: ../../locales/../src/interface/LocalListView.cpp:1976
 msgid "Cannot edit file, not connected to any server."
 msgstr "Nevar salīdzināt direktorijus, nav savienojuma ar serveri."
 
-#: ../../locales/../src/interface/LocalListView.cpp:1991
+#: ../../locales/../src/interface/LocalListView.cpp:1987
 msgid "Cannot edit file, remote path unknown."
-msgstr ""
+msgstr "Nevar rediģēt datni, nezināms attālais ceļš."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:331
 msgid ""
@@ -1721,7 +1716,7 @@ msgstr ""
 msgid "Cannot load Quickconnect bar from resource file"
 msgstr "Nevar ielādēt ātrā savienojuma joslu no resursu datnes"
 
-#: ../../locales/../src/interface/import.cpp:39
+#: ../../locales/../src/interface/import.cpp:38
 msgid "Cannot load file, not a valid XML file."
 msgstr "Nevar ielādēt datni, nederīga xml datne."
 
@@ -1734,7 +1729,7 @@ msgid "Cannot load toolbar from resource file"
 msgstr "Nevar ielādēt rīku joslu no resursu datnes"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:705
-#: ../../locales/../src/interface/sitemanager.cpp:1280
+#: ../../locales/../src/interface/sitemanager.cpp:1285
 msgid "Cannot rename entry"
 msgstr "Nevar pārsaukt ierakstu"
 
@@ -1742,26 +1737,26 @@ msgstr "Nevar pārsaukt ierakstu"
 msgid "Cannot rename file"
 msgstr "Nevar pārsaukt datni"
 
-#: ../../locales/../src/interface/filter.cpp:335
-#: ../../locales/../src/interface/filter.cpp:404
+#: ../../locales/../src/interface/filter.cpp:351
+#: ../../locales/../src/interface/filter.cpp:420
 msgid "Cannot save filterset"
 msgstr "Nevar saglabāt filtru komplektu"
 
-#: ../../locales/../src/interface/filter.cpp:295
+#: ../../locales/../src/interface/filter.cpp:311
 msgid "Cannot select filter"
 msgstr "Nevar atlasīt filtru"
 
-#: ../../locales/../src/interface/edithandler.cpp:1629
-#: ../../locales/../src/interface/edithandler.cpp:1634
-#: ../../locales/../src/interface/edithandler.cpp:1673
+#: ../../locales/../src/interface/edithandler.cpp:1638
+#: ../../locales/../src/interface/edithandler.cpp:1643
+#: ../../locales/../src/interface/edithandler.cpp:1682
 msgid "Cannot set file association"
 msgstr "Nevar iestatīt datņu asociācijas"
 
-#: ../../locales/../src/interface/edithandler.cpp:1210
+#: ../../locales/../src/interface/edithandler.cpp:1219
 msgid "Cannot show dialog"
 msgstr "Nevar parādīt dialogu"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2082
+#: ../../locales/../src/interface/LocalListView.cpp:2078
 #: ../../locales/../src/interface/RemoteListView.cpp:2660
 msgid "Cannot view/edit selected file"
 msgstr "Nevar parādīt/rediģēt atlasīto datni"
@@ -1770,7 +1765,7 @@ msgstr "Nevar parādīt/rediģēt atlasīto datni"
 msgid "Categories"
 msgstr "Kategorijas"
 
-#: ../../locales/../src/interface/statusbar.cpp:525
+#: ../../locales/../src/interface/statusbar.cpp:530
 msgid "Certificate and session data are not available yet."
 msgstr ""
 
@@ -1804,9 +1799,9 @@ msgstr "Mainīt datnes atļaujas"
 msgid "Changing logfile settings requires restart of FileZilla."
 msgstr "Atver Filezilla uzstādījumu dialogu"
 
-#: ../../locales/../src/interface/FileZilla.cpp:784
+#: ../../locales/../src/interface/FileZilla.cpp:682
 msgid "Character encoding issue"
-msgstr ""
+msgstr "Rakstzīmju kodējuma problēma"
 
 #: resources.h:104
 msgid "Charset"
@@ -1828,7 +1823,7 @@ msgstr "Meklēt jaunas Filezilla versijas"
 msgid "Check for updates"
 msgstr "Pārbaudīt atjauninājumus"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1751
+#: ../../locales/../src/interface/Mainfrm.cpp:1750
 msgid "Check for updates failed"
 msgstr "Neizdevās pārbaudīt atjauninājumus"
 
@@ -1844,13 +1839,13 @@ msgstr "Pārbauda atjauninājumus"
 msgid "Checksum mismatch of downloaded file."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1558
+#: ../../locales/../src/interface/sitemanager.cpp:1563
 msgid "Choose the default local directory"
 msgstr "Izvēlaties lokālo noklusējuma direktoriju"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:127
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:370
-#: ../../locales/../src/interface/sitemanager.cpp:2710
+#: ../../locales/../src/interface/sitemanager.cpp:2715
 msgid "Choose the local directory"
 msgstr "Izvēlaties lokālo direktoriju"
 
@@ -1894,11 +1889,11 @@ msgstr "Dzēst &pārsūtījumu rindu"
 msgid "Clear history"
 msgstr "Attīrīt vēsturi"
 
-#: resources.h:280 ../../locales/../src/interface/clearprivatedata.cpp:35
-#: ../../locales/../src/interface/clearprivatedata.cpp:41
-#: ../../locales/../src/interface/clearprivatedata.cpp:47
-#: ../../locales/../src/interface/clearprivatedata.cpp:78
-#: ../../locales/../src/interface/clearprivatedata.cpp:104
+#: resources.h:280 ../../locales/../src/interface/clearprivatedata.cpp:34
+#: ../../locales/../src/interface/clearprivatedata.cpp:40
+#: ../../locales/../src/interface/clearprivatedata.cpp:46
+#: ../../locales/../src/interface/clearprivatedata.cpp:77
+#: ../../locales/../src/interface/clearprivatedata.cpp:103
 msgid "Clear private data"
 msgstr "Dzēst privātos datus"
 
@@ -1964,7 +1959,7 @@ msgstr "Komanda neizdevās"
 
 #: ../../locales/../src/engine/proxy.cpp:448
 msgid "Command not supported"
-msgstr ""
+msgstr "Komanda nav atbalstīta"
 
 #: ../../locales/../src/engine/engineprivate.cpp:183
 msgid "Command not supported by this protocol"
@@ -2023,7 +2018,7 @@ msgstr "Kompilēts ar:"
 msgid "Compiler flags:"
 msgstr "Kompilatora karodziņi:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:81
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:83
 msgid "Compressed"
 msgstr "Saspiests"
 
@@ -2056,8 +2051,8 @@ msgid "Confirm deletion"
 msgstr "Apstiprināt dzēšanu"
 
 #: ../../locales/../src/engine/local_filesys.cpp:136
-#: ../../locales/../src/interface/LocalListView.cpp:2035
-#: ../../locales/../src/interface/LocalListView.cpp:2155
+#: ../../locales/../src/interface/LocalListView.cpp:2031
+#: ../../locales/../src/interface/LocalListView.cpp:2151
 #: ../../locales/../src/interface/RemoteListView.cpp:1665
 #: ../../locales/../src/interface/RemoteListView.cpp:2611
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1121
@@ -2069,9 +2064,8 @@ msgid "Congratulations, your configuration seems to be working."
 msgstr "Apsveicam, izskatās, ka jūsu konfigurācija darbojas."
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:140
-#, fuzzy
 msgid "Connect bypassing proxy settings"
-msgstr "Atkalsavienošanās uzstādījumi"
+msgstr "Savienoties apejot starpniekservera iestatījumus"
 
 #: ../../locales/../src/interface/cmdline.cpp:8
 msgid "Connect to specified Site Manager site"
@@ -2081,7 +2075,7 @@ msgstr "Savienoties ar norādīto Vietņu pārvaldiena vietni"
 msgid "Connected"
 msgstr "Savienots"
 
-#: ../../locales/../src/interface/QueueView.cpp:1431
+#: ../../locales/../src/interface/QueueView.cpp:1437
 msgid "Connecting"
 msgstr "Savienojas"
 
@@ -2112,20 +2106,20 @@ msgstr "Savienojas ar serveri"
 msgid "Connection"
 msgstr "Savienojas"
 
-#: ../../locales/../src/interface/QueueView.cpp:1049
+#: ../../locales/../src/interface/QueueView.cpp:1055
 msgid "Connection attempt failed"
-msgstr "Savienošanās mēģinājums neizdevās "
+msgstr "Savienošanās mēģinājums neizdevās"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1039
 #: ../../locales/../src/engine/proxy.cpp:176
-#, fuzzy, c-format
+#, c-format
 msgid "Connection attempt failed with \"%s\", trying next address."
-msgstr "Savienošanās mēģinājums neizdevās "
+msgstr "Savienošanās mēģinājums ar \"%s\" neizdevās, mēģinu nākamo adresi."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:1044
-#, fuzzy, c-format
+#, c-format
 msgid "Connection attempt failed with \"%s\"."
-msgstr "Savienošanās mēģinājums neizdevās "
+msgstr "Savienošanās mēģinājums ar \"%s\" neizdevās."
 
 #: ../../locales/../src/engine/ControlSocket.cpp:186
 #: ../../locales/../src/engine/engineprivate.cpp:320
@@ -2201,13 +2195,13 @@ msgid "Cop&y"
 msgstr "Kopē&t"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:643
-#: ../../locales/../src/interface/sitemanager.cpp:1858
+#: ../../locales/../src/interface/sitemanager.cpp:1863
 #, c-format
 msgid "Copy (%d) of %s"
 msgstr "Kopēt (%d) no %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:620
-#: ../../locales/../src/interface/sitemanager.cpp:1835
+#: ../../locales/../src/interface/sitemanager.cpp:1840
 #, c-format
 msgid "Copy of %s"
 msgstr "%s kopija"
@@ -2242,11 +2236,10 @@ msgstr "Nevar savienoties ar serveri"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:315
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:325
-#, fuzzy
 msgid "Could not convert private key"
-msgstr "Nevar savienoties ar serveri"
+msgstr "Nevar pārveidot privāto atslēgu"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:3062
+#: ../../locales/../src/interface/RemoteListView.cpp:3064
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1450
 msgid "Could not copy URLs"
 msgstr "Nevar nokopēt URL"
@@ -2267,7 +2260,7 @@ msgstr ""
 msgid "Could not establish connection to server"
 msgstr "Nevar izveidot savienojumu ar serveri"
 
-#: ../../locales/../src/interface/FileZilla.cpp:497
+#: ../../locales/../src/interface/FileZilla.cpp:487
 msgid ""
 "Could not find the resource files for FileZilla, closing FileZilla.\n"
 "You can set the data directory of FileZilla using the '--datadir "
@@ -2292,7 +2285,7 @@ msgid ""
 "failed"
 msgstr ""
 
-#: ../../locales/../src/interface/state.cpp:1011
+#: ../../locales/../src/interface/state.cpp:1015
 #, fuzzy
 msgid "Could not get full remote path."
 msgstr "Jānorāda lietotājvārds"
@@ -2316,8 +2309,8 @@ msgid ""
 "failed"
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:120
-#: ../../locales/../src/interface/import.cpp:311
+#: ../../locales/../src/interface/import.cpp:119
+#: ../../locales/../src/interface/import.cpp:310
 #, c-format
 msgid ""
 "Could not load \"%s\", please make sure the file is valid and can be "
@@ -2333,7 +2326,7 @@ msgstr "Neizdevās ielādēt atslēgdatni"
 msgid "Could not load private key"
 msgstr "Neizdevās ielādēt privāto atslēgdatni"
 
-#: ../../locales/../src/interface/state.cpp:1037
+#: ../../locales/../src/interface/state.cpp:1041
 #, c-format
 msgid ""
 "Could not obtain corresponding local directory for the remote directory '%"
@@ -2358,7 +2351,7 @@ msgid ""
 msgstr ""
 
 #: ../../locales/../src/interface/aboutdialog.cpp:219
-#: ../../locales/../src/interface/RemoteListView.cpp:3062
+#: ../../locales/../src/interface/RemoteListView.cpp:3064
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1450
 msgid "Could not open clipboard"
 msgstr "Neizdevās atvērt starpliktuvi"
@@ -2384,10 +2377,9 @@ msgstr ""
 msgid "Could not read from socket: %s"
 msgstr "Neizdevās rakstīt datni %s"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2629
-#, fuzzy
+#: ../../locales/../src/interface/sitemanager.cpp:2634
 msgid "Could not read server item."
-msgstr "Neizdevās uzsākt pārsūtījumu"
+msgstr "Nevar nolasīt servera vienumu."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2677
 #, c-format
@@ -2412,13 +2404,13 @@ msgstr ""
 msgid "Could not start proxy handshake: %s"
 msgstr "Neizdevās uzsākt pārsūtījumu"
 
-#: ../../locales/../src/interface/QueueView.cpp:1100
-#: ../../locales/../src/interface/QueueView.cpp:1105
+#: ../../locales/../src/interface/QueueView.cpp:1106
+#: ../../locales/../src/interface/QueueView.cpp:1111
 msgid "Could not start transfer"
 msgstr "Neizdevās uzsākt pārsūtījumu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:904
-#: ../../locales/../src/interface/sitemanager.cpp:2926
+#: ../../locales/../src/interface/sitemanager.cpp:909
+#: ../../locales/../src/interface/sitemanager.cpp:2931
 #, c-format
 msgid ""
 "Could not write \"%s\", any changes to the Site Manager could not be saved: %"
@@ -2435,17 +2427,17 @@ msgstr ""
 msgid "Could not write \"%s\", the global bookmarks could no be saved: %s"
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:1941
-#: ../../locales/../src/interface/QueueView.cpp:1977
+#: ../../locales/../src/interface/QueueView.cpp:1947
+#: ../../locales/../src/interface/QueueView.cpp:1983
 #, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
 "%s"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:2691
-#: ../../locales/../src/interface/sitemanager.cpp:3053
-#: ../../locales/../src/interface/sitemanager.cpp:3115
+#: ../../locales/../src/interface/sitemanager.cpp:2696
+#: ../../locales/../src/interface/sitemanager.cpp:3058
+#: ../../locales/../src/interface/sitemanager.cpp:3120
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
 msgstr ""
@@ -2460,7 +2452,7 @@ msgstr ""
 msgid "Could not write keyfile: %s"
 msgstr "Neizdevās rakstīt atslēgdatni: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1094
+#: ../../locales/../src/interface/QueueView.cpp:1100
 msgid "Could not write to local file"
 msgstr "Neizdevās rakstīt lokalo datni"
 
@@ -2488,19 +2480,19 @@ msgstr ""
 msgid "Create a new subdirectory in the current directory"
 msgstr "Izveido jaunu apakšdirektoriju aktuālajā direktorijā"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1189
-#: ../../locales/../src/interface/LocalTreeView.cpp:1188
+#: ../../locales/../src/interface/LocalListView.cpp:1185
+#: ../../locales/../src/interface/LocalTreeView.cpp:1189
 #: ../../locales/../src/interface/RemoteListView.cpp:1569
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1272
 msgid "Create directory"
 msgstr "Izveido direktoriju"
 
-#: ../../locales/../src/interface/QueueView.cpp:1504
+#: ../../locales/../src/interface/QueueView.cpp:1510
 msgid "Creating directory"
 msgstr "Izveido direktoriju"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3281
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2049
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2047
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "Izveido direktoriju '%s'..."
@@ -2525,15 +2517,15 @@ msgid ""
 "Synchronized browsing has been disabled."
 msgstr ""
 
-#: ../../locales/../src/interface/statusbar.cpp:419
+#: ../../locales/../src/interface/statusbar.cpp:422
 msgid "Current transfer type is set to ASCII."
 msgstr "Aktuālais pārsūtījumu veids ir iestatīts uz ASCII."
 
-#: ../../locales/../src/interface/statusbar.cpp:429
+#: ../../locales/../src/interface/statusbar.cpp:432
 msgid "Current transfer type is set to automatic detection."
 msgstr "Aktuālais pārsūtījumu veids ir iestatīts uz automātisko noteikšanu."
 
-#: ../../locales/../src/interface/statusbar.cpp:424
+#: ../../locales/../src/interface/statusbar.cpp:427
 msgid "Current transfer type is set to binary."
 msgstr "Aktuālais pārsūtījumu veids ir iestatīts uz bināro."
 
@@ -2541,7 +2533,7 @@ msgstr "Aktuālais pārsūtījumu veids ir iestatīts uz bināro."
 msgid "Cus&tom"
 msgstr "Pielā&gots"
 
-#: ../../locales/../src/interface/filter.cpp:98
+#: ../../locales/../src/interface/filter.cpp:99
 msgid "Custom filter set"
 msgstr "Pielāgots filtru komplekts"
 
@@ -2577,7 +2569,7 @@ msgstr "D&ubultklikšķa darbība ar direktorijiem:"
 msgid "DOS-like with virtual paths"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:2069
+#: ../../locales/../src/interface/LocalListView.cpp:2065
 #: ../../locales/../src/interface/RemoteListView.cpp:2645
 msgid "Dangerous filetype"
 msgstr "Bīstams datnes tips"
@@ -2590,6 +2582,10 @@ msgstr "Dati"
 #: ../../locales/../src/interface/netconfwizard.cpp:1051
 msgid "Data socket closed too early."
 msgstr ""
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:132
+msgid "Date"
+msgstr "Datums"
 
 #: resources.h:877
 msgid "Date formatting"
@@ -2634,7 +2630,7 @@ msgstr "Noklusējuma datne eksistē darbība"
 msgid "Default r&emote directory:"
 msgstr "Noklusējuma a&ttālā direktorijs:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1151
+#: ../../locales/../src/interface/sitemanager.cpp:1156
 msgid ""
 "Default remote path cannot be parsed. Make sure it is a valid absolute path "
 "for the selected server type."
@@ -2675,7 +2671,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1313
+#: ../../locales/../src/interface/sitemanager.cpp:1318
 msgid "Delete Site Manager entry"
 msgstr "Dzēst vietņu pārvaldnieka ierakstu"
 
@@ -2699,7 +2695,7 @@ msgstr ""
 msgid "Deleting symbolic link"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1052
+#: ../../locales/../src/interface/LocalTreeView.cpp:1055
 msgid "Desktop"
 msgstr "Darbavirsma"
 
@@ -2715,7 +2711,7 @@ msgstr "Jaunās atslēgas detaļas:"
 msgid "Dire&ctories"
 msgstr "Ma&pes"
 
-#: ../../locales/../src/interface/queue.cpp:1185
+#: ../../locales/../src/interface/queue.cpp:1192
 msgid "Direction"
 msgstr "Virziens"
 
@@ -2725,7 +2721,7 @@ msgstr "Direktorijs"
 
 #: resources.h:636 resources.h:908 resources.h:991
 #: ../../locales/../src/interface/filelistctrl.cpp:529
-#: ../../locales/../src/interface/Mainfrm.cpp:2321
+#: ../../locales/../src/interface/Mainfrm.cpp:2320
 msgid "Directory comparison"
 msgstr "Direktoriju salīdzināšana"
 
@@ -2759,7 +2755,7 @@ msgstr "Direktorija izdruka veiksmīga"
 msgid "Disa&ble all"
 msgstr "Ats&lēgt visu"
 
-#: ../../locales/../src/interface/state.cpp:1045
+#: ../../locales/../src/interface/state.cpp:1049
 msgid ""
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
@@ -2781,8 +2777,8 @@ msgstr "Atvienoties no servera"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:223
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:936
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:938
-#: ../../locales/../src/interface/QueueView.cpp:1047
-#: ../../locales/../src/interface/QueueView.cpp:1091
+#: ../../locales/../src/interface/QueueView.cpp:1053
+#: ../../locales/../src/interface/QueueView.cpp:1097
 msgid "Disconnected from server"
 msgstr "Atvienots no servera"
 
@@ -2792,7 +2788,7 @@ msgstr "Atvienots no servera"
 msgid "Disconnected from server: %s"
 msgstr "Atvienots no servera: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1406
+#: ../../locales/../src/interface/QueueView.cpp:1412
 #: ../../locales/../src/interface/statuslinectrl.cpp:265
 msgid "Disconnecting from previous server"
 msgstr "Atvienojas no iepriekšējā servera"
@@ -2828,29 +2824,29 @@ msgstr ""
 msgid "Do you really want to close FileZilla?"
 msgstr "Vai tiešām vēlaties aizvērt FileZilla?"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:35
+#: ../../locales/../src/interface/clearprivatedata.cpp:34
 msgid ""
 "Do you really want to delete all Site Manager entries and the transfer queue?"
 msgstr ""
 "Vai tiešām vēlaties dzēst visus vietņu pārvaldnieka ierakstus un pārsūtījumu "
 "rindu?"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:47
+#: ../../locales/../src/interface/clearprivatedata.cpp:46
 msgid "Do you really want to delete all Site Manager entries?"
 msgstr "Vai tiešām vēlaties dzēst visus vietņu pārvaldnieka ierakstus?"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1315
+#: ../../locales/../src/interface/sitemanager.cpp:1320
 msgid "Do you really want to delete selected entry?"
 msgstr "Vai tiešām vēlaties dzēst atlasīto ierakstu?"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:41
+#: ../../locales/../src/interface/clearprivatedata.cpp:40
 msgid "Do you really want to delete the transfer queue?"
 msgstr "Vai tiešām vēlaties dzēst pārsūtīšanas rindu?"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:592
 #, c-format
 msgid "Do you really want to send '%s' to the server?"
-msgstr "Vai tiešām vēlaties sūtīt '%s' uz serveri? "
+msgstr "Vai tiešām vēlaties sūtīt '%s' uz serveri?"
 
 #: resources.h:465
 msgid "Documentation"
@@ -2876,12 +2872,12 @@ msgstr "Lejupielādēt"
 msgid "Download &limit:"
 msgstr "Lejupielādēs &ierobežojums:"
 
-#: ../../locales/../src/interface/statusbar.cpp:598
+#: ../../locales/../src/interface/statusbar.cpp:603
 #, c-format
 msgid "Download limit: %s/s"
 msgstr "Lejupielādēs ierobežojums: %s/s"
 
-#: ../../locales/../src/interface/statusbar.cpp:600
+#: ../../locales/../src/interface/statusbar.cpp:605
 msgid "Download limit: none"
 msgstr "Lejupielādēs ierobežojums: nekāds"
 
@@ -2898,7 +2894,7 @@ msgstr "Lejupielādēt izvēlēto direktoriju"
 msgid "Download selected files and directories"
 msgstr "Lejupielādēt atlasītās datnes un direktorijus"
 
-#: ../../locales/../src/interface/edithandler.cpp:1236
+#: ../../locales/../src/interface/edithandler.cpp:1245
 msgid "Downloading"
 msgstr "Lejupielādē"
 
@@ -2960,7 +2956,7 @@ msgstr "I&ziet"
 msgid "E-Mail:"
 msgstr "E-pasts:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:605
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:635
 msgid "Each filter needs at least one condition."
 msgstr "Katram filtram vajag vismaz vienu nosacījumu."
 
@@ -2973,8 +2969,8 @@ msgid ""
 "Edit the file with the configured editor and upload changes to the server."
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:1980
-#: ../../locales/../src/interface/LocalListView.cpp:1991
+#: ../../locales/../src/interface/LocalListView.cpp:1976
+#: ../../locales/../src/interface/LocalListView.cpp:1987
 msgid "Editing failed"
 msgstr "Rediģēšana neizdevāš"
 
@@ -2982,7 +2978,7 @@ msgstr "Rediģēšana neizdevāš"
 msgid "Email:"
 msgstr "E-pasts:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2205
+#: ../../locales/../src/interface/QueueView.cpp:2227
 msgid "Empty command"
 msgstr "Tukša komanda"
 
@@ -3026,7 +3022,7 @@ msgstr "Ak&tivizēt visus"
 msgid "Enable invalid character &filtering"
 msgstr "Filtra validēšana neizdevās"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:82
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:84
 msgid "Encrypted"
 msgstr "Šifrēts"
 
@@ -3051,7 +3047,7 @@ msgstr "Ievadīt &pielāgotu komandu..."
 msgid "Enter 0 for unlimited speed."
 msgstr "Ievadiet 0 neierobežotam ātrumam."
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2216
 msgid "Enter command"
 msgstr "Ievadiet komandu"
 
@@ -3069,11 +3065,11 @@ msgstr "Ieiet direktorijā"
 msgid "Enter filter name"
 msgstr "Ievadiet filtra vārdu"
 
-#: ../../locales/../src/interface/filter.cpp:328
+#: ../../locales/../src/interface/filter.cpp:344
 msgid "Enter name for filterset"
 msgstr "Ievadiet filtru komplekta vārdu"
 
-#: ../../locales/../src/interface/filter.cpp:390
+#: ../../locales/../src/interface/filter.cpp:406
 msgid "Enter new name for filterset"
 msgstr "Ievadiet jaunu filtru komplekta vārdu"
 
@@ -3124,9 +3120,9 @@ msgstr "Ievadiet lietotājvārdu un paroli"
 msgid "Error exporting settings"
 msgstr "Kļūda eksportējot uzstādījumus"
 
-#: ../../locales/../src/interface/import.cpp:29
-#: ../../locales/../src/interface/import.cpp:39
-#: ../../locales/../src/interface/import.cpp:109
+#: ../../locales/../src/interface/import.cpp:28
+#: ../../locales/../src/interface/import.cpp:38
+#: ../../locales/../src/interface/import.cpp:108
 msgid "Error importing"
 msgstr "Kļūda importējot"
 
@@ -3135,23 +3131,23 @@ msgstr "Kļūda importējot"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:723
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:764
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:813
-#: ../../locales/../src/interface/filter.cpp:195
-#: ../../locales/../src/interface/filter.cpp:993
-#: ../../locales/../src/interface/import.cpp:121
-#: ../../locales/../src/interface/import.cpp:312
-#: ../../locales/../src/interface/Options.cpp:195
-#: ../../locales/../src/interface/QueueView.cpp:1931
-#: ../../locales/../src/interface/QueueView.cpp:1958
+#: ../../locales/../src/interface/filter.cpp:211
+#: ../../locales/../src/interface/filter.cpp:1046
+#: ../../locales/../src/interface/import.cpp:120
+#: ../../locales/../src/interface/import.cpp:311
+#: ../../locales/../src/interface/Options.cpp:213
+#: ../../locales/../src/interface/QueueView.cpp:1937
+#: ../../locales/../src/interface/QueueView.cpp:1964
 #: ../../locales/../src/interface/search.cpp:1115
 #: ../../locales/../src/interface/search.cpp:1136
-#: ../../locales/../src/interface/sitemanager.cpp:728
-#: ../../locales/../src/interface/sitemanager.cpp:881
-#: ../../locales/../src/interface/sitemanager.cpp:2092
-#: ../../locales/../src/interface/sitemanager.cpp:2590
-#: ../../locales/../src/interface/sitemanager.cpp:2766
-#: ../../locales/../src/interface/sitemanager.cpp:2872
-#: ../../locales/../src/interface/sitemanager.cpp:2992
-#: ../../locales/../src/interface/sitemanager.cpp:3079
+#: ../../locales/../src/interface/sitemanager.cpp:733
+#: ../../locales/../src/interface/sitemanager.cpp:886
+#: ../../locales/../src/interface/sitemanager.cpp:2097
+#: ../../locales/../src/interface/sitemanager.cpp:2595
+#: ../../locales/../src/interface/sitemanager.cpp:2771
+#: ../../locales/../src/interface/sitemanager.cpp:2877
+#: ../../locales/../src/interface/sitemanager.cpp:2997
+#: ../../locales/../src/interface/sitemanager.cpp:3084
 #: ../../locales/../src/interface/wrapengine.cpp:945
 msgid "Error loading xml file"
 msgstr "Kļūda ielādējot xml datni"
@@ -3163,21 +3159,20 @@ msgstr "Kļūda uzsākot pprogrammu"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:323
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:851
-#: ../../locales/../src/interface/QueueView.cpp:1942
-#: ../../locales/../src/interface/QueueView.cpp:1978
-#: ../../locales/../src/interface/sitemanager.cpp:905
-#: ../../locales/../src/interface/sitemanager.cpp:2692
-#: ../../locales/../src/interface/sitemanager.cpp:2927
-#: ../../locales/../src/interface/sitemanager.cpp:3054
-#: ../../locales/../src/interface/sitemanager.cpp:3116
+#: ../../locales/../src/interface/QueueView.cpp:1948
+#: ../../locales/../src/interface/QueueView.cpp:1984
+#: ../../locales/../src/interface/sitemanager.cpp:910
+#: ../../locales/../src/interface/sitemanager.cpp:2697
+#: ../../locales/../src/interface/sitemanager.cpp:2932
+#: ../../locales/../src/interface/sitemanager.cpp:3059
+#: ../../locales/../src/interface/sitemanager.cpp:3121
 #: ../../locales/../src/interface/wrapengine.cpp:1104
 msgid "Error writing xml file"
 msgstr "Kļūda rakstot xml datni"
 
 #: ../../locales/../src/interface/updatewizard.cpp:335
-#, fuzzy
 msgid "Error, file name cannot be parsed."
-msgstr "Kļūda, lokālā datne eksistē, bet nevar tikt aizvākta."
+msgstr "Kļūda, datnes vārdu nevar parsēt."
 
 #: ../../locales/../src/interface/updatewizard.cpp:351
 msgid "Error, local file exists but cannot be removed"
@@ -3195,9 +3190,8 @@ msgid "Establish connection in a new tab"
 msgstr "Izveidot savienojumu jaunā cilnē"
 
 #: resources.h:937
-#, fuzzy
 msgid "Example: png \"c:\\program files\\viewer\\viewer.exe\" -open"
-msgstr "png \"c:\\program files\\viewer\\viewer.exe\" -open"
+msgstr "Piemērs: png \"c:\\program files\\viewer\\viewer.exe\" -open"
 
 #: resources.h:896
 msgid "Examples"
@@ -3211,7 +3205,7 @@ msgstr "Izp&ildīt"
 msgid "Executable"
 msgstr "Izpildamais"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1751
+#: ../../locales/../src/interface/Mainfrm.cpp:1750
 msgid "Executable contains no version info, cannot check for updates."
 msgstr ""
 
@@ -3236,12 +3230,12 @@ msgid "F&ilter name:"
 msgstr "F&iltra vārds:"
 
 #: ../../locales/../src/interface/settings/settingsdialog.cpp:117
-#: ../../locales/../src/interface/sitemanager.cpp:1626
+#: ../../locales/../src/interface/sitemanager.cpp:1631
 msgid "FTP"
 msgstr "FTP"
 
 #: ../../locales/../src/interface/quickconnectbar.cpp:67
-#: ../../locales/../src/interface/quickconnectbar.cpp:189
+#: ../../locales/../src/interface/quickconnectbar.cpp:197
 msgid "FTP Engine not initialized, can't connect"
 msgstr "FTP programma nav inicializēta, nevar savienoties"
 
@@ -3273,16 +3267,16 @@ msgid "FTPS - FTP over implicit TLS/SSL"
 msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:535
-#: ../../locales/../src/interface/LocalListView.cpp:617
-#: ../../locales/../src/interface/LocalListView.cpp:2276
-#: ../../locales/../src/interface/LocalTreeView.cpp:910
+#: ../../locales/../src/interface/LocalListView.cpp:615
+#: ../../locales/../src/interface/LocalListView.cpp:2272
+#: ../../locales/../src/interface/LocalTreeView.cpp:913
 #: ../../locales/../src/interface/viewheader.cpp:520
 msgid "Failed to change directory"
 msgstr "Neizdevās nomainīt direktoriju"
 
+#: ../../locales/../src/interface/FileZilla.cpp:260
+#: ../../locales/../src/interface/FileZilla.cpp:268
 #: ../../locales/../src/interface/FileZilla.cpp:270
-#: ../../locales/../src/interface/FileZilla.cpp:278
-#: ../../locales/../src/interface/FileZilla.cpp:280
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 msgid "Failed to change language"
 msgstr "Neizdevās nomainīt valodu"
@@ -3291,11 +3285,11 @@ msgstr "Neizdevās nomainīt valodu"
 msgid "Failed to check for newer version of FileZilla."
 msgstr "Neizdevās pārbaudīt FileZilla atjauninājumu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2304
+#: ../../locales/../src/interface/sitemanager.cpp:2309
 msgid "Failed to copy or move sites"
 msgstr "Neizdevās kopēt vai pārvietot vietnes"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:512
+#: ../../locales/../src/interface/xmlfunctions.cpp:511
 msgid "Failed to create backup copy of xml file"
 msgstr "Neizdevās izveidot xml faila rezerves kopiju"
 
@@ -3312,11 +3306,11 @@ msgstr ""
 msgid "Failed to download the latest version of FileZilla."
 msgstr "Neizdevās lejupielādēt jaunāko FileZilla versiju"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:665
+#: ../../locales/../src/interface/LocalTreeView.cpp:667
 msgid "Failed to get 'My Documents' path"
 msgstr "Neizdevās iegūt 'Mani dokumenti' ceļu"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:651
+#: ../../locales/../src/interface/LocalTreeView.cpp:653
 msgid "Failed to get desktop path"
 msgstr "Neizdevās iegūt darbavirsmas ceļu"
 
@@ -3343,9 +3337,9 @@ msgid "Failed to load panels, invalid resource files?"
 msgstr "Neizdevās ielādēt paneļus, nederīgas resursu datnes?"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:299
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to load private key: %s"
-msgstr "Neizdevās rakstīt datni %s"
+msgstr "Neizdevās ielādēt privāto atslēgu: %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2599
 #, c-format
@@ -3400,37 +3394,39 @@ msgstr "Neizdevās iegūt ārējo ip adresi."
 msgid "Failed to send command."
 msgstr "Neizdevās nosūtīt komandu."
 
-#: ../../locales/../src/interface/FileZilla.cpp:278
-#, fuzzy, c-format
+#: ../../locales/../src/interface/FileZilla.cpp:268
+#, c-format
 msgid "Failed to set language to %s (%s), using default system language"
-msgstr "Neizdevās uzstādīt valodu %s, tiks izmantota noklusējuma valoda"
+msgstr "Neizdevās iestatīt valodu %s (%s), lieto sistēmas noklusējuma valodu"
 
-#: ../../locales/../src/interface/FileZilla.cpp:263
-#, fuzzy, c-format
+#: ../../locales/../src/interface/FileZilla.cpp:253
+#, c-format
 msgid ""
 "Failed to set language to %s (%s), using default system language (%s, %s)."
-msgstr "Neizdevās uzstādīt valodu %s, tiks izmantota noklusējuma valoda"
+msgstr ""
+"Neizdevās iestatīt valodu %s (%s), lieto sistēmas noklusējuma valodu(%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:251
-#, fuzzy, c-format
+#: ../../locales/../src/interface/FileZilla.cpp:241
+#, c-format
 msgid "Failed to set language to %s (%s), using default system language."
-msgstr "Neizdevās uzstādīt valodu %s, tiks izmantota noklusējuma valoda"
+msgstr "Neizdevās iestatīt valodu %s (%s), lieto sistēmas noklusējuma valodu."
 
-#: ../../locales/../src/interface/FileZilla.cpp:280
+#: ../../locales/../src/interface/FileZilla.cpp:270
 #: ../../locales/../src/interface/settings/optionspage_language.cpp:53
 #, c-format
 msgid "Failed to set language to %s, using default system language"
 msgstr "Neizdevās uzstādīt valodu %s, tiks izmantota noklusējuma valoda"
 
-#: ../../locales/../src/interface/FileZilla.cpp:259
-#, fuzzy, c-format
+#: ../../locales/../src/interface/FileZilla.cpp:249
+#, c-format
 msgid "Failed to set language to %s, using default system language (%s, %s)."
-msgstr "Neizdevās uzstādīt valodu %s, tiks izmantota noklusējuma valoda"
+msgstr ""
+"Neizdevās iestatīt valodu %s, lieto sistēmas noklusējuma valodu (%s, %s)."
 
-#: ../../locales/../src/interface/FileZilla.cpp:248
-#, fuzzy, c-format
+#: ../../locales/../src/interface/FileZilla.cpp:238
+#, c-format
 msgid "Failed to set language to %s, using default system language."
-msgstr "Neizdevās uzstādīt valodu %s, tiks izmantota noklusējuma valoda"
+msgstr "Neizdevās iestatīt valodu %s, lieto sistēmas noklusējuma valodu."
 
 #: ../../locales/../src/interface/settings/optionspage.cpp:215
 msgid "Failed to validate settings"
@@ -3446,7 +3442,7 @@ msgstr "Neizdevās saņemt datus"
 msgid "Failed to write to file %s"
 msgstr "Neizdevās rakstīt datni %s"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:530
+#: ../../locales/../src/interface/xmlfunctions.cpp:529
 msgid "Failed to write xml file"
 msgstr "Neizdevās ierakstīt xml datnē"
 
@@ -3476,7 +3472,7 @@ msgstr "Datne"
 msgid "File Types"
 msgstr "Datņu tipi"
 
-#: ../../locales/../src/interface/import.cpp:109
+#: ../../locales/../src/interface/import.cpp:108
 msgid "File does not contain any importable data."
 msgstr ""
 
@@ -3500,9 +3496,9 @@ msgstr "Datne ir mainījusies"
 msgid "File lists"
 msgstr "Datņu saraksti"
 
-#: ../../locales/../src/interface/edithandler.cpp:1713
-#: ../../locales/../src/interface/FileZilla.cpp:805
-#: ../../locales/../src/interface/FileZilla.cpp:899
+#: ../../locales/../src/interface/edithandler.cpp:1722
+#: ../../locales/../src/interface/FileZilla.cpp:703
+#: ../../locales/../src/interface/FileZilla.cpp:797
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "File not found"
 msgstr "Datne netika atrasta"
@@ -3554,9 +3550,9 @@ msgstr ""
 msgid "File would transfer with binary data type."
 msgstr ""
 
-#: ../../locales/../src/interface/FileZilla.cpp:498
+#: ../../locales/../src/interface/FileZilla.cpp:488
 #: ../../locales/../src/interface/quickconnectbar.cpp:67
-#: ../../locales/../src/interface/quickconnectbar.cpp:189
+#: ../../locales/../src/interface/quickconnectbar.cpp:197
 msgid "FileZilla Error"
 msgstr "FileZilla kļūda"
 
@@ -3570,14 +3566,14 @@ msgstr ""
 msgid "FileZilla is already connected to a server."
 msgstr "FileZilla jau ir savienota ar serveri."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:437
-#: ../../locales/../src/interface/sitemanager.cpp:1061
+#: ../../locales/../src/interface/manual_transfer.cpp:446
+#: ../../locales/../src/interface/sitemanager.cpp:1066
 msgid ""
 "FileZilla is running in kiosk mode.\n"
 "'Normal' and 'Account' logontypes are not available in this mode."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1496
+#: ../../locales/../src/interface/Mainfrm.cpp:1495
 msgid "FileZilla needs to be restarted for the language change to take effect."
 msgstr ""
 
@@ -3585,8 +3581,8 @@ msgstr ""
 msgid "Filelist status &bars"
 msgstr "Datņu sarakstau stāvokļa joslas"
 
-#: ../../locales/../src/interface/edithandler.cpp:1221
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:100
+#: ../../locales/../src/interface/edithandler.cpp:1230
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:107
 #: ../../locales/../src/interface/LocalListView.cpp:264
 #: ../../locales/../src/interface/RemoteListView.cpp:357
 #: ../../locales/../src/interface/search.cpp:385
@@ -3599,7 +3595,7 @@ msgid "Filename &filters..."
 msgstr "Datnes vārda &filtri..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3079
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2312
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2310
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr ""
@@ -3616,11 +3612,11 @@ msgstr "Datnes vārds nemainīts"
 msgid "Filename:"
 msgstr "Datnes vārds:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1368
+#: ../../locales/../src/interface/LocalListView.cpp:1364
 msgid "Filenames may not contain any of the following characters: / * ? < > |"
 msgstr "Datņu vārdi nevar saturēt nevinu no sekojošajām zīmēm: / * ? < > |"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1343
+#: ../../locales/../src/interface/LocalListView.cpp:1339
 msgid ""
 "Filenames may not contain any of the following characters: / \\ : * ? \" < > "
 "|"
@@ -3631,7 +3627,7 @@ msgstr ""
 msgid "Files currently being edited"
 msgstr "Pašlaik rediģētās datnes"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:105
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:112
 #: ../../locales/../src/interface/LocalListView.cpp:265
 #: ../../locales/../src/interface/RemoteListView.cpp:358
 #: ../../locales/../src/interface/search.cpp:387
@@ -3658,31 +3654,27 @@ msgid "Filter applies to:"
 msgstr "Filtrs attiecas uz:"
 
 #: resources.h:813
-#, fuzzy
 msgid "Filter invalid characters in filenames"
-msgstr "Filtra validēšana neizdevās"
+msgstr "Filtrēt nederīgās rakstzīmes datņu vārdos"
 
 #: ../../locales/../src/interface/filteredit.cpp:356
 msgid "Filter name already exists"
 msgstr "Filtra vārds jau eksistē"
 
 #: resources.h:220
-#, fuzzy
 msgid "Filter out items matching all of the following"
-msgstr "Saskan visi no sekojošajiem"
+msgstr "Izfiltrēt vienumus, kuriem saskan viss no sekojošajiem"
 
 #: resources.h:221
-#, fuzzy
 msgid "Filter out items matching any of the following"
-msgstr "Saskan visi no sekojošajiem"
+msgstr "Izfiltrēt vienumus, kuriem saskan jebkas no sekojošajiem"
 
 #: resources.h:222
-#, fuzzy
 msgid "Filter out items matching none of the following"
-msgstr "Saskan visi no sekojošajiem"
+msgstr "Izfiltrēt vienumus, kuriem nesaskan nekas no sekojošajiem"
 
-#: ../../locales/../src/interface/filter.cpp:350
-#: ../../locales/../src/interface/filter.cpp:411
+#: ../../locales/../src/interface/filter.cpp:366
+#: ../../locales/../src/interface/filter.cpp:427
 msgid "Filter set already exists"
 msgstr "Filtru komplekts jau eksistē"
 
@@ -3724,7 +3716,7 @@ msgstr ""
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr ""
 
-#: ../../locales/../src/interface/Options.cpp:194
+#: ../../locales/../src/interface/Options.cpp:212
 msgid ""
 "For this session the default settings will be used. Any changes to the "
 "settings will not be saved."
@@ -3775,8 +3767,8 @@ msgstr "Iegūt ārējo IP adresi no sekojošā URL:"
 msgid "Getting help"
 msgstr "Iegūt palīdzību"
 
-#: ../../locales/../src/interface/filter.cpp:350
-#: ../../locales/../src/interface/filter.cpp:411
+#: ../../locales/../src/interface/filter.cpp:366
+#: ../../locales/../src/interface/filter.cpp:427
 msgid "Given filterset name already exists, overwrite filter set?"
 msgstr "Filtru kompleka vārds jau eksistē, pārrakstīt filtru komplektu?"
 
@@ -3805,17 +3797,17 @@ msgstr ""
 msgid "Hash:"
 msgstr "Saimniekdators:"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:83
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:85
 msgid "Hidden"
 msgstr "Slēpts"
 
-#: resources.h:811 ../../locales/../src/interface/queue.cpp:892
-#: ../../locales/../src/interface/queue.cpp:973
+#: resources.h:811 ../../locales/../src/interface/queue.cpp:899
+#: ../../locales/../src/interface/queue.cpp:980
 msgid "High"
 msgstr "Augsta"
 
-#: ../../locales/../src/interface/queue.cpp:894
-#: ../../locales/../src/interface/queue.cpp:975
+#: ../../locales/../src/interface/queue.cpp:901
+#: ../../locales/../src/interface/queue.cpp:982
 msgid "Highest"
 msgstr "Augstākā"
 
@@ -3828,7 +3820,7 @@ msgid ""
 "Hold the shift key to toggle the filter state on both sides simultaneously."
 msgstr ""
 "Turiet \"shift\" taustiņu, lai pārslēgtu filtra stāvokļus abās pusēs "
-"vienlaicīgi. "
+"vienlaicīgi."
 
 #: resources.h:156
 msgid "Homepage:"
@@ -4005,7 +3997,7 @@ msgid ""
 "manufacturer."
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:97
+#: ../../locales/../src/interface/import.cpp:96
 msgid "Import data from older version"
 msgstr "Importēt datus no vecākas versijas"
 
@@ -4013,8 +4005,8 @@ msgstr "Importēt datus no vecākas versijas"
 msgid "Import settings"
 msgstr "Importa uzstādījumi"
 
-#: ../../locales/../src/interface/import.cpp:82
-#: ../../locales/../src/interface/import.cpp:85
+#: ../../locales/../src/interface/import.cpp:81
+#: ../../locales/../src/interface/import.cpp:84
 msgid "Import successful"
 msgstr "Imports veiksmīgs"
 
@@ -4041,7 +4033,7 @@ msgid ""
 "in the settings dialog."
 msgstr ""
 "Ja jūs dodat priekšroku automātiskai atjauninājumu pārbaudīšanai, tad to var "
-"iespējot uzstādījumu dialogā. "
+"iespējot uzstādījumu dialogā."
 
 #: resources.h:685 resources.h:749
 msgid ""
@@ -4062,7 +4054,7 @@ msgid ""
 "certificate"
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:1043
+#: ../../locales/../src/interface/QueueView.cpp:1049
 msgid "Incorrect password"
 msgstr "Nepareiza parole"
 
@@ -4081,8 +4073,8 @@ msgid "Interface"
 msgstr "Interaktīvs"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:219
-#: ../../locales/../src/interface/QueueView.cpp:1000
-#: ../../locales/../src/interface/QueueView.cpp:1574
+#: ../../locales/../src/interface/QueueView.cpp:1006
+#: ../../locales/../src/interface/QueueView.cpp:1580
 msgid "Interrupted by user"
 msgstr "Lietotājs pārtraucis"
 
@@ -4116,8 +4108,8 @@ msgstr "Saņemti nederīga dati"
 msgid "Invalid date"
 msgstr "Nederīgs datums"
 
-#: ../../locales/../src/interface/LocalListView.cpp:1343
-#: ../../locales/../src/interface/LocalListView.cpp:1368
+#: ../../locales/../src/interface/LocalListView.cpp:1339
+#: ../../locales/../src/interface/LocalListView.cpp:1364
 msgid "Invalid filename"
 msgstr "Nederīgs datnes vārds"
 
@@ -4161,21 +4153,21 @@ msgstr "Nederīgs atbildes kods"
 msgid "Invalid search conditions: %s"
 msgstr "Nederīgs izmērs nosacījumos"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2561
-#: ../../locales/../src/interface/sitemanager.cpp:2581
-#: ../../locales/../src/interface/sitemanager.cpp:2598
-#: ../../locales/../src/interface/sitemanager.cpp:2605
-#: ../../locales/../src/interface/sitemanager.cpp:2612
-#: ../../locales/../src/interface/sitemanager.cpp:2629
-#: ../../locales/../src/interface/sitemanager.cpp:2778
-#: ../../locales/../src/interface/sitemanager.cpp:3004
-#: ../../locales/../src/interface/sitemanager.cpp:3011
-#: ../../locales/../src/interface/sitemanager.cpp:3091
-#: ../../locales/../src/interface/sitemanager.cpp:3098
+#: ../../locales/../src/interface/sitemanager.cpp:2566
+#: ../../locales/../src/interface/sitemanager.cpp:2586
+#: ../../locales/../src/interface/sitemanager.cpp:2603
+#: ../../locales/../src/interface/sitemanager.cpp:2610
+#: ../../locales/../src/interface/sitemanager.cpp:2617
+#: ../../locales/../src/interface/sitemanager.cpp:2634
+#: ../../locales/../src/interface/sitemanager.cpp:2783
+#: ../../locales/../src/interface/sitemanager.cpp:3009
+#: ../../locales/../src/interface/sitemanager.cpp:3016
+#: ../../locales/../src/interface/sitemanager.cpp:3096
+#: ../../locales/../src/interface/sitemanager.cpp:3103
 msgid "Invalid site path"
 msgstr "Nederīgs vietnes ceļš"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:638
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:668
 msgid "Invalid size in condition"
 msgstr "Nederīgs izmērs nosacījumos"
 
@@ -4219,7 +4211,7 @@ msgstr "Z&emākā"
 msgid "Language"
 msgstr "Valoda"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:1496
+#: ../../locales/../src/interface/Mainfrm.cpp:1495
 msgid "Language changed"
 msgstr "Valoda nomainīta"
 
@@ -4247,7 +4239,7 @@ msgstr "Ierobežot lokālās pieslēgvietas"
 
 #: resources.h:952
 msgid "Limit size of logfile"
-msgstr ""
+msgstr "Ierobežot žurnāldatnes lielumu"
 
 #: resources.h:953
 msgid "Limit:"
@@ -4275,8 +4267,8 @@ msgstr "Saraksts:"
 msgid "Lo&west available port:"
 msgstr "Ze&mākā pieejamā pieslēgvieta:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1269
-#: ../../locales/../src/interface/edithandler.cpp:1523
+#: ../../locales/../src/interface/edithandler.cpp:1278
+#: ../../locales/../src/interface/edithandler.cpp:1532
 msgid "Local"
 msgstr "Lokāli"
 
@@ -4290,7 +4282,11 @@ msgstr "Lokālā datne neeksistē."
 
 #: ../../locales/../src/interface/manual_transfer.cpp:319
 msgid "Local file is a directory instead of a regular file."
-msgstr ""
+msgstr "Lokālā datne ir direktorijs un ne parasta datne."
+
+#: ../../locales/../src/interface/manual_transfer.cpp:365
+msgid "Local file is not a valid filename."
+msgstr "Lokālā datne nav derīgs datnes vārds."
 
 #: resources.h:202
 msgid "Local filters:"
@@ -4344,13 +4340,13 @@ msgid ""
 "'%s' or '%s'"
 msgstr ""
 
-#: ../../locales/../src/interface/queue.cpp:887
-#: ../../locales/../src/interface/queue.cpp:968
+#: ../../locales/../src/interface/queue.cpp:894
+#: ../../locales/../src/interface/queue.cpp:975
 msgid "Low"
 msgstr "Zema"
 
-#: ../../locales/../src/interface/queue.cpp:885
-#: ../../locales/../src/interface/queue.cpp:966
+#: ../../locales/../src/interface/queue.cpp:892
+#: ../../locales/../src/interface/queue.cpp:973
 msgid "Lowest"
 msgstr "Zemākā"
 
@@ -4360,9 +4356,9 @@ msgstr "Zemākajai pieejamajai pieslēgvietai jābūt skaitlim starp 1024 un 655
 
 #: resources.h:20 resources.h:44
 msgid "MAC:"
-msgstr ""
+msgstr "MAC:"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:64
+#: ../../locales/../src/interface/xmlfunctions.cpp:63
 msgid "Make sure the file can be accessed and is a well-formed XML document."
 msgstr ""
 
@@ -4390,6 +4386,7 @@ msgstr ""
 #: ../../locales/../src/interface/manual_transfer.cpp:332
 #: ../../locales/../src/interface/manual_transfer.cpp:339
 #: ../../locales/../src/interface/manual_transfer.cpp:346
+#: ../../locales/../src/interface/manual_transfer.cpp:365
 msgid "Manual transfer"
 msgstr "Manuāls pārsūtijums"
 
@@ -4412,7 +4409,7 @@ msgid "Maximum simultaneous &transfers:"
 msgstr "Vienlaicīgo &pārsūtījumu skaits:"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:375
-#: ../../locales/../src/interface/Mainfrm.cpp:1834
+#: ../../locales/../src/interface/Mainfrm.cpp:1833
 msgid "Message log"
 msgstr "Ziņojumu žurnāls"
 
@@ -4422,7 +4419,7 @@ msgstr "Ziņojumu žurnāla pozīcija"
 
 #: resources.h:954
 msgid "MiB"
-msgstr ""
+msgstr "MiB"
 
 #: resources.h:96
 msgid "Minutes"
@@ -4436,17 +4433,17 @@ msgstr "Pārvietot &lejup"
 msgid "Move &up"
 msgstr "Pārvietot &augšup"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1071
+#: ../../locales/../src/interface/LocalTreeView.cpp:1074
 msgid "My Computer"
 msgstr "Mans dators"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1061
+#: ../../locales/../src/interface/LocalTreeView.cpp:1064
 msgid "My Documents"
 msgstr "Mani dokumenti"
 
-#: ../../locales/../src/interface/sitemanager.cpp:715
-#: ../../locales/../src/interface/sitemanager.cpp:717
-#: ../../locales/../src/interface/sitemanager.cpp:2132
+#: ../../locales/../src/interface/sitemanager.cpp:720
+#: ../../locales/../src/interface/sitemanager.cpp:722
+#: ../../locales/../src/interface/sitemanager.cpp:2137
 msgid "My Sites"
 msgstr "Manas vietnes"
 
@@ -4460,12 +4457,12 @@ msgid "Name"
 msgstr "Vārds"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:705
-#: ../../locales/../src/interface/sitemanager.cpp:1280
+#: ../../locales/../src/interface/sitemanager.cpp:1285
 msgid "Name already exists"
 msgstr "Vārds jau eksistē"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:828
-#: ../../locales/../src/interface/sitemanager.cpp:3028
+#: ../../locales/../src/interface/sitemanager.cpp:3033
 msgid "Name of bookmark already exists."
 msgstr "Grāmatzīmes vārds jau eksistē."
 
@@ -4482,7 +4479,7 @@ msgstr "Jāievada filtra vārdu"
 msgid "Need to enter valid remote path"
 msgstr "Jāievada filtra vārdu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1095
+#: ../../locales/../src/interface/sitemanager.cpp:1100
 msgid "Need to specify a character encoding"
 msgstr "Jānorāda rakstzīmju kodējumu"
 
@@ -4515,12 +4512,12 @@ msgstr "Jauna grāmat&zīme"
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:549
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:572
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:828
-#: ../../locales/../src/interface/sitemanager.cpp:2469
-#: ../../locales/../src/interface/sitemanager.cpp:3028
+#: ../../locales/../src/interface/sitemanager.cpp:2474
+#: ../../locales/../src/interface/sitemanager.cpp:3033
 msgid "New bookmark"
 msgstr "Jauna grāmatzīme"
 
-#: ../../locales/../src/interface/LocalTreeView.cpp:1191
+#: ../../locales/../src/interface/LocalTreeView.cpp:1192
 #: ../../locales/../src/interface/RemoteListView.cpp:1583
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1286
 msgid "New directory"
@@ -4529,19 +4526,19 @@ msgstr "Jauns direktorijs"
 #: ../../locales/../src/interface/welcome_dialog.cpp:43
 #, c-format
 msgid "New features and improvements in %s"
-msgstr ""
+msgstr "Jaunas iespējas un uzlabojumi %s"
 
 #: ../../locales/../src/interface/filteredit.cpp:129
 msgid "New filter"
 msgstr "Jauns filtrs"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1009
+#: ../../locales/../src/interface/sitemanager.cpp:1014
 msgid "New folder"
 msgstr "Jauna mape"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2445
-#: ../../locales/../src/interface/sitemanager.cpp:2891
-#: ../../locales/../src/interface/sitemanager.cpp:2905
+#: ../../locales/../src/interface/sitemanager.cpp:2450
+#: ../../locales/../src/interface/sitemanager.cpp:2896
+#: ../../locales/../src/interface/sitemanager.cpp:2910
 msgid "New site"
 msgstr "Jauna vietne"
 
@@ -4557,7 +4554,7 @@ msgstr "Nē"
 msgid "No category to export selected"
 msgstr "Nav izvēlēta neviena kategorija eksportam"
 
-#: ../../locales/../src/interface/QueueView.cpp:2205
+#: ../../locales/../src/interface/QueueView.cpp:2227
 msgid "No command given, aborting."
 msgstr ""
 
@@ -4565,7 +4562,7 @@ msgstr ""
 msgid "No external IP address set, trying default."
 msgstr "Nav uzstādīta neviena ārējā IP adrese, mēģinu noklusējuma."
 
-#: ../../locales/../src/interface/edithandler.cpp:1210
+#: ../../locales/../src/interface/edithandler.cpp:1219
 msgid "No files are currently being edited."
 msgstr "Neviena datne pašlaik netiek rediģēta."
 
@@ -4583,12 +4580,12 @@ msgstr "Nav dots saimniekdators, lūdzu ievadiet saimniekdatoru."
 msgid "No images available"
 msgstr "Neviens attēls nav pieejams"
 
-#: ../../locales/../src/interface/QueueView.cpp:3054
+#: ../../locales/../src/interface/QueueView.cpp:3076
 msgid "No more files in the queue!"
 msgstr "Rindā datņu vairs nav!"
 
-#: ../../locales/../src/interface/filter.cpp:335
-#: ../../locales/../src/interface/filter.cpp:404
+#: ../../locales/../src/interface/filter.cpp:351
+#: ../../locales/../src/interface/filter.cpp:420
 msgid "No name for the filterset given."
 msgstr "Nav iedots filtru komplekta vārds."
 
@@ -4605,9 +4602,9 @@ msgstr ""
 msgid "No search results"
 msgstr "Nav meklēšanas rezultātu"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2098
-#: ../../locales/../src/interface/sitemanager.cpp:2110
-#: ../../locales/../src/interface/sitemanager.cpp:2141
+#: ../../locales/../src/interface/sitemanager.cpp:2103
+#: ../../locales/../src/interface/sitemanager.cpp:2115
+#: ../../locales/../src/interface/sitemanager.cpp:2146
 msgid "No sites available"
 msgstr "Neviena vietne nav pieejama"
 
@@ -4632,10 +4629,10 @@ msgstr "Nekas vel nav atlasīts"
 #: ../../locales/../src/engine/server.cpp:865
 #: ../../locales/../src/interface/manual_transfer.cpp:156
 #: ../../locales/../src/interface/manual_transfer.cpp:181
-#: ../../locales/../src/interface/manual_transfer.cpp:544
-#: ../../locales/../src/interface/queue.cpp:890
-#: ../../locales/../src/interface/queue.cpp:971
-#: ../../locales/../src/interface/sitemanager.cpp:1387
+#: ../../locales/../src/interface/manual_transfer.cpp:553
+#: ../../locales/../src/interface/queue.cpp:897
+#: ../../locales/../src/interface/queue.cpp:978
+#: ../../locales/../src/interface/sitemanager.cpp:1392
 msgid "Normal"
 msgstr "Normāls"
 
@@ -4657,26 +4654,26 @@ msgid "Not connected to any server."
 msgstr "Nav savienots ne ar vienu serveri."
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:27
-#, fuzzy
 msgid "Not connected."
-msgstr "Nav savienots"
+msgstr "Nav savienots."
 
 #: ../../locales/../src/interface/Mainfrm.cpp:655
 msgid "Note that this feature is only supported using the FTP protocol."
 msgstr ""
+"Ņemiet vērā, ka šī iespēja ir atbalstīta tikai izmantojot FTP protokolu."
 
 #: resources.h:778
 msgid "Note: This only works with plain, unencrypted FTP connections."
 msgstr ""
+"Piezīme: Tas tikai strādā ar vienkāršiem, nešifrētiem FTP savienojumiem."
 
 #: resources.h:795
 msgid "Note: Using a generic proxy forces passive mode on FTP connections."
 msgstr ""
 
 #: resources.h:895
-#, fuzzy
 msgid "Number of decimal places:"
-msgstr "Dienu skaits starp pārbaudēm:"
+msgstr "Zīmju skaits aiz komata:"
 
 #: ../../locales/../src/interface/settings/optionspage_connection.cpp:35
 msgid "Number of retries has to be between 0 and 99."
@@ -4718,7 +4715,7 @@ msgstr "Atvērt direktoriju sistēmas datņu pārvaldniekā"
 
 #: resources.h:968 resources.h:969
 msgid "Open the Site Manager"
-msgstr "Atver vietņu pārvaldnieku "
+msgstr "Atver vietņu pārvaldnieku"
 
 #: resources.h:562
 msgid "Open the file."
@@ -4730,12 +4727,12 @@ msgstr "Atver Filezilla uzstādījumu dialogu"
 
 #: resources.h:308
 msgid "Opened as:"
-msgstr "Atvērts kā: "
+msgstr "Atvērts kā:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2057
-#: ../../locales/../src/interface/LocalListView.cpp:2102
-#: ../../locales/../src/interface/LocalListView.cpp:2189
-#: ../../locales/../src/interface/LocalListView.cpp:2202
+#: ../../locales/../src/interface/LocalListView.cpp:2053
+#: ../../locales/../src/interface/LocalListView.cpp:2098
+#: ../../locales/../src/interface/LocalListView.cpp:2185
+#: ../../locales/../src/interface/LocalListView.cpp:2198
 #: ../../locales/../src/interface/RemoteListView.cpp:2633
 msgid "Opening failed"
 msgstr "Atvēršana neizdevās"
@@ -4755,13 +4752,12 @@ msgstr ""
 "Atver direktorija izdrukas filtru dialogu. Labais klikšķis pārslēdz filtrus."
 
 #: resources.h:170
-#, fuzzy
 msgid "Operating system"
-msgstr "Uzieta operētājsistēmas problēma "
+msgstr "Operētājsistēma"
 
-#: ../../locales/../src/interface/FileZilla.cpp:317
+#: ../../locales/../src/interface/FileZilla.cpp:307
 msgid "Operating system problem detected"
-msgstr "Uzieta operētājsistēmas problēma "
+msgstr "Uzieta operētājsistēmas problēma"
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:171
 msgid "Organization:"
@@ -4835,7 +4831,7 @@ msgstr "Pa&sīvs (ieteikts)"
 msgid "Package"
 msgstr "Pakotne"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2466
+#: ../../locales/../src/interface/Mainfrm.cpp:2465
 msgid "Parameter not a valid URL"
 msgstr "Parametrs nav derīgs URL"
 
@@ -4862,13 +4858,13 @@ msgstr "Pasīvais režīms uzstādīts kā noklusējuma pārsūtīšanas režīm
 msgid "Password required"
 msgstr "Nepieciešama parole"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:120
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:127
 #: ../../locales/../src/interface/search.cpp:386
 msgid "Path"
 msgstr "Ceļš"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3166
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2357
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2355
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr ""
@@ -4877,14 +4873,14 @@ msgstr ""
 msgid "Paths"
 msgstr "Ceļi"
 
-#: ../../locales/../src/interface/edithandler.cpp:1248
-#: ../../locales/../src/interface/edithandler.cpp:1391
-#: ../../locales/../src/interface/edithandler.cpp:1490
-#: ../../locales/../src/interface/edithandler.cpp:1503
+#: ../../locales/../src/interface/edithandler.cpp:1257
+#: ../../locales/../src/interface/edithandler.cpp:1400
+#: ../../locales/../src/interface/edithandler.cpp:1499
+#: ../../locales/../src/interface/edithandler.cpp:1512
 msgid "Pending removal"
-msgstr ""
+msgstr "Aizvākšana aizkavēta"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:115
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:122
 msgid "Permission"
 msgstr "Atļauja"
 
@@ -4895,7 +4891,7 @@ msgstr "Atļaujas"
 
 #: resources.h:169
 msgid "Platform:"
-msgstr ""
+msgstr "Platforma:"
 
 #: resources.h:249
 msgid ""
@@ -4948,6 +4944,11 @@ msgstr "Lūdzu ievadiet pielāgotu datuma formātu."
 msgid "Please enter a custom time format."
 msgstr "Lūdzu ievadiet pielāgotu laika formātu."
 
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:684
+msgid ""
+"Please enter a date of the form YYYY-MM-DD such as for example 2010-07-18."
+msgstr ""
+
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:111
 #: ../../locales/../src/interface/speedlimits_dialog.cpp:54
 #, fuzzy, c-format
@@ -4964,7 +4965,7 @@ msgstr "Lūdzu ievadiet vārdu jaunajam filtram."
 msgid "Please enter a new name for the copied filter."
 msgstr "Lūdzu ievadiet jaunu vārdu nokopētajam filtram."
 
-#: ../../locales/../src/interface/filter.cpp:388
+#: ../../locales/../src/interface/filter.cpp:404
 #, c-format
 msgid "Please enter a new name for the filter set \"%s\""
 msgstr "Lūdzu ievadiet jaunu vārdu filtru komplektam \"%s\""
@@ -4994,7 +4995,7 @@ msgstr "Lūdzu ievadiet skaitli starp 1 un 10 vienlaicīgo pārsūtīšanu skait
 msgid "Please enter a password for this server:"
 msgstr "Lūdzu ievadiet paroli šim serverim:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2194
+#: ../../locales/../src/interface/QueueView.cpp:2216
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -5008,7 +5009,7 @@ msgstr ""
 "Lūdzu ievadiet noildzi starp 5 un 9999 sekundēm vai 0, lai atslēgtu "
 "taimautus."
 
-#: ../../locales/../src/interface/filter.cpp:328
+#: ../../locales/../src/interface/filter.cpp:344
 msgid "Please enter a unique name for this filter set"
 msgstr "Lūdzu ievadiet unikālu vārdu šim filtru komplektam"
 
@@ -5043,8 +5044,8 @@ msgid ""
 "Using raw ftp commands will clear the directory cache."
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:1189
-#: ../../locales/../src/interface/LocalTreeView.cpp:1188
+#: ../../locales/../src/interface/LocalListView.cpp:1185
+#: ../../locales/../src/interface/LocalTreeView.cpp:1189
 #: ../../locales/../src/interface/RemoteListView.cpp:1569
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1272
 msgid "Please enter the name of the directory which should be created:"
@@ -5078,7 +5079,7 @@ msgid ""
 "make sure you typed the address of the address resolver correctly."
 msgstr ""
 
-#: ../../locales/../src/interface/FileZilla.cpp:269
+#: ../../locales/../src/interface/FileZilla.cpp:259
 msgid "Please make sure the requested locale is installed on your system."
 msgstr ""
 
@@ -5200,14 +5201,14 @@ msgstr ""
 msgid "Postal code:"
 msgstr "Pasta indekss:"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1913
-#: ../../locales/../src/interface/sitemanager.cpp:2131
+#: ../../locales/../src/interface/sitemanager.cpp:1918
+#: ../../locales/../src/interface/sitemanager.cpp:2136
 msgid "Predefined Sites"
 msgstr "Iepriekš definētas vietnes"
 
 #: ../../locales/../src/interface/Mainfrm.cpp:704
 msgid "Preserving file timestamps"
-msgstr ""
+msgstr "Saglabā datnes laikspiedolus"
 
 #: ../../locales/../src/interface/settings/optionspage_themes.cpp:223
 msgid "Preview:"
@@ -5225,7 +5226,7 @@ msgstr ""
 msgid "Prioritize directories (default)"
 msgstr "Prioritizēt direktorijus (noklusējuma)"
 
-#: ../../locales/../src/interface/queue.cpp:1188
+#: ../../locales/../src/interface/queue.cpp:1195
 msgid "Priority"
 msgstr "Prioritāte"
 
@@ -5254,9 +5255,8 @@ msgid "Proxy &user:"
 msgstr "Starpniekservera &lietotājs:"
 
 #: ../../locales/../src/engine/proxy.cpp:415
-#, fuzzy
 msgid "Proxy authentication failed"
-msgstr "Filtra validēšana neizdevās"
+msgstr "Starpniekservera autentifikācija neizdevās"
 
 #: ../../locales/../src/engine/transfersocket.cpp:132
 #: ../../locales/../src/engine/transfersocket.cpp:146
@@ -5294,22 +5294,22 @@ msgstr "Publiskais atslēgas algoritms:"
 msgid "Public permissions"
 msgstr "Publiskās atļaujas"
 
-#: ../../locales/../src/interface/QueueView.cpp:3109
+#: ../../locales/../src/interface/QueueView.cpp:3131
 msgid "Queue has been fully processed"
 msgstr "Rinda pilnībā apstrādāta"
 
-#: ../../locales/../src/interface/statusbar.cpp:458
+#: ../../locales/../src/interface/statusbar.cpp:461
 #, c-format
 msgid "Queue: %s MiB"
 msgstr "Rinda: %s MiB"
 
-#: ../../locales/../src/interface/statusbar.cpp:388
+#: ../../locales/../src/interface/statusbar.cpp:391
 #, c-format
 msgid "Queue: %s%s"
 msgstr "Rinda: %s%s"
 
-#: ../../locales/../src/interface/statusbar.cpp:384
-#: ../../locales/../src/interface/statusbar.cpp:449
+#: ../../locales/../src/interface/statusbar.cpp:387
+#: ../../locales/../src/interface/statusbar.cpp:452
 msgid "Queue: empty"
 msgstr "Rinda: tukša"
 
@@ -5355,7 +5355,7 @@ msgstr ""
 msgid "Rea&d"
 msgstr "Las&īt"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:84
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:86
 msgid "Read-only"
 msgstr "Lasīšanas režīms"
 
@@ -5396,7 +5396,7 @@ msgstr "Tiešām dzēst visas izvēlētās datnes un mapes?"
 msgid "Reason"
 msgstr "Iemesls"
 
-#: ../../locales/../src/interface/QueueView.cpp:3117
+#: ../../locales/../src/interface/QueueView.cpp:3139
 msgid "Reboot now"
 msgstr "Atsāknēt tagad"
 
@@ -5404,13 +5404,18 @@ msgstr "Atsāknēt tagad"
 msgid "Rec&urse into subdirectories"
 msgstr ""
 
+#: ../../locales/../src/engine/directorylistingparser.cpp:2107
+#: ../../locales/../src/engine/directorylistingparser.cpp:2122
+msgid "Received a line exceeding 10000 characters, aborting."
+msgstr "Saņemtā līnija pārsniedz 10000 rakstzīmes, pārtraucu."
+
 #: ../../locales/../src/interface/netconfwizard.cpp:998
 #: ../../locales/../src/interface/netconfwizard.cpp:1007
 #: ../../locales/../src/interface/netconfwizard.cpp:1031
 msgid "Received data tainted"
-msgstr ""
+msgstr "Saņemtie dati bojāti"
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:78
+#: ../../locales/../src/interface/clearprivatedata.cpp:77
 msgid ""
 "Reconnect information cannot be cleared while connected to a server.\n"
 "If you continue, your connection will be disconnected."
@@ -5432,7 +5437,7 @@ msgstr "Novirzīšana uz nederīgu adresi"
 msgid "Refresh the file and folder lists"
 msgstr "Atsvaidzināt datņu un mapju sarakstu"
 
-#: ../../locales/../src/interface/edithandler.cpp:1232
+#: ../../locales/../src/interface/edithandler.cpp:1241
 msgid "Remote"
 msgstr "Attālināts"
 
@@ -5440,7 +5445,7 @@ msgstr "Attālināts"
 msgid "Remote certificate not trusted."
 msgstr "Attālinātais sertifikāts nav uzticams."
 
-#: resources.h:366 ../../locales/../src/interface/queue.cpp:1186
+#: resources.h:366 ../../locales/../src/interface/queue.cpp:1193
 msgid "Remote file"
 msgstr "Attālā datne"
 
@@ -5455,7 +5460,7 @@ msgstr "Attālā datņu meklēšana"
 msgid "Remote filters:"
 msgstr "Attālie filtri:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1223
+#: ../../locales/../src/interface/edithandler.cpp:1232
 msgid "Remote path"
 msgstr "Attālais ceļš"
 
@@ -5466,7 +5471,7 @@ msgid ""
 "supported by the current site's servertype (%s)."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1184
+#: ../../locales/../src/interface/sitemanager.cpp:1189
 #, c-format
 msgid ""
 "Remote path cannot be parsed. Make sure it is a valid absolute path and is "
@@ -5475,7 +5480,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:424
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:428
-#: ../../locales/../src/interface/sitemanager.cpp:1186
+#: ../../locales/../src/interface/sitemanager.cpp:1191
 msgid "Remote path cannot be parsed. Make sure it is a valid absolute path."
 msgstr ""
 
@@ -5485,9 +5490,8 @@ msgid "Remote path could not be parsed."
 msgstr "nevar palaist fzsftp"
 
 #: resources.h:444
-#, fuzzy
 msgid "Remote path handling:"
-msgstr "Attālā ceļš:"
+msgstr "Attālā ceļa apstrāde:"
 
 #: resources.h:312
 msgid "Remote path:"
@@ -5519,7 +5523,7 @@ msgid "Rename selected files and directories"
 msgstr "Pārdēvēt izvēlētās datnes un direktorijus"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3512
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2559
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2557
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "Pārdēvē '%s' par '%s'"
@@ -5603,11 +5607,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "Saglabāt uzstādījumus?"
 
-#: ../../locales/../src/interface/QueueView.cpp:1808
+#: ../../locales/../src/interface/QueueView.cpp:1814
 msgid "Scanning for files to add to queue"
 msgstr "Skenē pēc datnēm, lai pievienotu rindai"
 
-#: ../../locales/../src/interface/QueueView.cpp:1810
+#: ../../locales/../src/interface/QueueView.cpp:1816
 msgid "Scanning for files to upload"
 msgstr "Skenē pēc datnēm augšupielādei"
 
@@ -5627,7 +5631,7 @@ msgstr "Meklēt datnes rekursīvi."
 msgid "Search server for files"
 msgstr "Meklēt serverī datnes"
 
-#: ../../locales/../src/interface/statusbar.cpp:525
+#: ../../locales/../src/interface/statusbar.cpp:530
 msgid "Security information"
 msgstr "Drošības informācija"
 
@@ -5655,7 +5659,7 @@ msgstr ""
 "Izvēlieties noklusējuma darbību, kas tiks pielietota, ja pārsūtījuma mērķa "
 "datne jau eksistēs."
 
-#: ../../locales/../src/interface/edithandler.cpp:1693
+#: ../../locales/../src/interface/edithandler.cpp:1702
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:162
 msgid "Select default editor"
 msgstr "Izvēlieties noklusējuma redaktoru"
@@ -5697,11 +5701,11 @@ msgid "Select file for exported settings"
 msgstr "Izvēlieties datni eksportējamajiem uzstādījumiem"
 
 #: ../../locales/../src/interface/export.cpp:32
-#: ../../locales/../src/interface/sitemanager.cpp:2673
+#: ../../locales/../src/interface/sitemanager.cpp:2678
 msgid "Select file for exported sites"
 msgstr "Atlasiet datni eksportētajām vietnēm"
 
-#: ../../locales/../src/interface/import.cpp:16
+#: ../../locales/../src/interface/import.cpp:15
 msgid "Select file to import settings from"
 msgstr "Izvēlieties datni uzstādījumu importam"
 
@@ -5789,13 +5793,13 @@ msgstr "Atlasīti: %s un %s. Kopējais izmērs: %s"
 msgid "Selected %s and %s. Total size: At least %s"
 msgstr "Atlasīti: %s un %s. Kopējais izmērs: vismaz %s"
 
-#: ../../locales/../src/interface/edithandler.cpp:1634
-#: ../../locales/../src/interface/edithandler.cpp:1713
+#: ../../locales/../src/interface/edithandler.cpp:1643
+#: ../../locales/../src/interface/edithandler.cpp:1722
 #: ../../locales/../src/interface/settings/optionspage_edit.cpp:182
 msgid "Selected editor does not exist."
 msgstr "Izvēlētais redaktors neeskistē."
 
-#: resources.h:319 ../../locales/../src/interface/LocalListView.cpp:2086
+#: resources.h:319 ../../locales/../src/interface/LocalListView.cpp:2082
 msgid "Selected file already being edited"
 msgstr "Atlasītā datne jau tiek rediģēta"
 
@@ -5811,11 +5815,11 @@ msgstr "Atlasītā datne jau ir ielādēta"
 msgid "Selected file still being edited"
 msgstr "Atlasītā datne joprojām tiek rediģēta"
 
-#: ../../locales/../src/interface/filter.cpp:295
+#: ../../locales/../src/interface/filter.cpp:311
 msgid "Selected filter only works for local files."
 msgstr "Atlasītais filtrs darbojas tikai lokālajām datnēm."
 
-#: ../../locales/../src/interface/menu_bar.cpp:305
+#: ../../locales/../src/interface/menu_bar.cpp:309
 msgid ""
 "Selected global bookmark and current server use a different server type.\n"
 "Use site-specific bookmarks for this server."
@@ -5917,9 +5921,8 @@ msgid "Server sent unexpected reply."
 msgstr "Serveris atsūtīja negaidītu atbildi."
 
 #: resources.h:350
-#, fuzzy
 msgid "Server to client MAC:"
-msgstr "Serveris / lokālā datne"
+msgstr "Serveris klienta MAC:"
 
 #: resources.h:348
 #, fuzzy
@@ -5930,7 +5933,7 @@ msgstr "Serveris / lokālā datne"
 msgid "Server&type:"
 msgstr "Servera &veids:"
 
-#: ../../locales/../src/interface/queue.cpp:1184
+#: ../../locales/../src/interface/queue.cpp:1191
 msgid "Server/Local file"
 msgstr "Serveris/Lokālā datne"
 
@@ -5947,12 +5950,12 @@ msgid "Set &Priority"
 msgstr "Uzstādīt &prioritāti"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3664
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2437
-#, fuzzy, c-format
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2435
+#, c-format
 msgid "Set permissions of '%s' to '%s'"
-msgstr "Pārdēvē '%s' par '%s'"
+msgstr "Iestatīt atļaujas '%s' uz '%s'"
 
-#: ../../locales/../src/engine/transfersocket.cpp:858
+#: ../../locales/../src/engine/transfersocket.cpp:863
 msgid "SetSocketBufferSize called without socket"
 msgstr ""
 
@@ -5968,7 +5971,7 @@ msgstr ""
 msgid "Show &welcome dialog..."
 msgstr "Rādīt &sveiciena dialogu..."
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2324
+#: ../../locales/../src/interface/Mainfrm.cpp:2323
 msgid "Show both directory trees and continue comparing?"
 msgstr ""
 
@@ -5976,7 +5979,7 @@ msgstr ""
 msgid "Shows this help dialog"
 msgstr "Rāda šo palīdzības dialogu"
 
-#: ../../locales/../src/interface/QueueView.cpp:3119
+#: ../../locales/../src/interface/QueueView.cpp:3141
 msgid "Shutdown now"
 msgstr "Izslēgt sistēmu"
 
@@ -5988,19 +5991,19 @@ msgstr "Vietņu &pārvaldnieka ieraksti"
 msgid "Site Manager"
 msgstr "Vietņu pārvaldnieks"
 
-#: ../../locales/../src/interface/sitemanager.cpp:1040
-#: ../../locales/../src/interface/sitemanager.cpp:1052
-#: ../../locales/../src/interface/sitemanager.cpp:1061
-#: ../../locales/../src/interface/sitemanager.cpp:1078
-#: ../../locales/../src/interface/sitemanager.cpp:1095
-#: ../../locales/../src/interface/sitemanager.cpp:1108
-#: ../../locales/../src/interface/sitemanager.cpp:1127
-#: ../../locales/../src/interface/sitemanager.cpp:1137
-#: ../../locales/../src/interface/sitemanager.cpp:1151
-#: ../../locales/../src/interface/sitemanager.cpp:1162
-#: ../../locales/../src/interface/sitemanager.cpp:1187
-#: ../../locales/../src/interface/sitemanager.cpp:1197
-#: ../../locales/../src/interface/sitemanager.cpp:1206
+#: ../../locales/../src/interface/sitemanager.cpp:1045
+#: ../../locales/../src/interface/sitemanager.cpp:1057
+#: ../../locales/../src/interface/sitemanager.cpp:1066
+#: ../../locales/../src/interface/sitemanager.cpp:1083
+#: ../../locales/../src/interface/sitemanager.cpp:1100
+#: ../../locales/../src/interface/sitemanager.cpp:1113
+#: ../../locales/../src/interface/sitemanager.cpp:1132
+#: ../../locales/../src/interface/sitemanager.cpp:1142
+#: ../../locales/../src/interface/sitemanager.cpp:1156
+#: ../../locales/../src/interface/sitemanager.cpp:1167
+#: ../../locales/../src/interface/sitemanager.cpp:1192
+#: ../../locales/../src/interface/sitemanager.cpp:1202
+#: ../../locales/../src/interface/sitemanager.cpp:1211
 msgid "Site Manager - Invalid data"
 msgstr "Vietņu pārvaldnieks - Nederīgi dati"
 
@@ -6008,22 +6011,22 @@ msgstr "Vietņu pārvaldnieks - Nederīgi dati"
 msgid "Site Manager already open"
 msgstr "Vietņu pārvaldnieks jau atvērts"
 
-#: ../../locales/../src/interface/sitemanager.cpp:2581
-#: ../../locales/../src/interface/sitemanager.cpp:2598
-#: ../../locales/../src/interface/sitemanager.cpp:2612
-#: ../../locales/../src/interface/sitemanager.cpp:3011
-#: ../../locales/../src/interface/sitemanager.cpp:3098
+#: ../../locales/../src/interface/sitemanager.cpp:2586
+#: ../../locales/../src/interface/sitemanager.cpp:2603
+#: ../../locales/../src/interface/sitemanager.cpp:2617
+#: ../../locales/../src/interface/sitemanager.cpp:3016
+#: ../../locales/../src/interface/sitemanager.cpp:3103
 msgid "Site does not exist."
 msgstr "Vietne neeksistē."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2561
+#: ../../locales/../src/interface/sitemanager.cpp:2566
 msgid "Site path has to begin with 0 or 1."
-msgstr ""
+msgstr "Vietnes ceļam ir jāsākas ar 0 vai 1."
 
-#: ../../locales/../src/interface/sitemanager.cpp:2605
-#: ../../locales/../src/interface/sitemanager.cpp:2778
-#: ../../locales/../src/interface/sitemanager.cpp:3004
-#: ../../locales/../src/interface/sitemanager.cpp:3091
+#: ../../locales/../src/interface/sitemanager.cpp:2610
+#: ../../locales/../src/interface/sitemanager.cpp:2783
+#: ../../locales/../src/interface/sitemanager.cpp:3009
+#: ../../locales/../src/interface/sitemanager.cpp:3096
 msgid "Site path is malformed."
 msgstr ""
 
@@ -6042,7 +6045,7 @@ msgstr ""
 "pārvaldniekā.\n"
 "Pievienot aktuālo savienojumu Vietņu pārvaldniekam?"
 
-#: ../../locales/../src/interface/queue.cpp:1187
+#: ../../locales/../src/interface/queue.cpp:1194
 msgid "Size"
 msgstr "Lielums"
 
@@ -6109,7 +6112,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:315
 msgid "Source and target file may not be the same"
-msgstr ""
+msgstr "Avota un mērķa datne nevar būt tā pati"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:139
 msgid "Source and target of the drop operation are identical"
@@ -6128,11 +6131,11 @@ msgstr "Ātruma ierobežojumi"
 msgid "Speed limits"
 msgstr "Ātruma ierobežojumi"
 
-#: ../../locales/../src/interface/statusbar.cpp:591
+#: ../../locales/../src/interface/statusbar.cpp:596
 msgid "Speed limits are disabled, click to change."
 msgstr "Ātruma ierobežojumi ir atspējoti, noklikšķiniet, lai izmainītu."
 
-#: ../../locales/../src/interface/statusbar.cpp:595
+#: ../../locales/../src/interface/statusbar.cpp:600
 msgid "Speed limits are enabled, click to change."
 msgstr "Ātruma ierobežojumi ir iespējoti, noklikšķiniet, lai izmainītu."
 
@@ -6142,7 +6145,7 @@ msgstr "Sākt pārsūtīšanu &tūlīt"
 
 #: ../../locales/../src/interface/cmdline.cpp:7
 msgid "Start with opened Site Manager"
-msgstr "Sākt ar atvērtu Vietņu pārvaldnieku "
+msgstr "Sākt ar atvērtu Vietņu pārvaldnieku"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2209
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:1633
@@ -6160,7 +6163,7 @@ msgstr "Sāk %s augšupielādi"
 msgid "State or province:"
 msgstr "Štats vai province:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1224
+#: ../../locales/../src/interface/edithandler.cpp:1233
 #: ../../locales/../src/interface/QueueView.cpp:474
 msgid "Status"
 msgstr "Status"
@@ -6205,11 +6208,11 @@ msgstr ""
 #: ../../locales/../src/interface/state.cpp:373
 #: ../../locales/../src/interface/state.cpp:383
 #: ../../locales/../src/interface/state.cpp:392
-#: ../../locales/../src/interface/state.cpp:1012
-#: ../../locales/../src/interface/state.cpp:1021
-#: ../../locales/../src/interface/state.cpp:1028
-#: ../../locales/../src/interface/state.cpp:1039
-#: ../../locales/../src/interface/state.cpp:1046
+#: ../../locales/../src/interface/state.cpp:1016
+#: ../../locales/../src/interface/state.cpp:1025
+#: ../../locales/../src/interface/state.cpp:1032
+#: ../../locales/../src/interface/state.cpp:1043
+#: ../../locales/../src/interface/state.cpp:1050
 msgid "Synchronized browsing"
 msgstr "Sinhronizētā pārlūkošana"
 
@@ -6227,12 +6230,12 @@ msgstr "Sintakses kļūda"
 #: ../../locales/../src/interface/cmdline.cpp:80
 #: ../../locales/../src/interface/cmdline.cpp:89
 #: ../../locales/../src/interface/cmdline.cpp:95
-#: ../../locales/../src/interface/Mainfrm.cpp:2468
+#: ../../locales/../src/interface/Mainfrm.cpp:2467
 #, fuzzy
 msgid "Syntax error in command line"
 msgstr "Sintakses kļūda"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:85
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:87
 msgid "System"
 msgstr "Sistēma"
 
@@ -6251,7 +6254,7 @@ msgstr "TLS/SSL savienojums nodibināts."
 
 #: ../../locales/../src/engine/proxy.cpp:445
 msgid "TTL expired"
-msgstr ""
+msgstr "TTL beidzies"
 
 #: resources.h:47
 msgid "Target file already exists"
@@ -6282,7 +6285,7 @@ msgstr ""
 "Vietņu pārvaldnieks ir atvērts citā FileZilla 3 instancē.\n"
 "Vai gribāt turpināt? Jebkuras izmaiņas vietņu pārvaldniekā netiks saglabātas."
 
-#: ../../locales/../src/interface/clearprivatedata.cpp:104
+#: ../../locales/../src/interface/clearprivatedata.cpp:103
 msgid ""
 "The Site Manager is opened in another instance of FileZilla 3.\n"
 "Please close it or the data cannot be deleted."
@@ -6290,10 +6293,10 @@ msgstr ""
 "Vietņu pārvaldnieks ir atvērts citā FileZilla 3 instancē.\n"
 "Lūdzu aizveriet to, vai arī dati netiks dzēsti."
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:422
+#: ../../locales/../src/interface/xmlfunctions.cpp:421
 #, c-format
 msgid "The XML document is not well-formed: %s"
-msgstr ""
+msgstr "XML dokuments nav labi veidots: %s"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:618
 #, c-format
@@ -6301,23 +6304,23 @@ msgid "The address you entered was: %s"
 msgstr "Ievadītā adrese bija: %s"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:812
-#: ../../locales/../src/interface/sitemanager.cpp:2991
+#: ../../locales/../src/interface/sitemanager.cpp:2996
 msgid "The bookmark could not be added."
 msgstr "Grāmatzīmi nevar pievienot."
 
-#: ../../locales/../src/interface/sitemanager.cpp:3078
+#: ../../locales/../src/interface/sitemanager.cpp:3083
 msgid "The bookmarks could not be cleared."
 msgstr "Grāmatzīmes nevar notīrīt."
 
-#: ../../locales/../src/interface/statusbar.cpp:487
+#: ../../locales/../src/interface/statusbar.cpp:489
 msgid "The connection is encrypted. Click icon for details."
-msgstr ""
+msgstr "Savienojums tiek šifrēts. Noklikšķiniet ikonu sīkākai informācijai."
 
 #: ../../locales/../src/interface/settings/optionspage_ftpproxy.cpp:89
 msgid "The custom login sequence cannot be empty."
 msgstr ""
 
-#: resources.h:423 ../../locales/../src/interface/edithandler.cpp:1673
+#: resources.h:423 ../../locales/../src/interface/edithandler.cpp:1682
 #, no-c-format
 msgid "The default editor for text files could not be found."
 msgstr "Nevar atrast noklusējuma redaktoru teksta datnēm."
@@ -6348,8 +6351,8 @@ msgstr ""
 "Datne %s jau eksistē.\n"
 "Lūdzu ievadiet jaunu vārdu:"
 
-#: ../../locales/../src/interface/LocalListView.cpp:2063
-#: ../../locales/../src/interface/LocalListView.cpp:2194
+#: ../../locales/../src/interface/LocalListView.cpp:2059
+#: ../../locales/../src/interface/LocalListView.cpp:2190
 #: ../../locales/../src/interface/RemoteListView.cpp:2639
 #, c-format
 msgid ""
@@ -6366,13 +6369,13 @@ msgstr ""
 msgid "The file '%s' could not be loaded or does not contain a private key."
 msgstr ""
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:60
-#, fuzzy, c-format
+#: ../../locales/../src/interface/xmlfunctions.cpp:59
+#, c-format
 msgid "The file '%s' could not be loaded."
-msgstr "Šo filtru komlektu nevar aizvākt"
+msgstr "Datni '%s' nevar ielādēt."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2057
-#: ../../locales/../src/interface/LocalListView.cpp:2189
+#: ../../locales/../src/interface/LocalListView.cpp:2053
+#: ../../locales/../src/interface/LocalListView.cpp:2185
 #: ../../locales/../src/interface/RemoteListView.cpp:2633
 #, c-format
 msgid ""
@@ -6382,8 +6385,8 @@ msgstr ""
 "Datni '%s' nevar atvērt:\n"
 "Neviena programma nav asociēta uz jūsu sistēmas ar šo datņu tipu."
 
-#: ../../locales/../src/interface/LocalListView.cpp:2102
-#: ../../locales/../src/interface/LocalListView.cpp:2202
+#: ../../locales/../src/interface/LocalListView.cpp:2098
+#: ../../locales/../src/interface/LocalListView.cpp:2198
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6419,7 +6422,7 @@ msgstr ""
 msgid "The file selected as default editor does not exist."
 msgstr "Izvēlētais redaktors neeskistē"
 
-#: ../../locales/../src/interface/import.cpp:96
+#: ../../locales/../src/interface/import.cpp:95
 msgid ""
 "The file you have selected contains site manager data from a previous "
 "version of FileZilla.\n"
@@ -6439,12 +6442,12 @@ msgstr "Datņu kolonnu nevar noslēpt."
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:68
 #, c-format
 msgid "The following character will be replaced: %s"
-msgstr ""
+msgstr "Sekojošā rakstzīme tiks aizstāta:%s"
 
 #: ../../locales/../src/interface/settings/optionspage_transfer.cpp:65
 #, c-format
 msgid "The following characters will be replaced: %s"
-msgstr ""
+msgstr "Sekojošās rakstzīmes tiks aizstātas: %s"
 
 #: resources.h:327
 msgid "The following files are currently being edited:"
@@ -6455,9 +6458,8 @@ msgid "The free open source FTP solution"
 msgstr "Bezmaksas atklātā pirmkoda FTP risinājums"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:290
-#, fuzzy
 msgid "The global bookmarks could not be saved."
-msgstr "nevar palaist fzsftp"
+msgstr "Globālās grāmatzīmes nevar saglabāt."
 
 #: resources.h:965
 msgid ""
@@ -6499,38 +6501,37 @@ msgid ""
 msgstr ""
 "Jaunākā versija ir lejupielādēta. Lūdzu intalējiet tā pat kā šo versiju."
 
-#: ../../locales/../src/interface/QueueView.cpp:1930
-#: ../../locales/../src/interface/QueueView.cpp:1957
+#: ../../locales/../src/interface/QueueView.cpp:1936
+#: ../../locales/../src/interface/QueueView.cpp:1963
 msgid "The queue will not be saved."
 msgstr "Rinda netiks saglabāta."
 
-#: ../../locales/../src/interface/state.cpp:1018
+#: ../../locales/../src/interface/state.cpp:1022
 #, c-format
 msgid ""
 "The remote directory '%s' is not below the synchronization root (%s).\n"
 "Disable synchronized browsing and continue changing the remote directory?"
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:85
+#: ../../locales/../src/interface/import.cpp:84
 msgid "The selected categories have been imported."
 msgstr "Izvēlētās kategorijas importētas."
 
 #: resources.h:297
 msgid ""
 "The selected file contains importable data for the following categories:"
-msgstr ""
+msgstr "Izvēlētā datne satur importējamus datus šādām kategorijām:"
 
 #: resources.h:320
-#, fuzzy
 msgid "The selected file is already being edited:"
-msgstr "Atlasītā datne jau tiek rediģēta"
+msgstr "Atlasītā datne jau tiek rediģēta:"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2693
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:2069
+#: ../../locales/../src/interface/LocalListView.cpp:2065
 #: ../../locales/../src/interface/RemoteListView.cpp:2645
 msgid ""
 "The selected file would be executed directly.\n"
@@ -6538,7 +6539,7 @@ msgid ""
 "Do you really want to continue?"
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:2871
+#: ../../locales/../src/interface/sitemanager.cpp:2876
 msgid "The server could not be added."
 msgstr "Serveri nevar pievienot."
 
@@ -6570,7 +6571,7 @@ msgid ""
 "the computer you think it is."
 msgstr ""
 
-#: ../../locales/../src/interface/import.cpp:82
+#: ../../locales/../src/interface/import.cpp:81
 msgid ""
 "The settings have been imported. You have to restart FileZilla for all "
 "settings to have effect."
@@ -6578,22 +6579,21 @@ msgstr ""
 "Uzstādījumi tika importēti. Jums jārestartē Filezilla, lai visiem "
 "uzstādījumiem būtu efekts."
 
-#: ../../locales/../src/interface/QueueView.cpp:3107
+#: ../../locales/../src/interface/QueueView.cpp:3129
 msgid "The system will soon reboot unless you click Cancel."
 msgstr ""
 
-#: ../../locales/../src/interface/QueueView.cpp:3105
+#: ../../locales/../src/interface/QueueView.cpp:3127
 msgid "The system will soon shut down unless you click Cancel."
 msgstr ""
 
 #: resources.h:48
-#, fuzzy
 msgid ""
 "The target file already exists.\n"
 "Please choose an action."
 msgstr ""
-"Datne %s jau eksistē.\n"
-"Lūdzu ievadiet jaunu vārdu:"
+"Mērķa datne jau eksistē.\n"
+"Lūdzu izvēlieties darbību."
 
 #: ../../locales/../src/interface/netconfwizard.cpp:846
 msgid "The test did not succeed. Do you really want to save the settings?"
@@ -6603,11 +6603,11 @@ msgstr ""
 msgid "Themes"
 msgstr "Tēmas"
 
-#: ../../locales/../src/interface/filter.cpp:447
+#: ../../locales/../src/interface/filter.cpp:463
 msgid "This filter set cannot be removed."
 msgstr "Šo filtru komlektu nevar aizvākt."
 
-#: ../../locales/../src/interface/filter.cpp:382
+#: ../../locales/../src/interface/filter.cpp:398
 msgid "This filter set cannot be renamed."
 msgstr "Šo filtru komlektu nevar pārsaukt."
 
@@ -6637,8 +6637,8 @@ msgstr "Laika formatēšana"
 msgid "Time&out in seconds:"
 msgstr "Noil&dze pēc sekundēm:"
 
-#: resources.h:729 ../../locales/../src/interface/QueueView.cpp:1045
-#: ../../locales/../src/interface/QueueView.cpp:1089
+#: resources.h:729 ../../locales/../src/interface/QueueView.cpp:1051
+#: ../../locales/../src/interface/QueueView.cpp:1095
 msgid "Timeout"
 msgstr "Noildze"
 
@@ -6649,16 +6649,18 @@ msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
 "seconds."
 msgstr ""
+"Laika joslas nobīdes: Serveris %d sekundes. Lokāli: %d sekundes. Atšķirība: %"
+"d sekundes."
 
 #: ../../locales/../src/interface/verifycertdialog.cpp:174
 msgid "Title:"
 msgstr "Virsraksts:"
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2322
+#: ../../locales/../src/interface/Mainfrm.cpp:2321
 msgid "To compare directories, both file lists have to be aligned."
 msgstr ""
 
-#: ../../locales/../src/interface/Mainfrm.cpp:2323
+#: ../../locales/../src/interface/Mainfrm.cpp:2322
 msgid "To do this, the directory trees need to be both shown or both hidden."
 msgstr ""
 
@@ -6753,17 +6755,17 @@ msgstr "Pārsūtījumu rinda"
 msgid "Transfer Settings"
 msgstr "Pārsūtīšanas uzstādījumi"
 
-#: ../../locales/../src/engine/transfersocket.cpp:493
-#: ../../locales/../src/engine/transfersocket.cpp:517
+#: ../../locales/../src/engine/transfersocket.cpp:498
+#: ../../locales/../src/engine/transfersocket.cpp:522
 #, c-format
 msgid "Transfer connection interrupted: %s"
 msgstr "Pārsūtīšanas savienojums pārtraukts: %s"
 
 #: ../../locales/../src/interface/netconfwizard.cpp:621
 msgid "Transferred data got tainted."
-msgstr ""
+msgstr "Pārsūtītie dati sabojājās."
 
-#: ../../locales/../src/interface/QueueView.cpp:1468
+#: ../../locales/../src/interface/QueueView.cpp:1474
 #: ../../locales/../src/interface/statuslinectrl.cpp:274
 msgid "Transferring"
 msgstr "Pārsūta"
@@ -6772,8 +6774,8 @@ msgstr "Pārsūta"
 msgid "Transfers"
 msgstr "Pārsūtījumi"
 
-#: ../../locales/../src/interface/QueueView.cpp:3022
-#: ../../locales/../src/interface/QueueView.cpp:3025
+#: ../../locales/../src/interface/QueueView.cpp:3044
+#: ../../locales/../src/interface/QueueView.cpp:3047
 msgid "Transfers finished"
 msgstr "Pārsūtījumi pabeigti"
 
@@ -6787,11 +6789,11 @@ msgstr "Apstrādāt &sekojošos datņu veidus kā ASCII datnes:"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:875
 msgid "Trust changed Hostkey: "
-msgstr ""
+msgstr "Uzticēties mainītai saimnieka atslēgai: "
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:873
 msgid "Trust new Hostkey: "
-msgstr "Uzticēties jaunajam karstajam taustiņam"
+msgstr "Uzticēties jaunajai saimnieka atslēgai: "
 
 #: resources.h:193
 msgid "Trust the new key and carry on connecting?"
@@ -6805,7 +6807,7 @@ msgstr ""
 msgid "Trust this host and carry on connecting?"
 msgstr ""
 
-#: resources.h:395 ../../locales/../src/interface/edithandler.cpp:1222
+#: resources.h:395 ../../locales/../src/interface/edithandler.cpp:1231
 msgid "Type"
 msgstr "Tips"
 
@@ -6848,8 +6850,8 @@ msgstr ""
 msgid "Unit:"
 msgstr "Vienība:"
 
-#: ../../locales/../src/interface/edithandler.cpp:1254
-#: ../../locales/../src/interface/edithandler.cpp:1282
+#: ../../locales/../src/interface/edithandler.cpp:1263
+#: ../../locales/../src/interface/edithandler.cpp:1291
 msgid "Unknown"
 msgstr "Nezināms"
 
@@ -6866,7 +6868,7 @@ msgstr ""
 msgid "Unknown certificate"
 msgstr "Nezināms sertifikāts"
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:410
+#: ../../locales/../src/interface/xmlfunctions.cpp:409
 msgid ""
 "Unknown error opening the file. Make sure the file can be accessed and is a "
 "well-formed XML document."
@@ -6883,7 +6885,7 @@ msgid ""
 "subnegotiation: %d"
 msgstr ""
 
-#: ../../locales/../src/interface/xmlfunctions.cpp:455
+#: ../../locales/../src/interface/xmlfunctions.cpp:454
 msgid ""
 "Unknown root element, the file does not appear to be generated by FileZilla."
 msgstr ""
@@ -6907,7 +6909,7 @@ msgstr "Neatbalstīts sertifikātu veids"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:650
 msgid "Unsupported redirect"
-msgstr ""
+msgstr "Neatbalstīta virzienmaiņa"
 
 #: resources.h:331
 msgid "Up&load and unedit"
@@ -6927,16 +6929,16 @@ msgstr "Atjauninājumu vednis"
 msgid "Upload"
 msgstr "Augšupielāde"
 
-#: ../../locales/../src/interface/edithandler.cpp:1245
+#: ../../locales/../src/interface/edithandler.cpp:1254
 msgid "Upload failed"
 msgstr "Augšupielāde neizdevās"
 
-#: ../../locales/../src/interface/statusbar.cpp:603
+#: ../../locales/../src/interface/statusbar.cpp:608
 #, c-format
 msgid "Upload limit: %s/s"
 msgstr "Augšupielādes ierobežojums: %s/s"
 
-#: ../../locales/../src/interface/statusbar.cpp:605
+#: ../../locales/../src/interface/statusbar.cpp:610
 msgid "Upload limit: none"
 msgstr "Augšupielādes ierobežojums: nekāds"
 
@@ -6950,25 +6952,25 @@ msgstr "Augšupielādēt atlasītās datnes un direktorijus"
 
 #: resources.h:315
 msgid "Upload this file back to the server?"
-msgstr "Augšupielādēt šo datni atpakaļ uz serveri? "
+msgstr "Augšupielādēt šo datni atpakaļ uz serveri?"
 
 #: resources.h:314
 msgid "Upload this file to the server?"
-msgstr "Augšupielādēt šo datni uz serveri? "
+msgstr "Augšupielādēt šo datni uz serveri?"
 
-#: ../../locales/../src/interface/edithandler.cpp:1239
-#: ../../locales/../src/interface/edithandler.cpp:1273
-#: ../../locales/../src/interface/edithandler.cpp:1438
+#: ../../locales/../src/interface/edithandler.cpp:1248
+#: ../../locales/../src/interface/edithandler.cpp:1282
+#: ../../locales/../src/interface/edithandler.cpp:1447
 msgid "Uploading"
 msgstr "Augšupielādē"
 
-#: ../../locales/../src/interface/edithandler.cpp:1242
-#: ../../locales/../src/interface/edithandler.cpp:1440
+#: ../../locales/../src/interface/edithandler.cpp:1251
+#: ../../locales/../src/interface/edithandler.cpp:1449
 msgid "Uploading and pending removal"
 msgstr ""
 
-#: ../../locales/../src/interface/edithandler.cpp:1276
-#: ../../locales/../src/interface/edithandler.cpp:1442
+#: ../../locales/../src/interface/edithandler.cpp:1285
+#: ../../locales/../src/interface/edithandler.cpp:1451
 msgid "Uploading and unediting"
 msgstr ""
 
@@ -7025,6 +7027,7 @@ msgstr "Izmantot tās vietā servera ārējo IP adresi"
 msgid ""
 "Use this if you're behind a router and have a static external IP address."
 msgstr ""
+"Izmantojiet šo, ja jūs esat aiz maršrutētāja un ir statiska ārējā IP adrese."
 
 #: resources.h:692
 msgid ""
@@ -7037,10 +7040,10 @@ msgstr ""
 msgid "User:"
 msgstr "Lietotājs:"
 
-#: ../../locales/../src/interface/manual_transfer.cpp:493
-#: ../../locales/../src/interface/sitemanager.cpp:1127
+#: ../../locales/../src/interface/manual_transfer.cpp:502
+#: ../../locales/../src/interface/sitemanager.cpp:1132
 msgid "Username cannot be a series of spaces"
-msgstr ""
+msgstr "Lietotāja vārds nevar būt vairākas atstarpes"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:4368
 #, c-format
@@ -7075,9 +7078,8 @@ msgid "Verifying certificate..."
 msgstr "Pārbauda sertifikātu..."
 
 #: resources.h:168
-#, fuzzy
 msgid "Version:"
-msgstr "&Versija %s"
+msgstr "Versija:"
 
 #: resources.h:812
 msgid "Very high"
@@ -7099,15 +7101,15 @@ msgstr "Redzamās kolonnas"
 msgid "W&rite"
 msgstr "R&akstīt"
 
-#: ../../locales/../src/interface/QueueView.cpp:1767
+#: ../../locales/../src/interface/QueueView.cpp:1773
 msgid "Waiting"
 msgstr "Gaida"
 
-#: ../../locales/../src/interface/QueueView.cpp:1375
+#: ../../locales/../src/interface/QueueView.cpp:1381
 msgid "Waiting for browsing connection"
-msgstr ""
+msgstr "Gaida pārlūkošanas savienojumu"
 
-#: ../../locales/../src/interface/QueueView.cpp:1418
+#: ../../locales/../src/interface/QueueView.cpp:1424
 msgid "Waiting for password"
 msgstr "Gaida paroli"
 
@@ -7119,7 +7121,7 @@ msgstr ""
 msgid "Waiting to retry..."
 msgstr "Gaida, lai atkārtotu..."
 
-#: ../../locales/../src/interface/FileZilla.cpp:308
+#: ../../locales/../src/interface/FileZilla.cpp:298
 msgid ""
 "Warning!\n"
 "\n"
@@ -7186,7 +7188,7 @@ msgstr "Nepareiza ārējā IP adrese"
 
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:827
 msgid "Wrong line endings"
-msgstr ""
+msgstr "Nepareizas rindiņas beigas"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:886
 msgid "Yes"
@@ -7213,8 +7215,9 @@ msgid ""
 "You can use an x at any position to keep the permission the original files "
 "have."
 msgstr ""
+"Jūs varat izmantot x jebkurā vietā, lai saglabātu datnes oriģinālās atļaujas."
 
-#: ../../locales/../src/interface/import.cpp:29
+#: ../../locales/../src/interface/import.cpp:28
 msgid "You cannot import settings from FileZilla's own settings directory."
 msgstr ""
 
@@ -7232,21 +7235,21 @@ msgstr "Jus neievadījāt jaunu vārdu datnei. Vai pārrakstīt datni?"
 msgid "You have selected at least one symbolic link."
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:2036
+#: ../../locales/../src/interface/LocalListView.cpp:2032
 #: ../../locales/../src/interface/RemoteListView.cpp:2612
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
 "continue?"
 msgstr ""
 
-#: ../../locales/../src/interface/LocalListView.cpp:2156
+#: ../../locales/../src/interface/LocalListView.cpp:2152
 msgid ""
 "You have selected more than 10 files or directories to open, do you really "
 "want to continue?"
 msgstr ""
 
-#: ../../locales/../src/interface/manual_transfer.cpp:417
-#: ../../locales/../src/interface/sitemanager.cpp:1040
+#: ../../locales/../src/interface/manual_transfer.cpp:426
+#: ../../locales/../src/interface/sitemanager.cpp:1045
 msgid "You have to enter a hostname."
 msgstr "Jāievada saimniekdatora vārds."
 
@@ -7263,13 +7266,13 @@ msgstr "Jāievada derīga IP adrese."
 msgid "You have to enter a writable local directory."
 msgstr "Jāievada rakstāms lokālais direktorijs."
 
-#: ../../locales/../src/interface/manual_transfer.cpp:504
-#: ../../locales/../src/interface/sitemanager.cpp:1137
+#: ../../locales/../src/interface/manual_transfer.cpp:513
+#: ../../locales/../src/interface/sitemanager.cpp:1142
 msgid "You have to enter an account name"
 msgstr "Jāievada saimniekdatora vārds"
 
-#: ../../locales/../src/interface/manual_transfer.cpp:474
-#: ../../locales/../src/interface/sitemanager.cpp:1108
+#: ../../locales/../src/interface/manual_transfer.cpp:483
+#: ../../locales/../src/interface/sitemanager.cpp:1113
 msgid "You have to specify a user name"
 msgstr "Jānorāda lietotājvārds"
 
@@ -7287,7 +7290,7 @@ msgstr "Jums jāievada grāmatzīmes vārds."
 msgid "You need to enter a name for the log file."
 msgstr "Jums jāievada žurnāla vārds."
 
-#: ../../locales/../src/interface/edithandler.cpp:1629
+#: ../../locales/../src/interface/edithandler.cpp:1638
 #, fuzzy
 msgid "You need to enter a properly quoted command."
 msgstr "Jāievada saimniekdatora vārds."
@@ -7304,19 +7307,19 @@ msgstr "Jāievada starpniekservera pieslēgvietu diapazonā no 1 līdz 65535"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:73
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:438
-#: ../../locales/../src/interface/sitemanager.cpp:1197
+#: ../../locales/../src/interface/sitemanager.cpp:1202
 msgid "You need to enter at least one path, empty bookmarks are not supported."
 msgstr ""
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:80
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:445
-#: ../../locales/../src/interface/sitemanager.cpp:1206
+#: ../../locales/../src/interface/sitemanager.cpp:1211
 msgid ""
 "You need to enter both a local and a remote path to enable synchronized "
 "browsing for this bookmark."
 msgstr ""
 
-#: ../../locales/../src/interface/sitemanager.cpp:1162
+#: ../../locales/../src/interface/sitemanager.cpp:1167
 msgid ""
 "You need to enter both a local and a remote path to enable synchronized "
 "browsing for this site."
@@ -7344,23 +7347,37 @@ msgid ""
 "should work properly."
 msgstr ""
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:68
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:102
+msgid "after"
+msgstr "pēc"
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:99
+msgid "before"
+msgstr "pirms"
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:69
 msgid "begins with"
 msgstr "sākas ar"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:66
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:67
 msgid "contains"
 msgstr "satur"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:71
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:72
 msgid "does not contain"
-msgstr ""
+msgstr "nesatur"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:69
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:76
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:101
+msgid "does not equal"
+msgstr "nav vienāds"
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:70
 msgid "ends with"
 msgstr "beidzas ar"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:74
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:75
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:100
 msgid "equals"
 msgstr "vienāds ar"
 
@@ -7371,7 +7388,7 @@ msgstr "vienāds ar"
 msgid "file"
 msgstr "datne"
 
-#: ../../locales/../src/interface/edithandler.cpp:87
+#: ../../locales/../src/interface/edithandler.cpp:88
 msgid "fz3temp-lockfile"
 msgstr ""
 
@@ -7391,72 +7408,69 @@ msgstr "nevar palaist fzsftp"
 msgid "gnutls_certificate_get_peers returned no certificates"
 msgstr ""
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:73
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:74
 msgid "greater than"
 msgstr "lielāks nekā"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:92
-#, fuzzy
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:94
 msgid "group executable"
-msgstr "Izpildamais"
+msgstr "grupai izpildāma"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:90
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:92
 msgid "group readable"
 msgstr "grupa lasāma"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:91
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:93
 msgid "group writeable"
 msgstr "grupa rakstāma"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:67
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:68
 msgid "is equal to"
 msgstr "ir vienāds ar"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:77
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:79
 msgid "is set"
 msgstr "ir iestatīts"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:78
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:80
 msgid "is unset"
-msgstr ""
+msgstr "ir atstatīts"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:75
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:77
 msgid "less than"
 msgstr "mazāk kā"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:70
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:71
 msgid "matches regex"
-msgstr ""
+msgstr "sakrīt ar regex"
+
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:91
+msgid "owner executable"
+msgstr "īpašniekam izpildāma"
 
 #: ../../locales/../src/interface/filter_conditions_dialog.cpp:89
-#, fuzzy
-msgid "owner executable"
-msgstr "Izpildamais"
-
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:87
 msgid "owner readable"
-msgstr ""
+msgstr "īpašniekam lasāma"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:88
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:90
 msgid "owner writeable"
-msgstr ""
+msgstr "īpašniekam rakstāma"
 
 #: ../../locales/../src/interface/sftp_crypt_info_dlg.cpp:29
 msgid "unknown"
 msgstr "nezināms"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:95
-#, fuzzy
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:97
 msgid "world executable"
-msgstr "Izpildamais"
+msgstr "pasaulei izpildāma"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:93
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:95
 msgid "world readable"
-msgstr ""
+msgstr "pasaulei lasāma"
 
-#: ../../locales/../src/interface/filter_conditions_dialog.cpp:94
+#: ../../locales/../src/interface/filter_conditions_dialog.cpp:96
 msgid "world writeable"
-msgstr ""
+msgstr "pasaulei rakstāma"
 
 #: resources.h:164
 msgid "wxWidgets:"
