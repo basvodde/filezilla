@@ -64,7 +64,7 @@ AC_DEFUN([FZ_CHECK_TINYXML], [
 
           TiXmlBase::EncodeString(input, &output);
 
-          if (output != "foo&amp#xxx;")
+          if (output != "foo&amp;#xxx;")
             return 1;
           return 0;
         ])
