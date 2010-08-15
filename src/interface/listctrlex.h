@@ -76,6 +76,7 @@ private:
 	void OnKeyDown(wxKeyEvent& event);
 	void OnBeginLabelEdit(wxListEvent& event);
 	void OnEndLabelEdit(wxListEvent& event);
+	void OnColumnDragging(wxListEvent& event);
 
 	bool m_prefixSearch_enabled;
 	wxDateTime m_prefixSearch_lastKeyPress;
@@ -100,6 +101,11 @@ private:
 	};
 	std::vector<t_columnInfo> m_columnInfo;
 	unsigned int *m_pVisibleColumnMapping;
+
+#ifdef __WXMSW__
+	virtual bool MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result);
+	bool m_columnDragging;
+#endif
 
 #ifndef __WXMSW__
 	bool m_editing;
