@@ -25,7 +25,7 @@ EVT_LIST_COL_DRAGGING(wxID_ANY, wxListCtrlEx::OnColumnDragging)
 #endif
 END_EVENT_TABLE()
 
-#define MIN_COLUMN_WIDTH 10
+#define MIN_COLUMN_WIDTH 12
 
 wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   wxWindowID id,
@@ -41,6 +41,7 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 
 #ifndef __WXMSW__
 	m_editing = false;
+#else
 	m_columnDragging = false;
 #endif
 	m_blockedLabelEditing = false;
