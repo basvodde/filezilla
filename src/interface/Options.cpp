@@ -640,6 +640,8 @@ void COptions::Import(TiXmlElement* pElement)
 	std::map<std::string, int> nameOptionMap;
 	GetNameOptionMap(nameOptionMap);
 	LoadOptions(nameOptionMap, pElement);
+	if (!m_save_timer.IsRunning())
+		m_save_timer.Start(15000, true);
 }
 
 void COptions::LoadOptions(const std::map<std::string, int>& nameOptionMap, TiXmlElement* settings /*=0*/)
