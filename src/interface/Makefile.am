@@ -274,7 +274,7 @@ $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla$(EXEEXT): filezilla
 	$(MAKE) -C resources mac-copy-resources
 	cp -f filezilla $(top_builddir)/FileZilla.app/Contents/MacOS/filezilla
 	cp -f $(top_srcdir)/COPYING $(top_builddir)/FileZilla.app/COPYING
-	mkdir -p $(top_builddir)/FileZilla.app/Contents/docs
+	mkdir -p $(top_builddir)/FileZilla.app/docs
 	cp -f $(top_srcdir)/docs/fzdefaults.xml.example $(top_builddir)/FileZilla.app/docs/fzdefaults.xml.example
 	cp -f $(top_srcdir)/docs/*.man $(top_builddir)/FileZilla.app/docs
 
