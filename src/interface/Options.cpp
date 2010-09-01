@@ -94,7 +94,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Trusted root certificate", string, _T(""), internal },
 	{ "Size format", number, _T("0"), normal },
 	{ "Size thousands separator", number, _T("1"), normal },
-	{ "Size decimal places", number, _T("0"), normal },
+	{ "Size decimal places", number, _T("1"), normal },
 
 	// Interface settings
 	{ "Number of Transfers", number, _T("2"), normal },
