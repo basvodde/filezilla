@@ -957,8 +957,7 @@ public:
 
 		CMP(CmpDir, data1, data2);
 
-		if (!data1.dir)
-			CMP(CmpSize, data1, data2)
+		CMP(CmpSize, data1, data2)
 
 		CMP_LESS(CmpName, data1, data2);
 	}
