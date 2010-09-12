@@ -244,6 +244,7 @@ void CFilelistStatusBar::SetHidden(int hidden)
 
 void CFilelistStatusBar::SetEmptyString(const wxString& empty)
 {
+	m_empty_string = empty;
 	TriggerUpdateText();
 }
 
