@@ -389,7 +389,7 @@ void CExternalIPResolver::OnData(char* buffer, unsigned int len)
 		{
 			if (buffer[i] == '\r' || buffer[i] == '\n')
 				break;
-			if (buffer[i] > 127)
+			if (buffer[i] & 0x80)
 			{
 				Close(false);
 				return;

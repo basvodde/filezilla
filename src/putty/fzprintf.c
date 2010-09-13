@@ -103,8 +103,8 @@ int fzprintf_raw(sftpEventTypes type, const char* fmt, ...)
     va_start(ap, fmt);
     str = dupvprintf(fmt, ap);
 
-    fprintf(stdout, "%c", (int)type + '0');
-    fprintf(stdout, str);
+    fputc((char)type + '0', stdout);
+    fputs(str, stdout);
 
     sfree(str);
 

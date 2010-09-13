@@ -3,6 +3,7 @@
  * Unix console PuTTY tools
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -155,7 +156,12 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	newmode.c_lflag |= ISIG | ICANON;
 	tcsetattr(0, TCSANOW, &newmode);
 	line[0] = '\0';
-	read(0, line, sizeof(line) - 1);
+	int ret;
+	do
+	{
+	    ret = read(0, line, sizeof(line) - 1);
+	} while (ret == -1 && errno == EINTR);
+
 	tcsetattr(0, TCSANOW, &oldmode);
     }
 
@@ -208,7 +214,12 @@ int askalg(void *frontend, const char *algtype, const char *algname,
 	newmode.c_lflag |= ECHO | ISIG | ICANON;
 	tcsetattr(0, TCSANOW, &newmode);
 	line[0] = '\0';
-	read(0, line, sizeof(line) - 1);
+	int ret;
+	do
+	{
+	    ret = read(0, line, sizeof(line) - 1);
+	} while (ret == -1 && errno == EINTR);
+
 	tcsetattr(0, TCSANOW, &oldmode);
     }
 
@@ -261,7 +272,11 @@ int askappend(void *frontend, Filename filename,
 	newmode.c_lflag |= ECHO | ISIG | ICANON;
 	tcsetattr(0, TCSANOW, &newmode);
 	line[0] = '\0';
-	read(0, line, sizeof(line) - 1);
+	int ret;
+	do
+	{
+	    ret = read(0, line, sizeof(line) - 1);
+	} while (ret == -1 && errno == EINTR);
 	tcsetattr(0, TCSANOW, &oldmode);
     }
 
@@ -317,6 +332,7 @@ void logevent(void *frontend, const char *string)
 //FZ postmsg(&cf);
 }
 
+/*FZ 
 static void console_data_untrusted(const char *data, int len)
 {
     int i;
@@ -324,7 +340,7 @@ static void console_data_untrusted(const char *data, int len)
 	if ((data[i] & 0x60) || (data[i] == '\n'))
 	    fputc(data[i], stdout);
     fflush(stdout);
-}
+}*/
 
 int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 {

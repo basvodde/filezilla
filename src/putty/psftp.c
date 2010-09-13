@@ -1364,7 +1364,7 @@ int sftp_general_get(struct sftp_command *cmd, int restart, int multiple)
     /* FZ unused
     while (i < cmd->nwords && cmd->words[i][0] == '-') {
 	if (!strcmp(cmd->words[i], "--")) {
-	    /* finish processing options *//* FZ unused
+	    *//* finish processing options *//* FZ unused
 	    i++;
 	    break;
 	} else if (!strcmp(cmd->words[i], "-r")) {
@@ -2388,7 +2388,7 @@ static struct sftp_cmd_lookup {
 	    "  default location where the \"get\" command will save files).\n",
 	    sftp_cmd_lpwd
     },
-/* END FZ UNUSED */
+END FZ UNUSED */
     {
 	"ls", TRUE, "dir", NULL,
 	    sftp_cmd_ls
@@ -2532,7 +2532,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
 {
     int i;
     if (cmd->nwords == 1) {
-	/*
+	*//*
 	 * Give short help on each command.
 	 */
 	/* CONTINUE FZ UNUSED
@@ -2557,7 +2557,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
 	    printf("%s\n", lookup->shorthelp);
 	}
     } else {
-	/*
+	*//*
 	 * Give long help on specific commands.
 	 *//* CONTINUE FZ UNUSED
 	for (i = 1; i < cmd->nwords; i++) {
@@ -2575,7 +2575,7 @@ static int sftp_cmd_help(struct sftp_command *cmd)
     }
     return 1;
 }
-/* END FZ UNUSED */
+END FZ UNUSED */
 
 /* ----------------------------------------------------------------------
  * Command line reading and parsing.
