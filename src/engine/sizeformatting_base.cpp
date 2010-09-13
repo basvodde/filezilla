@@ -77,6 +77,8 @@ wxString CSizeFormatBase::Format(COptionsBase* pOptions, const wxLongLong& size,
 		switch (num_decimal_places)
 		{
 		default:
+			num_decimal_places = 1;
+			// Fall-through
 		case 1:
 			max = 9;
 			divider = 100;
@@ -107,7 +109,7 @@ wxString CSizeFormatBase::Format(COptionsBase* pOptions, const wxLongLong& size,
 
 		places.Printf(_T("%d"), remainder);
 		const size_t len = places.Len();
-		for (size_t i = len; i < num_decimal_places; i++)
+		for (size_t i = len; i < static_cast<size_t>(num_decimal_places); i++)
 			places = _T("0") + places;
 	}
 

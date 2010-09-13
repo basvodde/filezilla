@@ -24,14 +24,26 @@ DEALINGS IN THE SOFTWARE.
 
 #include "wxdbusconnection.h"
 #include "config.h"
-#include <poll.h>
+#include <errno.h>
 #include <list>
+#include <poll.h>
 
 // Define WITH_LIBDBUS to 1 (e.g. from configure) if you are using
 // libdbus < 1.2 that does not have dbus_watch_get_unix_fd yet.
 #ifndef WITH_LIBDBUS
 #define WITH_LIBDBUS 2
 #endif
+
+static ssize_t safe_write(int fd, const void* buf, size_t count)
+{
+	int ret;
+	do
+	{
+		ret = write(fd, buf, count);
+	} while (ret == -1 && errno == EINTR);
+
+	return ret;
+}
 
 typedef std::list<DBusWatch *> WatchesList;
 
@@ -40,7 +52,7 @@ class DBusThread : public wxThread
 public:
 	DBusThread(wxThreadKind kind, wxDBusConnection * parent, int ID, DBusConnection * connection) ;
 	virtual ~DBusThread();
-	virtual ExitCode Entry();
+	bool Init();
 	inline void SetExit() { m_exit = true; }
 	inline int GetID() { return m_ID; }
 	
@@ -48,6 +60,9 @@ public:
 
 	inline void EnterCriticalSection() { m_critical_section.Enter(); }
 	inline void LeaveCriticalSection() { m_critical_section.Leave(); }
+
+protected:
+	virtual ExitCode Entry();
 
 private:
 	inline WatchesList * GetWatchesList() { return &bus_watches; }
@@ -76,7 +91,7 @@ private:
 void DBusThread::Wakeup()
 {
 	char tmp = 0;
-	write(m_wakeup_pipe[1], &tmp, 1);
+	safe_write(m_wakeup_pipe[1], &tmp, 1);
 }
 
 DBusThread::DBusThread(wxThreadKind kind, wxDBusConnection * parent, int ID, DBusConnection * connection): wxThread(kind)
@@ -86,19 +101,40 @@ DBusThread::DBusThread(wxThreadKind kind, wxDBusConnection * parent, int ID, DBu
 	m_parent = parent;
 	m_exit = false;
 	m_thread_holds_lock = false;
+	m_wakeup_pipe[0] = -1;
+	m_wakeup_pipe[1] = -1;
+}
 
-	pipe(m_wakeup_pipe);
+bool DBusThread::Init()
+{
+	if (pipe(m_wakeup_pipe) == -1)
+	{
+		// Just to be sure
+		m_wakeup_pipe[0] = -1;
+		m_wakeup_pipe[1] = -1;
+		return false;
+	}
+
+	if (Create() != wxTHREAD_NO_ERROR)
+		return false;
+
 	fcntl(m_wakeup_pipe[0], F_SETFL, O_NONBLOCK);
-
+	
 	m_parent_id = pthread_self();
 
 	dbus_connection_set_watch_functions(m_connection, add_watch, remove_watch, toggle_watch, (void *)this, NULL);
+
+	Run();
+
+	return true;
 }
 
 DBusThread::~DBusThread()
 {
-	close(m_wakeup_pipe[0]);
-	close(m_wakeup_pipe[1]);
+	if (m_wakeup_pipe[0] != -1)
+		close(m_wakeup_pipe[0]);
+	if (m_wakeup_pipe[1] != -1)
+		close(m_wakeup_pipe[1]);
 }
 
 wxThread::ExitCode DBusThread::Entry()
@@ -195,7 +231,7 @@ dbus_bool_t DBusThread::add_watch(DBusWatch *watch, void *data)
 
 	if (!thread->CalledFromThread()) {
 		char tmp = 0;
-		write(thread->m_wakeup_pipe[1], &tmp, 0);
+		safe_write(thread->m_wakeup_pipe[1], &tmp, 0);
 		thread->EnterCriticalSection();
 	}
 	else if (!thread->m_thread_holds_lock)
@@ -218,7 +254,7 @@ void DBusThread::remove_watch(DBusWatch *watch, void *data)
 
 	if (!thread->CalledFromThread()) {
 		char tmp = 0;
-		write(thread->m_wakeup_pipe[1], &tmp, 0);
+		safe_write(thread->m_wakeup_pipe[1], &tmp, 0);
 		thread->EnterCriticalSection();
 	}
 	else if (!thread->m_thread_holds_lock)
@@ -256,16 +292,24 @@ wxDBusConnection::wxDBusConnection(int ID, wxEvtHandler * EvtHandler, bool Syste
 	m_error = new wxDBusError;
 	m_connection = System ? dbus_bus_get(DBUS_BUS_SYSTEM, &(m_error->GetError())) : dbus_bus_get(DBUS_BUS_SESSION, &(m_error->GetError()));
 	if (!m_connection) {
-		printf("Failed to connect to D-BUS: %s", m_error->GetError().message);
+		fprintf(stderr, "Failed to connect to D-BUS: %s\n", m_error->GetError().message);
 		m_thread = NULL;
-	} else
+	}
+	else
 	{
 		dbus_connection_add_filter(m_connection, handle_message, (void *) this, NULL);
 		m_ID = ID;
 		m_EvtHandler = EvtHandler;
 		m_thread = new DBusThread(wxTHREAD_JOINABLE, this, ID, m_connection);
-		m_thread->Create();
-		m_thread->Run();
+		if (!m_thread->Init())
+		{
+			fprintf(stderr, "Failed to create worker thread\n");
+			delete m_thread;
+			m_thread = NULL;
+
+			dbus_connection_unref(m_connection);
+			m_connection = 0;
+		}
 	}
 }
 

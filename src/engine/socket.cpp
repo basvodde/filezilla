@@ -471,7 +471,12 @@ public:
 		WSASetEvent(m_sync_event);
 #else
 		char tmp = 0;
-		write(m_pipe[1], &tmp, 1);
+
+		int ret;
+		do
+		{
+			ret = write(m_pipe[1], &tmp, 1);
+		} while (ret == -1 && errno == EINTR);
 #endif
 		if (!already_locked)
 			m_sync.Unlock();
@@ -863,7 +868,8 @@ protected:
 			if (res > 0 && FD_ISSET(m_pipe[0], &readfds))
 			{
 				char buffer[100];
-				read(m_pipe[0], buffer, 100);
+				int damn_spurious_warning = read(m_pipe[0], buffer, 100);
+				(void)damn_spurious_warning; // We do not care about return value and this is definitely correct!
 			}
 
 			if (m_quit || !m_pSocket || m_pSocket->m_fd == -1)
