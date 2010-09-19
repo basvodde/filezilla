@@ -1,5 +1,6 @@
 #include <filezilla.h>
 #include "listctrlex.h"
+#include "filezillaapp.h"
 #include <wx/renderer.h>
 #include <wx/tokenzr.h>
 #include "Options.h"
@@ -36,6 +37,11 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 						   const wxString& name)
 						   : wxListCtrl(parent, id, pos, size, style, validator, name)
 {
+#ifdef __WXMSW__
+	m_pHeaderImageList = 0;
+#endif
+	m_header_icon_index.down = m_header_icon_index.up = -1;
+
 	m_pVisibleColumnMapping = 0;
 	m_prefixSearch_enabled = false;
 
@@ -49,6 +55,9 @@ wxListCtrlEx::wxListCtrlEx(wxWindow *parent,
 
 wxListCtrlEx::~wxListCtrlEx()
 {
+#ifdef __WXMSW__
+	delete m_pHeaderImageList;
+#endif
 	delete [] m_pVisibleColumnMapping;
 }
 
@@ -623,7 +632,7 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 				m_pVisibleColumnMapping[j - 1] = m_pVisibleColumnMapping[j];
 			info.width = GetColumnWidth(i);
 
-			icon = GetHeaderIconIndex(i);
+			icon = GetHeaderSortIconIndex(i);
 			DeleteColumn(i);
 
 			break;
@@ -645,7 +654,7 @@ void wxListCtrlEx::MoveColumn(unsigned int col, unsigned int before)
 
 		InsertColumn(pos, info.name, info.align, info.width);
 
-		SetHeaderIconIndex(pos, icon);
+		SetHeaderSortIconIndex(pos, icon);
 	}
 	m_columnInfo[col].order = before;
 }
@@ -817,7 +826,7 @@ int wxListCtrlEx::GetColumnVisibleIndex(int col)
 	return -1;
 }
 
-int wxListCtrlEx::GetHeaderIconIndex(int col)
+int wxListCtrlEx::GetHeaderSortIconIndex(int col)
 {
 	if (col < 0 || col >= GetColumnCount())
 		return -1;
@@ -843,7 +852,69 @@ int wxListCtrlEx::GetHeaderIconIndex(int col)
 #endif
 }
 
-void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
+void wxListCtrlEx::InitHeaderSortImageList()
+{
+#ifdef __WXMSW__
+	if (wxPlatformInfo::Get().GetOSMajorVersion() >= 6)
+		return;
+
+	// Initialize imagelist for list header
+	m_pHeaderImageList = new wxImageListEx(8, 8, true, 3);
+
+	wxBitmap bmp;
+
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.png"), wxBITMAP_TYPE_PNG);
+	m_pHeaderImageList->Add(bmp);
+	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("down.png"), wxBITMAP_TYPE_PNG);
+	m_pHeaderImageList->Add(bmp);
+
+	HWND hWnd = (HWND)GetHandle();
+	if (!hWnd)
+	{
+		delete m_pHeaderImageList;
+		m_pHeaderImageList = 0;
+		return;
+	}
+
+	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
+	if (!header)
+	{
+		delete m_pHeaderImageList;
+		m_pHeaderImageList = 0;
+		return;
+	}
+
+	TCHAR buffer[1000] = {0};
+	HDITEM item;
+	item.mask = HDI_TEXT;
+	item.pszText = buffer;
+	item.cchTextMax = 999;
+	SendMessage(header, HDM_GETITEM, 0, (LPARAM)&item);
+
+	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
+
+	m_header_icon_index.up = 0;
+	m_header_icon_index.down = 1;
+#else
+
+	wxColour colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+
+	wxString lightness;
+	if (colour.Red() + colour.Green() + colour.Blue() > 3 * 128)
+		lightness = _T("DARK");
+	else
+		lightness = _T("LIGHT");
+
+	wxBitmap bmp;
+
+	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_UP_") + lightness,  wxART_OTHER, wxSize(16, 16));
+	m_header_icon_index.up = m_pImageList->Add(bmp);
+	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_DOWN_") + lightness,  wxART_OTHER, wxSize(16, 16));
+	m_header_icon_index.down = m_pImageList->Add(bmp);
+#endif
+}
+
+void wxListCtrlEx::SetHeaderSortIconIndex(int col, int icon)
 {
 	if (col < 0 || col >= GetColumnCount())
 		return;
@@ -853,19 +924,35 @@ void wxListCtrlEx::SetHeaderIconIndex(int col, int icon)
 	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
 
 	wxChar buffer[100];
-	HDITEM item;
+	HDITEM item = {0};
 	item.mask = HDI_TEXT | HDI_FORMAT;
 	item.pszText = buffer;
 	item.cchTextMax = 99;
 	SendMessage(header, HDM_GETITEM, col, (LPARAM)&item);
-	item.mask |= HDI_IMAGE;
 	if (icon != -1)
 	{
-		item.fmt |= HDF_IMAGE | HDF_BITMAP_ON_RIGHT;
-		item.iImage = icon;
+		if (wxPlatformInfo::Get().GetOSMajorVersion() >= 6)
+		{
+			item.fmt &= ~(HDF_IMAGE | HDF_BITMAP_ON_RIGHT | HDF_SORTUP | HDF_SORTDOWN);
+			item.iImage = -1;
+			if (icon)
+				item.fmt |= HDF_SORTDOWN;
+			else
+				item.fmt |= HDF_SORTUP;
+		}
+		else
+		{
+			item.fmt &= ~(HDF_SORTUP | HDF_SORTDOWN);
+			item.fmt |= HDF_IMAGE | HDF_BITMAP_ON_RIGHT;
+			item.iImage = icon ? m_header_icon_index.down : m_header_icon_index.up;
+			item.mask |= HDI_IMAGE;
+		}
 	}
 	else
-		item.fmt &= ~(HDF_IMAGE | HDF_BITMAP_ON_RIGHT);
+	{
+		item.fmt &= ~(HDF_IMAGE | HDF_BITMAP_ON_RIGHT | HDF_SORTUP | HDF_SORTDOWN);
+		item.iImage = -1;
+	}
 	SendMessage(header, HDM_SETITEM, col, (LPARAM)&item);
 #else
 	wxListItem item;
@@ -1033,7 +1120,7 @@ bool wxListCtrlEx::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
 	case HDN_ITEMCHANGINGW:
 		if (m_columnDragging)
 		{
-			if (nmHDR->pitem->cxy < 10)
+			if (nmHDR->pitem->mask & HDI_WIDTH && nmHDR->pitem->cxy < 10)
 				*result = 1;
 			else
 				*result = 0;

@@ -378,7 +378,7 @@ CSearchDialogFileList::CSearchDialogFileList(CSearchDialog* pParent, CState* pSt
 
 	InitSort(OPTION_SEARCH_SORTORDER);
 
-	InitHeaderImageList();
+	InitHeaderSortImageList();
 
 	const unsigned long widths[7] = { 130, 130, 75, 80, 120, 80, 80 };
 

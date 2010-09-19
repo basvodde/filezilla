@@ -1,6 +1,8 @@
 #ifndef __LISTCTRLEX_H__
 #define __LISTCTRLEX_H__
 
+#include "systemimagelist.h"
+
 class wxListCtrlEx : public wxListCtrl
 {
 public:
@@ -60,8 +62,19 @@ protected:
 	void ResetSearchPrefix();
 
 	// Argument is visible column index
-	int GetHeaderIconIndex(int col);
-	void SetHeaderIconIndex(int col, int icon);
+	int GetHeaderSortIconIndex(int col);
+	void SetHeaderSortIconIndex(int col, int icon);
+
+	// Has to be called after setting the image list for the items
+	void InitHeaderSortImageList();
+#ifdef __WXMSW__
+	wxImageListEx *m_pHeaderImageList;
+#endif
+	struct _header_icon_index
+	{
+		int up;
+		int down;
+	} m_header_icon_index;
 
 private:
 	// Keyboard prefix search

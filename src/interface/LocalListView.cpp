@@ -275,7 +275,7 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 	m_pVolumeEnumeratorThread = 0;
 #endif
 
-	InitHeaderImageList();
+	InitHeaderSortImageList();
 
 	SetDropTarget(new CLocalListViewDropTarget(this));
 

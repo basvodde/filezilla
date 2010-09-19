@@ -245,11 +245,6 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 : wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxLC_EDIT_LABELS | (border ? wxBORDER_SUNKEN : wxNO_BORDER)),
 	CComparableListing(this), CSystemImageList(16)
 {
-#ifdef __WXMSW__
-	m_pHeaderImageList = 0;
-#endif
-	m_header_icon_index.down = m_header_icon_index.up = -1;
-
 	m_pQueue = pQueue;
 
 	m_sortColumn = 0;
@@ -285,68 +280,6 @@ template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pPar
 
 template<class CFileData> CFileListCtrl<CFileData>::~CFileListCtrl()
 {
-#ifdef __WXMSW__
-	delete m_pHeaderImageList;
-#endif
-}
-
-template<class CFileData> void CFileListCtrl<CFileData>::InitHeaderImageList()
-{
-#ifdef __WXMSW__
-	// Initialize imagelist for list header
-	m_pHeaderImageList = new wxImageListEx(8, 8, true, 3);
-
-	wxBitmap bmp;
-
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("up.png"), wxBITMAP_TYPE_PNG);
-	m_pHeaderImageList->Add(bmp);
-	bmp.LoadFile(wxGetApp().GetResourceDir() + _T("down.png"), wxBITMAP_TYPE_PNG);
-	m_pHeaderImageList->Add(bmp);
-
-	HWND hWnd = (HWND)GetHandle();
-	if (!hWnd)
-	{
-		delete m_pHeaderImageList;
-		m_pHeaderImageList = 0;
-		return;
-	}
-
-	HWND header = (HWND)SendMessage(hWnd, LVM_GETHEADER, 0, 0);
-	if (!header)
-	{
-		delete m_pHeaderImageList;
-		m_pHeaderImageList = 0;
-		return;
-	}
-
-	TCHAR buffer[1000] = {0};
-	HDITEM item;
-	item.mask = HDI_TEXT;
-	item.pszText = buffer;
-	item.cchTextMax = 999;
-	SendMessage(header, HDM_GETITEM, 0, (LPARAM)&item);
-
-	SendMessage(header, HDM_SETIMAGELIST, 0, (LPARAM)m_pHeaderImageList->GetHandle());
-
-	m_header_icon_index.up = 0;
-	m_header_icon_index.down = 1;
-#else
-
-	wxColour colour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-
-	wxString lightness;
-	if (colour.Red() + colour.Green() + colour.Blue() > 3 * 128)
-		lightness = _T("DARK");
-	else
-		lightness = _T("LIGHT");
-
-	wxBitmap bmp;
-
-	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_UP_") + lightness,  wxART_OTHER, wxSize(16, 16));
-	m_header_icon_index.up = m_pImageList->Add(bmp);
-	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_DOWN_") + lightness,  wxART_OTHER, wxSize(16, 16));
-	m_header_icon_index.down = m_pImageList->Add(bmp);
-#endif
 }
 
 template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=-1*/, int direction /*=-1*/, bool updateSelections /*=true*/)
@@ -359,7 +292,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 		{
 			const int oldVisibleColumn = GetColumnVisibleIndex(m_sortColumn);
 			if (oldVisibleColumn != -1)
-				SetHeaderIconIndex(oldVisibleColumn, -1);
+				SetHeaderSortIconIndex(oldVisibleColumn, -1);
 		}
 	}
 	else
@@ -375,7 +308,7 @@ template<class CFileData> void CFileListCtrl<CFileData>::SortList(int column /*=
 		column = 0;
 	}
 
-	SetHeaderIconIndex(newVisibleColumn, direction ? m_header_icon_index.down : m_header_icon_index.up);
+	SetHeaderSortIconIndex(newVisibleColumn, direction);
 
 	// Remember which files are selected
 	bool *selected = 0;
