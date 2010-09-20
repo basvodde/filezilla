@@ -243,8 +243,9 @@ static gboolean gtk_button_release_event(GtkWidget*, void *gdk_event, CGtkEventC
 
 template<class CFileData> CFileListCtrl<CFileData>::CFileListCtrl(wxWindow* pParent, CState* pState, CQueueView* pQueue, bool border /*=false*/)
 : wxListCtrlEx(pParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxLC_VIRTUAL | wxLC_REPORT | wxLC_EDIT_LABELS | (border ? wxBORDER_SUNKEN : wxNO_BORDER)),
-	CComparableListing(this), CSystemImageList(16)
+	CComparableListing(this)
 {
+	CreateSystemImageList(16);
 	m_pQueue = pQueue;
 
 	m_sortColumn = 0;

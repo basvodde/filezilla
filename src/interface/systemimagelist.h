@@ -31,7 +31,9 @@ public:
 class CSystemImageList
 {
 public:
-	CSystemImageList(int size);
+	CSystemImageList(int size = -1);
+	
+	bool CreateSystemImageList(int size);
 	virtual ~CSystemImageList();
 
 	wxImageList* GetSystemImageList() { return m_pImageList; }

@@ -7,6 +7,13 @@
 #include "dialogex.h"
 #ifdef __WXMSW__
 #include "commctrl.h"
+
+#ifndef HDF_SORTUP
+#define HDF_SORTUP              0x0400
+#endif
+#ifndef HDF_SORTDOWN
+#define HDF_SORTDOWN            0x0200
+#endif
 #endif
 
 DECLARE_EVENT_TYPE(fzEVT_POSTSCROLL, -1)

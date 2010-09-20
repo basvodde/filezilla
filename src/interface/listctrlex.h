@@ -3,7 +3,7 @@
 
 #include "systemimagelist.h"
 
-class wxListCtrlEx : public wxListCtrl
+class wxListCtrlEx : public wxListCtrl, public CSystemImageList
 {
 public:
 	wxListCtrlEx(wxWindow *parent,

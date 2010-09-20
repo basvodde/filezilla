@@ -38,7 +38,7 @@ public:
 	virtual ~CListViewSort() { } // Without this empty destructor GCC complains
 };
 
-template<class CFileData> class CFileListCtrl : public wxListCtrlEx, public CComparableListing, public CSystemImageList
+template<class CFileData> class CFileListCtrl : public wxListCtrlEx, public CComparableListing
 {
 public:
 	CFileListCtrl(wxWindow* pParent, CState *pState, CQueueView *pQueue, bool border = false);

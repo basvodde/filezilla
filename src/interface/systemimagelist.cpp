@@ -46,7 +46,7 @@ static inline void AlphaComposite_Over_Inplace(wxAlphaPixelData::Iterator &a, wx
 	// Alpha compositing of a single pixel, b gets composited over a
 	// (well-known over operator), result stored in a.
 	// All RGB and A values have range from 0 to 255, RGB values aren't
-	// premultiplied ba A.
+	// premultiplied by A.
 	// Safe for multiple compositions.
 
 	if (!b.Alpha())
@@ -91,8 +91,18 @@ static void OverlaySymlink(wxBitmap& bmp)
 }
 #endif
 
-CSystemImageList::CSystemImageList(int size)
+CSystemImageList::CSystemImageList(int size /*=-1*/)
+	: m_pImageList()
 {
+	if (size != -1)
+		CreateSystemImageList(size);
+}
+
+bool CSystemImageList::CreateSystemImageList(int size)
+{
+	if (m_pImageList)
+		return true;
+
 #ifdef __WXMSW__
 	SHFILEINFO shFinfo;
 	wxChar buffer[MAX_PATH + 10];
@@ -125,6 +135,8 @@ CSystemImageList::CSystemImageList(int size)
 	m_pImageList->Add(folderclosed);
 	m_pImageList->Add(folder);
 #endif
+
+	return true;
 }
 
 CSystemImageList::~CSystemImageList()
@@ -155,6 +167,9 @@ wxBitmap PrepareIcon(wxIcon icon, wxSize size)
 
 int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName /*=_T("")*/, bool physical /*=true*/, bool symlink /*=false*/)
 {
+	if (!m_pImageList)
+		return -1;
+
 #ifdef __WXMSW__
 	if (fileName == _T(""))
 		physical = false;
