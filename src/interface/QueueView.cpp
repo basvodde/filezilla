@@ -835,7 +835,6 @@ bool CQueueView::TryStartNextTransfer()
 		CFileItem* fileItem;
 		CServerItem* serverItem;
 		t_EngineData* pEngineData;
-		bool browsingConnection;
 	} bestMatch = {0};
 
 	// Find inactive file. Check all servers for
