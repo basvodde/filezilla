@@ -31,6 +31,7 @@ void CQueueViewSuccessful::OnContextMenu(wxContextMenuEvent& event)
 
 	pMenu->Enable(XRCID("ID_REMOVE"), has_selection);
 	pMenu->Enable(XRCID("ID_REQUEUE"), has_selection);
+	pMenu->Enable(XRCID("ID_REQUEUEALL"), !m_serverList.empty());
 	pMenu->Check(XRCID("ID_AUTOCLEAR"), m_autoClear);
 
 	PopupMenu(pMenu);
