@@ -519,8 +519,7 @@ bool CMainFrame::CreateMenus()
 
 bool CMainFrame::CreateQuickconnectBar()
 {
-	if (m_pQuickconnectBar)
-		delete m_pQuickconnectBar;
+	delete m_pQuickconnectBar;
 
 	m_pQuickconnectBar = new CQuickconnectBar();
 	if (!m_pQuickconnectBar->Create(this))

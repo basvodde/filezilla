@@ -11,6 +11,7 @@ IMPLEMENT_DYNAMIC_CLASS(CToolBar, wxToolBar)
 
 CToolBar::CToolBar()
 	: CStateEventHandler(0)
+	, m_pMainFrame()
 {
 }
 

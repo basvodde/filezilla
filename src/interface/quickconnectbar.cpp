@@ -16,11 +16,12 @@ EVT_NAVIGATION_KEY(CQuickconnectBar::OnKeyboardNavigation)
 END_EVENT_TABLE();
 
 CQuickconnectBar::CQuickconnectBar()
+	: m_pHost()
+	, m_pUser()
+	, m_pPass()
+	, m_pPort()
+	, m_pMainFrame()
 {
-	m_pHost = 0;
-	m_pUser = 0;
-	m_pPass = 0;
-	m_pPort = 0;
 }
 
 CQuickconnectBar::~CQuickconnectBar()

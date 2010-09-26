@@ -102,7 +102,6 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 		refresh = 31;
 	}
 
-	int elapsed_seconds = 0;
 	wxTimeSpan elapsed;
 	int left = -1;
 	wxFileOffset rate;
@@ -136,6 +135,7 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 			refresh = 31;
 		}
 
+		int elapsed_seconds = 0;
 		if (m_pStatus->started.IsValid())
 		{
 			elapsed = wxDateTime::Now().Subtract(m_pStatus->started);
