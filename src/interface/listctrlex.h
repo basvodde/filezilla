@@ -51,6 +51,9 @@ public:
 #ifndef __WXMSW__
 	wxScrolledWindow* GetMainWindow();
 #endif
+
+	bool HasSelection() const;
+
 protected:
 	virtual void OnPostScroll();
 	virtual void OnPreEmitPostScrollEvent();

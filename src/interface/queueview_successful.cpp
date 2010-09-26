@@ -22,12 +22,7 @@ void CQueueViewSuccessful::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-#ifndef __WXMSW__
-	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
-	const bool has_selection = GetSelectedItemCount() != 0;
-#else
-	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
-#endif
+	bool has_selection = HasSelection();
 
 	pMenu->Enable(XRCID("ID_REMOVE"), has_selection);
 	pMenu->Enable(XRCID("ID_REQUEUE"), has_selection);

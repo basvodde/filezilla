@@ -2136,12 +2136,7 @@ void CQueueView::OnContextMenu(wxContextMenuEvent& event)
 	if (!pMenu)
 		return;
 
-#ifndef __WXMSW__
-	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
-	const bool has_selection = GetSelectedItemCount() != 0;
-#else
-	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
-#endif
+	bool has_selection = HasSelection();
 
 	pMenu->Check(XRCID("ID_PROCESSQUEUE"), IsActive() ? true : false);
 	pMenu->Check(XRCID("ID_ACTIONAFTER_DISABLE"), IsActionAfter(ActionAfterState_Disabled));
@@ -2459,13 +2454,7 @@ void CQueueView::SetDefaultFileExistsAction(enum CFileExistsNotification::Overwr
 
 void CQueueView::OnSetDefaultFileExistsAction(wxCommandEvent &event)
 {
-#ifndef __WXMSW__
-	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
-	const bool has_selection = GetSelectedItemCount() != 0;
-#else
-	const bool has_selection = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
-#endif
-	if (!has_selection)
+	if (!HasSelection())
 		return;
 
 	CDefaultFileExistsDlg dlg;

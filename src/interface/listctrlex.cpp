@@ -1138,3 +1138,13 @@ bool wxListCtrlEx::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
 	return wxListCtrl::MSWOnNotify(idCtrl, lParam, result);
 }
 #endif
+
+bool wxListCtrlEx::HasSelection() const
+{
+#ifndef __WXMSW__
+	// GetNextItem is O(n) if nothing is selected, GetSelectedItemCount() is O(1)
+	return GetSelectedItemCount() != 0;
+#else
+	return GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED) != -1;
+#endif
+}
