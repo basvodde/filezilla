@@ -4,6 +4,7 @@
 #include "sizeformatting.h"
 #include "speedlimits_dialog.h"
 #include "statusbar.h"
+#include "themeprovider.h"
 #include "verifycertdialog.h"
 
 static const int statbarWidths[3] = {
@@ -432,7 +433,7 @@ void CStatusBar::DisplayDataType()
 			desc = _("Current transfer type is set to automatic detection.");
 		}
 
-		wxBitmap bmp = wxArtProvider::GetBitmap(name, wxART_OTHER, wxSize(16, 16));
+		wxBitmap bmp = wxArtProvider::GetBitmap(name, wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall));
 		if (!m_pDataTypeIndicator)
 		{
 			m_pDataTypeIndicator = new CIndicator(this, bmp);
@@ -481,7 +482,7 @@ void CStatusBar::DisplayEncrypted()
 	}
 	else
 	{
-		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER, wxSize(16, 16));
+		wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_LOCK"), wxART_OTHER,  CThemeProvider::GetIconSize(iconSizeSmall));
 		if (!m_pEncryptionIndicator)
 		{
 			m_pEncryptionIndicator = new CIndicator(this, bmp);
@@ -583,7 +584,7 @@ void CStatusBar::UpdateSpeedLimitsIcon()
 {
 	bool enable = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_ENABLE) != 0;
 
-	wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_SPEEDLIMITS"), wxART_OTHER, wxSize(16, 16));
+	wxBitmap bmp = wxArtProvider::GetBitmap(_T("ART_SPEEDLIMITS"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall));
 	wxString tooltip;
 
 	int downloadLimit = COptions::Get()->GetOptionVal(OPTION_SPEEDLIMIT_INBOUND);

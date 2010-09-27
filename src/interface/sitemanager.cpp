@@ -6,6 +6,7 @@
 #include "ipcmutex.h"
 #include "wrapengine.h"
 #include "conditionaldialog.h"
+#include "themeprovider.h"
 #include "window_state_manager.h"
 #include <wx/dnd.h>
 #ifdef __WXMSW__
@@ -323,12 +324,14 @@ bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connec
 	wxTreeCtrl *pTree = XRCCTRL(*this, "ID_SITETREE", wxTreeCtrl);
 	if (!pTree)
 		return false;
-	wxImageList* pImageList = new wxImageList(16, 16);
 
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_BOOKMARK"),  wxART_OTHER, wxSize(16, 16)));
+	wxSize s = CThemeProvider::GetIconSize(iconSizeSmall);
+	wxImageList* pImageList = new wxImageList(s.x, s.y);
+
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"), wxART_OTHER, s));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"), wxART_OTHER, s));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"), wxART_OTHER, s));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_BOOKMARK"), wxART_OTHER, s));
 
 	pTree->AssignImageList(pImageList);
 

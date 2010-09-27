@@ -4,6 +4,7 @@
 #include "queueview_failed.h"
 #include "queueview_successful.h"
 #include "sizeformatting.h"
+#include "themeprovider.h"
 
 CQueueItem::CQueueItem()
 {
@@ -779,12 +780,13 @@ CQueueViewBase::CQueueViewBase(CQueue* parent, int index, const wxString& title)
 	m_folderScanCountChanged = false;
 
 	// Create and assign the image list for the queue
-	wxImageList* pImageList = new wxImageList(16, 16);
+	wxSize s = CThemeProvider::GetIconSize(iconSizeSmall);
+	wxImageList* pImageList = new wxImageList(s.x, s.y);
 
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_SERVER"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FILE"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDERCLOSED"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)));
 
 	AssignImageList(pImageList, wxIMAGE_LIST_SMALL);
 

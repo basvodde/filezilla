@@ -14,6 +14,8 @@
 #ifndef HDF_SORTDOWN
 #define HDF_SORTDOWN            0x0200
 #endif
+#else
+#include "themeprovider.h"
 #endif
 
 DECLARE_EVENT_TYPE(fzEVT_POSTSCROLL, -1)
@@ -914,9 +916,9 @@ void wxListCtrlEx::InitHeaderSortImageList()
 
 	wxBitmap bmp;
 
-	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_UP_") + lightness,  wxART_OTHER, wxSize(16, 16));
+	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_UP_") + lightness, wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall));
 	m_header_icon_index.up = m_pImageList->Add(bmp);
-	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_DOWN_") + lightness,  wxART_OTHER, wxSize(16, 16));
+	bmp = wxArtProvider::GetBitmap(_T("ART_SORT_DOWN_") + lightness, wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall));
 	m_header_icon_index.down = m_pImageList->Add(bmp);
 #endif
 }

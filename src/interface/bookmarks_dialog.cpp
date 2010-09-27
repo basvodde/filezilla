@@ -2,6 +2,7 @@
 #include "bookmarks_dialog.h"
 #include "sitemanager.h"
 #include "ipcmutex.h"
+#include "themeprovider.h"
 #include "xmlfunctions.h"
 
 BEGIN_EVENT_TABLE(CNewBookmarkDialog, wxDialogEx)
@@ -239,10 +240,12 @@ int CBookmarksDialog::ShowModal(const wxString &local_path, const CServerPath &r
 	m_pTree = XRCCTRL(*this, "ID_TREE", wxTreeCtrl);
 	if (!m_pTree)
 		return false;
-	wxImageList* pImageList = new wxImageList(16, 16);
 
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"),  wxART_OTHER, wxSize(16, 16)));
-	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_BOOKMARK"),  wxART_OTHER, wxSize(16, 16)));
+	wxSize s = CThemeProvider::GetIconSize(iconSizeSmall);
+	wxImageList* pImageList = new wxImageList(s.x, s.y);
+
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_FOLDER"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)));
+	pImageList->Add(wxArtProvider::GetBitmap(_T("ART_BOOKMARK"), wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)));
 
 	m_pTree->AssignImageList(pImageList);
 

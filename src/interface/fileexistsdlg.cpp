@@ -2,6 +2,7 @@
 #include "fileexistsdlg.h"
 #include "Options.h"
 #include "sizeformatting.h"
+#include "themeprovider.h"
 
 #include <wx/display.h>
 
@@ -166,13 +167,18 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 	if (!pStatBmp)
 		return;
 
+	wxSize size = CThemeProvider::GetIconSize(iconSizeNormal);
+	pStatBmp->SetInitialSize(size);
+	pStatBmp->InvalidateBestSize();
+	pStatBmp->SetBitmap(CThemeProvider::GetBitmap(_T("ART_FILE"), wxART_OTHER, size));
+
 #ifdef __WXMSW__
 	SHFILEINFO fileinfo;
-	memset(&fileinfo,0,sizeof(fileinfo));
+	memset(&fileinfo, 0, sizeof(fileinfo));
 	if (SHGetFileInfo(file, FILE_ATTRIBUTE_NORMAL, &fileinfo, sizeof(fileinfo), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES))
 	{
 		wxBitmap bmp;
-		bmp.Create(32, 32);
+		bmp.Create(size.x, size.y);
 
 		wxMemoryDC *dc = new wxMemoryDC;
 
@@ -183,11 +189,11 @@ void CFileExistsDlg::LoadIcon(int id, const wxString &file)
 
 		dc->SetPen(pen);
 		dc->SetBrush(brush);
-		dc->DrawRectangle(0, 0, 32, 32);
+		dc->DrawRectangle(0, 0, size.x, size.y);
 
 		wxIcon icon;
 		icon.SetHandle(fileinfo.hIcon);
-		icon.SetSize(32, 32);
+		icon.SetSize(size.x, size.y);
 
 		dc->DrawIcon(icon, 0, 0);
 		delete dc;

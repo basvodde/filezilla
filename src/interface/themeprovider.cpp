@@ -27,12 +27,12 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 	if (wxDir::Exists(resourceDir + strSize))
 		dirs.push_back(resourceDir + strSize);
 
-	if (size.GetWidth() >= 40)
+	if (size.GetWidth() > 32)
 	{
 		dirs.push_back(m_themePath + _T("48x48/"));
 		dirs.push_back(resourceDir + _T("48x48/"));
 	}
-	if (size.GetWidth() >= 24)
+	if (size.GetWidth() > 16)
 	{
 		dirs.push_back(m_themePath + _T("32x32/"));
 		dirs.push_back(resourceDir + _T("32x32/"));
@@ -53,7 +53,7 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 	for (std::list<wxString>::const_iterator iter = dirs.begin(); iter != dirs.end(); iter++)
 	{
 		wxString fileName = *iter + name + _T(".png");
-#ifdef __WXMSW__
+//#ifdef __WXMSW__
 		// MSW toolbar only greys out disabled buttons in a visually
 		// pleasing way if the bitmap has an alpha channel. 
 		wxImage img(fileName, wxBITMAP_TYPE_PNG);
@@ -62,12 +62,14 @@ wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& clie
 
 		if (img.HasMask() && !img.HasAlpha())
 			img.InitAlpha();
+		if (size.IsFullySpecified())
+			img.Rescale(size.x, size.y, wxIMAGE_QUALITY_HIGH);
 		return wxBitmap(img);
-#else
+/*#else
 		wxBitmap bmp(fileName, wxBITMAP_TYPE_PNG);
 		if (bmp.Ok())
 			return bmp;
-#endif
+#endif*/
 	}
 
 	return wxNullBitmap;
@@ -102,9 +104,9 @@ std::list<wxBitmap*> CThemeProvider::GetAllImages(const wxString& theme, const w
 	wxString strSize = wxString::Format(_T("%dx%d/"), size.GetWidth(), size.GetHeight());
 	if (!wxDir::Exists(strSize))
 	{
-		if (size.GetWidth() >= 40)
+		if (size.GetWidth() > 32)
 			path += _T("48x48/");
-		else if (size.GetWidth() >= 24)
+		else if (size.GetWidth() > 16)
 			path += _T("32x32/");
 		else
 			path += _T("16x16/");
@@ -271,4 +273,31 @@ void CThemeProvider::OnOptionChanged(int option)
 
 	wxArtProvider::Remove(this);
 	wxArtProvider::Push(this);
+}
+
+wxSize CThemeProvider::GetIconSize(enum iconSize size)
+{
+	int s;
+	if (size == iconSizeSmall)
+	{
+		s = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
+		if (s <= 0)
+			s = 16;
+	}
+	else if (size == iconSizeLarge)
+	{
+		s = wxSystemSettings::GetMetric(wxSYS_SMALLICON_X);
+		if (s <= 0)
+			s = 48;
+		else
+			s *= 3;
+	}
+	else
+	{
+		s = wxSystemSettings::GetMetric(wxSYS_ICON_X);
+		if (s <= 0)
+			s = 32;
+	}
+
+	return wxSize(s, s);
 }

@@ -24,18 +24,14 @@ CToolBar::~CToolBar()
 CToolBar* CToolBar::Load(CMainFrame* pMainFrame)
 {
 	{
-		wxSize iconSize(16, 16);
+		wxSize iconSize;
 		wxString str = COptions::Get()->GetOption(OPTION_THEME_ICONSIZE);
-		int pos = str.Find('x');
-		if (CThemeProvider::ThemeHasSize(COptions::Get()->GetOption(OPTION_THEME), str) && pos > 0 && pos < (int)str.Len() - 1)
-		{
-			long width = 0;
-			long height = 0;
-			if (str.Left(pos).ToLong(&width) &&
-				str.Mid(pos + 1).ToLong(&height) &&
-				width > 0 && height > 0)
-				iconSize = wxSize(width, height);
-		}
+		if (str == _T("32x32"))
+			iconSize = CThemeProvider::GetIconSize(iconSizeNormal);
+		else if (str == _T("48x48"))
+			iconSize = CThemeProvider::GetIconSize(iconSizeLarge);
+		else
+			iconSize = CThemeProvider::GetIconSize(iconSizeSmall);
 
 		wxToolBarXmlHandlerEx::SetIconSize(iconSize);
 	}

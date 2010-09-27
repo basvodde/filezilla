@@ -18,6 +18,7 @@
   #endif
 #endif
 #ifndef __WXMSW__
+#include "themeprovider.h"
 #include <wx/rawbmp.h>
 #endif
 
@@ -234,7 +235,7 @@ int CSystemImageList::GetIconIndex(enum filetype type, const wxString& fileName 
 
 		if (newIcon.Ok())
 		{
-			wxBitmap bmp = PrepareIcon(newIcon, wxSize(16, 16));
+			wxBitmap bmp = PrepareIcon(newIcon, CThemeProvider::GetIconSize(iconSizeSmall));
 			if (symlink)
 				OverlaySymlink(bmp);
 			int index = m_pImageList->Add(bmp);

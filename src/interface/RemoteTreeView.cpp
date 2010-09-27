@@ -10,6 +10,7 @@
 #include <wx/clipbrd.h>
 #include "queue.h"
 #include "QueueView.h"
+#include "themeprovider.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -435,10 +436,11 @@ wxTreeItemId CRemoteTreeView::MakeParent(CServerPath path, bool select)
 wxBitmap CRemoteTreeView::CreateIcon(int index, const wxString& overlay /*=_T("")*/)
 {
 	// Create memory DC
+	wxSize s = CThemeProvider::GetIconSize(iconSizeSmall);
 #ifdef __WXMSW__
-	wxBitmap bmp(16, 16, 32);
+	wxBitmap bmp(s.x, s.y, 32);
 #else
-	wxBitmap bmp(16, 16, 24);
+	wxBitmap bmp(s.x, s.y, 24);
 #endif
 	wxMemoryDC dc;
 	dc.SelectObject(bmp);
@@ -446,7 +448,7 @@ wxBitmap CRemoteTreeView::CreateIcon(int index, const wxString& overlay /*=_T(""
 	// Make sure the background is set correctly
 	dc.SetBrush(wxBrush(GetBackgroundColour()));
 	dc.SetPen(wxPen(GetBackgroundColour()));
-	dc.DrawRectangle(0, 0, 16, 16);
+	dc.DrawRectangle(0, 0, s.x, s.y);
 
 	// Draw item from system image list
 	GetSystemImageList()->Draw(index, dc, 0, 0, wxIMAGELIST_DRAW_TRANSPARENT);
@@ -454,7 +456,7 @@ wxBitmap CRemoteTreeView::CreateIcon(int index, const wxString& overlay /*=_T(""
 	// Load overlay
 	if (overlay != _T(""))
 	{
-		wxImage unknownIcon = wxArtProvider::GetBitmap(overlay, wxART_OTHER, wxSize(16,16)).ConvertToImage();
+		wxImage unknownIcon = wxArtProvider::GetBitmap(overlay, wxART_OTHER, CThemeProvider::GetIconSize(iconSizeSmall)).ConvertToImage();
 
 		// Convert mask into alpha channel
 		if (!unknownIcon.HasAlpha())
@@ -473,7 +475,8 @@ wxBitmap CRemoteTreeView::CreateIcon(int index, const wxString& overlay /*=_T(""
 
 void CRemoteTreeView::CreateImageList()
 {
-	m_pImageList = new wxImageList(16, 16, true, 4);
+	wxSize s = CThemeProvider::GetIconSize(iconSizeSmall);
+	m_pImageList = new wxImageList(s.x, s.y, true, 4);
 
 	// Normal directory
 	int index = GetIconIndex(dir, _T("{78013B9C-3532-4fe1-A418-5CD1955127CC}"), false);
