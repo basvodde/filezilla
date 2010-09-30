@@ -138,6 +138,7 @@ private:
 	DBusConnection * m_connection;
 	DBusThread * m_thread;
 	wxDBusError * m_error;
+	bool m_filter_installed;
 };
 
 #endif

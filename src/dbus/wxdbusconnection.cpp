@@ -283,6 +283,7 @@ void response_notify(DBusPendingCall *pending, void *user_data);
 DBusHandlerResult handle_notification(DBusConnection *connection, DBusMessage *message, void *user_data);
 
 wxDBusConnection::wxDBusConnection(int ID, wxEvtHandler * EvtHandler, bool System)
+	: m_filter_installed()
 {
 	// Make sure libdbus locks its data structures, otherwise
 	// there'll be crashes if it gets used from multiple threads
@@ -297,7 +298,7 @@ wxDBusConnection::wxDBusConnection(int ID, wxEvtHandler * EvtHandler, bool Syste
 	}
 	else
 	{
-		dbus_connection_add_filter(m_connection, handle_message, (void *) this, NULL);
+		m_filter_installed = dbus_connection_add_filter(m_connection, handle_message, (void *) this, NULL);
 		m_ID = ID;
 		m_EvtHandler = EvtHandler;
 		m_thread = new DBusThread(wxTHREAD_JOINABLE, this, ID, m_connection);
@@ -306,6 +307,12 @@ wxDBusConnection::wxDBusConnection(int ID, wxEvtHandler * EvtHandler, bool Syste
 			fprintf(stderr, "Failed to create worker thread\n");
 			delete m_thread;
 			m_thread = NULL;
+
+			if (m_filter_installed)
+			{
+				dbus_connection_remove_filter(m_connection, handle_message, (void *) this);
+				m_filter_installed = false;
+			}
 
 			dbus_connection_unref(m_connection);
 			m_connection = 0;
@@ -323,6 +330,8 @@ wxDBusConnection::~wxDBusConnection()
 		delete m_thread;
 	}
 	if (m_connection != NULL) {
+		if (m_filter_installed)
+			dbus_connection_remove_filter(m_connection, handle_message, (void *) this);
 		dbus_connection_unref(m_connection);
 	}
 	delete m_error;
