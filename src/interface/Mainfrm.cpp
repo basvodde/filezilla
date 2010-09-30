@@ -1765,15 +1765,9 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 	if (swap == -1)
 		swap = COptions::Get()->GetOptionVal(OPTION_FILEPANE_SWAP);
 
-	bool final;
 	if (messagelog_position == -1)
-	{
-		final = true;
 		messagelog_position = COptions::Get()->GetOptionVal(OPTION_MESSAGELOG_POSITION);
-	}
-	else
-		final = false;
-
+	
 	// First handle changes in message log position as it can make size of the other panes change
 	{
 		bool shown = m_pStatusView->IsShown();
