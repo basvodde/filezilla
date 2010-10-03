@@ -408,9 +408,7 @@ int CSftpControlSocket::Connect(const CServer &server)
 		m_useUTF8 = true;
 	}
 
-
-	if (m_pCurrentServer)
-		delete m_pCurrentServer;
+	delete m_pCurrentServer;
 	m_pCurrentServer = new CServer(server);
 
 	CSftpConnectOpData* pData = new CSftpConnectOpData;

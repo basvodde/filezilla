@@ -414,9 +414,7 @@ bool CLocalPath::Exists(wxString *error /*=0*/) const
 
 	if (m_path[0] == '\\')
 	{
-		// UNC path
-
-		// \\server\share\ 
+		// \\server\share\ UNC path
 
 		size_t pos;
 

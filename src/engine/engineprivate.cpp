@@ -614,11 +614,8 @@ void CFileZillaEnginePrivate::OnTimer(wxTimerEvent& event)
 	wxASSERT(!GetRemainingReconnectDelay(pConnectCommand->GetServer()));
 #endif
 
-	if (m_pControlSocket)
-	{
-		delete m_pControlSocket;
-		m_pControlSocket = 0;
-	}
+	delete m_pControlSocket;
+	m_pControlSocket = 0;
 
 	ContinueConnect();
 }

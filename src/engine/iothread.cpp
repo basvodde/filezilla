@@ -36,8 +36,7 @@ CIOThread::CIOThread()
 
 CIOThread::~CIOThread()
 {
-	if (m_pFile)
-		delete m_pFile;
+	delete m_pFile;
 
 	for (unsigned int i = 0; i < BUFFERCOUNT; i++)
 		delete [] m_buffers[i];
@@ -48,8 +47,7 @@ CIOThread::~CIOThread()
 bool CIOThread::Create(wxFile* pFile, bool read, bool binary)
 {
 	wxASSERT(pFile);
-	if (m_pFile)
-		delete m_pFile;
+	delete m_pFile;
 	m_pFile = pFile;
 	m_read = read;
 	m_binary = binary;

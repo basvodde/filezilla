@@ -55,7 +55,7 @@ CTransferSocket::~CTransferSocket()
 	delete m_pProxyBackend;
 	if (m_pTlsSocket)
 		delete m_pTlsSocket;
-	else if (m_pBackend)
+	else
 		delete m_pBackend;
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
@@ -611,11 +611,9 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
 	delete m_pSocketServer;
 	m_pSocketServer = 0;
 
-	if (m_pProxyBackend)
-	{
-		delete m_pProxyBackend;
-		m_pProxyBackend = 0;
-	}
+	delete m_pProxyBackend;
+	m_pProxyBackend = 0;
+
 	if (m_pTlsSocket)
 	{
 		if (m_pBackend == m_pTlsSocket)
@@ -623,11 +621,10 @@ void CTransferSocket::TransferEnd(enum TransferEndReason reason)
         delete m_pTlsSocket;
 		m_pTlsSocket = 0;
 	}
-	if (m_pBackend)
-	{
-		delete m_pBackend;
-		m_pBackend = 0;
-	}
+
+	delete m_pBackend;
+	m_pBackend = 0;
+
 	delete m_pSocket;
 	m_pSocket = 0;
 

@@ -368,16 +368,13 @@ public:
 		if (!already_locked)
 			m_sync.Lock();
 		m_pSocket = pSocket;
-		if (m_pHost)
-		{
-			delete [] m_pHost;
-			m_pHost = 0;
-		}
-		if (m_pPort)
-		{
-			delete [] m_pPort;
-			m_pPort = 0;
-		}
+
+		delete [] m_pHost;
+		m_pHost = 0;
+
+		delete [] m_pPort;
+		m_pPort = 0;
+
 		m_waiting = 0;
 		if (!already_locked)
 			m_sync.Unlock();
@@ -386,10 +383,8 @@ public:
 	int Connect()
 	{
 		wxASSERT(m_pSocket);
-		if (m_pHost)
-			delete [] m_pHost;
-		if (m_pPort)
-			delete [] m_pPort;
+		delete [] m_pHost;
+		delete [] m_pPort;
 
 		const wxWX2MBbuf buf = m_pSocket->m_host.mb_str();
 		if (!buf)
