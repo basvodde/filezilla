@@ -97,7 +97,7 @@ bool CTlsSocket::Init()
 		return false;
 	}
 
-	res = gnutls_set_default_priority(m_session);
+	res = gnutls_priority_set_direct(m_session, "SECURE256", 0);
 	if (res)
 	{
 		LogError(res);
