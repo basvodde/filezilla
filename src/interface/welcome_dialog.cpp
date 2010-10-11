@@ -15,6 +15,13 @@ bool CWelcomeDialog::Run(wxWindow* parent, bool force /*=false*/, bool delay /*=
 
 	if (!force)
 	{
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
+		{
+			if (delay)
+				delete this;
+			return true;
+		}
+
 		greetingVersion = COptions::Get()->GetOption(OPTION_GREETINGVERSION);
 		if (greetingVersion != _T("") &&
 			CBuildInfo::ConvertToVersionNumber(ownVersion) <= CBuildInfo::ConvertToVersionNumber(greetingVersion))
