@@ -572,7 +572,7 @@ static int try_connect(Actual_Socket sock)
 	setsockopt(s, SOL_SOCKET, SO_OOBINLINE, (void *) &b, sizeof(b));
     }
 
-    if (sock->nodelay) {
+    //if (sock->nodelay) {
 	int b = TRUE;
 	setsockopt(s, IPPROTO_TCP, TCP_NODELAY, (void *) &b, sizeof(b));
     }
@@ -582,9 +582,15 @@ static int try_connect(Actual_Socket sock)
 	setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, (void *) &b, sizeof(b));
     }
 
+     /* Enable window scaling */
     {
 	int size_read = 4194304;
-	setsockopt(s, SOL_SOCKET, SO_RCVBUF, (const char*)&size_read, sizeof(size_read));
+	p_setsockopt(s, SOL_SOCKET, SO_RCVBUF, (const char*)&size_read, sizeof(size_read));
+    }
+
+    {
+	int size_write = 262144;
+	p_setsockopt(s, SOL_SOCKET, SO_SNDBUF, (const char*)&size_write, sizeof(size_write));
     }
 
     /*
