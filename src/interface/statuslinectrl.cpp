@@ -153,9 +153,13 @@ void CStatusLineCtrl::OnPaint(wxPaintEvent& event)
 		else
 		    rate = GetSpeed(elapsed_seconds);
 
-		if (elapsed_seconds && rate > 0)
+		if (m_pStatus->totalSize > 0 && elapsed_seconds && rate > 0)
 		{
-			left = ((m_pStatus->totalSize - m_pStatus->startOffset) / rate) - elapsed_seconds;
+			wxFileOffset r = m_pStatus->totalSize - m_pStatus->currentOffset;
+			left = r / rate + 1;
+			if (r)
+				++left;
+
 			if (left < 0)
 				left = 0;
 		}
