@@ -3,6 +3,7 @@
 #include <wx/tokenzr.h>
 #include "dialogex.h"
 #include "ipcmutex.h"
+#include "Options.h"
 
 CVerifyCertDialog::~CVerifyCertDialog()
 {
@@ -451,6 +452,9 @@ void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* co
 	cert.data = new unsigned char[len];
 	memcpy(cert.data, data, len);
 	m_trustedCerts.push_back(cert);
+
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
+		return;
 
 	TiXmlElement* pElement = m_xmlFile.GetElement();
 	if (!pElement)
