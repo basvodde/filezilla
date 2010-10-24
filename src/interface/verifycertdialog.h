@@ -13,7 +13,7 @@ public:
 	void ShowVerificationDialog(CCertificateNotification* pNotification, bool displayOnly = false);
 
 protected:
-	bool IsTrusted(const unsigned char* data, unsigned int len, bool permanentOnly);
+	bool IsTrusted(const wxString& host, int port, const unsigned char* data, unsigned int len, bool permanentOnly);
 
 	bool DisplayCert(wxDialogEx* pDlg, const CCertificate& cert);
 
@@ -31,6 +31,10 @@ protected:
 
 	struct t_certData
 	{
+		t_certData() : port(), data(), len() {}
+
+		wxString host;
+		int port;
 		unsigned char* data;
 		unsigned int len;
 	};

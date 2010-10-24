@@ -143,6 +143,8 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 			else
 			{
 				t_certData cert;
+				cert.host = pNotification->GetHost();
+				cert.port = pNotification->GetPort();
 				const unsigned char* data = m_certificates[0].GetRawData(cert.len);
 				cert.data = new unsigned char[cert.len];
 				memcpy(cert.data, data, cert.len);
@@ -256,13 +258,19 @@ bool CVerifyCertDialog::IsTrusted(CCertificateNotification* pNotification)
 	CCertificate cert =  pNotification->GetCertificates()[0];
 	const unsigned char* data = cert.GetRawData(len);
 
-	return IsTrusted(data, len, false);
+	return IsTrusted(pNotification->GetHost(), pNotification->GetPort(), data, len, false);
 }
 
-bool CVerifyCertDialog::IsTrusted(const unsigned char* data, unsigned int len, bool permanentOnly)
+bool CVerifyCertDialog::IsTrusted(const wxString& host, int port, const unsigned char* data, unsigned int len, bool permanentOnly)
 {
 	for (std::list<t_certData>::const_iterator iter = m_trustedCerts.begin(); iter != m_trustedCerts.end(); iter++)
 	{
+		if (host != iter->host)
+			continue;
+
+		if (port != iter->port)
+			continue;
+
 		if (iter->len != len)
 			continue;
 
@@ -275,6 +283,12 @@ bool CVerifyCertDialog::IsTrusted(const unsigned char* data, unsigned int len, b
 
 	for (std::list<t_certData>::const_iterator iter = m_sessionTrustedCerts.begin(); iter != m_sessionTrustedCerts.end(); iter++)
 	{
+		if (host != iter->host)
+			continue;
+
+		if (port != iter->port)
+			continue;
+
 		if (iter->len != len)
 			continue;
 
@@ -380,6 +394,11 @@ void CVerifyCertDialog::LoadTrustedCerts(bool close /*=true*/)
 		if (value == _T("") || !(data.data = ConvertStringToHex(value, data.len)))
 			pRemove = pCert;
 
+		data.host = GetTextElement(pCert, "Host");
+		data.port = GetTextElementInt(pCert, "Port");
+		if (data.host.empty() || data.port < 1 || data.port > 65535)
+			pRemove = pCert;
+
 		wxLongLong activationTime = GetTextElementLongLong(pCert, "ActivationTime", 0);
 		if (activationTime == 0 || activationTime > wxDateTime::GetTimeNow())
 			pRemove = pCert;
@@ -388,7 +407,7 @@ void CVerifyCertDialog::LoadTrustedCerts(bool close /*=true*/)
 		if (expirationTime == 0 || expirationTime < wxDateTime::GetTimeNow())
 			pRemove = pCert;
 
-		if (IsTrusted(data.data, data.len, true))
+		if (IsTrusted(data.host, data.port, data.data, data.len, true)) // Weed out duplicates
 			pRemove = pCert;
 
 		if (!pRemove)
@@ -421,7 +440,7 @@ void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* co
 	CReentrantInterProcessMutexLocker mutex(MUTEX_TRUSTEDCERTS);
 	LoadTrustedCerts(false);
 
-	if (IsTrusted(data, len, true))
+	if (IsTrusted(pNotification->GetHost(), pNotification->GetPort(), data, len, true))
 	{
 		m_xmlFile.Close();
 		return;
@@ -459,6 +478,9 @@ void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* co
 
 	time = certificate.GetExpirationTime().GetTicks();
 	AddTextElement(pCert, "ExpirationTime", time.ToString());
+
+	AddTextElement(pCert, "Host", pNotification->GetHost());
+	AddTextElement(pCert, "Port", pNotification->GetPort());
 
 	m_xmlFile.Save();
 	m_xmlFile.Close();
