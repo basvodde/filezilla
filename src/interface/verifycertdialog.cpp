@@ -76,6 +76,9 @@ void CVerifyCertDialog::ShowVerificationDialog(CCertificateNotification* pNotifi
 		m_pDlg->Load(0, _T("ID_VERIFYCERT"));
 
 		m_pDlg->WrapText(m_pDlg, XRCID("ID_DESC"), 400);
+
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
+			XRCCTRL(*m_pDlg, "ID_ALWAYS", wxCheckBox)->Hide();
 	}
 
 	m_certificates = pNotification->GetCertificates();
