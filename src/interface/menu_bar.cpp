@@ -28,6 +28,7 @@ CMenuBar::~CMenuBar()
 			delete iter->second;
 	}
 
+	m_pMainFrame->Disconnect(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CMenuBar::OnMenuEvent), 0, this);
 }
 
 CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
