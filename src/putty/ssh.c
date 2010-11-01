@@ -980,6 +980,7 @@ static Loaded_keyfile_list* load_keyfiles(Ssh ssh, int req_type)
     Keyfile_list *list = ssh->cfg.keyfile_list;
     Loaded_keyfile_list* loaded_list = NULL;
     int num_loaded = 0;
+	int type;
 
     for (; list; list = list->next) {
 	Loaded_keyfile_list* loaded = snew(Loaded_keyfile_list);
@@ -990,7 +991,7 @@ static Loaded_keyfile_list* load_keyfiles(Ssh ssh, int req_type)
 	loaded->publickey_bloblen = 0;
 	loaded->file = list->file;
 
-	int type = key_type(&list->file);
+	type = key_type(&list->file);
 	if (type != req_type) {
 	    sfree(loaded);
 	    continue;
@@ -3746,8 +3747,10 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 		    /* Purge duplicate keys from loaded_keyfile_list */
 		    while (loaded_keyfile_list) {
 			if (!memcmp(pkblob, loaded_keyfile_list->publickey_blob, loaded_keyfile_list->publickey_bloblen)) {
+				Loaded_keyfile_list* next;
+
 			    logeventf(ssh, "Key matched loaded keyfile, remove duplicate");
-			    Loaded_keyfile_list* next = loaded_keyfile_list->next;
+			    next = loaded_keyfile_list->next;
 			    if (!loaded_keyfile_list_prev)
 				s->loaded_keyfile_list = next;
 			    else
@@ -4016,10 +4019,10 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 
 	    crWaitUntil(pktin);
 	    if (pktin->type == SSH1_SMSG_FAILURE) {
-		c_write_str(ssh, "Server refused our public key.\r\n");
 		Loaded_keyfile_list* next = s->loaded_keyfile_list->next;
 		free_loaded_keyfile(s->loaded_keyfile_list);
 		s->loaded_keyfile_list = next;
+		c_write_str(ssh, "Server refused our public key.\r\n");
 		continue;	       /* go and try something else */
 	    }
 	    if (pktin->type != SSH1_SMSG_AUTH_RSA_CHALLENGE) {
@@ -4058,12 +4061,12 @@ static int do_ssh1_login(Ssh ssh, unsigned char *in, int inlen,
 
 	    crWaitUntil(pktin);
 	    if (pktin->type == SSH1_SMSG_FAILURE) {
-		if (flags & FLAG_VERBOSE)
-		    c_write_str(ssh, "Failed to authenticate with"
-		    " our public key.\r\n");
 		Loaded_keyfile_list* next = s->loaded_keyfile_list->next;
 		free_loaded_keyfile(s->loaded_keyfile_list);
 		s->loaded_keyfile_list = next;
+		if (flags & FLAG_VERBOSE)
+		    c_write_str(ssh, "Failed to authenticate with"
+		    " our public key.\r\n");
 		continue;	       /* go and try something else */
 	    } else if (pktin->type != SSH1_SMSG_SUCCESS) {
 		bombout(("Bizarre response to RSA authentication response"));
@@ -7843,10 +7846,10 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 
 		/* Purge duplicate keys from loaded_keyfile_list */
 		while (loaded_keyfile_list) {
+			Loaded_keyfile_list* next = loaded_keyfile_list->next;
 		    if (s->pklen == loaded_keyfile_list->publickey_bloblen &&
 			    !memcmp(s->pkblob, loaded_keyfile_list->publickey_blob, loaded_keyfile_list->publickey_bloblen)) {
 			logeventf(ssh, "Key matched loaded keyfile, remove duplicate");
-			Loaded_keyfile_list* next = loaded_keyfile_list->next;
 			if (!loaded_keyfile_list_prev)
 			    s->loaded_keyfile_list = next;
 			else
@@ -8163,6 +8166,7 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 
 	    } else if (s->can_pubkey && s->loaded_keyfile_list) {
 
+		Loaded_keyfile_list *next_keyfile;
 		struct ssh2_userkey *key;   /* not live over crReturn */
 
 		ssh->pkt_actx = SSH2_PKTCTX_PUBLICKEY;
@@ -8191,9 +8195,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		crWaitUntilV(pktin);
 		if (pktin->type != SSH2_MSG_USERAUTH_PK_OK) {
 		    /* Key refused. Give up. */
-		    Loaded_keyfile_list* next = s->loaded_keyfile_list->next;
+		    next_keyfile = s->loaded_keyfile_list->next;
 		    free_loaded_keyfile(s->loaded_keyfile_list);
-		    s->loaded_keyfile_list = next;
+		    s->loaded_keyfile_list = next_keyfile;
 		    s->gotit = TRUE; /* reconsider message next loop */
 		    s->type = AUTH_TYPE_PUBLICKEY_OFFER_LOUD;
 		    continue; /* process this new message */
@@ -8269,9 +8273,9 @@ static void do_ssh2_authconn(Ssh ssh, unsigned char *in, int inlen,
 		    ssh2_pkt_send(ssh, s->pktout);
 		    s->type = AUTH_TYPE_PUBLICKEY;
 		}
-		Loaded_keyfile_list* next = s->loaded_keyfile_list->next;
+		next_keyfile = s->loaded_keyfile_list->next;
 		free_loaded_keyfile(s->loaded_keyfile_list);
-		s->loaded_keyfile_list = next;
+		s->loaded_keyfile_list = next_keyfile;
 
 #ifndef NO_GSSAPI
 	    } else if (s->can_gssapi && !s->tried_gssapi) {

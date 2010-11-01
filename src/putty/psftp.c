@@ -1043,12 +1043,14 @@ int sftp_cmd_quit(struct sftp_command *cmd)
 
 int sftp_cmd_keyfile(struct sftp_command *cmd)
 {
+	Keyfile_list *list;
+
     if (cmd->nwords != 2) {
 	fzprintf(sftpError, "No keyfile given");
 	return 0;
     }
 
-    Keyfile_list *list = snew(Keyfile_list);
+    list = snew(Keyfile_list);
     list->file = filename_from_str(cmd->words[1]);
     list->next = cfg.keyfile_list;
     cfg.keyfile_list = list;
@@ -3318,9 +3320,6 @@ int psftp_init_utf8_locale()
  */
 int psftp_main(int argc, char *argv[])
 {
-    // FZ: Set proxy to none
-    cfg.proxy_type = PROXY_NONE;
-
     int i;
     int portnumber = 0;
     char *userhost, *user;
@@ -3328,6 +3327,9 @@ int psftp_main(int argc, char *argv[])
     int modeflags = 0;
     char *batchfile = NULL;
     int errors = 0;
+
+    // FZ: Set proxy to none
+    cfg.proxy_type = PROXY_NONE;
 
     fzprintf(sftpReply, "fzSftp started");
 
@@ -3414,8 +3416,9 @@ int psftp_main(int argc, char *argv[])
      * it now.
      */
     if (userhost) {
-	fzprintf(sftpVerbose, "psftp: Using userhost passed on commandline: %s", userhost);
 	int ret;
+
+	fzprintf(sftpVerbose, "psftp: Using userhost passed on commandline: %s", userhost);
 	ret = psftp_connect(userhost, user, portnumber);
 	sfree(userhost);
 	if (ret)
