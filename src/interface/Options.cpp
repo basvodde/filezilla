@@ -99,7 +99,7 @@ static const t_Option options[OPTIONS_NUM] =
 	// Interface settings
 	{ "Number of Transfers", number, _T("2"), normal },
 	{ "Ascii Binary mode", number, _T("0"), normal },
-	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|js|jsp|m4|mak|md5|nfo|nsi|pas|patch|php|phtml|pl|po|py|qmail|sh|shtml|sql|svg|tcl|tpl|txt|vbs|xhtml|xml|xrc"), normal },
+	{ "Auto Ascii files", string, _T("am|asp|bat|c|cfm|cgi|conf|cpp|css|dhtml|diz|h|hpp|htm|html|in|inc|java|js|jsp|lua|m4|mak|md5|nfo|nsi|pas|patch|php|phtml|pl|po|py|qmail|sh|shtml|sql|svg|tcl|tpl|txt|vbs|xhtml|xml|xrc"), normal },
 	{ "Auto Ascii no extension", number, _T("1"), normal },
 	{ "Auto Ascii dotfiles", number, _T("1"), normal },
 	{ "Theme", string, _T("opencrystal/"), normal },
