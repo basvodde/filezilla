@@ -32,7 +32,7 @@ nodist_noinst_DATA = psftp.o
 
 psftp.o: $(srcdir)/psftp.rc $(srcdir)/windows_manifest.xml
 	@if [ -f $@~ ]; then rm $@~; fi
-	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) $(srcdir)/psftp.rc $@~
+	@WINDRES@ --include-dir=$(srcdir) $(WINDRESFLAGS) -D GNU_WINDRES $(srcdir)/psftp.rc $@~
 	@if [ -f $@ ]; then rm $@; fi
 	mv $@~ $@
 endif
