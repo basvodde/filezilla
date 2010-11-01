@@ -12,6 +12,12 @@ dist_resources_DATA = defaultfilters.xml \
 		settings.xrc \
 		theme.xml toolbar.xrc up.png
 
+resources20dir = $(pkgdatadir)/resources/20x20
+dist_resources20_DATA = 20x20/unknown.png
+
+resources24dir = $(pkgdatadir)/resources/24x24
+dist_resources24_DATA = 24x24/unknown.png
+
 resources48dir = $(pkgdatadir)/resources/48x48
 dist_resources48_DATA = 48x48/filezilla.png \
 			48x48/speedlimits.png
@@ -38,6 +44,14 @@ mac-copy-resources: $(dist_resources_DATA)
 
 	for i in $(dist_resources_DATA); \
 		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources"; \
+	done
+	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/20x20"
+	for i in $(dist_resources20_DATA); \
+		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/20x20"; \
+	done
+	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/24x24"
+	for i in $(dist_resources24_DATA); \
+		do cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/24x24"; \
 	done
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/48x48"
 	for i in $(dist_resources48_DATA); \

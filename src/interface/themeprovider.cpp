@@ -13,32 +13,52 @@ CThemeProvider::CThemeProvider()
 	RegisterOption(OPTION_THEME);
 }
 
-wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
+static wxString SubdirFromSize(const int size)
+{
+	return wxString::Format(_T("%dx%d/"), size, size);
+}
+
+std::list<wxString> CThemeProvider::GetSearchDirs(const wxSize& size)
+{
+	const int s(size.GetWidth());
+	// Sort order:
+	// - Current theme before general resource dir
+	// - Try current size first
+	// - Then try scale down next larger icon
+	// - Then try scaling up next smaller icon
+
+
+	int sizes[] = { 48,32,24,20,16 };
+
+	std::list<wxString> sizeStrings;
+
+	for (int i = 0; i < sizeof(sizes) / sizeof(int) && sizes[i] > s; ++i)
+		sizeStrings.push_front(SubdirFromSize(sizes[i]));
+	for (int i = 0; i < sizeof(sizes) / sizeof(int); ++i)
+		if (sizes[i] < s)
+			sizeStrings.push_back(SubdirFromSize(sizes[i]));
+
+	sizeStrings.push_front(SubdirFromSize(s));
+
+	std::list<wxString> dirs;
+
+	for (std::list<wxString>::const_iterator it = sizeStrings.begin(); it != sizeStrings.end(); ++it)
+		dirs.push_back(m_themePath + *it);
+
+	const wxString resourceDir(wxGetApp().GetResourceDir());
+	for (std::list<wxString>::const_iterator it = sizeStrings.begin(); it != sizeStrings.end(); ++it)
+		dirs.push_back(resourceDir + *it);
+
+	return dirs;
+}
+
+wxBitmap CThemeProvider::CreateBitmap(const wxArtID& id, const wxArtClient& /*client*/, const wxSize& size)
 {
 	if (id.Left(4) != _T("ART_"))
 		return wxNullBitmap;
+	wxASSERT(size.GetWidth() == size.GetHeight());
 
-	wxString resourceDir = wxGetApp().GetResourceDir();
-
-	std::list<wxString> dirs;
-	wxString strSize = wxString::Format(_T("%dx%d/"), size.GetWidth(), size.GetHeight());
-	if (wxDir::Exists(m_themePath + strSize))
-		dirs.push_back(m_themePath + strSize);
-	if (wxDir::Exists(resourceDir + strSize))
-		dirs.push_back(resourceDir + strSize);
-
-	if (size.GetWidth() > 32)
-	{
-		dirs.push_back(m_themePath + _T("48x48/"));
-		dirs.push_back(resourceDir + _T("48x48/"));
-	}
-	if (size.GetWidth() > 16)
-	{
-		dirs.push_back(m_themePath + _T("32x32/"));
-		dirs.push_back(resourceDir + _T("32x32/"));
-	}
-	dirs.push_back(m_themePath + _T("16x16/"));
-	dirs.push_back(resourceDir + _T("16x16/"));
+	std::list<wxString> dirs = GetSearchDirs(size);
 
 	wxString name = id.Mid(4);
 

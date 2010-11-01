@@ -1,5 +1,7 @@
 resourcesdir = $(pkgdatadir)/resources/opencrystal
 resources16dir = $(pkgdatadir)/resources/opencrystal/16x16
+resources20dir = $(pkgdatadir)/resources/opencrystal/20x20
+resources24dir = $(pkgdatadir)/resources/opencrystal/24x24
 resources32dir = $(pkgdatadir)/resources/opencrystal/32x32
 resources48dir = $(pkgdatadir)/resources/opencrystal/48x48
 
@@ -37,6 +39,10 @@ dist_resources16_DATA = 16x16/ascii.png \
 		16x16/synchronize.png \
 		16x16/upload.png \
 		16x16/uploadadd.png
+
+dist_resources20_DATA = 20x20/unknown.png
+
+dist_resources24_DATA = 24x24/unknown.png
 
 dist_resources32_DATA = 32x32/ascii.png \
 		32x32/auto.png \
@@ -107,6 +113,14 @@ mac-copy-resources: $(dist_resources_DATA)
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/16x16";
 	for i in $(dist_resources16_DATA); do \
 	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/16x16"; \
+	done
+	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/20x20";
+	for i in $(dist_resources20_DATA); do \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/20x20"; \
+	done
+	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/24x24";
+	for i in $(dist_resources24_DATA); do \
+	  cp -f "$(srcdir)/$$i" "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/24x24"; \
 	done
 	mkdir -p "$(top_builddir)/FileZilla.app/Contents/SharedSupport/resources/opencrystal/32x32";
 	for i in $(dist_resources32_DATA); do \
