@@ -40,9 +40,9 @@ dist_resources16_DATA = 16x16/ascii.png \
 		16x16/upload.png \
 		16x16/uploadadd.png
 
-dist_resources20_DATA = 20x20/unknown.png
+dist_resources20_DATA = 20x20/server.png
 
-dist_resources24_DATA = 24x24/unknown.png
+dist_resources24_DATA = 24x24/server.png
 
 dist_resources32_DATA = 32x32/ascii.png \
 		32x32/auto.png \
