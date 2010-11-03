@@ -130,7 +130,10 @@ bool CDirectoryCache::LookupFile(CDirentry &entry, const CServer &server, const 
 {
 	tServerIter sit = GetServerEntry(server);
 	if (sit == m_serverList.end())
+	{
+		dirDidExist = false;
 		return false;
+	}
 
 	tCacheIter iter;
 	bool unused;
