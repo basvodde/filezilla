@@ -185,7 +185,7 @@ void CVerifyCertDialog::ParseDN(wxDialog* pDlg, const wxString& dn, wxSizer* pSi
 	ParseDN_by_prefix(pDlg, tokenlist, _T("postalCode"), _("Postal code:"), pSizer, true);
 	ParseDN_by_prefix(pDlg, tokenlist, _T("STREET"), _("Street:"), pSizer);
 	ParseDN_by_prefix(pDlg, tokenlist, _T("EMAIL"), _("E-Mail:"), pSizer);
-	ParseDN_by_prefix(pDlg, tokenlist, _T("serialNumber"), _("Serial Number:"), pSizer);
+	ParseDN_by_prefix(pDlg, tokenlist, _T("serialNumber"), _("Serial number:"), pSizer);
 	ParseDN_by_prefix(pDlg, tokenlist, _T("1.3.6.1.4.1.311.60.2.1.3"), _("Jurisdiction country:"), pSizer, true);
 	ParseDN_by_prefix(pDlg, tokenlist, _T("1.3.6.1.4.1.311.60.2.1.2"), _("Jurisdiction state or province:"), pSizer, true);	
 	ParseDN_by_prefix(pDlg, tokenlist, _T("1.3.6.1.4.1.311.60.2.1.1"), _("Jurisdiction locality:"), pSizer, true);
