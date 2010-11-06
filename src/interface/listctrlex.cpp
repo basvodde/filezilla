@@ -968,6 +968,9 @@ void wxListCtrlEx::SetHeaderSortIconIndex(int col, int icon)
 	if (!GetColumn(col, item))
 		return;
 
+	if( icon != -1 )
+		icon = icon ? m_header_icon_index.down : m_header_icon_index.up;
+
 	item.SetImage(icon);
 	SetColumn(col, item);
 #endif
