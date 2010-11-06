@@ -113,6 +113,26 @@ if test "$buildmain" = "yes"; then
     AC_MSG_ERROR([You need to use wxWidgets 2.8.x to compile this program.])
   fi
 
+  AC_LANG_PUSH(C++)
+  CPPFLAGS_OLD="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
+  AC_MSG_CHECKING([positional printf argument support in wxWidgets])
+  AC_PREPROC_IFELSE(
+	AC_LANG_PROGRAM([[
+		  #include <wx/wx.h>
+		  #if !wxUSE_PRINTF_POS_PARAMS
+			#error wx compiled without wxUSE_PRINTF_POS_PARAMS
+		  #endif
+		]]),
+	  AC_MSG_RESULT([yes]),
+	  [
+		AC_MSG_RESULT([no])
+		AC_MSG_FAILURE([Positional printf argument support in wxWidgets is required by FileZilla. Please rebuild wxWidgets and pass --enable-printfposparam to its configure script.])
+	  ]
+	)
+  CPPFLAGS="$CPPFLAGS_OLD"
+  AC_LANG_POP
+
   AC_SUBST(WX_CONFIG_WITH_ARGS)
 
   AC_CACHE_SAVE
