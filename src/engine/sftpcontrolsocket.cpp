@@ -868,9 +868,10 @@ bool CSftpControlSocket::SetAsyncRequestReply(CAsyncRequestNotification *pNotifi
 			CHostKeyNotification *pHostKeyNotification = reinterpret_cast<CHostKeyNotification *>(pNotification);
 			wxString show;
 			if (requestId == reqId_hostkey)
-				show = _("Trust new Hostkey: ");
+				show = _("Trust new Hostkey:");
 			else
-				show = _("Trust changed Hostkey: ");
+				show = _("Trust changed Hostkey:");
+			show += ' ';
 			if (!pHostKeyNotification->m_trust)
 			{
 				Send(_T(""), show + _("No"));
