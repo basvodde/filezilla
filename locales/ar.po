@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-02 23:11+0100\n"
-"PO-Revision-Date: 2010-10-04 13:31+0300\n"
+"POT-Creation-Date: 2010-11-07 22:34+0100\n"
+"PO-Revision-Date: 2010-11-07 20:32+0300\n"
 "Last-Translator: Awadh Al-Ghaamdi <awadh_al_ghaamdi@hotmail.com>\n"
 "Language-Team: Awadh Al-Ghaamdi <awadh_al_ghaamdi@hotmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -1678,7 +1678,7 @@ msgid "C&ustom filetype associations:"
 msgstr "إ&شراكات مخصصة لأنواع الملفات :"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1607
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1268
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1269
 msgid "Calculating timezone offset of server..."
 msgstr "تعداد فارق التوقيت للخادم..."
 
@@ -2503,7 +2503,9 @@ msgstr ""
 #: ../../locales/../src/interface/sitemanager.cpp:3123
 #, c-format
 msgid "Could not write \"%s\", the selected sites could not be exported: %s"
-msgstr "لا يمكن كتابة \"%s\" , تعذر تصدير المواقع المحددة: %s"
+msgstr ""
+"لا يمكن كتابة \"%s\" , تعذر تصدير المواقع المحددة\n"
+"%s"
 
 #: ../../locales/../src/interface/wrapengine.cpp:1103
 #, c-format
@@ -2555,7 +2557,7 @@ msgid "Creating directory"
 msgstr "إنشاء دليل"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3281
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2045
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2046
 #, c-format
 msgid "Creating directory '%s'..."
 msgstr "جاري إنشاء الدليل '%s'..."
@@ -3666,7 +3668,7 @@ msgid "Filename &filters..."
 msgstr "&مرشحات إسم الملف..."
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3079
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2308
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2309
 #, c-format
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "إسم الملف لا يمكن أن يتم بناؤه للدليل %s و إسم الملف %s"
@@ -4669,7 +4671,7 @@ msgstr "موقع جديد"
 msgid "Next to the transfer queue"
 msgstr "التالي إلى قائمة إنتظار الإرسال"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:876
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:877
 msgid "No"
 msgstr "لا"
 
@@ -4824,7 +4826,7 @@ msgstr ""
 "على الصفحات التالية ، سيتم تكوين نمط الإرسال المحدد ، بالإضافة إلى نمط "
 "التراجع إذا كان في وضع التمكين"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:886
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:887
 msgid "Once"
 msgstr "مرة"
 
@@ -4989,7 +4991,7 @@ msgid "Path"
 msgstr "مسار"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3166
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2353
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2354
 #, c-format
 msgid "Path cannot be constructed for directory %s and subdir %s"
 msgstr "لا يمكن بناء المسار للمجلد %s و للمجلد الفرعي %s"
@@ -5684,7 +5686,7 @@ msgid "Rename selected files and directories"
 msgstr "تسمية الملفات المحددة و الأدلة"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3512
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2555
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2556
 #, c-format
 msgid "Renaming '%s' to '%s'"
 msgstr "تسمية '%s' إلى '%s'"
@@ -5732,7 +5734,7 @@ msgstr ""
 "السطر تختلف عن التي مع التابع"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1276
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:953
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:954
 msgid "Retrieving directory listing..."
 msgstr "إسترجاع قائمة الدليل..."
 
@@ -5986,12 +5988,10 @@ msgid "Selected file is already loaded"
 msgstr "الملف المحدد يتم التعامل معه حاليا"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2666
-#, fuzzy
-msgid "Selected file is already opened."
-msgstr "الملف المحدد يتم فتحه حاليا"
+msgid "Selected file is already opened"
+msgstr "الملف المحدد مفتوح مسبقا"
 
 #: ../../locales/../src/interface/RemoteListView.cpp:2694
-#, fuzzy
 msgid "Selected file is still being edited"
 msgstr "الملف المحدد لا يزال قيد التحرير"
 
@@ -6023,11 +6023,8 @@ msgstr "إرسال أمر مخصص إلى الخادم ، غير ذلك فانه
 msgid "Sending keep-alive command"
 msgstr "إرسال &أوامر البقاء نشطا"
 
-#: ../../locales/../src/interface/verifycertdialog.cpp:188
-msgid "Serial Number:"
-msgstr "رقم التسلسل :"
-
 #: resources.h:7 resources.h:31
+#: ../../locales/../src/interface/verifycertdialog.cpp:188
 msgid "Serial number:"
 msgstr "رقم التسلسل:"
 
@@ -6134,7 +6131,7 @@ msgid "Set &Priority"
 msgstr "&وضع الاولوية"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:3664
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2433
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:2434
 #, c-format
 msgid "Set permissions of '%s' to '%s'"
 msgstr "وضع الأذونات لـ '%s' إلى '%s'"
@@ -6331,13 +6328,13 @@ msgid "Start with opened Site Manager"
 msgstr "البدء مع مدير مواقع مفتوح"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2209
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1631
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1632
 #, c-format
 msgid "Starting download of %s"
 msgstr "بدء التحميل لـ %s"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:2213
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1635
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1636
 #, c-format
 msgid "Starting upload of %s"
 msgstr "بدء الرفع لـ %s"
@@ -6857,7 +6854,7 @@ msgid "Timeout"
 msgstr "إنقضاء الوقت"
 
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:1668
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1077
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1078
 #, c-format
 msgid ""
 "Timezone offsets: Server: %d seconds. Local: %d seconds. Difference: %d "
@@ -7002,11 +6999,13 @@ msgid "Treat the &following filetypes as ASCII files:"
 msgstr "معاملة أنواع الملفات &التالية بهيئة ملفات ASCII :"
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:873
-msgid "Trust changed Hostkey: "
+#, fuzzy
+msgid "Trust changed Hostkey:"
 msgstr "المحفوظات المتغيرة للثقة: "
 
 #: ../../locales/../src/engine/sftpcontrolsocket.cpp:871
-msgid "Trust new Hostkey: "
+#, fuzzy
+msgid "Trust new Hostkey:"
 msgstr "المحفوظات الجديدة للثقة: "
 
 #: resources.h:193
@@ -7432,7 +7431,7 @@ msgstr "عنوان IP خارجي خطأ"
 msgid "Wrong line endings"
 msgstr "نهايات سطور خطأ"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:884
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:885
 msgid "Yes"
 msgstr "نعم"
 
@@ -7648,7 +7647,7 @@ msgstr ""
 "الرجاء التأكد من أن هذا الملف التنفيذي موجود في نفس الدليل كملف تنفيذي رئيسي "
 "لـ FileZilla"
 
-#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1556
+#: ../../locales/../src/engine/sftpcontrolsocket.cpp:1557
 msgid "fzsftp could not be started"
 msgstr "fzsftp غير قادر على تشغيل"
 
@@ -7723,6 +7722,9 @@ msgstr "ملف قابل للكتابة للعام"
 #: resources.h:164
 msgid "wxWidgets:"
 msgstr "wxWidgets:"
+
+#~ msgid "Serial Number:"
+#~ msgstr "رقم التسلسل :"
 
 #~ msgid "&Speed limits..."
 #~ msgstr "&حدود السرعة..."
