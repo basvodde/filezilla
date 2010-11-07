@@ -10,6 +10,24 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.3.5-rc1 (2010-11-07)
+
++ FTP over TLS certificate store is now host-specific
++ MSW: Large-DPI awareness
++ Improved SFTP transfer speeds
++ FTP over TLS should prefer ciphers with longer key sizes, updated contained GnuTLS library in precompiled binaries
++ Add context menu entry to re-queue all files on the successful and failed queue tabs
++ MSW: Native file list sort indicator on Windows Vista and 7
+- Resuming of uploads was not working correctly in all cases
+- Correct remaining time calculation in queue
+- Do not show welcome dialog in kiosk mode 2
+- Do not offer option to permanently accept certificate in kiosk mode 2
+- Fix sorting by size in filelists with directory sort behavior set to inline
+- MSW: Fix memory corruption when changing language
+- OS X: Include license and documentation files in application bundle
+- Directly save settings after importing from file
+
+
 3.3.4.1 (2010-08-15)
 
 - Set a minimum size for column widths in directory lists and transfer queue
