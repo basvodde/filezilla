@@ -451,6 +451,8 @@ void CVerifyCertDialog::SetPermanentlyTrusted(const CCertificateNotification* co
 	}
 
 	t_certData cert;
+	cert.host = pNotification->GetHost();
+	cert.port = pNotification->GetPort();
 	cert.len = len;
 	cert.data = new unsigned char[len];
 	memcpy(cert.data, data, len);
