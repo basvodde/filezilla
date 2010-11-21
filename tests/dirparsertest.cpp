@@ -1318,6 +1318,22 @@ void CDirectoryListingParserTest::InitEntries()
 			DEFAULT
 		});
 
+	// MVS entry with a large number of used blocks:
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	m_entries.push_back((t_entry){
+			"WYOSPT 3420   2003/05/21  1 ????  FB      80  8053  PS  79-MVS.FILE",
+			{
+				_T("79-MVS.FILE"),
+				100,
+				_T(""),
+				_T(""),
+				CDirentry::flag_timestamp_date,
+				_T(""),
+				wxDateTime(21, wxDateTime::May, 2003)
+		},
+		DEFAULT
+	});
+
 /*
 	wxString name;
 	wxLongLong size;

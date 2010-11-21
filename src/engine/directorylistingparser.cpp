@@ -2299,7 +2299,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	// used
 	if (!pLine->GetToken(index++, token))
 		return false;
-	if (token.IsNumeric())
+	if (token.IsNumeric() || token.GetString() == _T("????"))
 	{
 		// recfm
 		if (!pLine->GetToken(index++, token))
