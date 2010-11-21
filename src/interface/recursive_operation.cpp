@@ -424,7 +424,7 @@ void CRecursiveOperation::LinkIsNotDir()
 	{
 		CLocalPath localPath = dir.localDir;
 		wxString localFile = dir.subdir;
-		if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode == recursive_download_flatten)
+		if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
 			localPath.MakeParent();
 		m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue || m_operationMode == recursive_addtoqueue_flatten, true, localPath, localFile, dir.subdir, dir.parent, *pServer, -1);
 		m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
