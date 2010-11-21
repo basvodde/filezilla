@@ -5,6 +5,11 @@
   #else
     #define DEBUG_NEW new
   #endif
+
+  #if !wxUSE_PRINTF_POS_PARAMS
+    #error Please build wxWidgets with support for positional arguments.
+  #endif
+
 #else
   #define DEBUG_NEW new
 #endif
