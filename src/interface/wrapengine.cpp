@@ -204,11 +204,12 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 	if (!m_font.IsOk())
 		m_font = parent->GetFont();
 
+#ifdef __WXDEBUG__
+	const wxString original = text;
+#endif
+
 	if (m_wrapOnEveryChar)
 	{
-#ifdef __WXDEBUG__
-		const wxString original = text;
-#endif
 		bool res = WrapTextChinese(parent, text, maxLength);
 #ifdef __WXDEBUG__
 		wxString unwrapped = UnwrapText(text);
@@ -265,16 +266,23 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 
 		if (lineLength + spaceWidth + width > maxLength)
 		{
+			// Cannot be appended to current line without overflow, so start a new line
 			if (wrappedText != _T(""))
 				wrappedText += _T("\n");
 			wrappedText += text.Mid(start, wrapAfter - start);
 			if (text[wrapAfter] != ' ' && text[wrapAfter] != '\0')
 				wrappedText += text[wrapAfter];
+
 			if (width + spaceWidth >= (int)maxLength)
 			{
-				if (wrappedText != _T(""))
-					wrappedText += _T("\n");
-				wrappedText += text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+				// Current segment too big to even fit into a line just by itself
+
+				if( i != wrapAfter )
+				{
+					if (wrappedText != _T(""))
+						wrappedText += _T("\n");
+					wrappedText += text.Mid(wrapAfter + 1, i - wrapAfter - 1);
+				}
 
 				start = i + 1;
 				wrapAfter = -1;
@@ -318,6 +326,11 @@ bool CWrapEngine::WrapText(wxWindow* parent, wxString& text, unsigned long maxLe
 
 	text = wrappedText;
 
+#ifdef __WXDEBUG__
+		wxString unwrapped = UnwrapText(text);
+		wxASSERT(original == unwrapped);
+#endif
+
 	return true;
 }
 
@@ -346,7 +359,7 @@ int CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 	
 #if WRAPDEBUG >= 3
 	static int level = 1;
-    plvl printf("Enter\n");
+	plvl printf("Enter with max = %d\n", max);
 #endif
 
 	if (max <= 0)
@@ -381,7 +394,7 @@ int CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 
 		if (min.GetWidth() + item->GetPosition().x + lborder + rborder <= max)
 		    continue;
-			
+
 		wxWindow* window;
 		wxSizer* subSizer = 0;
 		if ((window = item->GetWindow()))
@@ -438,6 +451,17 @@ int CWrapEngine::WrapRecursive(wxWindow* wnd, wxSizer* sizer, int max)
 				}
 				continue;
 			}
+
+			if (wxDynamicCast(window, wxCheckBox) || wxDynamicCast(window, wxRadioButton) || wxDynamicCast(window, wxChoice))
+			{
+#if WRAPDEBUG >= 3
+				plvl printf("Leave: WrapRecursive on unshrinkable controls failed\n");
+#endif
+				result |= wrap_failed;
+				return result;
+			}
+
+			// We assume here that all other oversized controls can scale
 		}
 		else if ((subSizer = item->GetSizer()))
 		{
@@ -525,7 +549,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 #ifdef __WXMAC__
 			const int offset = 6;
 #elif defined(__WXGTK__)
-			const int offset = 4;
+			const int offset = 0;
 #else
 			const int offset = 0;
 #endif
@@ -593,7 +617,7 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 #ifdef __WXMAC__
 			const int offset = 6;
 #elif defined(__WXGTK__)
-			const int offset = 4;
+			const int offset = 0;
 #else
 			const int offset = 0;
 #endif
@@ -681,12 +705,19 @@ bool CWrapEngine::WrapRecursive(std::vector<wxWindow*>& windows, double ratio, c
 	}
 #if WRAPDEBUG > 0		
 		printf("Performing final wrap with bestwidth %d\n", bestWidth);
-#endif		
+#endif
+#ifdef __WXMAC__
+			const int offset = 6;
+#elif defined(__WXGTK__)
+			const int offset = 0;
+#else
+			const int offset = 0;
+#endif
 	for (std::vector<wxWindow*>::iterator iter = all_windows.begin(); iter != all_windows.end(); iter++)
 	{
 		wxSizer *pSizer = (*iter)->GetSizer();
 
-		int res = WrapRecursive(*iter, pSizer, bestWidth);
+		int res = WrapRecursive(*iter, pSizer, bestWidth - offset);
 
 		if (res & wrap_didwrap)
 		{
