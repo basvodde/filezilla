@@ -34,7 +34,8 @@ enum Flags
 {
 	normal,
 	internal,
-	default_only
+	default_only,
+	default_priority // If that option is given in fzdefaults.xml, it overrides any user option
 };
 
 struct t_Option
@@ -177,7 +178,7 @@ static const t_Option options[OPTIONS_NUM] =
 
 	// Default/internal options
 	{ "Config Location", string, _T(""), default_only },
-	{ "Kiosk mode", number, _T("0"), default_only },
+	{ "Kiosk mode", number, _T("0"), default_priority },
 	{ "Disable update check", number, _T("0"), default_only }
 };
 
@@ -684,7 +685,6 @@ void COptions::LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::
 	{
 		if (!allowDefault && options[iter->second].flags == default_only)
 			return;
-
 		wxString value;
 
 		TiXmlNode *text = pOption->FirstChild();
@@ -693,6 +693,17 @@ void COptions::LoadOptionFromElement(TiXmlElement* pOption, const std::map<std::
 				return;
 
 			value = ConvLocal(text->Value());
+		}
+
+		if (options[iter->second].flags == default_priority)
+		{
+			if (allowDefault)
+				m_optionsCache[iter->second].from_default = true;
+			else
+			{
+				if (m_optionsCache[iter->second].from_default)
+					return;
+			}
 		}
 
 		if (options[iter->second].type == number)
@@ -831,5 +842,6 @@ void COptions::SetDefaultValues()
 			options[i].defaultValue.ToLong(&numValue);
 			m_optionsCache[i].numValue = numValue;
 		}
+		m_optionsCache[i].from_default = false;
 	}
 }

@@ -92,7 +92,7 @@ enum interfaceOptions
 
 struct t_OptionsCache
 {
-	bool cached;
+	bool from_default;
 	int numValue;
 	wxString strValue;
 };
