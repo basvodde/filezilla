@@ -13,7 +13,7 @@ std::map<wxString, int> CDirectoryListingParser::m_MonthNamesMap;
 #ifdef LISTDEBUG
 static char data[][150]={
 	"" // Has to be terminated with empty string
-};a
+};
 
 #endif
 
@@ -29,9 +29,13 @@ protected:
 
 public:
 	CToken()
+		: m_pToken()
+		, m_len()
+		, m_numeric(Unknown)
+		, m_leftNumeric(Unknown)
+		, m_rightNumeric(Unknown)
+		, m_number(-1)
 	{
-		m_pToken = 0;
-		m_len = 0;
 	}
 
 	enum t_numberBase
@@ -41,14 +45,13 @@ public:
 	};
 
 	CToken(const wxChar* p, unsigned int len)
-	{
-		m_pToken = p;
-		m_len = len;
-		m_numeric = Unknown;
-		m_leftNumeric = Unknown;
-		m_rightNumeric = Unknown;
-		m_number = -1;
-	}
+		: m_pToken(p)
+		, m_len(len)
+		, m_numeric(Unknown)
+		, m_leftNumeric(Unknown)
+		, m_rightNumeric(Unknown)
+		, m_number(-1)
+	{}
 
 	const wxChar* GetToken() const
 	{

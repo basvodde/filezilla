@@ -17,6 +17,7 @@ END_EVENT_TABLE()
 
 CMenuBar::CMenuBar()
 	: CStateEventHandler(0)
+	, m_pMainFrame()
 {
 }
 
@@ -228,7 +229,7 @@ void CMenuBar::ClearBookmarks()
 	CContextControl* pContextControl = m_pMainFrame ? m_pMainFrame->GetContextControl() : 0;
 	CContextControl::_context_controls* controls = pContextControl ? pContextControl->GetCurrentControls() : 0;
 
-	if (!controls)
+	if (!controls->site_bookmarks)
 		controls->site_bookmarks = new CContextControl::_context_controls::_site_bookmarks;
 	UpdateBookmarkMenu();
 }

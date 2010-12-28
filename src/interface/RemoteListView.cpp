@@ -2438,7 +2438,7 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 	}
 #endif
 
-	CLabelEditBlocker(*this);
+	CLabelEditBlocker b(*this);
 
 	wxDropSource source(this);
 	source.SetData(object);
