@@ -17,21 +17,26 @@ wxEvent* CIOThreadEvent::Clone() const
 }
 
 CIOThread::CIOThread()
-	: wxThreadEx(wxTHREAD_JOINABLE), m_evtHandler(0), m_pFile(0), m_condition(m_mutex)
+	: wxThreadEx(wxTHREAD_JOINABLE), m_evtHandler(0)
+	, m_read()
+	, m_binary()
+	, m_pFile(0)
+	, m_condition(m_mutex)
+	, m_curAppBuf()
+	, m_curThreadBuf()
+	, m_error()
+	, m_running()
+	, m_threadWaiting()
+	, m_appWaiting()
+	, m_destroyed()
+	, m_wasCarriageReturn()
+	, m_error_description()
 {
 	for (unsigned int i = 0; i < BUFFERCOUNT; i++)
 	{
 		m_buffers[i] = new char[BUFFERSIZE];
 		m_bufferLens[i] = 0;
 	}
-
-	m_error = false;
-	m_running = false;
-	m_appWaiting = false;
-	m_threadWaiting = false;
-	m_destroyed = false;
-	m_wasCarriageReturn = false;
-	m_error_description = 0;
 }
 
 CIOThread::~CIOThread()

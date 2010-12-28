@@ -24,7 +24,9 @@ EVT_TREE_END_LABEL_EDIT(XRCID("ID_TREE"), CBookmarksDialog::OnEndLabelEdit)
 END_EVENT_TABLE()
 
 CNewBookmarkDialog::CNewBookmarkDialog(wxWindow* parent, wxString& site_path, const CServer* server)
-: m_parent(parent), m_site_path(site_path), m_server(server)
+	: m_parent(parent)
+	, m_site_path(site_path)
+	, m_server(server)
 {
 }
 
@@ -151,7 +153,10 @@ public:
 };
 
 CBookmarksDialog::CBookmarksDialog(wxWindow* parent, wxString& site_path, const CServer* server)
-: m_parent(parent), m_site_path(site_path), m_server(server)
+	: m_parent(parent)
+	, m_site_path(site_path)
+	, m_server(server)
+	, m_pTree()
 {
 }
 

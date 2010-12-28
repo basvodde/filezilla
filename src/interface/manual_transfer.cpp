@@ -24,12 +24,12 @@ EVT_CHOICE(XRCID("ID_LOGONTYPE"), CManualTransfer::OnLogontypeSelChanged)
 END_EVENT_TABLE()
 
 CManualTransfer::CManualTransfer(CQueueView* pQueueView)
+	: m_local_file_exists()
+	, m_pServer()
+	, m_pLastSite()
+	, m_pState()
+	, m_pQueueView(pQueueView)
 {
-	m_pQueueView = pQueueView;
-
-	m_local_file_exists = false;
-	m_pServer = 0;
-	m_pLastSite = 0;
 }
 
 CManualTransfer::~CManualTransfer()
