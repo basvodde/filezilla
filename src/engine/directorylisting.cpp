@@ -146,7 +146,7 @@ void CDirectoryListing::Assign(const std::list<CDirentry> &entries)
 	m_has_perms = false;
 	m_has_usergroup = false;
 	
-	for (std::list<CDirentry>::const_iterator iter = entries.begin(); iter != entries.end(); iter++)
+	for (std::list<CDirentry>::const_iterator iter = entries.begin(); iter != entries.end(); ++iter)
 	{
 		if (iter->is_dir())
 			m_hasDirs = true;
@@ -177,7 +177,7 @@ bool CDirectoryListing::RemoveEntry(unsigned int index)
 		m_hasUnsureEntries |= CDirectoryListing::unsure_file_removed;
 	entries.erase(iter);
 
-	m_entryCount--;
+	--m_entryCount;
 
 	return true;
 }
@@ -185,7 +185,7 @@ bool CDirectoryListing::RemoveEntry(unsigned int index)
 void CDirectoryListing::GetFilenames(std::vector<wxString> &names) const
 {
 	names.reserve(GetCount());
-	for (unsigned int i = 0; i < GetCount(); i++)
+	for (unsigned int i = 0; i < GetCount(); ++i)
 		names.push_back((*m_entries)[i]->name);
 }
 
@@ -210,7 +210,7 @@ int CDirectoryListing::FindFile_CmpCase(const wxString& name) const
 
 	// Build map if not yet complete
 	std::vector<CRefcountObject<CDirentry> >::const_iterator entry_iter = m_entries->begin() + i;
-	for (; entry_iter != m_entries->end(); entry_iter++, i++)
+	for (; entry_iter != m_entries->end(); ++entry_iter, ++i)
 	{
 		const wxString& entry_name = (*entry_iter)->name;
 		searchmap_case.insert(std::pair<const wxString, unsigned int>(entry_name, i));
@@ -246,7 +246,7 @@ int CDirectoryListing::FindFile_CmpNoCase(wxString name) const
 
 	// Build map if not yet complete
 	std::vector<CRefcountObject<CDirentry> >::const_iterator entry_iter = m_entries->begin() + i;
-	for (; entry_iter != m_entries->end(); entry_iter++, i++)
+	for (; entry_iter != m_entries->end(); ++entry_iter, ++i)
 	{
 		wxString entry_name = (*entry_iter)->name;
 		entry_name.MakeLower();

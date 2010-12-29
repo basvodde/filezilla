@@ -88,14 +88,14 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 	;
 	int len = 1; // String list terminated by empty string
 
-	for (std::list<wxString>::const_iterator const_iter = dirsToVisit.begin(); const_iter != dirsToVisit.end(); const_iter++)
+	for (std::list<wxString>::const_iterator const_iter = dirsToVisit.begin(); const_iter != dirsToVisit.end(); ++const_iter)
 		len += const_iter->Length() + 1;
 
 	// Allocate memory
 	wxChar* pBuffer = new wxChar[len];
 	wxChar* p = pBuffer;
 
-	for (std::list<wxString>::iterator iter = dirsToVisit.begin(); iter != dirsToVisit.end(); iter++)
+	for (std::list<wxString>::iterator iter = dirsToVisit.begin(); iter != dirsToVisit.end(); ++iter)
 	{
 		wxString& path = *iter;
 		if (path.Last() == wxFileName::GetPathSeparator())
@@ -137,7 +137,7 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 			return true;
 	}
 
-	for (std::list<wxString>::iterator iter = dirsToVisit.begin(); iter != dirsToVisit.end(); iter++)
+	for (std::list<wxString>::iterator iter = dirsToVisit.begin(); iter != dirsToVisit.end(); ++iter)
 	{
 		wxString& path = *iter;
 		if (path.Last() == '/' && path != _T("/"))
@@ -190,12 +190,12 @@ bool CLocalFileSystem::RecursiveDelete(std::list<wxString> dirsToVisit, wxWindow
 		}
 
 		// Delete all files and links in current directory enumerated before
-		for (std::list<wxString>::const_iterator iter = filesToDelete.begin(); iter != filesToDelete.end(); iter++)
+		for (std::list<wxString>::const_iterator iter = filesToDelete.begin(); iter != filesToDelete.end(); ++iter)
 			wxRemoveFile(*iter);
 	}
 
 	// Delete the now empty directories
-	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); iter++)
+	for (std::list<wxString>::const_iterator iter = dirsToDelete.begin(); iter != dirsToDelete.end(); ++iter)
 		wxRmdir(*iter);
 
 	return !encodingError;

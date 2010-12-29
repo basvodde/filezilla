@@ -284,6 +284,7 @@ protected:
 };
 
 CSiteManager::CSiteManager()
+	: m_connected_sites()
 {
 	m_pSiteManagerMutex = 0;
 	m_pWindowStateManager = 0;
@@ -342,7 +343,7 @@ bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connec
 	HWND hWnd = (HWND)m_pNotebook_Site->GetHandle();
 
 	int width = 4;
-	for (unsigned int i = 0; i < m_pNotebook_Site->GetPageCount(); i++)
+	for (unsigned int i = 0; i < m_pNotebook_Site->GetPageCount(); ++i)
 	{
 		RECT tab_rect;
 		TabCtrl_GetItemRect(hWnd, i, &tab_rect);
@@ -354,7 +355,7 @@ bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connec
 	// Make pages at least wide enough to fit all tabs
 	int width = 10; // Guessed
 	wxClientDC dc(m_pNotebook_Site);
-	for (unsigned int i = 0; i < m_pNotebook_Site->GetPageCount(); i++)
+	for (unsigned int i = 0; i < m_pNotebook_Site->GetPageCount(); ++i)
 	{
 		wxCoord w, h;
 		dc.GetTextExtent(m_pNotebook_Site->GetPageText(i), &w, &h);
@@ -433,7 +434,7 @@ bool CSiteManager::Create(wxWindow* parent, std::vector<_connected_site> *connec
 
 void CSiteManager::MarkConnectedSites()
 {
-	for (int i = 0; i < (int)m_connected_sites->size(); i++)
+	for (int i = 0; i < (int)m_connected_sites->size(); ++i)
 		MarkConnectedSite(i);
 }
 
@@ -496,15 +497,16 @@ void CSiteManager::CreateControls(wxWindow* parent)
 	pProtocol->Append(CServer::GetProtocolName(SFTP));
 	pProtocol->Append(CServer::GetProtocolName(FTPS));
 	pProtocol->Append(CServer::GetProtocolName(FTPES));
+	pProtocol->Append(CServer::GetProtocolName(INSECURE_FTP));
 
 	wxChoice *pChoice = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice);
 	wxASSERT(pChoice);
-	for (int i = 0; i < SERVERTYPE_MAX; i++)
+	for (int i = 0; i < SERVERTYPE_MAX; ++i)
 		pChoice->Append(CServer::GetNameFromServerType((enum ServerType)i));
 
 	pChoice = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice);
 	wxASSERT(pChoice);
-	for (int i = 0; i < LOGONTYPE_MAX; i++)
+	for (int i = 0; i < LOGONTYPE_MAX; ++i)
 		pChoice->Append(CServer::GetNameFromLogonType((enum LogonType)i));
 }
 
@@ -610,10 +612,10 @@ public:
 					m_pTree->SelectItem(newItem);
 			}
 			else
-				m_wrong_sel_depth++;
+				++m_wrong_sel_depth;
 		}
 		else
-			m_wrong_sel_depth++;
+			++m_wrong_sel_depth;
 
 		return true;
 	}
@@ -645,10 +647,10 @@ public:
 					m_pTree->SelectItem(newItem);
 			}
 			else
-				m_wrong_sel_depth++;
+				++m_wrong_sel_depth;
 		}
 		else
-			m_wrong_sel_depth++;
+			++m_wrong_sel_depth;
 
 		return true;
 	}
@@ -1121,7 +1123,7 @@ bool CSiteManager::Verify()
 		if (user != _T(""))
 		{
 			bool space_only = true;
-			for (unsigned int i = 0; i < user.Len(); i++)
+			for (unsigned int i = 0; i < user.Len(); ++i)
 			{
 				if (user[i] != ' ')
 				{
@@ -1863,7 +1865,7 @@ void CSiteManager::OnCopySite(wxCommandEvent& event)
 		if (!found)
 			break;
 
-		newName = wxString::Format(_("Copy (%d) of %s"), index++, name.c_str());
+		newName = wxString::Format(_("Copy (%d) of %s"), ++index, name.c_str());
 	}
 
 	wxTreeItemId newItem;
@@ -1973,7 +1975,7 @@ public:
 	unsigned int GetInsertIndex(wxMenu* pMenu, const wxString& name)
 	{
 		unsigned int i;
-		for (i = 0; i < pMenu->GetMenuItemCount(); i++)
+		for (i = 0; i < pMenu->GetMenuItemCount(); ++i)
 		{
 			const wxMenuItem* const pItem = pMenu->FindItemByPosition(i);
 			if (!pItem)
@@ -2153,7 +2155,7 @@ wxMenu* CSiteManager::GetSitesMenu()
 
 void CSiteManager::ClearIdMap()
 {
-	for (std::map<int, struct _menu_data>::iterator iter = m_idMap.begin(); iter != m_idMap.end(); iter++)
+	for (std::map<int, struct _menu_data>::iterator iter = m_idMap.begin(); iter != m_idMap.end(); ++iter)
 		delete iter->second.data;
 
 	m_idMap.clear();
@@ -2382,7 +2384,7 @@ bool CSiteManager::MoveItems(wxTreeItemId source, wxTreeItemId target, bool copy
 		pTree->Delete(source);
 	}
 
-	for (std::list<wxTreeItemId>::iterator iter = expand.begin(); iter != expand.end(); iter++)
+	for (std::list<wxTreeItemId>::iterator iter = expand.begin(); iter != expand.end(); ++iter)
 		pTree->Expand(*iter);
 
 	pTree->Expand(target);
@@ -2438,7 +2440,7 @@ wxString CSiteManager::FindFirstFreeName(const wxTreeItemId &parent, const wxStr
 		if (!found)
 			break;
 
-		newName = name + wxString::Format(_T(" %d"), index++);
+		newName = name + wxString::Format(_T(" %d"), ++index);
 	}
 
 	return newName;
@@ -2551,7 +2553,7 @@ bool CSiteManager::UnescapeSitePath(wxString path, std::list<wxString>& result)
 		}
 		else
 			name += *p;
-		p++;
+		++p;
 	}
 	if (lastBackslash)
 		return false;
@@ -2902,7 +2904,7 @@ wxString CSiteManager::AddServer(CServer server)
 	while (true)
 	{
 		std::list<wxString>::const_iterator iter;
-		for (iter = names.begin(); iter != names.end(); iter++)
+		for (iter = names.begin(); iter != names.end(); ++iter)
 		{
 			if (*iter == name)
 				break;

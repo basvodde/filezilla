@@ -64,7 +64,7 @@ public:
 	virtual ~CSftpInputThread()
 	{
 		m_criticalSection.Enter();
-		for (std::list<sftp_message*>::iterator iter = m_sftpMessages.begin(); iter != m_sftpMessages.end(); iter++)
+		for (std::list<sftp_message*>::iterator iter = m_sftpMessages.begin(); iter != m_sftpMessages.end(); ++iter)
 			delete *iter;
 		m_criticalSection.Leave();
 	}
@@ -167,7 +167,7 @@ protected:
 				continue;
 			}
 
-			buffer[read++] = c;
+			buffer[++read] = c;
 		}
 		if (pInputStream->Eof())
 		{
@@ -177,7 +177,7 @@ protected:
 		}
 
 		if (read && buffer[read - 1] == '\r')
-			read--;
+			--read;
 
 		buffer[read] = 0;
 
@@ -600,7 +600,7 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 
 	std::list<sftp_message*> messages;
 	m_pInputThread->GetMessages(messages);
-	for (std::list<sftp_message*>::iterator iter = messages.begin(); iter != messages.end(); iter++)
+	for (std::list<sftp_message*>::iterator iter = messages.begin(); iter != messages.end(); ++iter)
 	{
 		if (!m_pInputThread)
 		{
@@ -675,7 +675,7 @@ void CSftpControlSocket::OnSftpEvent(wxCommandEvent& event)
 							LogMessage(::Error, _("Server sent an additional login prompt. You need to use the interactive login type."));
 						DoClose(FZ_REPLY_CRITICALERROR | FZ_REPLY_PASSWORDFAILED);
 
-						for (;iter != messages.end(); iter++)
+						for (;iter != messages.end(); ++iter)
 							delete *iter;
 						return;
 					}
@@ -916,10 +916,11 @@ class CSftpListOpData : public COpData
 public:
 	CSftpListOpData()
 		: COpData(cmd_list)
+		, pParser()
+		, mtime_index()
+		, refresh()
+		, fallback_to_current()
 	{
-		pParser = 0;
-		mtime_index = 0;
-		fallback_to_current = false;
 	}
 
 	virtual ~CSftpListOpData()
@@ -1039,7 +1040,7 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 		{
 			time_t seconds = 0;
 			bool parsed = true;
-			for (unsigned int i = 0; i < reply.Len(); i++)
+			for (unsigned int i = 0; i < reply.Len(); ++i)
 			{
 				wxChar c = reply[i];
 				if (c < '0' || c > '9')
@@ -1079,7 +1080,7 @@ int CSftpControlSocket::ListParseResponse(bool successful, const wxString& reply
 
 					wxTimeSpan span(0, 0, offset);
 					const int count = pData->directoryListing.GetCount();
-					for (int i = 0; i < count; i++)
+					for (int i = 0; i < count; ++i)
 					{
 						CDirentry& entry = pData->directoryListing[i];
 						if (!entry.has_time())
@@ -1942,7 +1943,7 @@ int CSftpControlSocket::FileTransferParseResponse(bool successful, const wxStrin
 		{
 			time_t seconds = 0;
 			bool parsed = true;
-			for (unsigned int i = 0; i < reply.Len(); i++)
+			for (unsigned int i = 0; i < reply.Len(); ++i)
 			{
 				wxChar c = reply[i];
 				if (c < '0' || c > '9')
@@ -2679,7 +2680,7 @@ wxString CSftpControlSocket::WildcardEscape(const wxString& file)
 
 	wxString escapedFile;
 	escapedFile.Alloc(file.Len());
-	for (unsigned int i = 0; i < file.Len(); i++)
+	for (unsigned int i = 0; i < file.Len(); ++i)
 	{
 		const wxChar& c = file[i];
 		switch (c)
@@ -2764,7 +2765,7 @@ int CSftpControlSocket::ListCheckTimezoneDetection()
 	if (CServerCapabilities::GetCapability(*m_pCurrentServer, timezone_offset) == unknown)
 	{
 		const int count = pData->directoryListing.GetCount();
-		for (int i = 0; i < count; i++)
+		for (int i = 0; i < count; ++i)
 		{
 			if (!pData->directoryListing[i].has_time())
 				continue;

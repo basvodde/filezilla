@@ -50,10 +50,11 @@ void CManualTransfer::Show(wxWindow* pParent, CState* pState)
 	pProtocol->Append(CServer::GetProtocolName(SFTP));
 	pProtocol->Append(CServer::GetProtocolName(FTPS));
 	pProtocol->Append(CServer::GetProtocolName(FTPES));
+	pProtocol->Append(CServer::GetProtocolName(INSECURE_FTP));
 
 	wxChoice* pChoice = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice);
 	wxASSERT(pChoice);
-	for (int i = 0; i < LOGONTYPE_MAX; i++)
+	for (int i = 0; i < LOGONTYPE_MAX; ++i)
 		pChoice->Append(CServer::GetNameFromLogonType((enum LogonType)i));
 
 	if (m_pState->GetServer())
@@ -488,7 +489,7 @@ bool CManualTransfer::VerifyServer()
 	if (user != _T(""))
 	{
 		bool space_only = true;
-		for (unsigned int i = 0; i < user.Len(); i++)
+		for (unsigned int i = 0; i < user.Len(); ++i)
 		{
 			if (user[i] != ' ')
 			{

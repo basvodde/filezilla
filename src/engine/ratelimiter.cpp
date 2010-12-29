@@ -27,7 +27,7 @@ CRateLimiter* CRateLimiter::Create(COptionsBase* pOptions)
 	if (!m_pTheRateLimiter)
 		m_pTheRateLimiter = new CRateLimiter(pOptions);
 	else
-		m_pTheRateLimiter->m_usageCount++;
+		++m_pTheRateLimiter->m_usageCount;
 	
 	return m_pTheRateLimiter;
 }
@@ -50,7 +50,7 @@ void CRateLimiter::Free()
 		m_pTheRateLimiter = 0;
 	}
 	else
-		m_usageCount--;
+		--m_usageCount;
 }
 
 wxLongLong CRateLimiter::GetLimit(enum rate_direction direction) const
@@ -68,7 +68,7 @@ void CRateLimiter::AddObject(CRateLimiterObject* pObject)
 {
 	m_objectList.push_back(pObject);
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; ++i)
 	{
 		wxLongLong limit = GetLimit((enum rate_direction)i);
 		if (limit > 0)
@@ -103,11 +103,11 @@ void CRateLimiter::AddObject(CRateLimiterObject* pObject)
 
 void CRateLimiter::RemoveObject(CRateLimiterObject* pObject)
 {
-	for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); iter++)
+	for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); ++iter)
 	{
 		if (*iter == pObject)
 		{
-			for (int i = 0; i < 2; i++)
+			for (int i = 0; i < 2; ++i)
 			{
 				// If an object already used up some of its assigned tokens, add them to m_tokenDebt,
 				// so that newly created objects get less initial tokens.
@@ -124,9 +124,9 @@ void CRateLimiter::RemoveObject(CRateLimiterObject* pObject)
 		}
 	}
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; ++i)
 	{
-		for (std::list<CRateLimiterObject*>::iterator iter = m_wakeupList[i].begin(); iter != m_wakeupList[i].end(); iter++)
+		for (std::list<CRateLimiterObject*>::iterator iter = m_wakeupList[i].begin(); iter != m_wakeupList[i].end(); ++iter)
 		{
 			if (*iter == pObject)
 			{
@@ -140,7 +140,7 @@ void CRateLimiter::RemoveObject(CRateLimiterObject* pObject)
 void CRateLimiter::OnTimer(wxTimerEvent& event)
 {
 	std::list<CRateLimiterObject*> objectsToUnwait;
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; ++i)
 	{
 		m_tokenDebt[i] = 0;
 
@@ -150,7 +150,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 		wxLongLong limit = GetLimit((enum rate_direction)i);
 		if (limit == 0)
 		{
-			for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); iter++)
+			for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); ++iter)
 			{
 				(*iter)->m_bytesAvailable[i] = -1;
 				if ((*iter)->m_waiting[i])
@@ -172,7 +172,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 		// This list will hold all objects which didn't reach maxTokens
 		std::list<CRateLimiterObject*> unsaturatedObjects;
 
-		for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); iter++)
+		for (std::list<CRateLimiterObject*>::iterator iter = m_objectList.begin(); iter != m_objectList.end(); ++iter)
 		{
 			if ((*iter)->m_bytesAvailable[i] == -1)
 			{
@@ -208,7 +208,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 			std::list<CRateLimiterObject*> objects;
 			objects.swap(unsaturatedObjects);
 
-			for (std::list<CRateLimiterObject*>::iterator iter = objects.begin(); iter != objects.end(); iter++)
+			for (std::list<CRateLimiterObject*>::iterator iter = objects.begin(); iter != objects.end(); ++iter)
 			{
 				(*iter)->m_bytesAvailable[i] += tokensPerObject;
 				if ((*iter)->m_bytesAvailable[i] > maxTokens)
@@ -229,7 +229,7 @@ void CRateLimiter::OnTimer(wxTimerEvent& event)
 
 void CRateLimiter::WakeupWaitingObjects()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; ++i)
 	{
 		while (!m_wakeupList[i].empty())
 		{
@@ -268,7 +268,7 @@ int CRateLimiter::GetBucketSize() const
 
 CRateLimiterObject::CRateLimiterObject()
 {
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; ++i)
 	{
 		m_waiting[i] = false;
 		m_bytesAvailable[i] = -1;

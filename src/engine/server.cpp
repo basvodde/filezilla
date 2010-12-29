@@ -4,19 +4,22 @@ struct t_protocolInfo
 {
 	const enum ServerProtocol protocol;
 	const wxString prefix;
+	bool alwaysShowPrefix;
 	unsigned int defaultPort;
 	const bool translateable;
 	const wxChar* const name;
+	bool supportsPostlogin;
 };
 
 static const t_protocolInfo protocolInfos[] = {
-	{ FTP,     _T("ftp"),   21,  false, _T("FTP - File Transfer Protocol") },
-	{ SFTP,    _T("sftp"),  22,  false, _T("SFTP - SSH File Transfer Protocol") },
-	{ HTTP,    _T("http"),  80,  false, _T("HTTP - Hypertext Transfer Protocol") },
-	{ HTTPS,   _T("https"), 443, true, wxTRANSLATE("HTTPS - HTTP over TLS") },
-	{ FTPS,    _T("ftps"),  990, true,  wxTRANSLATE("FTPS - FTP over implicit TLS/SSL") },
-	{ FTPES,   _T("ftpes"), 21,  true,  wxTRANSLATE("FTPES - FTP over explicit TLS/SSL") },
-	{ UNKNOWN, _T(""),      21,  false, _T("") }
+	{ FTP,          _T("ftp"),    false, 21,  true,  wxTRANSLATE("FTP - File Transfer Protocol with optional encryption"),                 true  },
+	{ SFTP,         _T("sftp"),   true,  22,  false, _T("SFTP - SSH File Transfer Protocol"),                              false },
+	{ HTTP,         _T("http"),   true,  80,  false, _T("HTTP - Hypertext Transfer Protocol"),                             true  },
+	{ HTTPS,        _T("https"),  true, 443,  true,  wxTRANSLATE("HTTPS - HTTP over TLS"),                                 true  },
+	{ FTPS,         _T("ftps"),   true, 990,  true,  wxTRANSLATE("FTPS - FTP over implicit TLS/SSL"),                      true  },
+	{ FTPES,        _T("ftpes"),  true,  21,  true,  wxTRANSLATE("FTPES - FTP over explicit TLS/SSL"),                     true  },
+	{ INSECURE_FTP, _T("ftp"),    false, 21,  true,  wxTRANSLATE("FTP - Insecure File Transfer Protocol"), true  },
+	{ UNKNOWN,      _T(""),       false, 21,  false, _T("") }
 };
 
 static const wxString typeNames[SERVERTYPE_MAX] = {
@@ -31,6 +34,17 @@ static const wxString typeNames[SERVERTYPE_MAX] = {
 	wxTRANSLATE("DOS-like with virtual paths"),
 	_T("Cygwin")
 };
+
+static const t_protocolInfo& GetProtocolInfo(ServerProtocol protocol)
+{
+	unsigned int i = 0;
+	for ( ; protocolInfos[i].protocol != UNKNOWN; ++i)
+	{
+		if (protocolInfos[i].protocol == protocol)
+			break;
+	}
+	return protocolInfos[i];
+}
 
 CServer::CServer()
 {
@@ -159,7 +173,7 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 				error = _("Invalid host, after closing bracket only colon and port may follow.");
 				return false;
 			}
-			pos++;
+			++pos;
 		}
 		else
 			pos = -1;
@@ -522,8 +536,8 @@ void CServer::SetProtocol(enum ServerProtocol serverProtocol)
 {
 	wxASSERT(serverProtocol != UNKNOWN);
 
-	if (m_protocol != FTP && m_protocol != FTPS && m_protocol != FTPES)
-		m_postLoginCommands.empty();
+	if (!GetProtocolInfo(serverProtocol).supportsPostlogin)
+		m_postLoginCommands.clear();
 
 	m_protocol = serverProtocol;
 }
@@ -632,22 +646,13 @@ wxString CServer::FormatServer(const bool always_include_prefix /*=false*/) cons
 	if (m_logonType != ANONYMOUS)
 		server = GetUser() + _T("@") + server;
 
-	switch (m_protocol)
+	const t_protocolInfo& info = GetProtocolInfo(m_protocol);
+	if (!info.prefix.empty())
 	{
-	default:
-		{
-			wxString prefix = GetPrefixFromProtocol(m_protocol);
-			if (prefix != _T(""))
-				server = prefix + _T("://") + server;
-			else if (always_include_prefix)
-				server = prefix + _T("://") + server;
-		}
-		break;
-	case FTP:
-		if (always_include_prefix ||
-			(GetProtocolFromPort(m_port) != FTP && GetProtocolFromPort(m_port) != UNKNOWN))
-			server = _T("ftp://") + server;
-		break;
+		if (always_include_prefix || info.alwaysShowPrefix)
+			server = info.prefix + _T("://") + server;
+		else if (m_port != info.defaultPort)
+			server = info.prefix + _T("://") + server;
 	}
 
 	return server;
@@ -705,19 +710,14 @@ wxString CServer::GetCustomEncoding() const
 
 unsigned int CServer::GetDefaultPort(enum ServerProtocol protocol)
 {
-	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
-	{
-		if (protocolInfos[i].protocol == protocol)
-			return protocolInfos[i].defaultPort;
-	}
+	const t_protocolInfo& info = GetProtocolInfo(protocol);
 
-	// Assume FTP
-	return 21;
+	return info.defaultPort;
 }
 
 enum ServerProtocol CServer::GetProtocolFromPort(unsigned int port, bool defaultOnly /*=false*/)
 {
-	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
+	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; ++i)
 	{
 		if (protocolInfos[i].defaultPort == port)
 			return protocolInfos[i].protocol;
@@ -737,7 +737,7 @@ wxString CServer::GetProtocolName(enum ServerProtocol protocol)
 	{
 		if (protocolInfo->protocol != protocol)
 		{
-			protocolInfo++;
+			++protocolInfo;
 			continue;
 		}
 
@@ -765,7 +765,7 @@ enum ServerProtocol CServer::GetProtocolFromName(const wxString& name)
 			if (protocolInfo->name == name)
 				return protocolInfo->protocol;
 		}
-		protocolInfo++;
+		++protocolInfo;
 	}
 
 	return UNKNOWN;
@@ -785,7 +785,7 @@ bool CServer::SetPostLoginCommands(const std::vector<wxString>& postLoginCommand
 
 enum ServerProtocol CServer::GetProtocolFromPrefix(const wxString& prefix)
 {
-	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
+	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; ++i)
 	{
 		if (!protocolInfos[i].prefix.CmpNoCase(prefix))
 			return protocolInfos[i].protocol;
@@ -796,13 +796,9 @@ enum ServerProtocol CServer::GetProtocolFromPrefix(const wxString& prefix)
 
 wxString CServer::GetPrefixFromProtocol(const enum ServerProtocol protocol)
 {
-	for (unsigned int i = 0; protocolInfos[i].protocol != UNKNOWN; i++)
-	{
-		if (protocolInfos[i].protocol == protocol)
-			return protocolInfos[i].prefix;
-	}
+	const t_protocolInfo& info = GetProtocolInfo(protocol);
 
-	return _T("");
+	return info.prefix;
 }
 
 void CServer::SetBypassProxy(bool val)
@@ -831,7 +827,7 @@ wxString CServer::GetNameFromServerType(enum ServerType type)
 
 enum ServerType CServer::GetServerTypeFromName(const wxString& name)
 {
-	for (int i = 0; i < SERVERTYPE_MAX; i++)
+	for (int i = 0; i < SERVERTYPE_MAX; ++i)
 	{
 		enum ServerType type = (enum ServerType)i;
 		if (name == CServer::GetNameFromServerType(type))

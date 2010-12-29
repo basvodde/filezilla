@@ -2721,7 +2721,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 void CRemoteListView::ValidateIndexMapping()
 {
 	// This ensures that the index mapping is a bijection.
-    // Beware:
+	// Beware:
 	// - NO filter may be used!
 	// - Doesn't work in comparison mode
 

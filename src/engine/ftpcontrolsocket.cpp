@@ -42,9 +42,12 @@ END_EVENT_TABLE();
 
 CRawTransferOpData::CRawTransferOpData()
 	: COpData(cmd_rawtransfer)
+	, pOldData()
+	, bPasv(true)
+	, bTriedPasv()
+	, bTriedActive()
+	, port()
 {
-	bTriedPasv = bTriedActive = false;
-	bPasv = true;
 }
 
 CFtpTransferOpData::CFtpTransferOpData()
@@ -130,7 +133,7 @@ public:
 
 		customCommandIndex = 0;
 
-		for (int i = 0; i < LOGON_DONE; i++)
+		for (int i = 0; i < LOGON_DONE; ++i)
 			neededCommands[i] = 1;
 	}
 
@@ -158,9 +161,10 @@ class CFtpDeleteOpData : public COpData
 public:
 	CFtpDeleteOpData()
 		: COpData(cmd_delete)
+		, omitPath()
+		, m_needSendListing()
+		, m_deleteFailed()
 	{
-		m_needSendListing = false;
-		m_deleteFailed = false;
 	}
 
 	virtual ~CFtpDeleteOpData() { }
@@ -238,7 +242,7 @@ void CFtpControlSocket::OnReceive()
 		char* start = m_receiveBuffer;
 		m_bufferLen += read;
 
-		for (int i = start - m_receiveBuffer; i < m_bufferLen; i++)
+		for (int i = start - m_receiveBuffer; i < m_bufferLen; ++i)
 		{
 			char& p = m_receiveBuffer[i];
 			if (p == '\r' ||
@@ -248,7 +252,7 @@ void CFtpControlSocket::OnReceive()
 				int len = i - (start - m_receiveBuffer);
 				if (!len)
 				{
-					start++;
+					++start;
 					continue;
 				}
 
@@ -402,7 +406,7 @@ void CFtpControlSocket::OnConnect()
 		else
 			LogMessage(Status, _("TLS/SSL connection established, waiting for welcome message..."));
 	}
-	else if (m_pCurrentServer->GetProtocol() == FTPES && m_pTlsSocket)
+	else if ((m_pCurrentServer->GetProtocol() == FTPES || m_pCurrentServer->GetProtocol() == FTP) && m_pTlsSocket)
 	{
 		LogMessage(Status, _("TLS/SSL connection established."));
 		return;
@@ -741,8 +745,19 @@ int CFtpControlSocket::LogonParseResponse()
 		{
 			if (pData->opState == LOGON_AUTH_SSL)
 			{
-				DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
-				return FZ_REPLY_DISCONNECTED;
+				if (m_pCurrentServer->GetProtocol() == FTP) 
+				{
+					// For now. In future make TLS mandatory unless explicitly requested INSECURE_FTP as protocol
+					LogMessage(Status, _("Insecure server, it does not support FTP over TLS."));
+
+					pData->opState = LOGON_LOGON;
+					return SendNextCommand();
+				}
+				else
+				{
+					DoClose(code == 5 ? FZ_REPLY_CRITICALERROR : 0);
+					return FZ_REPLY_DISCONNECTED;
+				}
 			}
 		}
 		else
@@ -787,13 +802,13 @@ int CFtpControlSocket::LogonParseResponse()
 				// Fall back to local charset for the case that the server might not
 				// support UTF8 and the login data contains non-ascii characters.
 				bool asciiOnly = true;
-				for (unsigned int i = 0; i < m_pCurrentServer->GetUser().Length(); i++)
+				for (unsigned int i = 0; i < m_pCurrentServer->GetUser().Length(); ++i)
 					if ((unsigned int)m_pCurrentServer->GetUser()[i] > 127)
 						asciiOnly = false;
-				for (unsigned int i = 0; i < m_pCurrentServer->GetPass().Length(); i++)
+				for (unsigned int i = 0; i < m_pCurrentServer->GetPass().Length(); ++i)
 					if ((unsigned int)m_pCurrentServer->GetPass()[i] > 127)
 						asciiOnly = false;
-				for (unsigned int i = 0; i < m_pCurrentServer->GetAccount().Length(); i++)
+				for (unsigned int i = 0; i < m_pCurrentServer->GetAccount().Length(); ++i)
 					if ((unsigned int)m_pCurrentServer->GetAccount()[i] > 127)
 						asciiOnly = false;
 				if (!asciiOnly)
@@ -904,14 +919,14 @@ int CFtpControlSocket::LogonParseResponse()
 	}
 	else if (pData->opState == LOGON_CUSTOMCOMMANDS)
 	{
-		pData->customCommandIndex++;
+		++pData->customCommandIndex;
 		if (pData->customCommandIndex < m_pCurrentServer->GetPostLoginCommands().size())
 			return SendNextCommand();
 	}
 
 	while (true)
 	{
-		pData->opState++;
+		++pData->opState;
 
 		if (pData->opState == LOGON_DONE)
 		{
@@ -1219,7 +1234,7 @@ bool CFtpControlSocket::Send(wxString str, bool maskArgs /*=false*/)
 	unsigned int len = (unsigned int)strlen(buffer);
 	bool res = CRealControlSocket::Send(buffer, len);
 	if (res)
-		m_pendingReplies++;
+		++m_pendingReplies;
 	return res;
 }
 
@@ -1228,12 +1243,13 @@ class CFtpListOpData : public COpData, public CFtpTransferOpData
 public:
 	CFtpListOpData()
 		: COpData(cmd_list)
+		, fallback_to_current()
+		, m_pDirectoryListingParser()
+		, refresh()
+		, viewHiddenCheck()
+		, viewHidden()
+		, mdtm_index()
 	{
-		viewHiddenCheck = false;
-		viewHidden = false;
-		m_pDirectoryListingParser = 0;
-		mdtm_index = 0;
-		fallback_to_current = false;
 	}
 
 	virtual ~CFtpListOpData()
@@ -1669,7 +1685,7 @@ int CFtpControlSocket::ListParseResponse()
 
 			wxTimeSpan span(0, 0, offset);
 			const int count = pData->directoryListing.GetCount();
-			for (int i = 0; i < count; i++)
+			for (int i = 0; i < count; ++i)
 			{
 				CDirentry& entry = pData->directoryListing[i];
 				if (!entry.has_time())
@@ -1713,7 +1729,7 @@ int CFtpControlSocket::ListCheckTimezoneDetection(CDirectoryListing& listing)
 		else
 		{
 			const int count = listing.GetCount();
-			for (int i = 0; i < count; i++)
+			for (int i = 0; i < count; ++i)
 			{
 				if (!listing[i].is_dir() && listing[i].has_time())
 				{
@@ -2296,7 +2312,7 @@ int CFtpControlSocket::FileTransferParseResponse()
 
 					size *= 10;
 					size += *buf - '0';
-					buf++;
+					++buf;
 				}
 				pData->remoteFileSize = size;
 			}
@@ -3140,6 +3156,7 @@ class CFtpRemoveDirOpData : public COpData
 public:
 	CFtpRemoveDirOpData()
 		: COpData(cmd_removedir)
+		, omitPath()
 	{
 	}
 
@@ -4280,7 +4297,7 @@ int CFtpControlSocket::FileTransferTestResumeCapability()
 	if (!pData->download)
 		return FZ_REPLY_OK;
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 2; ++i)
 	{
 		if (pData->localFileSize >= ((wxFileOffset)1 << (i ? 31 : 32)))
 		{
@@ -4374,7 +4391,7 @@ int CFtpControlSocket::Connect(const CServer &server)
 		pData->port = server.GetPort();
 	}
 
-	if (server.GetProtocol() != FTPES)
+	if (server.GetProtocol() != FTPES && server.GetProtocol() != FTP)
 	{
 		pData->neededCommands[LOGON_AUTH_TLS] = 0;
 		pData->neededCommands[LOGON_AUTH_SSL] = 0;
@@ -4417,12 +4434,12 @@ bool CFtpControlSocket::CheckInclusion(const CDirectoryListing& listing1, const 
 
 		if (*iter1 != *iter2)
 		{
-			iter1++;
+			++iter1;
 			continue;
 		}
 
-		iter1++;
-		iter2++;
+		++iter1;
+		++iter2;
 	}
 
 	return true;
@@ -4460,7 +4477,7 @@ void CFtpControlSocket::OnIdleTimer(wxTimerEvent& event)
 
 	if (!Send(cmd))
 		return;
-	m_repliesToSkip++;
+	++m_repliesToSkip;
 }
 
 void CFtpControlSocket::StartKeepaliveTimer()

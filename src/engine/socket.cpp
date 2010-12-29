@@ -156,7 +156,7 @@ public:
 		int errors[] = {
 			0
 		};
-		for (int i = 0; errors[i]; i++)
+		for (int i = 0; errors[i]; ++i)
 		{
 #ifdef __WXMSW__
 			int code = ConvertMSWErrorCode(errors[i]);
@@ -179,7 +179,7 @@ CSocketEventDispatcher::CSocketEventDispatcher()
 
 CSocketEventDispatcher::~CSocketEventDispatcher()
 {
-	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
+	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); ++iter)
 		delete *iter;
 }
 
@@ -208,7 +208,7 @@ void CSocketEventDispatcher::RemovePending(const CSocketEventHandler* pHandler)
 	wxCriticalSectionLocker lock(m_sync);
 
 	std::list<CSocketEvent*> keep;
-	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
+	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); ++iter)
 	{
 		if ((*iter)->GetSocketEventHandler() != pHandler)
 		{
@@ -226,7 +226,7 @@ void CSocketEventDispatcher::RemovePending(const CSocketEventSource* pSource)
 	wxCriticalSectionLocker lock(m_sync);
 
 	std::list<CSocketEvent*> keep;
-	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
+	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); ++iter)
 	{
 		if ((*iter)->GetSocketEventSource() != pSource)
 		{
@@ -243,7 +243,7 @@ void CSocketEventDispatcher::UpdatePending(const CSocketEventHandler* pOldHandle
 {
 	wxCriticalSectionLocker lock(m_sync);
 
-	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); iter++)
+	for (std::list<CSocketEvent*>::iterator iter = m_pending_events.begin(); iter != m_pending_events.end(); ++iter)
 	{
 		CSocketEvent* evt = *iter;
 		if (evt->GetSocketEventSource() != pOldSource || evt->GetSocketEventHandler() != pOldHandler)
@@ -344,7 +344,7 @@ public:
 		m_triggered = 0;
 		m_threadwait = false;
 
-		for (int i = 0; i < WAIT_EVENTCOUNT; i++)
+		for (int i = 0; i < WAIT_EVENTCOUNT; ++i)
 		{
 			m_triggered_errors[i] = 0;
 		}
@@ -1349,7 +1349,7 @@ static struct Error_table error_table[] =
 
 wxString CSocket::GetErrorString(int error)
 {
-	for (int i = 0; error_table[i].code; i++)
+	for (int i = 0; error_table[i].code; ++i)
 	{
 		if (error != error_table[i].code)
 			continue;
@@ -1362,7 +1362,7 @@ wxString CSocket::GetErrorString(int error)
 
 wxString CSocket::GetErrorDescription(int error)
 {
-	for (int i = 0; error_table[i].code; i++)
+	for (int i = 0; error_table[i].code; ++i)
 	{
 		if (error != error_table[i].code)
 			continue;

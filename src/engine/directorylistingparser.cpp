@@ -87,7 +87,7 @@ public:
 
 			int pos = m_len - 1;
 			while (m_pToken[pos] >= '0' && m_pToken[pos] <= '9')
-				pos--;
+				--pos;
 
 			wxString str(m_pToken, pos + 1);
 			m_str[type] = str;
@@ -100,7 +100,7 @@ public:
 
 			int pos = 0;
 			while (m_pToken[pos] >= '0' && m_pToken[pos] <= '9')
-				pos++;
+				++pos;
 
 			wxString str(m_pToken + pos, m_len - pos);
 			m_str[type] = str;
@@ -119,7 +119,7 @@ public:
 			if (m_numeric == Unknown)
 			{
 				m_numeric = Yes;
-				for (unsigned int i = 0; i < m_len; i++)
+				for (unsigned int i = 0; i < m_len; ++i)
 					if (m_pToken[i] < '0' || m_pToken[i] > '9')
 					{
 						m_numeric = No;
@@ -128,7 +128,7 @@ public:
 			}
 			return m_numeric == Yes;
 		case hex:
-			for (unsigned int i = 0; i < m_len; i++)
+			for (unsigned int i = 0; i < m_len; ++i)
 			{
 				const char c = m_pToken[i];
 				if ((c < '0' || c > '9') && (c < 'A' || c > 'F') && (c < 'a' || c > 'f'))
@@ -140,7 +140,7 @@ public:
 
 	bool IsNumeric(unsigned int start, unsigned int len)
 	{
-		for (unsigned int i = start; i < wxMin(start + len, m_len); i++)
+		for (unsigned int i = start; i < wxMin(start + len, m_len); ++i)
 			if (m_pToken[i] < '0' || m_pToken[i] > '9')
 				return false;
 		return true;
@@ -179,9 +179,9 @@ public:
 		if (!chr)
 			return -1;
 
-		for (unsigned int i = start; i < m_len; i++)
+		for (unsigned int i = start; i < m_len; ++i)
 		{
-			for (int c = 0; chr[c]; c++)
+			for (int c = 0; chr[c]; ++c)
 			{
 				if (m_pToken[i] == chr[c])
 					return i;
@@ -195,7 +195,7 @@ public:
 		if (!m_pToken)
 			return -1;
 
-		for (unsigned int i = start; i < m_len; i++)
+		for (unsigned int i = start; i < m_len; ++i)
 			if (m_pToken[i] == chr)
 				return i;
 
@@ -216,7 +216,7 @@ public:
 			return -1;
 
 		wxLongLong number = 0;
-		for (unsigned int i = start; i < (start + len); i++)
+		for (unsigned int i = start; i < (start + len); ++i)
 		{
 			if (m_pToken[i] < '0' || m_pToken[i] > '9')
 				break;
@@ -237,7 +237,7 @@ public:
 				if (IsNumeric() || IsLeftNumeric())
 				{
 					m_number = 0;
-					for (unsigned int i = 0; i < m_len; i++)
+					for (unsigned int i = 0; i < m_len; ++i)
 					{
 						if (m_pToken[i] < '0' || m_pToken[i] > '9')
 							break;
@@ -250,8 +250,8 @@ public:
 					m_number = 0;
 					int start = m_len - 1;
 					while (m_pToken[start - 1] >= '0' && m_pToken[start - 1] <= '9')
-						start--;
-					for (unsigned int i = start; i < m_len; i++)
+						--start;
+					for (unsigned int i = start; i < m_len; ++i)
 					{
 						m_number *= 10;
 						m_number += m_pToken[i] - '0';
@@ -262,7 +262,7 @@ public:
 		case hex:
 			{
 				wxLongLong number = 0;
-				for (unsigned int i = 0; i < m_len; i++)
+				for (unsigned int i = 0; i < m_len; ++i)
 				{
 					const wxChar& c = m_pToken[i];
 					if (c >= '0' && c <= '9')
@@ -330,9 +330,9 @@ public:
 		delete [] m_pLine;
 
 		std::vector<CToken *>::iterator iter;
-		for (iter = m_Tokens.begin(); iter != m_Tokens.end(); iter++)
+		for (iter = m_Tokens.begin(); iter != m_Tokens.end(); ++iter)
 			delete *iter;
-		for (iter = m_LineEndTokens.begin(); iter != m_LineEndTokens.end(); iter++)
+		for (iter = m_LineEndTokens.begin(); iter != m_LineEndTokens.end(); ++iter)
 			delete *iter;
 	}
 
@@ -355,7 +355,7 @@ public:
 					m_Tokens.push_back(pToken);
 
 					while ((m_pLine[m_parsePos] == ' ' || m_pLine[m_parsePos] == '\t') && m_parsePos < m_len)
-						m_parsePos++;
+						++m_parsePos;
 
 					if (m_Tokens.size() > n)
 					{
@@ -365,7 +365,7 @@ public:
 
 					start = m_parsePos;
 				}
-				m_parsePos++;
+				++m_parsePos;
 			}
 			if (m_parsePos != start)
 			{
@@ -415,7 +415,7 @@ public:
 				if (!GetToken(n, token))
 					return false;
 
-			for (unsigned int i = static_cast<unsigned int>(m_LineEndTokens.size()); i <= n; i++)
+			for (unsigned int i = static_cast<unsigned int>(m_LineEndTokens.size()); i <= n; ++i)
 			{
 				const CToken *refToken = m_Tokens[i];
 				const wxChar* p = refToken->GetToken();
@@ -636,7 +636,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 		// Some servers send a combination of month name and number,
 		// Add corresponding numbers to the month names.
 		std::map<wxString, int> combo;
-		for (std::map<wxString, int>::iterator iter = m_MonthNamesMap.begin(); iter != m_MonthNamesMap.end(); iter++)
+		for (std::map<wxString, int>::iterator iter = m_MonthNamesMap.begin(); iter != m_MonthNamesMap.end(); ++iter)
 		{
 			// January could be 1 or 0, depends how the server counts
 			combo[wxString::Format(_T("%s%02d"), iter->first.c_str(), iter->second)] = iter->second;
@@ -667,7 +667,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 	}
 
 #ifdef LISTDEBUG
-	for (unsigned int i = 0; data[i][0]; i++)
+	for (unsigned int i = 0; data[i][0]; ++i)
 	{
 		unsigned int len = (unsigned int)strlen(data[i]);
 		char *pData = new char[len + 3];
@@ -680,7 +680,7 @@ CDirectoryListingParser::CDirectoryListingParser(CControlSocket* pControlSocket,
 
 CDirectoryListingParser::~CDirectoryListingParser()
 {
-	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); iter++)
+	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); ++iter)
 		delete [] iter->p;
 
 	delete m_prevLine;
@@ -743,7 +743,7 @@ CDirectoryListing CDirectoryListingParser::Parse(const CServerPath &path)
 
 		listing.SetCount(m_fileList.size());
 		unsigned int i = 0;
-		for (std::list<wxString>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); iter++, i++)
+		for (std::list<wxString>::const_iterator iter = m_fileList.begin(); iter != m_fileList.end(); ++iter, ++i)
 		{
 			CDirentry entry;
 			entry.name = *iter;
@@ -941,7 +941,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry, bool e
 			return false;
 
 		if (!token.IsNumeric())
-			index--;
+			--index;
 	}
 
 	// Repeat until numOwnerGroup is 0 since not all servers send every possible field
@@ -952,7 +952,7 @@ bool CDirectoryListingParser::ParseAsUnix(CLine *pLine, CDirentry &entry, bool e
 		index = startindex;
 
 		entry.ownerGroup.clear();
-		for (int i = 0; i < numOwnerGroup; i++)
+		for (int i = 0; i < numOwnerGroup; ++i)
 		{
 			if (!pLine->GetToken(++index, token))
 				return false;
@@ -1121,7 +1121,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 		{
 			int offset = 0;
 			if (dateMonth.GetString().Right(1) == _T("."))
-				offset++;
+				++offset;
 			if (!dateMonth.IsNumeric(0, dateMonth.GetLength() - offset))
 				return false;
 			dateDay = dateMonth.GetNumber(0, dateMonth.GetLength() - offset).GetLo();
@@ -1147,7 +1147,7 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 			// Most likely an Asian server sending some unknown language specific
 			// suffix at the end of the monthname. Filter it out.
 			int i;
-			for (i = strMonth.Length() - 1; i > 0; i--)
+			for (i = strMonth.Length() - 1; i > 0; --i)
 			{
 				if (strMonth[i] >= '0' && strMonth[i] <= '9')
 					break;
@@ -1242,11 +1242,11 @@ bool CDirectoryListingParser::ParseUnixDateTime(CLine *pLine, int &index, CDiren
 				hasTime = true;
 			}
 			else
-				index--;
+				--index;
 		}
 	}
 	else
-		index--;
+		--index;
 
 	entry.time = wxDateTime();
 	if (!VerifySetDate(entry.time, year, (wxDateTime::Month)(wxDateTime::Jan + month - 1), day, hour, minute))
@@ -1455,7 +1455,7 @@ bool CDirectoryListingParser::ParseAsDos(CLine *pLine, CDirentry &entry)
 		// Convert size, filter out separators
 		wxLongLong size = 0;
 		int len = token.GetLength();
-		for (int i = 0; i < len; i++)
+		for (int i = 0; i < len; ++i)
 		{
 			char chr = token[i];
 			if (chr == ',' || chr == '.')
@@ -1582,7 +1582,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 
 		if (!len)
 		{
-			fact++;
+			++fact;
 			continue;
 		}
 
@@ -1613,7 +1613,7 @@ bool CDirectoryListingParser::ParseAsEplf(CLine *pLine, CDirentry &entry)
 wxString Unescape(const wxString& str, wxChar escape)
 {
 	wxString res;
-	for (unsigned int i = 0; i < str.Len(); i++)
+	for (unsigned int i = 0; i < str.Len(); ++i)
 	{
 		wxChar c = str[i];
 		if (c == escape)
@@ -1736,7 +1736,7 @@ bool CDirectoryListingParser::ParseAsVms(CLine *pLine, CDirentry &entry)
 			return false;
 		if (token[0] != '(' && token[len - 1] == ')')
 			return false;
-		index--;
+		--index;
 	}
 
 	if (!gotSize)
@@ -1930,7 +1930,7 @@ bool CDirectoryListingParser::ParseOther(CLine *pLine, CDirentry &entry)
 				else if (token.Find(_T("-/.")) != -1)
 					break;
 
-				skippedCount++;
+				++skippedCount;
 
 				if (!pLine->GetToken(++index, token))
 					return false;
@@ -2040,7 +2040,7 @@ bool CDirectoryListingParser::AddLine(const wxChar* pLine)
 		m_pControlSocket->LogMessageRaw(RawList, pLine);
 
 	while (*pLine == ' ' || *pLine == '\t')
-		pLine++;
+		++pLine;
 
 	if (!*pLine)
 		return false;
@@ -2067,11 +2067,11 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/, bool &error)
 		int len = iter->len;
 		while (iter->p[m_currentOffset]=='\r' || iter->p[m_currentOffset]=='\n' || iter->p[m_currentOffset]==' ' || iter->p[m_currentOffset]=='\t')
 		{
-			m_currentOffset++;
+			++m_currentOffset;
 			if (m_currentOffset >= len)
 			{
 				delete [] iter->p;
-				iter++;
+				++iter;
 				m_currentOffset = 0;
 				if (iter == m_DataList.end())
 				{
@@ -2094,15 +2094,15 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/, bool &error)
 		while ((iter->p[currentOffset] != '\n') && (iter->p[currentOffset] != '\r'))
 		{
 			if (iter->p[currentOffset] == ' ' || iter->p[currentOffset] == '\t')
-				emptylen++;
+				++emptylen;
 			else
 				emptylen = 0;
-			reslen++;
+			++reslen;
 
-			currentOffset++;
+			++currentOffset;
 			if (currentOffset >= len)
 			{
-				iter++;
+				++iter;
 				if (iter == m_DataList.end())
 				{
 					if (reslen > 10000)
@@ -2147,7 +2147,7 @@ CLine *CDirectoryListingParser::GetLine(bool breakAtEnd /*=false*/, bool &error)
 			startpos = 0;
 
 			delete [] i->p;
-			i++;
+			++i;
 		}
 
 		// Copy last chunk
@@ -2483,11 +2483,11 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry
 	int start = ++index;
 	while (pLine->GetToken(index, token))
 	{
-		index++;
+		++index;
 	}
 	if ((index - start < 2))
 		return false;
-	index--;
+	--index;
 
 	pLine->GetToken(index, token);
 	if (!token.IsNumeric() && (token.GetString() != _T("ANY")))
@@ -2497,11 +2497,11 @@ bool CDirectoryListingParser::ParseAsIBM_MVS_PDS2(CLine *pLine, CDirentry &entry
 	if (!token.IsNumeric() && (token.GetString() != _T("ANY")))
 		return false;
 
-	for (int i = start; i < index - 1; i++)
+	for (int i = start; i < index - 1; ++i)
 	{
 		pLine->GetToken(i, token);
 		int len = token.GetLength();
-		for (int j = 0; j < len; j++)
+		for (int j = 0; j < len; ++j)
 			if (token[j] < 'A' || token[j] > 'Z')
 				return false;
 	}
@@ -2563,7 +2563,7 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 		char c = token[--len - 1];
 		if (c < '0' || c > '9')
 		{
-			len--;
+			--len;
 			last = c;
 		}
 		else
@@ -2580,7 +2580,7 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 	size = 0;
 
 	int dot = -1;
-	for (int i = 0; i < len; i++)
+	for (int i = 0; i < len; ++i)
 	{
 		char c = token[i];
 		if (c >= '0' && c <= '9')
@@ -2626,7 +2626,7 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 	default:
 		return false;
 	}
-	while (dot-- > 0)
+	while (--dot > 0)
 		size /= 10;
 
 	return true;
@@ -2690,7 +2690,7 @@ int CDirectoryListingParser::ParseAsMlsd(CLine *pLine, CDirentry &entry)
 		{
 			entry.size = 0;
 
-			for (unsigned int i = 0; i < value.Len(); i++)
+			for (unsigned int i = 0; i < value.Len(); ++i)
 			{
 				if (value[i] < '0' || value[i] > '9')
 					return 0;
@@ -2834,7 +2834,7 @@ bool CDirectoryListingParser::ParseAsOS9(CLine *pLine, CDirentry &entry)
 
 void CDirectoryListingParser::Reset()
 {
-	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); iter++)
+	for (std::list<t_list>::iterator iter = m_DataList.begin(); iter != m_DataList.end(); ++iter)
 		delete [] iter->p;
 	m_DataList.clear();
 

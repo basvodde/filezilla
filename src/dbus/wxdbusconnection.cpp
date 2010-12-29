@@ -153,7 +153,7 @@ wxThread::ExitCode DBusThread::Entry()
 		fd_array[0].events = POLLIN;
 
 		unsigned int nfds = 1;
-		for (std::list<DBusWatch *>::iterator it = bus_watches.begin(); it != bus_watches.end(); it++) {
+		for (std::list<DBusWatch *>::iterator it = bus_watches.begin(); it != bus_watches.end(); ++it) {
 			if (dbus_watch_get_enabled(*it))
 			{
 #if WITH_LIBDBUS >= 2
@@ -167,7 +167,7 @@ wxThread::ExitCode DBusThread::Entry()
 					fd_array[nfds].events |= POLLIN;
 				if (flags & DBUS_WATCH_WRITABLE)
 					fd_array[nfds].events |= POLLOUT;
-				nfds++;				
+				++nfds;				
 			}
 		}
 		LeaveCriticalSection();
@@ -186,7 +186,7 @@ wxThread::ExitCode DBusThread::Entry()
 				continue;
 			}
 
-			for (std::list<DBusWatch *>::iterator it = bus_watches.begin(); it != bus_watches.end(); it++) {
+			for (std::list<DBusWatch *>::iterator it = bus_watches.begin(); it != bus_watches.end(); ++it) {
 				if (!dbus_watch_get_enabled(*it))
 					continue;
 #if WITH_LIBDBUS >= 2
@@ -195,7 +195,7 @@ wxThread::ExitCode DBusThread::Entry()
 				int fd = dbus_watch_get_fd(*it);
 #endif
 				unsigned int i;
-				for (i = 1; i < nfds; i++) {
+				for (i = 1; i < nfds; ++i) {
 					if (fd_array[i].fd == fd && fd_array[i].revents) {
 						int flags = 0;
 						if (fd_array[i].revents & POLLIN)

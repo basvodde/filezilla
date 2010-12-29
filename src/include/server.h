@@ -6,12 +6,13 @@ enum ServerProtocol
 	// Never change any existing values or user's saved sites will become
 	// corrupted.
 	UNKNOWN = -1,
-	FTP,
+	FTP, // FTP, attempts AUTH TLS
 	SFTP,
 	HTTP,
 	FTPS, // Implicit SSL
 	FTPES, // Explicit SSL
-	HTTPS
+	HTTPS,
+	INSECURE_FTP // Insecure, as the name suggests
 };
 
 enum ServerType

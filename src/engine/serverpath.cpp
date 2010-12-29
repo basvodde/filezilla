@@ -163,7 +163,7 @@ wxString CServerPath::GetPath() const
 	if (m_data->m_segments.empty() && (!traits[m_type].has_root || m_data->m_prefix.empty() || traits[m_type].separator_after_prefix))
 		path += traits[m_type].separator;
 
-	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); iter++)
+	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); ++iter)
 	{
 		const wxString& segment = *iter;
 		if (iter != m_data->m_segments.begin())
@@ -246,7 +246,7 @@ wxString CServerPath::GetSafePath() const
 	if (m_data->m_prefix != _T(""))
 		safepath += m_data->m_prefix + _T(" ");
 
-	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); iter++)
+	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); ++iter)
 		safepath += wxString::Format(_T("%d %s "), (int)iter->Length(), iter->c_str());
 
 	if (!m_data->m_segments.empty())
@@ -282,11 +282,11 @@ bool CServerPath::SetSafePath(const wxString& path)
 
 		if (type >= SERVERTYPE_MAX)
 			return false;
-		p++;
+		++p;
 	} while (*p != ' ');
 
 	m_type = (ServerType)type;
-	p++;
+	++p;
 
 	int prefix_len = 0;
 	do
@@ -298,7 +298,7 @@ bool CServerPath::SetSafePath(const wxString& path)
 
 		if (prefix_len > 32767) // Should be sane enough
 			return false;
-		p++;
+		++p;
 	}
 	while (*p && *p != ' ');
 
@@ -314,7 +314,7 @@ bool CServerPath::SetSafePath(const wxString& path)
 		}
 	}
 
-	p++;
+	++p;
 
 	if (len - (p - begin) < prefix_len)
 		return false;
@@ -338,13 +338,13 @@ bool CServerPath::SetSafePath(const wxString& path)
 
 			if (segment_len > 32767) // Should be sane enough
 				return false;
-			p++;
+			++p;
 		}
 		while (*p != ' ');
 
 		if (!segment_len)
 			return false;
-		p++;
+		++p;
 
 		if (len - (p - begin) < segment_len)
 			return false;
@@ -412,8 +412,8 @@ bool CServerPath::IsSubdirOf(const CServerPath &path, bool cmpNoCase) const
 		else if (*iter1 != *iter2)
 			return false;
 
-		iter1++;
-		iter2++;
+		++iter1;
+		++iter2;
 	}
 
 	return false;
@@ -738,7 +738,7 @@ bool CServerPath::operator<(const CServerPath &op) const
 		return true;
 
 	std::list<wxString>::const_iterator iter1, iter2;
-	for (iter1 = m_data->m_segments.begin(), iter2 = op.m_data->m_segments.begin(); iter1 != m_data->m_segments.end(); iter1++, iter2++)
+	for (iter1 = m_data->m_segments.begin(), iter2 = op.m_data->m_segments.begin(); iter1 != m_data->m_segments.end(); ++iter1, ++iter2)
 	{
 		if (iter2 == op.m_data->m_segments.end())
 			return false;
@@ -874,9 +874,9 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 	if (traits[m_type].prefixmode == 1)
 	{
 		if (m_data->m_prefix.empty())
-			last--;
+			--last;
 		if (path.m_data->m_prefix.empty())
-			last2--;
+			--last2;
 		parentData.m_prefix = GetParent().m_data->m_prefix;
 	}
 	else
@@ -896,8 +896,8 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 
 		parentData.m_segments.push_back(*iter);
 
-		iter++;
-		iter2++;
+		++iter;
+		++iter2;
 	}
 
 	return parent;

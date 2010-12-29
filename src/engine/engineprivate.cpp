@@ -66,7 +66,7 @@ CFileZillaEnginePrivate::CFileZillaEnginePrivate()
 	m_retryCount = 0;
 
 	static int id = 0;
-	m_engine_id = id++;
+	m_engine_id = ++id;
 
 	m_pLogging = new CLogging(this);
 }
@@ -77,11 +77,11 @@ CFileZillaEnginePrivate::~CFileZillaEnginePrivate()
 	delete m_pCurrentCommand;
 
 	// Delete notification list
-	for (std::list<CNotification *>::iterator iter = m_NotificationList.begin(); iter != m_NotificationList.end(); iter++)
+	for (std::list<CNotification *>::iterator iter = m_NotificationList.begin(); iter != m_NotificationList.end(); ++iter)
 		delete *iter;
 
 	// Remove ourself from the engine list
-	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); ++iter)
 		if (*iter == this)
 		{
 			m_engineList.erase(iter);
@@ -194,7 +194,7 @@ int CFileZillaEnginePrivate::ResetOperation(int nErrorCode)
 
 				if ((nErrorCode & FZ_REPLY_CRITICALERROR) != FZ_REPLY_CRITICALERROR)
 				{
-					m_retryCount++;
+					++m_retryCount;
 					if (m_retryCount < m_pOptions->GetOptionVal(OPTION_RECONNECTCOUNT) && pConnectCommand->RetryConnecting())
 					{
 						unsigned int delay = GetRemainingReconnectDelay(pConnectCommand->GetServer());
@@ -531,7 +531,7 @@ void CFileZillaEnginePrivate::SendDirectoryListingNotification(const CServerPath
 
 	// Iterate over the other engine, send notification if last listing
 	// directory is the same
-	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); ++iter)
 	{
 		CFileZillaEnginePrivate* const pEngine = *iter;
 		if (!pEngine->m_pControlSocket || pEngine->m_pControlSocket == m_pControlSocket)
@@ -563,11 +563,11 @@ void CFileZillaEnginePrivate::RegisterFailedLoginAttempt(const CServer& server, 
 			iter->server == server || (!critical && (iter->server.GetHost() == server.GetHost() && iter->server.GetPort() == server.GetPort())))
 		{
 			std::list<t_failedLogins>::iterator prev = iter;
-			iter++;
+			++iter;
 			m_failedLogins.erase(prev);
 		}
 		else
-			iter++;
+			++iter;
 	}
 
 	t_failedLogins failure;
@@ -586,7 +586,7 @@ unsigned int CFileZillaEnginePrivate::GetRemainingReconnectDelay(const CServer& 
 		if (span.GetSeconds() >= delay)
 		{
 			std::list<t_failedLogins>::iterator prev = iter;
-			iter++;
+			++iter;
 			m_failedLogins.erase(prev);
 		}
 		else if (!iter->critical && iter->server.GetHost() == server.GetHost() && iter->server.GetPort() == server.GetPort())
@@ -594,7 +594,7 @@ unsigned int CFileZillaEnginePrivate::GetRemainingReconnectDelay(const CServer& 
 		else if (iter->server == server)
 			return delay * 1000 - span.GetMilliseconds().GetLo();
 		else
-			iter++;
+			++iter;
 	}
 
 	return 0;
@@ -637,6 +637,7 @@ int CFileZillaEnginePrivate::ContinueConnect()
 	case FTP:
 	case FTPS:
 	case FTPES:
+	case INSECURE_FTP:
 		m_pControlSocket = new CFtpControlSocket(this);
 		break;
 	case SFTP:
@@ -647,7 +648,8 @@ int CFileZillaEnginePrivate::ContinueConnect()
 		m_pControlSocket = new CHttpControlSocket(this);
 		break;
 	default:
-		return FZ_REPLY_SYNTAXERROR;
+		m_pLogging->LogMessage(Debug_Warning, _T("Not a valid protocol: %d"), server.GetProtocol());
+		return FZ_REPLY_SYNTAXERROR|FZ_REPLY_DISCONNECTED;
 	}
 
 	int res = m_pControlSocket->Connect(server);
@@ -663,7 +665,7 @@ void CFileZillaEnginePrivate::InvalidateCurrentWorkingDirs(const CServerPath& pa
 	const CServer* const pOwnServer = m_pControlSocket->GetCurrentServer();
 	wxASSERT(pOwnServer);
 
-	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); iter++)
+	for (std::list<CFileZillaEnginePrivate*>::iterator iter = m_engineList.begin(); iter != m_engineList.end(); ++iter)
 	{
 		if (*iter == this)
 			continue;
