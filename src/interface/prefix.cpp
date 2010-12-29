@@ -44,7 +44,7 @@
 #include "prefix.h"
 
 #ifndef NULL
-#define NULL 0; //Changed from ((void *) 0) to avoide compile error
+#define NULL 0; //Changed from ((void *) 0) to avoid compile error
 #endif
 
 #ifdef __GNUC__
