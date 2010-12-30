@@ -167,7 +167,7 @@ protected:
 				continue;
 			}
 
-			buffer[++read] = c;
+			buffer[read++] = c;
 		}
 		if (pInputStream->Eof())
 		{
