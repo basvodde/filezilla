@@ -1,18 +1,18 @@
 #include <filezilla.h>
-
-#include "LocalTreeView.h"
-#include "LocalListView.h"
-#include "RemoteTreeView.h"
-#include "RemoteListView.h"
-#include "StatusView.h"
-#include "queue.h"
 #include "Mainfrm.h"
+
+#include "LocalListView.h"
+#include "LocalTreeView.h"
+#include "queue.h"
+#include "RemoteListView.h"
+#include "RemoteTreeView.h"
+#include "StatusView.h"
 #include "state.h"
 #include "Options.h"
-#include "commandqueue.h"
 #include "asyncrequestqueue.h"
+#include "commandqueue.h"
 #include "led.h"
-#include "sitemanager.h"
+#include "sitemanager_dialog.h"
 #include "settings/settingsdialog.h"
 #include "themeprovider.h"
 #include "filezillaapp.h"
@@ -1340,14 +1340,14 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 	if (!pState)
 		return;
 
-	CSiteManager dlg;
+	CSiteManagerDialog dlg;
 
 	std::set<wxString> handled_paths;
-	std::vector<CSiteManager::_connected_site> connected_sites;
+	std::vector<CSiteManagerDialog::_connected_site> connected_sites;
 
 	if (pServer)
 	{
-		CSiteManager::_connected_site connected_site;
+		CSiteManagerDialog::_connected_site connected_site;
 		connected_site.server = *pServer;
 		connected_sites.push_back(connected_site);
 	}
@@ -1364,7 +1364,7 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 		if (handled_paths.find(path) != handled_paths.end())
 			continue;
 
-		CSiteManager::_connected_site connected_site;
+		CSiteManagerDialog::_connected_site connected_site;
 		connected_site.old_path = path;
 		connected_site.server = controls->pState->GetLastServer();
 		connected_sites.push_back(connected_site);
@@ -1392,7 +1392,7 @@ void CMainFrame::OpenSiteManager(const CServer* pServer /*=0*/)
 				controls->site_bookmarks->path = connected_sites[j].new_path;
 
 				controls->site_bookmarks->bookmarks.clear();
-				dlg.GetBookmarks(controls->site_bookmarks->path, controls->site_bookmarks->bookmarks);
+				CSiteManager::GetBookmarks(controls->site_bookmarks->path, controls->site_bookmarks->bookmarks);
 
 				break;
 			}
