@@ -45,6 +45,9 @@ protected:
 	void SetCtrlState();
 	bool LoadDefaultSites();
 
+	void SetProtocol(ServerProtocol protocol);
+	ServerProtocol GetProtocol() const;
+
 	bool IsPredefinedItem(wxTreeItemId item);
 
 	wxString FindFirstFreeName(const wxTreeItemId &parent, const wxString& name);

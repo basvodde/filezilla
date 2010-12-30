@@ -492,15 +492,9 @@ void CSiteManagerDialog::CreateControls(wxWindow* parent)
 {
 	wxXmlResource::Get()->LoadDialog(this, parent, _T("ID_SITEMANAGER"));
 
-	XRCCTRL(*this, "ID_ENCRYPTION_DESC", wxStaticText)->Hide();
-	XRCCTRL(*this, "ID_ENCRYPTION", wxChoice)->Hide();
-
 	wxChoice *pProtocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice);
-	pProtocol->Append(CServer::GetProtocolName(FTP));
+	pProtocol->Append(_("FTP - File Transfer Protocol"));
 	pProtocol->Append(CServer::GetProtocolName(SFTP));
-	pProtocol->Append(CServer::GetProtocolName(FTPS));
-	pProtocol->Append(CServer::GetProtocolName(FTPES));
-	pProtocol->Append(CServer::GetProtocolName(INSECURE_FTP));
 
 	wxChoice *pChoice = XRCCTRL(*this, "ID_SERVERTYPE", wxChoice);
 	wxASSERT(pChoice);
@@ -511,6 +505,13 @@ void CSiteManagerDialog::CreateControls(wxWindow* parent)
 	wxASSERT(pChoice);
 	for (int i = 0; i < LOGONTYPE_MAX; ++i)
 		pChoice->Append(CServer::GetNameFromLogonType((enum LogonType)i));
+
+	wxChoice* pEncryption = XRCCTRL(*this, "ID_ENCRYPTION", wxChoice);
+	pEncryption->Append(_("Use explicit FTP over TLS if available"));
+	pEncryption->Append(_("Require explicit FTP over TLS"));
+	pEncryption->Append(_("Require implicit FTP over TLS"));
+	pEncryption->Append(_("Only use plain FTP (insecure)"));
+	pEncryption->SetSelection(0);
 }
 
 void CSiteManagerDialog::OnOK(wxCommandEvent& event)
@@ -944,8 +945,7 @@ bool CSiteManagerDialog::Verify()
 
 		enum LogonType logon_type = CServer::GetLogonTypeFromName(XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->GetStringSelection());
 
-		wxString protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
-		enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
+		enum ServerProtocol protocol = GetProtocol();
 		if (protocol == SFTP &&
 			logon_type == ACCOUNT)
 		{
@@ -983,10 +983,7 @@ bool CSiteManagerDialog::Verify()
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(server.FormatHost(true));
 		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(wxString::Format(_T("%d"), server.GetPort()));
 
-		protocolName = CServer::GetProtocolName(server.GetProtocol());
-		if (protocolName == _T(""))
-			CServer::GetProtocolName(FTP);
-		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(protocolName);
+		SetProtocol(server.GetProtocol());
 
 		if (XRCCTRL(*this, "ID_CHARSET_CUSTOM", wxRadioButton)->GetValue())
 		{
@@ -1342,8 +1339,8 @@ bool CSiteManagerDialog::UpdateServer(CSiteManagerItemData_Site &server, const w
 	}
 	server.m_server.SetHost(host, port);
 
-	const wxString& protocolName = XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->GetStringSelection();
-	const enum ServerProtocol protocol = CServer::GetProtocolFromName(protocolName);
+	
+	const enum ServerProtocol protocol = GetProtocol();
 	if (protocol != UNKNOWN)
 		server.m_server.SetProtocol(protocol);
 	else
@@ -1524,7 +1521,7 @@ void CSiteManagerDialog::SetCtrlState()
 		// Empty all site information
 		XRCCTRL(*this, "ID_HOST", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
-		XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(_("FTP"));
+		SetProtocol(FTP);
 		XRCCTRL(*this, "ID_BYPASSPROXY", wxCheckBox)->SetValue(false);
 		XRCCTRL(*this, "ID_LOGONTYPE", wxChoice)->SetStringSelection(_("Anonymous"));
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->SetValue(_T(""));
@@ -1577,12 +1574,9 @@ void CSiteManagerDialog::SetCtrlState()
 			XRCCTRL(*this, "ID_PORT", wxTextCtrl)->SetValue(_T(""));
 		XRCCTRL(*this, "ID_PORT", wxWindow)->Enable(!predefined);
 
-		const wxString& protocolName = CServer::GetProtocolName(site_data->m_server.GetProtocol());
-		if (protocolName != _T(""))
-			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(protocolName);
-		else
-			XRCCTRL(*this, "ID_PROTOCOL", wxChoice)->SetStringSelection(CServer::GetProtocolName(FTP));
+		SetProtocol(site_data->m_server.GetProtocol());
 		XRCCTRL(*this, "ID_PROTOCOL", wxWindow)->Enable(!predefined);
+		XRCCTRL(*this, "ID_ENCRYPTION", wxWindow)->Enable(!predefined);
 		XRCCTRL(*this, "ID_BYPASSPROXY", wxCheckBox)->SetValue(site_data->m_server.GetBypassProxy());
 
 		XRCCTRL(*this, "ID_USER", wxTextCtrl)->Enable(!predefined && site_data->m_server.GetLogonType() != ANONYMOUS);
@@ -1704,6 +1698,12 @@ void CSiteManagerDialog::OnCharsetChange(wxCommandEvent& event)
 
 void CSiteManagerDialog::OnProtocolSelChanged(wxCommandEvent& event)
 {
+	wxChoice* pProtocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice);
+	wxChoice* pEncryption = XRCCTRL(*this, "ID_ENCRYPTION", wxChoice);
+	wxStaticText* pEncryptionDesc = XRCCTRL(*this, "ID_ENCRYPTION_DESC", wxStaticText);
+	
+	pEncryption->Show(pProtocol->GetSelection() != 1);
+	pEncryptionDesc->Show(pProtocol->GetSelection() != 1);
 }
 
 void CSiteManagerDialog::OnCopySite(wxCommandEvent& event)
@@ -2274,4 +2274,65 @@ wxString CSiteManagerDialog::GetSitePath()
 		return _T("");
 
 	return GetSitePath(item);
+}
+
+void CSiteManagerDialog::SetProtocol(ServerProtocol protocol)
+{
+	wxChoice* pProtocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice);
+	wxChoice* pEncryption = XRCCTRL(*this, "ID_ENCRYPTION", wxChoice);
+	wxStaticText* pEncryptionDesc = XRCCTRL(*this, "ID_ENCRYPTION_DESC", wxStaticText);
+
+	if (protocol == SFTP)
+	{
+		pEncryption->Hide();
+		pEncryptionDesc->Hide();
+		pProtocol->SetSelection(1);
+	}
+	else
+	{
+		switch (protocol)
+		{
+		default:
+		case FTP:
+			pEncryption->SetSelection(0);
+			break;
+		case FTPES:
+			pEncryption->SetSelection(1);
+			break;
+		case FTPS:
+			pEncryption->SetSelection(2);
+			break;
+		case INSECURE_FTP:
+			pEncryption->SetSelection(3);
+			break;
+		}
+		pEncryption->Show();
+		pEncryptionDesc->Show();
+		pProtocol->SetSelection(0);
+	}
+}
+
+
+ServerProtocol CSiteManagerDialog::GetProtocol() const
+{
+	wxChoice* pProtocol = XRCCTRL(*this, "ID_PROTOCOL", wxChoice);
+	wxChoice* pEncryption = XRCCTRL(*this, "ID_ENCRYPTION", wxChoice);
+
+	if (pProtocol->GetSelection() == 1)
+		return SFTP;
+
+	switch (pEncryption->GetSelection())
+	{
+	default:
+	case 0:
+		return FTP;
+	case 1:
+		return FTPES;
+	case 2:
+		return FTPS;
+	case 3:
+		return INSECURE_FTP;
+	}
+
+	return FTP;
 }
