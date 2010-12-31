@@ -76,6 +76,8 @@ protected:
 	bool Segmentize(wxString str, tSegmentList& segments);
 	bool ExtractFile(wxString& dir, wxString& file);
 
+	static void EscapeSeparators(ServerType type, wxString& subdir);
+
 	CRefcountObject<CServerPathData> m_data;
 };
 

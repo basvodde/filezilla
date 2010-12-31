@@ -2626,7 +2626,7 @@ bool CDirectoryListingParser::ParseComplexFileSize(CToken& token, wxLongLong& si
 	default:
 		return false;
 	}
-	while (--dot > 0)
+	while (dot-- > 0)
 		size /= 10;
 
 	return true;
