@@ -5,7 +5,7 @@
 
 struct CServerTypeTraits
 {
-	wxChar separator;
+	const wxChar* separators;
 	bool has_root; // Root = simply separator nothing else
 	wxChar left_enclosure; // Example: VMS paths: [FOO.BAR]
 	wxChar right_enclosure;
@@ -17,16 +17,16 @@ struct CServerTypeTraits
 };
 
 static const CServerTypeTraits traits[SERVERTYPE_MAX] = {
-	{ '/',  true,  0,    0,    false, 0, 0,   true,  false }, // Failsafe
-	{ '/',  true,  0,    0,    false, 0, 0,   true,  false },
-	{ '.',  false, '[',  ']',  false, 0, '^', false, false },
-	{ '\\', false, 0,    0,    false, 0, 0,   true,  false },
-	{ '.',  false, '\'', '\'', true,  1, 0,   false, false },
-	{ '/',  true,  0,    0,    false, 0, 0,   true,  false },
-	{ '/',  true,  0,    0,    false, 0, 0,   true,  false }, // Same as Unix
-	{ '.',  false, 0,    0,    false, 0, 0,   false, false },
-	{ '\\', true,  0,    0,    false, 0, 0,   true,  false },
-	{ '/',  true,  0,    0,    false, 0, 0,   true,  true  } // Cygwin is like Unix but has optional prefix of form "//server"
+	{ _T("/"),  true,  0,    0,    false, 0, 0,   true,  false }, // Failsafe
+	{ _T("/"),  true,  0,    0,    false, 0, 0,   true,  false },
+	{ _T("."),  false, '[',  ']',  false, 0, '^', false, false },
+	{ _T("\\/"), false, 0,    0,    false, 0, 0,   true,  false },
+	{ _T("."),  false, '\'', '\'', true,  1, 0,   false, false },
+	{ _T("/"),  true,  0,    0,    false, 0, 0,   true,  false },
+	{ _T("/"),  true,  0,    0,    false, 0, 0,   true,  false }, // Same as Unix
+	{ _T("."),  false, 0,    0,    false, 0, 0,   false, false },
+	{ _T("\\"), true,  0,    0,    false, 0, 0,   true,  false },
+	{ _T("/"),  true,  0,    0,    false, 0, 0,   true,  true  } // Cygwin is like Unix but has optional prefix of form "//server"
 };
 
 CServerPathData::CServerPathData()
@@ -161,23 +161,23 @@ wxString CServerPath::GetPath() const
 	if (traits[m_type].left_enclosure != 0)
 		path += traits[m_type].left_enclosure;
 	if (m_data->m_segments.empty() && (!traits[m_type].has_root || m_data->m_prefix.empty() || traits[m_type].separator_after_prefix))
-		path += traits[m_type].separator;
+		path += traits[m_type].separators[0];
 
 	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); ++iter)
 	{
 		const wxString& segment = *iter;
 		if (iter != m_data->m_segments.begin())
-			path += traits[m_type].separator;
+			path += traits[m_type].separators[0];
 		else if (traits[m_type].has_root)
 		{
 			if (m_data->m_prefix.empty() || traits[m_type].separator_after_prefix)
-				path += traits[m_type].separator;
+				path += traits[m_type].separators[0];
 		}
 
 		if (traits[m_type].separatorEscape)
 		{
 			wxString tmp = segment;
-			tmp.Replace((wxString)traits[m_type].separator, (wxString)traits[m_type].separatorEscape + traits[m_type].separator);
+			EscapeSeparators(m_type, tmp);
 			path += tmp;
 		}
 		else
@@ -193,7 +193,7 @@ wxString CServerPath::GetPath() const
 	// DOS is strange.
 	// C: is current working dir on drive C, C:\ the drive root.
 	if (m_type == DOS && m_data->m_segments.size() == 1)
-		path += traits[m_type].separator;
+		path += traits[m_type].separators[0];
 
 	return path;
 }
@@ -498,7 +498,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 	case DOS:
 		{
 			bool is_relative = false;
-			int sep = dir.Find(traits[m_type].separator);
+			int sep = dir.find_first_of(traits[m_type].separators);
 			if (sep == -1)
 				sep = dir.Len();
 			int colon = dir.Find(':');
@@ -507,7 +507,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 
 			if (is_relative)
 				data.m_segments.clear();
-			else if (dir[0] == traits[m_type].separator)
+			else if (wxString(traits[m_type].separators).Contains(dir[0]))
 			{
 				if (data.m_segments.empty())
 					return false;
@@ -643,7 +643,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 		break;
 	case CYGWIN:
 		{
-			if (dir[0] == traits[m_type].separator)
+			if (wxString(traits[m_type].separators).Contains(dir[0]))
 			{
 				data.m_segments.clear();
 				data.m_prefix.clear();
@@ -652,7 +652,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 				return false;
 			if (dir.Left(2) == _T("//"))
 			{
-				data.m_prefix = traits[m_type].separator;
+				data.m_prefix = traits[m_type].separators[0];
 				dir = dir.Mid(1);
 			}
 
@@ -665,7 +665,7 @@ bool CServerPath::ChangePath(wxString &subdir, bool isFile)
 		break;
 	default:
 		{
-			if (dir[0] == traits[m_type].separator)
+			if (wxString(traits[m_type].separators).Contains(dir[0]))
 				data.m_segments.clear();
 			else if (m_bEmpty)
 				return false;
@@ -774,15 +774,15 @@ wxString CServerPath::FormatFilename(const wxString &filename, bool omitPath /*=
 	switch (m_type)
 	{
 		case VXWORKS:
-			if (result.Last() != traits[m_type].separator && !m_data->m_segments.empty())
-				result += traits[m_type].separator;
+			if (!wxString(traits[m_type].separators).Contains(result.Last()) && !m_data->m_segments.empty())
+				result += traits[m_type].separators[0];
 			break;
 		case VMS:
 		case MVS:
 			break;
 		default:
-			if (result.Last() != traits[m_type].separator)
-				result += traits[m_type].separator;
+			if (!wxString(traits[m_type].separators).Contains(result.Last()))
+				result += traits[m_type].separators[0];
 			break;
 	}
 
@@ -909,7 +909,7 @@ wxString CServerPath::FormatSubdir(const wxString &subdir) const
 		return subdir;
 
 	wxString res = subdir;
-	res.Replace((wxString)traits[m_type].separator, (wxString)traits[m_type].separatorEscape + traits[m_type].separator);
+	EscapeSeparators(m_type, res);
 
 	return res;
 }
@@ -920,7 +920,7 @@ bool CServerPath::Segmentize(wxString str, tSegmentList& segments)
 	while (!str.empty())
 	{
 		wxString segment;
-		int pos = str.Find(traits[m_type].separator);
+		int pos = str.find_first_of(traits[m_type].separators);
 		if (pos == -1)
 		{
 			segment = str,
@@ -958,7 +958,7 @@ bool CServerPath::Segmentize(wxString str, tSegmentList& segments)
 		{
 			append_next = true;
 			segment.RemoveLast();
-			segment += traits[m_type].separator;
+			segment += traits[m_type].separators[0];
 		}
 
 		if (append)
@@ -976,7 +976,7 @@ bool CServerPath::Segmentize(wxString str, tSegmentList& segments)
 
 bool CServerPath::ExtractFile(wxString& dir, wxString& file)
 {
-	int pos = dir.Find(traits[m_type].separator, true);
+	int pos = dir.find_last_of(traits[m_type].separators);
 	if (pos == (int)dir.Length() - 1)
 		return false;
 
@@ -991,4 +991,13 @@ bool CServerPath::ExtractFile(wxString& dir, wxString& file)
 	dir = dir.Left(pos + 1);
 
 	return true;
+}
+
+void CServerPath::EscapeSeparators(ServerType type, wxString& subdir)
+{
+	if (traits[type].separatorEscape)
+	{
+		for (const wxChar* p = traits[type].separators; *p; ++p)
+			subdir.Replace((wxString)*p, (wxString)traits[type].separatorEscape + traits[type].separators[0]);
+	}
 }
