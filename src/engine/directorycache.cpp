@@ -391,22 +391,25 @@ void CDirectoryCache::RemoveDir(const CServer& server, const CServerPath& path, 
 	if (!absolutePath.AddSegment(filename))
 		absolutePath.Clear();
 
-	std::list<CCacheEntry> newList;
-	for (tCacheIter iter = sit->cacheList.begin(); iter != sit->cacheList.end(); ++iter)
+	for (tCacheIter iter = sit->cacheList.begin(); iter != sit->cacheList.end(); )
 	{
 		CCacheEntry &entry = *iter;
 		// Delete exact matches and subdirs
 		if (!absolutePath.IsEmpty() && (entry.listing.path == absolutePath || absolutePath.IsParentOf(entry.listing.path, true)))
 		{
 			m_totalFileCount -= entry.listing.GetCount();
-			continue;
+			tLruList::iterator* lruIt = (tLruList::iterator*)iter->lruIt;
+			if (lruIt)
+			{
+				m_leastRecentlyUsedList.erase(*lruIt);
+				delete lruIt;
+			}
+			sit->cacheList.erase(iter++);
 		}
-
-		//todo
-		newList.push_back(*iter);
+		else {
+			++iter;
+		}
 	}
-
-	sit->cacheList = newList;
 
 	RemoveFile(server, path, filename);
 }
