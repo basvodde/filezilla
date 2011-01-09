@@ -241,7 +241,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 	
 	bool added = false;
 
-	for (int i = pDirectoryListing->GetCount() - 1; i >= 0; i--)
+	for (int i = pDirectoryListing->GetCount() - 1; i >= 0; --i)
 	{
 		const CDirentry& entry = (*pDirectoryListing)[i];
 

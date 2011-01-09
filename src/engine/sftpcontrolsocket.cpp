@@ -917,9 +917,9 @@ public:
 	CSftpListOpData()
 		: COpData(cmd_list)
 		, pParser()
-		, mtime_index()
 		, refresh()
 		, fallback_to_current()
+		, mtime_index()
 	{
 	}
 

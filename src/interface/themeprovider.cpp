@@ -29,12 +29,13 @@ std::list<wxString> CThemeProvider::GetSearchDirs(const wxSize& size)
 
 
 	int sizes[] = { 48,32,24,20,16 };
+	const int count = static_cast<int>(sizeof(sizes) / sizeof(int));
 
 	std::list<wxString> sizeStrings;
 
-	for (int i = 0; i < sizeof(sizes) / sizeof(int) && sizes[i] > s; ++i)
+	for (int i = 0; i < count && sizes[i] > s; ++i)
 		sizeStrings.push_front(SubdirFromSize(sizes[i]));
-	for (int i = 0; i < sizeof(sizes) / sizeof(int); ++i)
+	for (int i = 0; i < count; ++i)
 		if (sizes[i] < s)
 			sizeStrings.push_back(SubdirFromSize(sizes[i]));
 
