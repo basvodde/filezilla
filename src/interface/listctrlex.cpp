@@ -1132,12 +1132,19 @@ bool wxListCtrlEx::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
 	case HDN_ITEMCHANGINGW:
 		if (m_columnDragging)
 		{
-			if (nmHDR->pitem->mask & HDI_WIDTH && nmHDR->pitem->cxy < 10)
+			if (nmHDR->pitem->mask & HDI_WIDTH && nmHDR->pitem->cxy < MIN_COLUMN_WIDTH)
+			{
 				*result = 1;
+				return true;
+			}
 			else
+			{
 				*result = 0;
+				return false;
+			}
 		}
-		return true;
+		else 
+			return false;
 	}
 
 	return wxListCtrl::MSWOnNotify(idCtrl, lParam, result);
