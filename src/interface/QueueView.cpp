@@ -2008,7 +2008,11 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 				wxLongLong size = GetTextElementLongLong(pFile, "Size", -1);
 				unsigned int errorCount = GetTextElementInt(pFile, "ErrorCount");
 				unsigned int priority = GetTextElementInt(pFile, "Priority", priority_normal);
-				bool binary = GetTextElementInt(pFile, "TransferMode", 1) != 0;
+
+				int dataType = GetTextElementInt(pFile, "DataType", -1);
+				if (dataType == -1)
+					dataType = GetTextElementInt(pFile, "TransferMode", 1); 
+				bool binary = dataType != 0;
 				int overwrite_action = GetTextElementInt(pFile, "OverwriteAction", CFileExistsNotification::unknown);
 
 				CServerPath remotePath;

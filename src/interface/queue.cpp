@@ -357,7 +357,7 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 		AddTextElement(file, "ErrorCount", m_errorCount);
 	if (m_priority != priority_normal)
 		AddTextElement(file, "Priority", m_priority);
-	AddTextElementRaw(file, "TransferMode", m_transferSettings.binary ? "1" : "0");
+	AddTextElementRaw(file, "DataType", m_transferSettings.binary ? "1" : "0");
 	if (m_defaultFileExistsAction != CFileExistsNotification::unknown)
 		AddTextElement(file, "OverwriteAction", m_defaultFileExistsAction);
 }
