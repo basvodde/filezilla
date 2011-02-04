@@ -90,6 +90,9 @@ void CManualTransfer::Show(wxWindow* pParent, CState* pState)
 		break;
 	}
 
+	wxSize minSize = GetSizer()->GetMinSize();
+	SetClientSize(minSize);
+
 	ShowModal();
 }
 
