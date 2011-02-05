@@ -2325,7 +2325,9 @@ int CFtpControlSocket::FileTransferParseResponse()
 		if (m_Response.Left(4) == _T("213 ") && m_Response.Length() > 16)
 		{
 			wxDateTime date;
-			const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
+			const wxChar *res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M%S"));
+			if (!res || !date.IsValid())
+				res = date.ParseFormat(m_Response.Mid(4), _T("%Y%m%d%H%M"));
 			if (res && date.IsValid())
 			{
 				pData->fileTime = date.FromTimezone(wxDateTime::GMT0);
