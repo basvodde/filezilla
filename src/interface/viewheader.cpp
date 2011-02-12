@@ -380,6 +380,7 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 		return;
 	}
 
+#ifdef __WXMSW__
 	if (str.Left(2) == _T("\\\\"))
 	{
 		int pos = str.Mid(2).Find('\\');
@@ -396,6 +397,7 @@ void CLocalViewHeader::OnTextChanged(wxCommandEvent& event)
 			return;
 		}
 	}
+#endif
 
 	wxFileName fn(str);
 	if (!fn.IsOk())

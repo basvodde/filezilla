@@ -25,7 +25,7 @@ public:
 	bool empty() const;
 	void clear();
 	
-	// On failure the path s undefined
+	// On failure the path is undefined
 	bool ChangePath(const wxString& path);
 
 	// Do not call with separators in the segment

@@ -380,7 +380,16 @@ bool CLocalPath::ChangePath(const wxString& path)
 	if (m_path.empty())
 		return false;
 
-	return SetPath(m_path + path);
+	if ((path[0] == '\\' || path[0] == '/') && m_path[1] == ':')
+	{
+		// Relative to drive root
+		return SetPath(m_path.Left(2) + path);
+	}
+	else
+	{
+		// Relative to current directory
+		return SetPath(m_path + path);
+	}
 #else
 	if (path[0] == path_separator)
 	{
