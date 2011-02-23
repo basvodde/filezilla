@@ -1334,6 +1334,23 @@ void CDirectoryListingParserTest::InitEntries()
 		DEFAULT
 	});
 
+	// MVS entry with PO-E Dsorg indicating direrctory. See
+	// http://forum.filezilla-project.org/viewtopic.php?t=19374 for reference.
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	m_entries.push_back((t_entry){
+			"WYOSPT 3420   2003/05/21  1 3 U 6447    6447  PO-E 80-MVS.DIR",
+			{
+				_T("80-MVS.DIR"),
+				-1,
+				_T(""),
+				_T(""),
+				CDirentry::flag_dir | CDirentry::flag_timestamp_date,
+				_T(""),
+				wxDateTime(21, wxDateTime::May, 2003)
+		},
+		DEFAULT
+	});
+
 /*
 	wxString name;
 	wxLongLong size;

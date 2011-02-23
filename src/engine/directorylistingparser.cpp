@@ -2332,7 +2332,7 @@ bool CDirectoryListingParser::ParseAsIBM_MVS(CLine *pLine, CDirentry &entry)
 	if (!pLine->GetToken(index++, token))
 		return false;
 
-	if (token.GetString() == _T("PO"))
+	if (token.GetString() == _T("PO") || token.GetString() == _T("PO-E"))
 	{
 		entry.flags |= CDirentry::flag_dir;
 		entry.size = -1;
