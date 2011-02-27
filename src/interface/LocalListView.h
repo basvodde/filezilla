@@ -59,8 +59,6 @@ protected:
 #endif
 
 public:
-	void InitDateFormat();
-
 	virtual bool CanStartComparison(wxString* pError);
 	virtual void StartComparison();
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size, wxDateTime& date, bool &hasTime);
@@ -88,8 +86,6 @@ protected:
 
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;
-
-	wxString m_dateFormat;
 
 	// Event handlers
 	DECLARE_EVENT_TABLE();

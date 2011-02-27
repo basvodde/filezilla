@@ -21,6 +21,7 @@
 #include "local_filesys.h"
 #include "filelist_statusbar.h"
 #include "sizeformatting.h"
+#include "timeformatting.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -278,8 +279,6 @@ CLocalListView::CLocalListView(wxWindow* pParent, CState *pState, CQueueView *pQ
 	InitHeaderSortImageList();
 
 	SetDropTarget(new CLocalListViewDropTarget(this));
-
-	InitDateFormat();
 
 	EnablePrefixSearch(true);
 }
@@ -1799,28 +1798,6 @@ void CLocalListView::RefreshFile(const wxString& file)
 	}
 }
 
-void CLocalListView::InitDateFormat()
-{
-	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
-	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
-
-	if (dateFormat == _T("1"))
-		m_dateFormat = _T("%Y-%m-%d");
-	else if (dateFormat[0] == '2')
-		m_dateFormat = dateFormat.Mid(1);
-	else
-		m_dateFormat = _T("%x");
-
-	m_dateFormat += ' ';
-
-	if (timeFormat == _T("1"))
-		m_dateFormat += _T("%H:%M");
-	else if (timeFormat[0] == '2')
-		m_dateFormat += timeFormat.Mid(1);
-	else
-		m_dateFormat += _T("%X");
-}
-
 wxListItemAttr* CLocalListView::OnGetItemAttr(long item) const
 {
 	CLocalListView *pThis = const_cast<CLocalListView *>(this);
@@ -1958,7 +1935,7 @@ wxString CLocalListView::GetItemText(int item, unsigned int column)
 		if (!data->hasTime)
 			return _T("");
 
-		return data->lastModified.Format(m_dateFormat);
+		return CTimeFormat::FormatDateTime(data->lastModified);
 	}
 	return _T("");
 }

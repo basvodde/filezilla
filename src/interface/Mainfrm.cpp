@@ -2010,13 +2010,6 @@ void CMainFrame::CheckChangedSettings()
 
 	m_pAsyncRequestQueue->RecheckDefaults();
 
-	CContextControl::_context_controls* controls = m_pContextControl->GetCurrentControls();
-	if (controls)
-	{
-		controls->pLocalListView->InitDateFormat();
-		controls->pRemoteListView->InitDateFormat();
-	}
-
 	m_pQueueView->SettingsChanged();
 	CAutoAsciiFiles::SettingsChanged();
 }

@@ -99,6 +99,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		StatusView.cpp \
 		systemimagelist.cpp \
 		themeprovider.cpp \
+		timeformatting.cpp \
 		toolbar.cpp \
 		treectrlex.cpp \
 		updatewizard.cpp \
@@ -208,6 +209,7 @@ noinst_HEADERS = aboutdialog.h \
 		 StatusView.h \
 		 systemimagelist.h \
 		 themeprovider.h \
+		 timeformatting.h \
 		 toolbar.h \
 		 treectrlex.h \
 		 updatewizard.h \

@@ -10,6 +10,7 @@
 #include "queue.h"
 #include "recursive_operation.h"
 #include "sizeformatting.h"
+#include "timeformatting.h"
 #include "window_state_manager.h"
 
 class CSearchFileData : public CGenericFileData
@@ -39,8 +40,6 @@ protected:
 	virtual wxString GetItemText(int item, unsigned int column);
 	virtual int OnGetItemImage(long item) const;
 
-	void InitDateFormat();
-
 #ifdef __WXMSW__
 	virtual int GetOverlayIndex(int item);
 #endif
@@ -55,9 +54,6 @@ private:
 	virtual void OnExitComparisonMode() {}
 
 	int m_dirIcon;
-
-	wxString m_timeFormat;
-	wxString m_dateFormat;
 };
 
 // Helper classes for fast sorting using std::sort
@@ -374,8 +370,6 @@ CSearchDialogFileList::CSearchDialogFileList(CSearchDialog* pParent, CState* pSt
 
 	m_dirIcon = GetIconIndex(dir);
 
-	InitDateFormat();
-
 	InitSort(OPTION_SEARCH_SORTORDER);
 
 	InitHeaderSortImageList();
@@ -479,9 +473,9 @@ wxString CSearchDialogFileList::GetItemText(int item, unsigned int column)
 			return _T("");
 
 		if (entry.has_time())
-			return entry.time.Format(m_timeFormat);
+			return CTimeFormat::FormatDateTime(entry.time);
 		else
-			return entry.time.Format(m_dateFormat);
+			return CTimeFormat::FormatDate(entry.time);
 	}
 	else if (column == 5)
 		return entry.permissions;
@@ -504,26 +498,6 @@ int CSearchDialogFileList::OnGetItemImage(long item) const
 
 	icon = pThis->GetIconIndex(file, pThis->m_fileData[index].entry.name, false);
 	return icon;
-}
-
-void CSearchDialogFileList::InitDateFormat()
-{
-	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
-	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
-
-	if (dateFormat == _T("1"))
-		m_dateFormat = _T("%Y-%m-%d");
-	else if (dateFormat[0] == '2')
-		m_dateFormat = dateFormat.Mid(1);
-	else
-		m_dateFormat = _T("%x");
-
-	if (timeFormat == _T("1"))
-		m_timeFormat = m_dateFormat + _T(" %H:%M");
-	else if (timeFormat[0] == '2')
-		m_timeFormat = m_dateFormat + _T(" ") + timeFormat.Mid(1);
-	else
-		m_timeFormat = m_dateFormat + _T(" %X");
 }
 
 // Search dialog

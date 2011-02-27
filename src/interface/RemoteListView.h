@@ -19,8 +19,6 @@ public:
 	CRemoteListView(wxWindow* pParent, CState* pState, CQueueView* pQueue);
 	virtual ~CRemoteListView();
 
-	void InitDateFormat();
-
 	virtual bool CanStartComparison(wxString* pError);
 	virtual void StartComparison();
 	virtual bool GetNextFile(wxString& name, bool &dir, wxLongLong &size, wxDateTime& date, bool& hasTime);
@@ -90,9 +88,6 @@ protected:
 
 	wxDropTarget* m_pDropTarget;
 	int m_dropTarget;
-
-	wxString m_dateFormat;
-	wxString m_timeFormat;
 
 	// Used to track state for resolving symlinks
 	// While being resolved, global state might have changed

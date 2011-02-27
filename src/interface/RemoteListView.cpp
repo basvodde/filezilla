@@ -18,6 +18,7 @@
 #include "dragdropmanager.h"
 #include <wx/clipbrd.h>
 #include "sizeformatting.h"
+#include "timeformatting.h"
 #ifdef __WXMSW__
 #include "shellapi.h"
 #include "commctrl.h"
@@ -373,12 +374,9 @@ CRemoteListView::CRemoteListView(wxWindow* pParent, CState *pState, CQueueView* 
 
 	SetDropTarget(new CRemoteListViewDropTarget(this));
 
-	InitDateFormat();
-
 	EnablePrefixSearch(true);
 
 	m_pLinkResolveState = 0;
-
 }
 
 CRemoteListView::~CRemoteListView()
@@ -2528,25 +2526,6 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 #endif
 }
 
-void CRemoteListView::InitDateFormat()
-{
-	const wxString& dateFormat = COptions::Get()->GetOption(OPTION_DATE_FORMAT);
-	const wxString& timeFormat = COptions::Get()->GetOption(OPTION_TIME_FORMAT);
-
-	if (dateFormat == _T("1"))
-		m_dateFormat = _T("%Y-%m-%d");
-	else if (dateFormat[0] == '2')
-		m_dateFormat = dateFormat.Mid(1);
-	else
-		m_dateFormat = _T("%x");
-
-	if (timeFormat == _T("1"))
-		m_timeFormat = m_dateFormat + _T(" %H:%M");
-	else if (timeFormat[0] == '2')
-		m_timeFormat = m_dateFormat + _T(" ") + timeFormat.Mid(1);
-	else
-		m_timeFormat = m_dateFormat + _T(" %X");
-}
 
 void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 {
@@ -2947,9 +2926,9 @@ wxString CRemoteListView::GetItemText(int item, unsigned int column)
 			return _T("");
 
 		if (entry.has_time())
-			return entry.time.Format(m_timeFormat);
+			return CTimeFormat::FormatDateTime(entry.time);
 		else
-			return entry.time.Format(m_dateFormat);
+			return CTimeFormat::FormatDate(entry.time);
 	}
 	else if (column == 4)
 		return (*m_pDirectoryListing)[index].permissions;
