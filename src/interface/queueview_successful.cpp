@@ -11,7 +11,9 @@ END_EVENT_TABLE()
 CQueueViewSuccessful::CQueueViewSuccessful(CQueue* parent, int index)
 	: CQueueViewFailed(parent, index, _("Successful transfers"))
 {
-	CreateColumns();
+	std::list<ColumnId> extraCols;
+	extraCols.push_back(colTime);
+	CreateColumns(extraCols);
 
 	m_autoClear = COptions::Get()->GetOptionVal(OPTION_QUEUE_SUCCESSFUL_AUTOCLEAR) ? true : false;
 }

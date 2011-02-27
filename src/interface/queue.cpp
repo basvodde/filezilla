@@ -4,6 +4,7 @@
 #include "queueview_failed.h"
 #include "queueview_successful.h"
 #include "sizeformatting.h"
+#include "timeformatting.h"
 #include "themeprovider.h"
 
 CQueueItem::CQueueItem()
@@ -843,12 +844,20 @@ void CQueueViewBase::OnEraseBackground(wxEraseEvent& event)
 
 wxString CQueueViewBase::OnGetItemText(long item, long column) const
 {
+	if (column < 0 || static_cast<std::size_t>(column) >= m_columns.size())
+		return _T("");
+
 	CQueueViewBase* pThis = const_cast<CQueueViewBase*>(this);
 
 	CQueueItem* pItem = pThis->GetQueueItem(item);
 	if (!pItem)
 		return _T("");
 
+	return OnGetItemText(pItem, m_columns[column]);
+}
+
+wxString CQueueViewBase::OnGetItemText(CQueueItem* pItem, ColumnId column) const
+{
 	switch (pItem->GetType())
 	{
 	case QueueItemType_Server:
@@ -863,9 +872,9 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			CFileItem* pFileItem = reinterpret_cast<CFileItem*>(pItem);
 			switch (column)
 			{
-			case 0:
+			case colLocalName:
 				return pFileItem->GetIndent() + pFileItem->GetLocalPath().GetPath() + pFileItem->GetLocalFile();
-			case 1:
+			case colDirection:
 				if (pFileItem->Download())
 					if (pFileItem->queued())
 						return _T("<--");
@@ -877,9 +886,9 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 					else
 						return _T("-->>");
 				break;
-			case 2:
+			case colRemoteName:
 				return pFileItem->GetRemotePath().FormatFilename(pFileItem->GetRemoteFile());
-			case 3:
+			case colSize:
 				{
 					const wxLongLong& size = pFileItem->GetSize();
 					if (size >= 0)
@@ -887,7 +896,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 					else
 						return _T("?");
 				}
-			case 4:
+			case colPriority:
 				switch (pFileItem->GetPriority())
 				{
 				case 0:
@@ -903,8 +912,11 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 					return _("Highest");
 				}
 				break;
-			case 5:
+			case colTransferStatus:
+			case colErrorReason:
 				return pFileItem->m_statusMessage;
+			case colTime:
+				return CTimeFormat::FormatDateTime(pItem->GetTime());
 			default:
 				break;
 			}
@@ -915,9 +927,9 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			CFolderScanItem* pFolderItem = reinterpret_cast<CFolderScanItem*>(pItem);
 			switch (column)
 			{
-			case 0:
+			case colLocalName:
 				return _T("  ") + pFolderItem->GetLocalPath().GetPath();
-			case 1:
+			case colDirection:
 				if (pFolderItem->Download())
 					if (pFolderItem->queued())
 						return _T("<--");
@@ -929,10 +941,13 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 					else
 						return _T("-->>");
 				break;
-			case 2:
+			case colRemoteName:
 				return pFolderItem->GetRemotePath().GetPath();
-			case 5:
+			case colTransferStatus:
+			case colErrorReason:
 				return pFolderItem->m_statusMessage;
+			case colTime:
+				return CTimeFormat::FormatDateTime(pItem->GetTime());
 			default:
 				break;
 			}
@@ -943,11 +958,11 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 			CFileItem* pFolderItem = reinterpret_cast<CFolderItem*>(pItem);
 			switch (column)
 			{
-			case 0:
+			case colLocalName:
 				if (pFolderItem->Download())
 					return pFolderItem->GetIndent() + pFolderItem->GetLocalPath().GetPath() + pFolderItem->GetLocalFile();
 				break;
-			case 1:
+			case colDirection:
 				if (pFolderItem->Download())
 					if (pFolderItem->queued())
 						return _T("<--");
@@ -959,7 +974,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 					else
 						return _T("-->>");
 				break;
-			case 2:
+			case colRemoteName:
 				if (!pFolderItem->Download())
 				{
 					if (pFolderItem->GetRemoteFile() == _T(""))
@@ -968,7 +983,7 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 						return pFolderItem->GetRemotePath().FormatFilename(pFolderItem->GetRemoteFile());
 				}
 				break;
-			case 4:
+			case colPriority:
 				switch (pFolderItem->GetPriority())
 				{
 				case 0:
@@ -984,8 +999,11 @@ wxString CQueueViewBase::OnGetItemText(long item, long column) const
 					return _("Highest");
 				}
 				break;
-			case 5:
+			case colTransferStatus:
+			case colErrorReason:
 				return pFolderItem->m_statusMessage;
+			case colTime:
+				return CTimeFormat::FormatDateTime(pItem->GetTime());
 			default:
 				break;
 			}
@@ -1186,17 +1204,26 @@ void CQueueViewBase::UpdateSelections_ItemRangeRemoved(int removed, int count)
 		SetItemState(*iter, 0, wxLIST_STATE_SELECTED);
 }
 
-void CQueueViewBase::CreateColumns(const wxString& lastColumnName)
+void CQueueViewBase::AddQueueColumn(ColumnId id)
 {
-	const unsigned long widths[6] = { 180, 60, 180, 80, 60, 150 };
+	const unsigned long widths[8] = { 180, 60, 180, 80, 60, 100, 150, 150 };
+	const int alignment[8] = { wxLIST_FORMAT_LEFT, wxLIST_FORMAT_CENTER, wxLIST_FORMAT_LEFT, wxLIST_FORMAT_RIGHT, wxLIST_FORMAT_LEFT, wxLIST_FORMAT_LEFT, wxLIST_FORMAT_LEFT, wxLIST_FORMAT_LEFT };
+	const wxString names[8] = { _("Server/Local file"), _("Direction"), _("Remote file"), _("Size"), _("Priority"), _("Time"), _("Status"), _("Reason") };
 
-	AddColumn(_("Server/Local file"), wxLIST_FORMAT_LEFT, widths[0]);
-	AddColumn(_("Direction"), wxLIST_FORMAT_CENTER, widths[1]);
-	AddColumn(_("Remote file"), wxLIST_FORMAT_LEFT, widths[2]);
-	AddColumn(_("Size"), wxLIST_FORMAT_RIGHT, widths[3]);
-	AddColumn(_("Priority"), wxLIST_FORMAT_LEFT, widths[4]);
-	if (lastColumnName != _T(""))
-		AddColumn(lastColumnName, wxLIST_FORMAT_LEFT, widths[5]);
+	AddColumn(names[id], alignment[id], widths[id]);
+	m_columns.push_back(id);
+}
+
+void CQueueViewBase::CreateColumns(std::list<ColumnId> const& extraColumns)
+{
+	AddQueueColumn(colLocalName);
+	AddQueueColumn(colDirection);
+	AddQueueColumn(colRemoteName);
+	AddQueueColumn(colSize);
+	AddQueueColumn(colPriority);
+
+	for( std::list<ColumnId>::const_iterator it = extraColumns.begin(); it != extraColumns.end(); ++it)
+		AddQueueColumn(*it);
 
 	LoadColumnSettings(OPTION_QUEUE_COLUMN_WIDTHS, -1, -1);
 }
@@ -1285,6 +1312,8 @@ void CQueueViewBase::DisplayNumberQueuedFiles()
 void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 {
 	const int newIndex = GetItemIndex(pServerItem) + pServerItem->GetChildrenCount(true) + 1;
+
+	pItem->UpdateTime();
 
 	pServerItem->AddChild(pItem);
 	m_itemCount++;

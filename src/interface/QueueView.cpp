@@ -471,7 +471,9 @@ CQueueView::CQueueView(CQueue* parent, int index, CMainFrame* pMainFrame, CAsync
 	m_actionAfterTimerId = -1;
 #endif
 
-	CreateColumns(_("Status"));
+	std::list<ColumnId> extraCols;
+	extraCols.push_back(colTransferStatus);
+	CreateColumns(extraCols);
 
 	//Initialize the engine data
 	t_EngineData *pData = new t_EngineData;

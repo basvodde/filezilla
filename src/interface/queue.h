@@ -55,6 +55,9 @@ public:
 
 	virtual enum QueueItemType GetType() const = 0;
 
+	wxDateTime GetTime() const { return m_time; }
+	void UpdateTime() { m_time = wxDateTime::Now(); }
+
 protected:
 	CQueueItem();
 	wxString GetIndent();
@@ -74,6 +77,8 @@ protected:
 	std::vector<t_cacheItem> m_lookupCache;
 
 	friend class CServerItem;
+
+	wxDateTime m_time;
 
 private:
 	std::vector<CQueueItem*> m_children;
@@ -288,10 +293,21 @@ class CQueue;
 class CQueueViewBase : public wxListCtrlEx
 {
 public:
+
+	enum ColumnId
+	{
+		colLocalName,
+		colDirection,
+		colRemoteName,
+		colSize,
+		colPriority,
+		colTime,
+		colTransferStatus,
+		colErrorReason
+	};
+
 	CQueueViewBase(CQueue* parent, int index, const wxString& title);
 	virtual ~CQueueViewBase();
-
-	void CreateColumns(const wxString& lastColumnName = _T(""));
 
 	// Gets item for given server or creates new if it doesn't exist
 	CServerItem* CreateServerItem(const CServer& server);
@@ -309,6 +325,9 @@ public:
 
 protected:
 
+	void CreateColumns(std::list<ColumnId> const& extraColumns = std::list<ColumnId>());
+	void AddQueueColumn(ColumnId id);
+
 	// Gets item for given server
 	CServerItem* GetServerItem(const CServer& server);
 
@@ -319,6 +338,7 @@ protected:
 	int GetItemIndex(const CQueueItem* item);
 
 	virtual wxString OnGetItemText(long item, long column) const;
+	virtual wxString OnGetItemText(CQueueItem* pItem, ColumnId column) const;
 	virtual int OnGetItemImage(long item) const;
 
 	void RefreshItem(const CQueueItem* pItem);
@@ -352,6 +372,8 @@ protected:
 	const wxString m_title;
 
 	wxTimer m_filecount_delay_timer;
+
+	std::vector<ColumnId> m_columns;
 
 	DECLARE_EVENT_TABLE();
 	void OnEraseBackground(wxEraseEvent& event);

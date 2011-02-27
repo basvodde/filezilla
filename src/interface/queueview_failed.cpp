@@ -15,7 +15,10 @@ END_EVENT_TABLE()
 CQueueViewFailed::CQueueViewFailed(CQueue* parent, int index)
 	: CQueueViewBase(parent, index, _("Failed transfers"))
 {
-	CreateColumns(_("Reason"));
+	std::list<ColumnId> extraCols;
+	extraCols.push_back(colTime);
+	extraCols.push_back(colErrorReason);
+	CreateColumns(extraCols);
 }
 
 CQueueViewFailed::CQueueViewFailed(CQueue* parent, int index, const wxString& title)
