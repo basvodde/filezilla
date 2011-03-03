@@ -33,7 +33,10 @@ bool COptionsPageInterface::LoadPage()
 		XRCCTRL(*this, "ID_PREVENT_IDLESLEEP", wxCheckBox)->Hide();
 
 	if (m_pOptions->OptionFromFzDefaultsXml(OPTION_DEFAULT_KIOSKMODE) || m_pOptions->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
-		XRCCTRL(*this, "ID_DONT_SAVE_PASSWORDS", wxCheckBox)->Hide();
+	{
+		XRCCTRL(*this, "ID_DONT_SAVE_PASSWORDS", wxCheckBox)->SetValue(true);
+		XRCCTRL(*this, "ID_DONT_SAVE_PASSWORDS", wxCheckBox)->Disable();
+	}
 	else
 		SetCheckFromOption(XRCID("ID_DONT_SAVE_PASSWORDS"), OPTION_DEFAULT_KIOSKMODE, failure);
 
