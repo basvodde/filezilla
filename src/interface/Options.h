@@ -107,6 +107,8 @@ public:
 
 	virtual bool SetOption(unsigned int nID, int value);
 	virtual bool SetOption(unsigned int nID, wxString value);
+
+	bool OptionFromFzDefaultsXml(unsigned int nID);
 	
 	void SetLastServer(const CServer& server);
 	bool GetLastServer(CServer& server);

@@ -326,6 +326,14 @@ bool COptions::SetOption(unsigned int nID, wxString value)
 	return true;
 }
 
+bool COptions::OptionFromFzDefaultsXml(unsigned int nID)
+{
+	if (nID >= OPTIONS_NUM)
+		return false;
+
+	return m_optionsCache[nID].from_default;
+}
+
 void COptions::CreateSettingsXmlElement()
 {
 	if (!m_pXmlFile)

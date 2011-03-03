@@ -663,19 +663,8 @@ void SetServer(TiXmlElement *node, const CServer& server)
 	if (!node)
 		return;
 
-	static bool initialized = false;
-	static bool kiosk_mode = false;
-	if (!initialized)
-	{
-		COptions* pOptions = COptions::Get();
-		if (pOptions)
-		{
-			initialized = true;
-			if (pOptions->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 0)
-				kiosk_mode = true;
-		}
-	}
-
+	bool kiosk_mode = COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 0;
+	
 	node->Clear();
 
 	AddTextElement(node, "Host", server.GetHost());

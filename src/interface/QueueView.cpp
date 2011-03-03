@@ -1921,7 +1921,7 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 
 void CQueueView::SaveQueue()
 {
-	// Kiosk mode doesn't save queue
+	// Kiosk mode 2 doesn't save queue
 	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 		return;
 
