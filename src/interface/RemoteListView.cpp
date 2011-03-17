@@ -2640,7 +2640,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 			wxMessageBox(_("A file with that name is already being transferred."), _("Cannot view/edit selected file"), wxICON_EXCLAMATION);
 			continue;
 		case CEditHandler::removing:
-			if (!pEditHandler)
+			if (!pEditHandler->Remove(entry.name, path, server))
 			{
 				wxMessageBox(_("A file with that name is still being edited. Please close it and try again."), _("Selected file is already opened"), wxICON_EXCLAMATION);
 				continue;
