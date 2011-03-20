@@ -10,6 +10,19 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.4.0-rc1 (2011-03-20)
+
++ Disabled automatic negotiation of FTP over TLS introduced in 3.4.0-beta1. Will be added in a future version instead
++ Add checkbox to settings dialog to not save passwords
++ Add timestamp columns to successful and failed queue tabs showing when the transfers completed or failed
+- Fixed infinite loop in TinyXML when loading settings from corrupt XML documents
+- Parsing MDTM reply now takes seconds into account
+- MSW: Handling of paths relative to the drive-root in local directory input box
+- Compatibility with MVS listing containing PO-E type entries
+- Fix Resizing issues with manual transfers dialog
+- MSW: Remote file editing did not correctly handle files that were still open
+
+
 3.4.0-beta1 (2011-01-09)
 
 + Normal FTP connections now always attempt to negotiate secure FTP over TLS
