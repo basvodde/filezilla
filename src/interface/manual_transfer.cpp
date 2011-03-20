@@ -50,7 +50,7 @@ void CManualTransfer::Show(wxWindow* pParent, CState* pState)
 	pProtocol->Append(CServer::GetProtocolName(SFTP));
 	pProtocol->Append(CServer::GetProtocolName(FTPS));
 	pProtocol->Append(CServer::GetProtocolName(FTPES));
-	pProtocol->Append(CServer::GetProtocolName(INSECURE_FTP));
+	//pProtocol->Append(CServer::GetProtocolName(INSECURE_FTP));
 
 	wxChoice* pChoice = XRCCTRL(*this, "ID_LOGONTYPE", wxChoice);
 	wxASSERT(pChoice);

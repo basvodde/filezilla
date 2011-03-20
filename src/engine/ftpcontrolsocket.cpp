@@ -4393,7 +4393,7 @@ int CFtpControlSocket::Connect(const CServer &server)
 		pData->port = server.GetPort();
 	}
 
-	if (server.GetProtocol() != FTPES && server.GetProtocol() != FTP)
+	if (server.GetProtocol() != FTPES /*&& server.GetProtocol() != FTP*/)
 	{
 		pData->neededCommands[LOGON_AUTH_TLS] = 0;
 		pData->neededCommands[LOGON_AUTH_SSL] = 0;
