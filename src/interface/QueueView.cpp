@@ -1045,7 +1045,7 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 				CLoginManager::Get().CachedPasswordFailed(pEngineData->lastServer);
 
 			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
-				pEngineData->pItem->m_statusMessage = _T("");
+				pEngineData->pItem->m_statusMessage.clear();
 			else if (replyCode & FZ_REPLY_PASSWORDFAILED)
 				pEngineData->pItem->m_statusMessage = _("Incorrect password");
 			else if ((replyCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
@@ -1091,7 +1091,7 @@ void CQueueView::ProcessReply(t_EngineData* pEngineData, COperationNotification*
 		else
 		{
 			if ((replyCode & FZ_REPLY_CANCELED) == FZ_REPLY_CANCELED)
-				pEngineData->pItem->m_statusMessage = _T("");
+				pEngineData->pItem->m_statusMessage.clear();
 			else if ((replyCode & FZ_REPLY_TIMEOUT) == FZ_REPLY_TIMEOUT)
 				pEngineData->pItem->m_statusMessage = _("Timeout");
 			else if (replyCode & FZ_REPLY_DISCONNECTED)
@@ -2034,7 +2034,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 					if (previousRemotePath != remotePath)
 						previousRemotePath = remotePath;
 
-					CFileItem* fileItem = new CFileItem(pServerItem, true, download, localPath, localFileName, remoteFile, previousRemotePath, size);
+					CFileItem* fileItem = new CFileItem(pServerItem, true, download, previousLocalPath, localFileName, remoteFile, previousRemotePath, size);
 					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);
 					fileItem->m_errorCount = errorCount;
@@ -2376,7 +2376,7 @@ bool CQueueView::StopItem(CFileItem* item)
 		else
 			reason = reset;
 		if (item->m_pEngineData->pItem)
-			item->m_pEngineData->pItem->m_statusMessage = _T("");
+			item->m_pEngineData->pItem->m_statusMessage.clear();
 		ResetEngine(*item->m_pEngineData, reason);
 		return true;
 	}

@@ -14,6 +14,7 @@ CQueueItem::CQueueItem()
 	m_maxCachedIndex = -1;
 
 	m_removed_at_front = 0;
+	m_indent = 0;
 }
 
 CQueueItem::~CQueueItem()
@@ -37,7 +38,7 @@ void CQueueItem::AddChild(CQueueItem* item)
 		m_children.erase(m_children.begin(), m_children.begin() + m_removed_at_front);
 		m_removed_at_front = 0;
 	}
-	item->m_indent = m_indent + _T("  ");
+	item->m_indent = m_indent + 1;
 	m_children.push_back(item);
 
 	m_visibleOffspring += 1 + item->m_visibleOffspring;
@@ -278,6 +279,20 @@ int CQueueItem::GetItemIndex() const
 	}
 
 	return index + pParent->GetItemIndex();
+}
+
+const wxString& CQueueItem::GetIndent() const
+{ 
+	wxASSERT(m_indent < 5);
+	static const wxString indents[5] = 
+	{ 
+		_T(""),
+		_T("  "),
+		_T("    "),
+		_T("      "),
+		_T("        ")
+	};
+	return indents[m_indent];
 }
 
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download,

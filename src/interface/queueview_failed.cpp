@@ -160,7 +160,7 @@ bool CQueueViewFailed::RequeueFileItem(CFileItem* pFileItem, CServerItem* pServe
 	CQueueView* pQueueView = m_pQueue->GetQueueView();
 
 	pFileItem->m_errorCount = 0;
-	pFileItem->m_statusMessage.Clear();
+	pFileItem->m_statusMessage.clear();
 
 	if (!pFileItem->Download() && !wxFileName::FileExists(pFileItem->GetLocalPath().GetPath() + pFileItem->GetLocalFile()))
 	{
