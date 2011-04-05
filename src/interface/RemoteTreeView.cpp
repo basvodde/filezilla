@@ -261,6 +261,7 @@ CRemoteTreeView::CRemoteTreeView(wxWindow* parent, wxWindowID id, CState* pState
 
 CRemoteTreeView::~CRemoteTreeView()
 {
+	SetImageList(0);
 	delete m_pImageList;
 }
 
