@@ -1424,15 +1424,15 @@ bool CLocalTreeView::CheckSubdirStatus(wxTreeItemId& item, const wxString& path)
 	// listing that directory is slow.
 	if (GetItemParent(item) == GetRootItem() && (path == _T("/net") || path == _T("/net/")))
 	{
-			CFilterManager filter;
+		CFilterManager filter;
 
-			const int attributes = S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-			if (!filter.FilenameFiltered(_T("localhost"), path, true, size, true, attributes, 0))
-			{
-				if (!child)
-					AppendItem(item, _T(""));
-				return true;
-			}
+		const int attributes = S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+		if (!filter.FilenameFiltered(_T("localhost"), path, true, size, true, attributes, 0))
+		{
+			if (!child)
+				AppendItem(item, _T(""));
+			return true;
+		}
 	}
 #endif
 
