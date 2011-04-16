@@ -58,14 +58,15 @@ public:
 	wxDateTime GetTime() const { return m_time; }
 	void UpdateTime() { m_time = wxDateTime::Now(); }
 
+	const wxString& GetIndent() const;
+
 protected:
 	CQueueItem();
-	wxString GetIndent();
 
 	CQueueItem* m_parent;
 
 	int m_visibleOffspring; // Visible offspring over all sublevels
-	wxString m_indent;
+	int m_indent;
 
 	int m_maxCachedIndex;
 
@@ -173,8 +174,6 @@ public:
 		else
 			flags &= ~flag_remove;
 	}
-
-	wxString GetIndent() { return m_indent; }
 
 	virtual enum QueueItemType GetType() const { return QueueItemType_File; }
 
