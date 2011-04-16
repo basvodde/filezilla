@@ -243,14 +243,15 @@ wxString CServerPath::GetSafePath() const
 
 	wxString safepath;
 	safepath.Alloc(256);
-	safepath.Printf(_T("%d %d"), m_type, (int)m_data->m_prefix.Length());
+	wxChar buffer[32];
+	wxSprintf(buffer, _T("%u %u"), static_cast<unsigned int>(m_type), static_cast<unsigned int>(m_data->m_prefix.Length()));
+	safepath += buffer;
 	if (m_data->m_prefix != _T(""))
 		safepath += _T(" ") + m_data->m_prefix;
 
-	wxChar buffer[20];
 	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); ++iter)
 	{
-		wxPrintf(buffer, " %u ", static_cast<unsigned int>(iter->Length()));
+		wxSprintf(buffer, _T(" %u "), static_cast<unsigned int>(iter->Length()));
 		safepath += buffer;
 		safepath += *iter;
 	}
