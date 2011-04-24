@@ -294,11 +294,11 @@ extern "C" {
 static void custom_free(void* v)
 {
 #ifdef __WXMSW__
-	char* s = reinterpret_cast<char*>(v);
-	delete [] s;
-#else
 	wxStringData* data = reinterpret_cast<wxStringData*>(v) - 1;
 	data->Unlock();
+#else
+	char* s = reinterpret_cast<char*>(v);
+	delete [] s;
 #endif
 }
 }
@@ -311,11 +311,12 @@ bool CQueueStorage::Impl::Bind(sqlite3_stmt* statement, int index, const wxStrin
 	wxStringData* data = reinterpret_cast<wxStringData*>(const_cast<wxChar*>(value.c_str())) - 1;
 	data->Lock();
 	return sqlite3_bind_text16(statement, index, data + 1, data->nDataLength * 2, custom_free) == SQLITE_OK;
-#endif
+#else
 	char* out = new char[value.size() * 2];
 	size_t outlen = utf16_.FromWChar(out, value.size() * 2, value.c_str(), value.size());
 	bool ret = sqlite3_bind_text16(statement, index, out, outlen, custom_free) == SQLITE_OK;
 	return ret;
+#endif
 }
 
 
