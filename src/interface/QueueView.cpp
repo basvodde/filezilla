@@ -522,32 +522,32 @@ CQueueView::~CQueueView()
 }
 
 bool CQueueView::QueueFile(const bool queueOnly, const bool download,
-						   const CLocalPath& localPath, const wxString& localFile,
-						   const wxString& remoteFile, const CServerPath& remotePath,
+						   const wxString& sourceFile, const wxString& targetFile,
+						   const CLocalPath& localPath, const CServerPath& remotePath,
 						   const CServer& server, const wxLongLong size, enum CEditHandler::fileType edit /*=CEditHandler::none*/)
 {
 	CServerItem* pServerItem = CreateServerItem(server);
 
 	CFileItem* fileItem;
-	if (localFile == _T("") || remotePath.IsEmpty())
+	if (sourceFile.empty())
 	{
 		if (download)
 		{
 			CLocalPath p(localPath);
-			p.AddSegment(localFile);
+			p.AddSegment(targetFile);
 			fileItem = new CFolderItem(pServerItem, queueOnly, p);
 		}
 		else
-			fileItem = new CFolderItem(pServerItem, queueOnly, remotePath, remoteFile);
+			fileItem = new CFolderItem(pServerItem, queueOnly, remotePath, targetFile);
 		wxASSERT(edit == CEditHandler::none);
 	}
 	else
 	{
-		fileItem = new CFileItem(pServerItem, queueOnly, download, localPath, localFile, remoteFile, remotePath, size);
+		fileItem = new CFileItem(pServerItem, queueOnly, download, sourceFile, targetFile, localPath, remotePath, size);
 		if (download)
-			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(remoteFile, remotePath.GetType());
+			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(sourceFile, remotePath.GetType());
 		else
-			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(localFile, remotePath.GetType());
+			fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferLocalAsAscii(sourceFile, remotePath.GetType());
 		fileItem->m_edit = edit;
 		if (edit != CEditHandler::none)
 			fileItem->m_onetime_action = CFileExistsNotification::overwrite;
@@ -596,7 +596,10 @@ bool CQueueView::QueueFiles(const bool queueOnly, const CLocalPath& localPath, c
 			continue;
 
 		CFileItem* fileItem;
-		fileItem = new CFileItem(pServerItem, queueOnly, true, localPath, ReplaceInvalidCharacters(iter->name), iter->name, dataObject.GetServerPath(), iter->size);
+		wxString localFile = ReplaceInvalidCharacters(iter->name);
+		fileItem = new CFileItem(pServerItem, queueOnly, true,
+			iter->name, (iter->name != localFile) ? localFile : wxEmptyString,
+			localPath, dataObject.GetServerPath(), iter->size);
 		fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(iter->name, dataObject.GetServerPath().GetType());
 
 		InsertItem(pServerItem, fileItem);
@@ -1899,7 +1902,7 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 				continue;
 			}
 
-			CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, pFolderScanItem->m_current_local_path, entry->name, entry->name, pFolderScanItem->m_current_remote_path, entry->size);
+			CFileItem* fileItem = new CFileItem(pServerItem, queueOnly, download, entry->name, wxEmptyString, pFolderScanItem->m_current_local_path, pFolderScanItem->m_current_remote_path, entry->size);
 
 			if (download)
 				fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(entry->name, pFolderScanItem->m_current_remote_path.GetType());
@@ -2045,7 +2048,10 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 					if (previousRemotePath != remotePath)
 						previousRemotePath = remotePath;
 
-					CFileItem* fileItem = new CFileItem(pServerItem, true, download, previousLocalPath, localFileName, remoteFile, previousRemotePath, size);
+					CFileItem* fileItem = new CFileItem(pServerItem, true, download,
+						download ? remoteFile : localFileName,
+						(remoteFile != localFileName) ? (download ? localFileName : remoteFile) : wxEmptyString,
+						previousLocalPath, previousRemotePath, size);
 					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);
 					fileItem->m_errorCount = errorCount;
@@ -3342,10 +3348,10 @@ void CQueueView::RenameFileInTransfer(CFileZillaEngine *pEngine, const wxString&
 	{
 		wxFileName fn(pFile->GetLocalPath().GetPath(), pFile->GetLocalFile());
 		fn.SetFullName(newName);
-		pFile->SetLocalFile(fn.GetFullName());
+		pFile->SetTargetFile(fn.GetFullName());
 	}
 	else
-		pFile->SetRemoteFile(newName);
+		pFile->SetTargetFile(newName);
 
 	RefreshItem(pFile);
 }

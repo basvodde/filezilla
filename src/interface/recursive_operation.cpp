@@ -225,7 +225,7 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 		}
 		else if (m_operationMode == recursive_addtoqueue)
 		{
-			m_pQueue->QueueFile(true, true, dir.localDir, _T(""), _T(""), CServerPath(), *pServer, -1);
+			m_pQueue->QueueFile(true, true, _T(""), _T(""), dir.localDir, CServerPath(), *pServer, -1);
 			m_pQueue->QueueFile_Finish(false);
 		}
 	}
@@ -280,18 +280,20 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			case recursive_download:
 			case recursive_download_flatten:
 				{
+					wxString localFile = CQueueView::ReplaceInvalidCharacters(entry.name);
 					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true,
-						dir.localDir, CQueueView::ReplaceInvalidCharacters(entry.name),
-						entry.name, pDirectoryListing->path, *pServer, entry.size);
+						entry.name, (entry.name == localFile) ? wxEmptyString : localFile,
+						dir.localDir, pDirectoryListing->path, *pServer, entry.size);
 					added = true;
 				}
 				break;
 			case recursive_addtoqueue:
 			case recursive_addtoqueue_flatten:
 				{
+					wxString localFile = CQueueView::ReplaceInvalidCharacters(entry.name);
 					m_pQueue->QueueFile(true, true,
-						dir.localDir, CQueueView::ReplaceInvalidCharacters(entry.name),
-						entry.name, pDirectoryListing->path, *pServer, entry.size);
+						entry.name, (entry.name == localFile) ? wxEmptyString : localFile,
+						dir.localDir, pDirectoryListing->path, *pServer, entry.size);
 					added = true;
 				}
 				break;
@@ -426,7 +428,7 @@ void CRecursiveOperation::LinkIsNotDir()
 		wxString localFile = dir.subdir;
 		if (m_operationMode != recursive_addtoqueue_flatten && m_operationMode != recursive_download_flatten)
 			localPath.MakeParent();
-		m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue || m_operationMode == recursive_addtoqueue_flatten, true, localPath, localFile, dir.subdir, dir.parent, *pServer, -1);
+		m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue || m_operationMode == recursive_addtoqueue_flatten, true, dir.subdir, (dir.subdir == localFile) ? wxEmptyString : localFile, localPath, dir.parent, *pServer, -1);
 		m_pQueue->QueueFile_Finish(m_operationMode != recursive_addtoqueue);
 	}
 

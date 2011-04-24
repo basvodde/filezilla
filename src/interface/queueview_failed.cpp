@@ -186,7 +186,7 @@ bool CQueueViewFailed::RequeueFileItem(CFileItem* pFileItem, CServerItem* pServe
 				delete pFileItem;
 				return false;
 			}
-			pFileItem->SetLocalFile(file);
+			pFileItem->SetTargetFile(file);
 		}
 		else if (state == CEditHandler::upload_and_remove_failed)
 		{

@@ -581,7 +581,7 @@ void CLocalListView::OnItemActivated(wxListEvent &event)
 
 	const bool queue_only = action == 1;
 
-	m_pQueue->QueueFile(queue_only, false, CLocalPath(m_dir), data->name, data->name, path, *pServer, data->size);
+	m_pQueue->QueueFile(queue_only, false, data->name, wxEmptyString, CLocalPath(m_dir), path, *pServer, data->size);
 	m_pQueue->QueueFile_Finish(true);
 }
 
@@ -1169,7 +1169,7 @@ void CLocalListView::OnMenuUpload(wxCommandEvent& event)
 		}
 		else
 		{
-			m_pQueue->QueueFile(queue_only, false, CLocalPath(m_dir), data->name, data->name, path, *pServer, data->size);
+			m_pQueue->QueueFile(queue_only, false, data->name, wxEmptyString, CLocalPath(m_dir), path, *pServer, data->size);
 			added = true;
 		}
 	}

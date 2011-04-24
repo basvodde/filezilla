@@ -370,7 +370,10 @@ void CManualTransfer::OnOK(wxCommandEvent& event)
 		return;
 	}
 
-	m_pQueueView->QueueFile(!start, download, localPath, name, remote_file, path, *m_pServer, -1);
+	m_pQueueView->QueueFile(!start, download,
+		download ? remote_file : name,
+		(remote_file != name) ? (download ? name : remote_file) : wxEmptyString,
+		localPath, path, *m_pServer, -1);
 
 	// Restore old data type
 	COptions::Get()->SetOption(OPTION_ASCIIBINARY, old_data_type);

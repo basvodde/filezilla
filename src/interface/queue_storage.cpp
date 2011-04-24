@@ -74,9 +74,9 @@ namespace file_table_column_names
 	{
 		id,
 		server,
-		local_file,
+		source_file,
+		target_file,
 		local_path,
-		remote_file,
 		remote_path,
 		download,
 		size,
@@ -90,9 +90,9 @@ namespace file_table_column_names
 _column file_table_columns[] = {
 	{ _T("id"), integer, not_null | autoincrement },
 	{ _T("server"), integer, not_null },
-	{ _T("local_file"), text, not_null },
+	{ _T("source_file"), text, not_null },
+	{ _T("target_file"), text, 0 },
 	{ _T("local_path"), text, not_null },
-	{ _T("remote_file"), text, not_null },
 	{ _T("remote_path"), text, not_null },
 	{ _T("download"), integer, not_null },
 	{ _T("size"), integer, 0 },
@@ -467,9 +467,12 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 
 	sqlite3_reset(insertFileQuery_);
 
-	Bind(insertFileQuery_, file_table_column_names::local_file, file.GetLocalFile());
+	Bind(insertFileQuery_, file_table_column_names::source_file, file.GetSourceFile());
+	if (file.GetTargetFile().empty())
+		BindNull(insertFileQuery_, file_table_column_names::target_file);
+	else
+		Bind(insertFileQuery_, file_table_column_names::target_file, file.GetTargetFile());
 	Bind(insertFileQuery_, file_table_column_names::local_path, file.GetLocalPath().GetPath());
-	Bind(insertFileQuery_, file_table_column_names::remote_file, file.GetRemoteFile());
 	Bind(insertFileQuery_, file_table_column_names::remote_path, file.GetRemotePath().GetSafePath());
 	Bind(insertFileQuery_, file_table_column_names::download, file.Download() ? 1 : 0);
 	if (file.GetSize() != -1)
@@ -652,9 +655,9 @@ wxLongLong_t CQueueStorage::Impl::ParseServerFromRow(CServer& server)
 
 wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 {
-	wxString localFile = GetColumnText(selectFilesQuery_, file_table_column_names::local_file);
+	wxString sourceFile = GetColumnText(selectFilesQuery_, file_table_column_names::source_file);
+	wxString targetFile = GetColumnText(selectFilesQuery_, file_table_column_names::target_file);
 	wxString safeLocalPath = GetColumnText(selectFilesQuery_, file_table_column_names::local_path);
-	wxString remoteFile = GetColumnText(selectFilesQuery_, file_table_column_names::remote_file);
 	wxString safeRemotePath = GetColumnText(selectFilesQuery_, file_table_column_names::remote_path);
 	bool download = GetColumnInt(selectFilesQuery_, file_table_column_names::download) != 0;
 
@@ -667,8 +670,8 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 
 	CLocalPath localPath;
 	CServerPath remotePath;
-	if (localFile != _T("") && localPath.SetPath(safeLocalPath) &&
-		remoteFile != _T("") && remotePath.SetSafePath(safeRemotePath) &&
+	if (sourceFile != _T("") && localPath.SetPath(safeLocalPath) &&
+		remotePath.SetSafePath(safeRemotePath) &&
 		size >= -1 &&
 		priority > 0 && priority < PRIORITY_COUNT &&
 		errorCount >= 0)
@@ -681,7 +684,7 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 		//if (previousRemotePath != remotePath)
 		//	previousRemotePath = remotePath;
 
-		CFileItem* fileItem = new CFileItem(0, true, download, localPath, localFile, remoteFile, remotePath, size);
+		CFileItem* fileItem = new CFileItem(0, true, download, sourceFile, targetFile, localPath, remotePath, size);
 		*pItem = fileItem;
 		fileItem->m_transferSettings.binary = binary;
 		fileItem->SetPriorityRaw((enum QueuePriority)priority);

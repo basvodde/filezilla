@@ -144,16 +144,20 @@ struct t_EngineData;
 class CFileItem : public CQueueItem
 {
 public:
-	CFileItem(CServerItem* parent, bool queued, bool download, const CLocalPath& localPath, const wxString& localFile,
-			const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size);
+	CFileItem(CServerItem* parent, bool queued, bool download,
+		const wxString& sourceFile, const wxString& targetFile,
+		const CLocalPath& localPath, const CServerPath& remotePath, wxLongLong size);
+
 	virtual ~CFileItem();
 
 	virtual void SetPriority(enum QueuePriority priority);
 	void SetPriorityRaw(enum QueuePriority priority);
 	enum QueuePriority GetPriority() const;
 
-	const wxString& GetLocalFile() const { return m_localFile; }
-	const wxString& GetRemoteFile() const { return m_remoteFile; }
+	const wxString& GetLocalFile() const { return !Download() ? GetSourceFile() : (m_targetFile.empty() ? m_sourceFile : m_targetFile); }
+	const wxString& GetRemoteFile() const { return Download() ? GetSourceFile() : (m_targetFile.empty() ? m_sourceFile : m_targetFile); }
+	const wxString& GetSourceFile() const { return m_sourceFile; }
+	const wxString& GetTargetFile() const { return m_targetFile; }
 	const CLocalPath& GetLocalPath() const { return m_localPath; }
 	const CServerPath& GetRemotePath() const { return m_remotePath; }
 	const wxLongLong& GetSize() const { return m_size; }
@@ -188,8 +192,7 @@ public:
 	virtual bool TryRemoveAll(); // Removes a inactive childrens, queues active children for removal.
 								 // Returns true if item can be removed itself
 
-	void SetLocalFile(const wxString &file);
-	void SetRemoteFile(const wxString &file);
+	void SetTargetFile(const wxString &file);
 
 	int m_errorCount;
 	CEditHandler::fileType m_edit;
@@ -226,8 +229,8 @@ protected:
 
 	enum QueuePriority m_priority;
 
-	wxString m_localFile;
-	wxString m_remoteFile;
+	wxString m_sourceFile;
+	wxString m_targetFile;
 	const CLocalPath m_localPath;
 	const CServerPath m_remotePath;
 	wxLongLong m_size;

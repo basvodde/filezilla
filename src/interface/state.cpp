@@ -718,7 +718,7 @@ void CState::UploadDroppedFiles(const wxFileDataObject* pFileDataObject, const C
 		{
 			wxString localFile;
 			const CLocalPath localPath(files[i], &localFile);
-			m_pMainFrame->GetQueue()->QueueFile(queueOnly, false, localPath, localFile, localFile, path, *m_pServer, size);
+			m_pMainFrame->GetQueue()->QueueFile(queueOnly, false, localFile, wxEmptyString, localPath, path, *m_pServer, size);
 			m_pMainFrame->GetQueue()->QueueFile_Finish(!queueOnly);
 		}
 		else if (type == CLocalFileSystem::dir)

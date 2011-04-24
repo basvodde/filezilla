@@ -296,9 +296,9 @@ const wxString& CQueueItem::GetIndent() const
 }
 
 CFileItem::CFileItem(CServerItem* parent, bool queued, bool download,
-					 const CLocalPath& localPath, const wxString& localFile,
-					 const wxString& remoteFile, const CServerPath& remotePath, wxLongLong size)
-	: m_localFile(localFile), m_remoteFile(remoteFile)
+					 const wxString& sourceFile, const wxString& targetFile,
+					 const CLocalPath& localPath, const CServerPath& remotePath, wxLongLong size)
+	: m_sourceFile(sourceFile), m_targetFile(targetFile)
 	, m_localPath(localPath), m_remotePath(remotePath)
 	, m_size(size)
 {
@@ -363,8 +363,8 @@ void CFileItem::SaveItem(TiXmlElement* pElement) const
 
 	TiXmlElement *file = pElement->LinkEndChild(new TiXmlElement("File"))->ToElement();
 
-	AddTextElement(file, "LocalFile", m_localPath.GetPath() + m_localFile);
-	AddTextElement(file, "RemoteFile", m_remoteFile);
+	AddTextElement(file, "LocalFile", m_localPath.GetPath() + GetLocalFile());
+	AddTextElement(file, "RemoteFile", GetRemoteFile());
 	AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
 	AddTextElementRaw(file, "Download", Download() ? "1" : "0");
 	if (m_size != -1)
@@ -387,25 +387,22 @@ bool CFileItem::TryRemoveAll()
 	return false;
 }
 
-void CFileItem::SetLocalFile(const wxString &file)
+void CFileItem::SetTargetFile(const wxString &file)
 {
 	wxASSERT(!file.empty());
-	m_localFile = file;
-}
-
-void CFileItem::SetRemoteFile(const wxString &file)
-{
-	wxASSERT(!file.empty());
-	m_remoteFile = file;
+	if (file != m_sourceFile)
+		m_targetFile = file;
+	else
+		m_targetFile.clear();
 }
 
 CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CLocalPath& localPath)
-	: CFileItem(parent, queued, true, localPath, _T(""), _T(""), CServerPath(), -1)
+	: CFileItem(parent, queued, true, wxEmptyString, wxEmptyString, localPath, CServerPath(), -1)
 {
 }
 
 CFolderItem::CFolderItem(CServerItem* parent, bool queued, const CServerPath& remotePath, const wxString& remoteFile)
-	: CFileItem(parent, queued, false, CLocalPath(), _T(""), remoteFile, remotePath, -1)
+	: CFileItem(parent, queued, false, _T(""), remoteFile, CLocalPath(), remotePath, -1)
 {
 }
 
@@ -414,10 +411,10 @@ void CFolderItem::SaveItem(TiXmlElement* pElement) const
 	TiXmlElement *file = new TiXmlElement("Folder");
 
 	if (Download())
-		AddTextElement(file, "LocalFile", m_localFile);
+		AddTextElement(file, "LocalFile", GetLocalFile());
 	else
 	{
-		AddTextElement(file, "RemoteFile", m_remoteFile);
+		AddTextElement(file, "RemoteFile", GetRemoteFile());
 		AddTextElement(file, "RemotePath", m_remotePath.GetSafePath());
 	}
 	AddTextElementRaw(file, "Download", Download() ? "1" : "0");

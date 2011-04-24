@@ -1276,7 +1276,10 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 				return;
 			}
 
-			m_pQueue->QueueFile(queue_only, true, local_path, CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
+			wxString localFile = CQueueView::ReplaceInvalidCharacters(name);
+			m_pQueue->QueueFile(queue_only, true, name,
+				(name == localFile) ? wxEmptyString : localFile,
+				local_path, m_pDirectoryListing->path, *pServer, entry.size);
 			m_pQueue->QueueFile_Finish(true);
 		}
 	}
@@ -1540,7 +1543,10 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 		}
 		else
 		{
-			m_pQueue->QueueFile(queueOnly, true, local_parent, CQueueView::ReplaceInvalidCharacters(name), name, m_pDirectoryListing->path, *pServer, entry.size);
+			wxString localFile = CQueueView::ReplaceInvalidCharacters(name);
+			m_pQueue->QueueFile(queueOnly, true,
+				name, (name == localFile) ? wxEmptyString : localFile,
+				local_parent, m_pDirectoryListing->path, *pServer, entry.size);
 			added = true;
 		}
 	}
@@ -2691,7 +2697,8 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		wxString localFile;
 		CLocalPath localPath(file, &localFile);
 
-		m_pQueue->QueueFile(false, true, localPath, localFile, entry.name, path, server, entry.size, CEditHandler::remote);
+		m_pQueue->QueueFile(false, true, entry.name, (localFile != entry.name) ? localFile : wxEmptyString,
+			localPath, path, server, entry.size, CEditHandler::remote);
 		m_pQueue->QueueFile_Finish(true);
 	}
 }
@@ -2997,7 +3004,10 @@ void CRemoteListView::LinkIsNotDir(const CServerPath& path, const wxString& link
 
 	if (m_pLinkResolveState->remote_path == path && m_pLinkResolveState->link == link)
 	{
-		m_pQueue->QueueFile(false, true, m_pLinkResolveState->local_path, CQueueView::ReplaceInvalidCharacters(link), link, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);
+		wxString localFile = CQueueView::ReplaceInvalidCharacters(link);
+		m_pQueue->QueueFile(false, true, 
+			link, (link != localFile) ? localFile : wxEmptyString,
+			m_pLinkResolveState->local_path, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);
 		m_pQueue->QueueFile_Finish(true);
 	}
 
