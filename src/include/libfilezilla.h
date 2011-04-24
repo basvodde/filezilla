@@ -37,8 +37,4 @@
 
 #include "misc.h"
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
 #endif //__LIBFILEZILLA_H__

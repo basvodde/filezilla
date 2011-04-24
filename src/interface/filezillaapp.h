@@ -51,7 +51,7 @@ protected:
 
 	wxString GetDataDir(wxString fileToFind) const;
 
-	// FileExists acceppts full paths as parameter,
+	// FileExists accepts full paths as parameter,
 	// with the addition that path segments may be obmitted
 	// with a wildcard (*). A matching directory will then be searched.
 	// Example: FileExists(_T("/home/*/.filezilla/filezilla.xml"));

@@ -12,7 +12,9 @@ enum ServerProtocol
 	FTPS, // Implicit SSL
 	FTPES, // Explicit SSL
 	HTTPS,
-	INSECURE_FTP // Insecure, as the name suggests
+	INSECURE_FTP, // Insecure, as the name suggests
+
+	MAX_VALUE = INSECURE_FTP
 };
 
 enum ServerType

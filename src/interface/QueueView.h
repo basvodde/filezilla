@@ -9,6 +9,8 @@
 #include <set>
 #include <wx/progdlg.h>
 
+#include "queue_storage.h"
+
 class CFolderProcessingEntry
 {
 public:
@@ -262,6 +264,8 @@ protected:
 #if WITH_LIBDBUS
 	CDesktopNotification* m_desktop_notification;
 #endif
+
+	CQueueStorage m_queue_storage;
 
 	DECLARE_EVENT_TABLE();
 	void OnEngineEvent(wxEvent &event);

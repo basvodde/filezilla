@@ -80,7 +80,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libgnutls-26.lib libidn.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_unicode_debug.lib Netapi32.lib Winmm.lib Ws2_32.lib mpr.lib"
+				AdditionalDependencies="libgnutls-26.lib libidn.lib odbc32.lib odbccp32.lib comctl32.lib rpcrt4.lib wsock32.lib ..\lib\engine_unicode_debug.lib Netapi32.lib Winmm.lib Ws2_32.lib mpr.lib sqlite3.lib"
 				OutputFile="..\bin\FileZilla_unicode_dbg.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -182,7 +182,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libgnutls-26.lib libidn.lib wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine_unicode.lib Netapi32.lib Winmm.lib Ws2_32.lib mpr.lib"
+				AdditionalDependencies="libgnutls-26.lib libidn.lib wsock32.lib odbc32.lib odbccp32.lib comctl32.lib ..\lib\engine_unicode.lib Netapi32.lib Winmm.lib Ws2_32.lib mpr.lib sqlite3.lib"
 				OutputFile="../bin/FileZilla_unicode.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -504,6 +504,10 @@
 			</File>
 			<File
 				RelativePath=".\queue.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\queue_storage.cpp"
 				>
 			</File>
 			<File
@@ -913,6 +917,10 @@
 			</File>
 			<File
 				RelativePath=".\queue.h"
+				>
+			</File>
+			<File
+				RelativePath=".\queue_storage.h"
 				>
 			</File>
 			<File

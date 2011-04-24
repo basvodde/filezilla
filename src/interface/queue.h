@@ -60,6 +60,9 @@ public:
 
 	const wxString& GetIndent() const;
 
+	const std::vector<CQueueItem*>& GetChildren() const { return m_children; }
+	int GetRemovedAtFront() const { return m_removed_at_front; }
+
 protected:
 	CQueueItem();
 
@@ -149,11 +152,11 @@ public:
 	void SetPriorityRaw(enum QueuePriority priority);
 	enum QueuePriority GetPriority() const;
 
-	wxString GetLocalFile() const { return m_localFile; }
-	wxString GetRemoteFile() const { return m_remoteFile; }
+	const wxString& GetLocalFile() const { return m_localFile; }
+	const wxString& GetRemoteFile() const { return m_remoteFile; }
 	const CLocalPath& GetLocalPath() const { return m_localPath; }
 	const CServerPath& GetRemotePath() const { return m_remotePath; }
-	wxLongLong GetSize() const { return m_size; }
+	const wxLongLong& GetSize() const { return m_size; }
 	void SetSize(wxLongLong size) { m_size = size; }
 	inline bool Download() const { return flags & flag_download; }
 	

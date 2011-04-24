@@ -1929,25 +1929,9 @@ void CQueueView::SaveQueue()
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("queue.xml"));
-	CXmlFile xml(file);
-	TiXmlElement* pDocument = xml.Load();
-	if (!pDocument)
-	{
-		wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+	m_queue_storage.SaveQueue(m_serverList);
 
-		return;
-	}
-
-	WriteToFile(pDocument);
-
-	wxString error;
-	if (!xml.Save(&error))
-	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved.\n%s"), file.GetFullPath().c_str(), error.c_str());
-		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
-	}
+	//TODO: Error reporting
 }
 
 void CQueueView::LoadQueue()
@@ -1956,33 +1940,58 @@ void CQueueView::LoadQueue()
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("queue.xml"));
-	CXmlFile xml(file);
-	TiXmlElement* pDocument = xml.Load();
-	if (!pDocument)
-	{
-		wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+	bool error = false;
 
-		return;
+	if (!m_queue_storage.BeginTransaction())
+		error = true;
+	else
+	{
+		CServer server;
+		wxLongLong_t id;
+		for (id = m_queue_storage.GetServer(server, true); id > 0; id = m_queue_storage.GetServer(server, false))
+		{
+			m_insertionStart = -1;
+			m_insertionCount = 0;
+			CServerItem *pServerItem = CreateServerItem(server);
+
+			CFileItem* fileItem = 0;
+			wxLongLong_t fileId;
+			for (fileId = m_queue_storage.GetFile(&fileItem, id); fileItem; fileId = m_queue_storage.GetFile(&fileItem, 0))
+			{
+				fileItem->SetParent(pServerItem);
+				fileItem->SetPriority(fileItem->GetPriority());
+				InsertItem(pServerItem, fileItem);
+			}
+			if (fileId < 0)
+				error = true;
+
+			if (!pServerItem->GetChild(0))
+			{
+				m_itemCount--;
+				m_serverList.pop_back();
+				delete pServerItem;
+			}
+		}
+		if (id < 0)
+			error = true;
+
+		if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 2)
+			if (!m_queue_storage.Clear())
+				error = true;
+
+		if (!m_queue_storage.EndTransaction())
+			error = true;
 	}
+	
+	m_insertionStart = -1;
+	m_insertionCount = 0;
+	CommitChanges();
 
-	TiXmlElement* pQueue = pDocument->FirstChildElement("Queue");
-	if (!pQueue)
-		return;
-
-	ImportQueue(pQueue, false);
-
-	pDocument->RemoveChild(pQueue);
-
-	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
-		return;
-
-	wxString error;
-	if (!xml.Save(&error))
+	if (error)
 	{
-		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved.\n%s"), file.GetFullPath().c_str(), error.c_str());
-		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+		wxString file = CQueueStorage::GetDatabaseFilename();
+		wxString msg = wxString::Format(_("An error occured loading the transfer queue from \"%s\".\nSome queue items might not have been restored."), file.c_str());
+		wxMessageBox(msg, _("Error loading queue"), wxICON_ERROR);
 	}
 }
 

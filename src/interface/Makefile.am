@@ -55,6 +55,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		Options.cpp \
 		power_management.cpp \
 		queue.cpp \
+		queue_storage.cpp \
 		QueueView.cpp \
 		queueview_failed.cpp \
 		queueview_successful.cpp \
@@ -165,6 +166,7 @@ noinst_HEADERS = aboutdialog.h \
 		 power_management.h \
 		 prefix.h \
 		 queue.h \
+		 queue_storage.h \
 		 QueueView.h \
 		 queueview_failed.h \
 		 queueview_successful.h \
