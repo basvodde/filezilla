@@ -236,25 +236,73 @@ wxString CServerPath::GetLastSegment() const
 		return _T("");
 }
 
+// libc sprintf can be so slow at times...
+wxChar* fast_sprint_number(wxChar* s, size_t n)
+{
+	wxChar tmp[20]; // Long enough for 2^64-1
+
+	wxChar* c = tmp;
+	do
+	{
+		*(c++) = n % 10 + '0';
+		n /= 10;
+	} while( n > 0 );
+
+	do
+	{
+		*(s++) = *(--c);
+	} while (c != tmp);
+
+	return s;
+}
+
+#ifdef wxUSE_UNICODE
+#define tstrcpy wcscpy
+#else
+#define tstrcpy strcpy
+#endif
+
 wxString CServerPath::GetSafePath() const
 {
 	if (m_bEmpty)
 		return _T("");
 
+	#define INTLENGTH 20 // 2^64 - 1
+
+	int len = 5 // Type and 2x' ' and terminating 0
+		+ INTLENGTH; // Max length of prefix
+
+	len += m_data->m_prefix.size();
+	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); ++iter)
+		len += iter->Length() + 2 + INTLENGTH;
+
 	wxString safepath;
-	safepath.Alloc(256);
-	wxChar buffer[32];
-	wxSprintf(buffer, _T("%u %u"), static_cast<unsigned int>(m_type), static_cast<unsigned int>(m_data->m_prefix.Length()));
-	safepath += buffer;
-	if (m_data->m_prefix != _T(""))
-		safepath += _T(" ") + m_data->m_prefix;
+	wxChar* start = safepath.GetWriteBuf(len);
+	wxChar* t = start;
+
+	t = fast_sprint_number(t, m_type);
+	*(t++) = ' ';
+	t = fast_sprint_number(t, m_data->m_prefix.size());
+
+	if (!m_data->m_prefix.empty())
+	{
+		*(t++) = ' ';
+		tstrcpy(t, m_data->m_prefix);
+		t += m_data->m_prefix.size();
+	}
 
 	for (tConstSegmentIter iter = m_data->m_segments.begin(); iter != m_data->m_segments.end(); ++iter)
 	{
-		wxSprintf(buffer, _T(" %u "), static_cast<unsigned int>(iter->Length()));
-		safepath += buffer;
-		safepath += *iter;
+		*(t++) = ' ';
+		t = fast_sprint_number(t, iter->size());
+		*(t++) = ' ';
+		tstrcpy(t, *iter);
+		t += iter->size();
 	}
+	*t = 0;
+
+	safepath.UngetWriteBuf( t - start );
+	safepath.Shrink();
 
 	return safepath;
 }
@@ -272,7 +320,7 @@ bool CServerPath::SetSafePath(const wxString& path)
 	// from file
 	const int len = (int)path.Len();
 	wxChar* begin = new wxChar[len + 1];
-	CSharedPointerArray<wxChar> tmp(begin);
+	CScopedArray<wxChar> tmp(begin);
 	memcpy(begin, (const wxChar*)path, (len + 1) * sizeof(wxChar));
 	wxChar* p = begin;
 

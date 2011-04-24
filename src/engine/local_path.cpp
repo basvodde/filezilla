@@ -4,6 +4,8 @@
 #include <errno.h>
 #endif
 
+#include <deque>
+
 #ifdef __WXMSW__
 const wxChar CLocalPath::path_separator = '\\';
 #else
@@ -30,7 +32,7 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 		return false;
 	}
 
-	std::list<wxChar*> segments; // List to store the beginnings of segments
+	std::deque<wxChar*> segments; // List to store the beginnings of segments
 
 	const wxChar* in = path.c_str();
 

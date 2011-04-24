@@ -531,4 +531,15 @@ template<class T> const T* CRefcountObject_Uninitialized<T>::operator->() const
 	return m_ptr;
 }
 
+template<typename T> class CScopedArray
+{
+public:
+	CScopedArray() : v_() {}
+	CScopedArray(T* v) : v_(v) {}
+	~CScopedArray() { delete [] v_; }
+
+private:
+	T* v_;
+};
+
 #endif //__REFCOUNT_H__

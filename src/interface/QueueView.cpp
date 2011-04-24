@@ -1280,6 +1280,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 				CQueueViewFailed* pQueueViewFailed = m_pQueue->GetQueueView_Failed();
 				CServerItem* pServerItem = pQueueViewFailed->CreateServerItem(server);
 				data.pItem->SetParent(pServerItem);
+				data.pItem->UpdateTime();
 				pQueueViewFailed->InsertItem(pServerItem, data.pItem);
 				pQueueViewFailed->CommitChanges();
 			}
@@ -1298,6 +1299,7 @@ void CQueueView::ResetEngine(t_EngineData& data, const enum ResetReason reason)
 					RemoveItem(data.pItem, false);
 
 					CServerItem* pServerItem = pQueueViewSuccessful->CreateServerItem(server);
+					data.pItem->UpdateTime();
 					data.pItem->SetParent(pServerItem);
 					pQueueViewSuccessful->InsertItem(pServerItem, data.pItem);
 					pQueueViewSuccessful->CommitChanges();

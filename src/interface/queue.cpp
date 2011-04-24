@@ -1328,8 +1328,6 @@ void CQueueViewBase::InsertItem(CServerItem* pServerItem, CQueueItem* pItem)
 {
 	const int newIndex = GetItemIndex(pServerItem) + pServerItem->GetChildrenCount(true) + 1;
 
-	pItem->UpdateTime();
-
 	pServerItem->AddChild(pItem);
 	m_itemCount++;
 
