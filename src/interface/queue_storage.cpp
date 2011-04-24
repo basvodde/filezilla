@@ -3,7 +3,7 @@
 #include "Options.h"
 #include "queue.h"
 
-#include <../sqlite3/include/sqlite3.h>
+#include <sqlite3.h>
 
 #define INVALID_DATA -1000
 
@@ -243,7 +243,7 @@ void CQueueStorage::Impl::PrepareStatements()
 	if (db_)
 	{
 		wxString query = _T("SELECT ");
-		for (unsigned int i = 0; i < (server_table_columns, sizeof(server_table_columns) / sizeof(_column)); ++i)
+		for (unsigned int i = 0; i < (sizeof(server_table_columns) / sizeof(_column)); ++i)
 		{
 			if (i > 0)
 				query += _T(", ");
@@ -259,7 +259,7 @@ void CQueueStorage::Impl::PrepareStatements()
 	if (db_)
 	{
 		wxString query = _T("SELECT ");
-		for (unsigned int i = 0; i < (file_table_columns, sizeof(file_table_columns) / sizeof(_column)); ++i)
+		for (unsigned int i = 0; i < (sizeof(file_table_columns) / sizeof(_column)); ++i)
 		{
 			if (i > 0)
 				query += _T(", ");

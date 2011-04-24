@@ -250,6 +250,9 @@ filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
 
+filezilla_CPPFLAGS += $(LIBSQLITE3_CFLAGS)
+filezilla_LDFLAGS += $(LIBSQLITE3_LIBS)
+
 if MINGW
 filezilla_LDFLAGS += -lole32 -luuid -lnetapi32 -lmpr
 endif
