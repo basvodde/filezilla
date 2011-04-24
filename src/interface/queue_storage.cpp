@@ -4,7 +4,7 @@
 #include "queue.h"
 
 #include <sqlite3.h>
-
+#include <wx/wx.h>
 #define INVALID_DATA -1000
 
 enum _column_type
@@ -50,22 +50,22 @@ namespace server_table_column_names
 }
 
 _column server_table_columns[] = {
-	_T("id"), integer, not_null | autoincrement,
-	_T("host"), text, not_null,
-	_T("port"), integer, 0,
-	_T("user"), text, 0,
-	_T("password"), text, 0,
-	_T("account"), text, 0,
-	_T("protocol"), integer, 0,
-	_T("type"), integer, 0,
-	_T("logontype"), integer, 0,
-	_T("timezone_offset"), integer, 0,
-	_T("transfer_mode"), text, 0,
-	_T("max_connections"), integer, 0,
-	_T("encoding"), text, 0,
-	_T("bypass_proxy"), integer, 0,
-	_T("post_login_commands"), text, 0,
-	_T("name"), text, 0
+	{ _T("id"), integer, not_null | autoincrement },
+	{ _T("host"), text, not_null },
+	{ _T("port"), integer, 0 },
+	{ _T("user"), text, 0 },
+	{ _T("password"), text, 0 },
+	{ _T("account"), text, 0 },
+	{ _T("protocol"), integer, 0 },
+	{ _T("type"), integer, 0 },
+	{ _T("logontype"), integer, 0 },
+	{ _T("timezone_offset"), integer, 0 },
+	{ _T("transfer_mode"), text, 0 },
+	{ _T("max_connections"), integer, 0 },
+	{ _T("encoding"), text, 0 },
+	{ _T("bypass_proxy"), integer, 0 },
+	{ _T("post_login_commands"), text, 0 },
+	{ _T("name"), text, 0 }
 };
 
 namespace file_table_column_names
@@ -88,18 +88,18 @@ namespace file_table_column_names
 }
 
 _column file_table_columns[] = {
-	_T("id"), integer, not_null | autoincrement,
-	_T("server"), integer, not_null,
-	_T("local_file"), text, not_null,
-	_T("local_path"), text, not_null,
-	_T("remote_file"), text, not_null,
-	_T("remote_path"), text, not_null,
-	_T("download"), integer, not_null,
-	_T("size"), integer, 0,
-	_T("error_count"), integer, 0,
-	_T("priority"), integer, 0,
-	_T("ascii_file"), integer, 0,
-	_T("default_exists_action"), integer, 0
+	{ _T("id"), integer, not_null | autoincrement },
+	{ _T("server"), integer, not_null },
+	{ _T("local_file"), text, not_null },
+	{ _T("local_path"), text, not_null },
+	{ _T("remote_file"), text, not_null },
+	{ _T("remote_path"), text, not_null },
+	{ _T("download"), integer, not_null },
+	{ _T("size"), integer, 0 },
+	{ _T("error_count"), integer, 0 },
+	{ _T("priority"), integer, 0 },
+	{ _T("ascii_file"), integer, 0 },
+	{ _T("default_exists_action"), integer, 0 }
 };
 
 
@@ -143,6 +143,10 @@ public:
 
 	sqlite3_stmt* selectServersQuery_;
 	sqlite3_stmt* selectFilesQuery_;
+
+#ifndef __WXMSW__
+	wxMBConvUTF16 utf16_;
+#endif
 };
 
 void CQueueStorage::Impl::CreateTables()
@@ -286,9 +290,32 @@ bool CQueueStorage::Impl::Bind(sqlite3_stmt* statement, int index, wxLongLong_t 
 }
 
 
+extern "C" {
+static void custom_free(void* v)
+{
+#ifdef __WXMSW__
+	char* s = reinterpret_cast<char*>(v);
+	delete [] s;
+#else
+	wxStringData* data = reinterpret_cast<wxStringData*>(v) - 1;
+	data->Unlock();
+#endif
+}
+}
+
 bool CQueueStorage::Impl::Bind(sqlite3_stmt* statement, int index, const wxString& value)
 {
-	return sqlite3_bind_text(statement, index, value.ToUTF8(), -1, SQLITE_TRANSIENT) == SQLITE_OK;
+#ifdef __WXMSW__
+	// Increase string reference and pass the data to sqlite with a custom deallocator that
+	// reduces the reference once sqlite is done with it.
+	wxStringData* data = reinterpret_cast<wxStringData*>(const_cast<wxChar*>(value.c_str())) - 1;
+	data->Lock();
+	return sqlite3_bind_text16(statement, index, data + 1, data->nDataLength * 2, custom_free) == SQLITE_OK;
+#endif
+	char* out = new char[value.size() * 2];
+	size_t outlen = utf16_.FromWChar(out, value.size() * 2, value.c_str(), value.size());
+	bool ret = sqlite3_bind_text16(statement, index, out, outlen, custom_free) == SQLITE_OK;
+	return ret;
 }
 
 
@@ -472,10 +499,22 @@ wxString CQueueStorage::Impl::GetColumnText(sqlite3_stmt* statement, int index)
 {
 	wxString ret;
 
-	const unsigned char* text = sqlite3_column_text(statement, index);
+#ifdef __WXMSW__
+	const wxChar* text = reinterpret_cast<const wxChar*>(sqlite3_column_text16(statement, index));
 	if (text)
-		ret = wxString::FromUTF8(reinterpret_cast<const char*>(text));
-	
+		ret = text;
+#else
+	const char* text = reinterpret_cast<const char*>(sqlite3_column_text16(statement, index));
+	int len = sqlite3_column_bytes16(statement, index);
+	if (text)
+	{
+		wxChar* out = ret.GetWriteBuf( len );
+		int outlen = utf16_.ToWChar( out, len, text, len );
+		ret.UngetWriteBuf( outlen );
+		ret.Shrink();
+	}
+#endif
+
 	return ret;
 }
 
@@ -663,8 +702,11 @@ CQueueStorage::CQueueStorage()
 	if (ret != SQLITE_OK)
 		d_->db_ = 0;
 
-	d_->CreateTables();
-	d_->PrepareStatements();
+	if (sqlite3_exec(d_->db_, "PRAGMA encoding=\"UTF-16le\"", 0, 0, 0) == SQLITE_OK)
+	{
+		d_->CreateTables();
+		d_->PrepareStatements();
+	}
 }
 
 CQueueStorage::~CQueueStorage()
@@ -770,7 +812,6 @@ wxLongLong_t CQueueStorage::GetFile(CFileItem** pItem, wxLongLong_t server)
 	}
 
 	return ret;
-	return 0;
 }
 
 bool CQueueStorage::Clear()
