@@ -1,5 +1,6 @@
 #include <filezilla.h>
 #include "serverpath.h"
+#include "string_coalescer.h"
 
 #define FTP_MVS_DOUBLE_QUOTE (wxChar)0xDC
 
@@ -307,7 +308,7 @@ wxString CServerPath::GetSafePath() const
 	return safepath;
 }
 
-bool CServerPath::SetSafePath(const wxString& path)
+bool CServerPath::SetSafePath(const wxString& path, bool coalesce)
 {
 	CServerPathData& data = m_data.Get();
 	m_bEmpty = true;
@@ -374,6 +375,8 @@ bool CServerPath::SetSafePath(const wxString& path)
 	{
 		*(p + prefix_len) = 0;
 		data.m_prefix = p;
+		if (coalesce)
+			::Coalesce(data.m_prefix);
 
 		p += prefix_len + 1;
 	}
@@ -401,7 +404,10 @@ bool CServerPath::SetSafePath(const wxString& path)
 		if (len - (p - begin) < segment_len)
 			return false;
 		*(p + segment_len) = 0;
-		data.m_segments.push_back(p);
+		wxString s(p);
+		if (coalesce)
+			::Coalesce(s);
+		data.m_segments.push_back(s);
 
 		p += segment_len + 1;
 	}
@@ -789,7 +795,7 @@ bool CServerPath::operator<(const CServerPath &op) const
 	else if (m_type < op.m_type)
 		return true;
 
-	std::list<wxString>::const_iterator iter1, iter2;
+	tConstSegmentIter iter1, iter2;
 	for (iter1 = m_data->m_segments.begin(), iter2 = op.m_data->m_segments.begin(); iter1 != m_data->m_segments.end(); ++iter1, ++iter2)
 	{
 		if (iter2 == op.m_data->m_segments.end())
@@ -921,8 +927,8 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 
 	CServerPathData& parentData = parent.m_data.Get();
 	
-	std::list<wxString>::const_iterator last = m_data->m_segments.end();
-	std::list<wxString>::const_iterator last2 = path.m_data->m_segments.end();
+	tConstSegmentIter last = m_data->m_segments.end();
+	tConstSegmentIter last2 = path.m_data->m_segments.end();
 	if (traits[m_type].prefixmode == 1)
 	{
 		if (m_data->m_prefix.empty())
@@ -934,8 +940,8 @@ CServerPath CServerPath::GetCommonParent(const CServerPath& path) const
 	else
 		parentData.m_prefix = m_data->m_prefix;
 
-	std::list<wxString>::const_iterator iter = m_data->m_segments.begin();
-	std::list<wxString>::const_iterator iter2 = path.m_data->m_segments.begin();
+	tConstSegmentIter iter = m_data->m_segments.begin();
+	tConstSegmentIter iter2 = path.m_data->m_segments.begin();
 	while (iter != last && iter2 != last2)
 	{
 		if (*iter != *iter2)
@@ -1052,4 +1058,12 @@ void CServerPath::EscapeSeparators(ServerType type, wxString& subdir)
 		for (const wxChar* p = traits[type].separators; *p; ++p)
 			subdir.Replace((wxString)*p, (wxString)traits[type].separatorEscape + traits[type].separators[0]);
 	}
+}
+
+void CServerPath::Coalesce()
+{
+	CServerPathData& data = m_data.Get();
+	::Coalesce(data.m_prefix);
+	for (tSegmentIter iter = data.m_segments.begin(); iter != data.m_segments.end(); ++iter)
+		::Coalesce(*iter);
 }

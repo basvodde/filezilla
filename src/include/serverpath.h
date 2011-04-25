@@ -3,12 +3,14 @@
 
 #include "refcount.h"
 
+#include <deque>
+
 class CServerPathData
 {
 public:
 	CServerPathData();
 	CServerPathData(const CServerPathData& v);
-	std::list<wxString> m_segments;
+	std::deque<wxString> m_segments;
 	wxString m_prefix;
 
 	bool operator==(const CServerPathData& cmp) const;
@@ -28,7 +30,7 @@ public:
 
 	bool SetPath(wxString newPath);
 	bool SetPath(wxString &newPath, bool isFile);
-	bool SetSafePath(const wxString& path);
+	bool SetSafePath(const wxString& path, bool coalesce = true);
 
 	// If ChangePath returns false, the object will be left an
 	// undefined state
@@ -65,11 +67,13 @@ public:
 
 	bool AddSegment(const wxString& segment);
 
+	void Coalesce();
+
 protected:
 	bool m_bEmpty;
 	ServerType m_type;
 
-	typedef std::list<wxString> tSegmentList;
+	typedef std::deque<wxString> tSegmentList;
 	typedef tSegmentList::iterator tSegmentIter;
 	typedef tSegmentList::const_iterator tConstSegmentIter;
 

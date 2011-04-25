@@ -33,6 +33,7 @@ libengine_a_SOURCES = \
 		sftpcontrolsocket.cpp \
 		sizeformatting_base.cpp \
 		socket.cpp \
+		string_coalescer.cpp \
 		tlssocket.cpp \
 		threadex.cpp \
 		timeex.cpp \

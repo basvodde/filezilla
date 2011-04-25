@@ -49,6 +49,7 @@
 #include "speedlimits_dialog.h"
 #include "toolbar.h"
 #include "menu_bar.h"
+#include "string_coalescer.h"
 
 #ifdef __WXMSW__
 #include <wx/module.h>
@@ -622,6 +623,14 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 	else if (event.GetId() == XRCID("ID_CLEARCACHE_LAYOUT"))
 	{
 		CWrapEngine::ClearCache();
+	}
+	else if (event.GetId() == XRCID("ID_COALESCER_CLEAR"))
+	{
+		ClearStringCoalescer();
+	}
+	else if (event.GetId() == XRCID("ID_COALESCER_BENCHMARK"))
+	{
+		BenchmarkStringCoalescer();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_TRANSFER_FILEEXISTS"))
 	{

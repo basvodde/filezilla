@@ -216,7 +216,7 @@ public:
 
 		t_dirPair* pair = new t_dirPair;
 		pair->localPath = pFolderItem->GetLocalPath().GetPath().c_str();
-		pair->remotePath.SetSafePath(pFolderItem->GetRemotePath().GetSafePath().c_str());
+		pair->remotePath.SetSafePath(pFolderItem->GetRemotePath().GetSafePath().c_str(), false);
 		m_dirsToCheck.push_back(pair);
 	}
 
@@ -262,7 +262,7 @@ public:
 			pair->localPath = (localPath.GetPath() + name).c_str();
 
 			remotePath.AddSegment(name);
-			pair->remotePath.SetSafePath(remotePath.GetSafePath().c_str());
+			pair->remotePath.SetSafePath(remotePath.GetSafePath().c_str(), false);
 		}
 
 		m_dirsToCheck.push_back(pair);
@@ -396,7 +396,7 @@ protected:
 	
 			{
 				pair2->localPath = pair->localPath.c_str();
-				pair2->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str());
+				pair2->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str(), false);
 			}
 
 			AddEntry(pair2);

@@ -1,5 +1,6 @@
 #include <filezilla.h>
 #include "local_path.h"
+#include "string_coalescer.h"
 #ifndef __WXMSW__
 #include <errno.h>
 #endif
@@ -207,6 +208,9 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 	*out = 0;
 
 	m_path.UngetWriteBuf();
+
+	Coalesce(m_path);
+
 	return true;
 }
 
