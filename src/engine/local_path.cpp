@@ -58,8 +58,8 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 			return false;
 		}
 
-		wxChar* buf = m_path.GetWriteBuf(path.Len() + 2);
-		out = buf;
+		wxChar* start = m_path.GetWriteBuf(path.Len() + 2);
+		out = start;
 		*out++ = '\\';
 		*out++ = '\\';
 
@@ -72,37 +72,40 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 		}
 		*out++ = path_separator;
 
-		if (out - buf <= 3)
+		if (out - start <= 3)
 		{
 			// not a valid UNC path
-			*buf = 0;
-			m_path.UngetWriteBuf();
+			*start = 0;
+			m_path.UngetWriteBuf( 0 );
 			return false;
 		}
+		else
+			m_path.UngetWriteBuf( out - start );
+
 		segments.push_back(out);
 	}
 	else if ((*in >= 'a' && *in <= 'z') || (*in >= 'A' || *in <= 'Z'))
 	{
 		// Regular path
 
-		wxChar* buf = m_path.GetWriteBuf(path.Len() + 2);
-		out = buf;
+		wxChar* start = m_path.GetWriteBuf(path.Len() + 2);
 		*out++ = *in++;
 
 		if (*in++ != ':')
 		{
-			*buf = 0;
-			m_path.UngetWriteBuf();
+			*start = 0;
+			m_path.UngetWriteBuf( 0 );
 			return false;
 		}
 		*out++ = ':';
 		if (*in != '/' && *in != '\\' && *in)
 		{
-			*buf = 0;
-			m_path.UngetWriteBuf();
+			*start = 0;
+			m_path.UngetWriteBuf( 0 );
 			return false;
 		}
 		*out++ = path_separator;
+		m_path.UngetWriteBuf( out - start );
 		segments.push_back(out);
 	}
 	else
@@ -118,7 +121,9 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 		return false;
 	}
 
-	wxChar* out = m_path.GetWriteBuf(path.Len() + 2);
+	wxChar* start = m_path.GetWriteBuf(path.Len() + 2);
+	wxChar* out = start;
+
 	*out++ = '/';
 	segments.push_back(out);
 #endif
@@ -207,7 +212,7 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 
 	*out = 0;
 
-	m_path.UngetWriteBuf();
+	m_path.UngetWriteBuf( out - start );
 
 	Coalesce(m_path);
 

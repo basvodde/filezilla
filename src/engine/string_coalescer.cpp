@@ -55,12 +55,23 @@ struct backref_holder
 	backref_base* b_;
 };
 
+struct fast_equal
+{
+	bool operator()(wxString const& lhs, wxString const& rhs) const
+	{
+		// wxString is CoW, yet it doesn't even do this fast pointer
+		// comparison in it's less and/or equal operator(s).
+		return lhs.c_str() == rhs.c_str() || lhs == rhs;
+	}
+};
+
+
 // Can't use wxHashMap as it doesn't like forward declarations. That 
 // contraption is actually implemented as a series of ugly macros and
 // not using beautiful templates.
 
 // Using tr1 unordered_map instead with wxStringHash, works sufficiently well.
-typedef std::unordered_map<wxString, backref_holder, wxStringHash> tree;
+typedef std::unordered_map<wxString, backref_holder, wxStringHash, fast_equal> tree;
 typedef std::list<tree::iterator> lru;
 
 struct backref : backref_base
