@@ -113,6 +113,11 @@ if test "$buildmain" = "yes"; then
     AC_MSG_ERROR([You need to use wxWidgets 2.8.x to compile this program.])
   fi
 
+  # --universal=no doesn't work correctly, it still accepts universal builds. Reject it manually here.
+  if echo "$WX_CPPFLAGS" | grep __WXUNIVERSAL__ > /dev/null; then
+    AC_MSG_ERROR([wxUniversal is not acceptable as flavour of wxWidgets. Please recompile wxWidgets with --disable-universal])
+  fi
+
   AC_LANG_PUSH(C++)
   CPPFLAGS_OLD="$CPPFLAGS"
   CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
