@@ -278,13 +278,13 @@ public:
 				m_normal_font = m_original_normal_font;
 		}
 
-		CFilterDC filter_dc(dc, pane.active ? 1 : 0, m_tab_ctrl_height % 2, m_bottom);
+		CFilterDC filter_dc(dc, pane.active ? 1 : 0, (m_tab_ctrl_height % 2) != 0, m_bottom);
 		wxAuiDefaultTabArt::DrawTab(*((wxDC*)&filter_dc), wnd, pane, in_rect, close_button_state, out_tab_rect, out_button_rect, x_extent);
 	}
 
 	virtual void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 	{
-		CFilterDC filter_dc(dc, 2, m_tab_ctrl_height % 2, m_bottom);
+		CFilterDC filter_dc(dc, 2, (m_tab_ctrl_height % 2) != 0, m_bottom);
 		wxAuiDefaultTabArt::DrawBackground(*((wxDC*)&filter_dc), wnd, rect);
 	}
 protected:
@@ -323,7 +323,7 @@ void wxAuiNotebookEx::RemoveExtraBorders()
 
 void wxAuiNotebookEx::SetExArtProvider()
 {
-	SetArtProvider(new wxAuiTabArtEx(this, GetWindowStyle() & wxAUI_NB_BOTTOM, new struct wxAuiTabArtExData));
+	SetArtProvider(new wxAuiTabArtEx(this, (GetWindowStyle() & wxAUI_NB_BOTTOM) != 0, new struct wxAuiTabArtExData));
 }
 
 bool wxAuiNotebookEx::SetPageText(size_t page_idx, const wxString& text)

@@ -47,6 +47,7 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 	}
 
 	wxChar* out;
+	wxChar* start;
 	if (*in == '\\')
 	{
 		// possibly UNC
@@ -58,7 +59,7 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 			return false;
 		}
 
-		wxChar* start = m_path.GetWriteBuf(path.Len() + 2);
+		start = m_path.GetWriteBuf(path.Len() + 2);
 		out = start;
 		*out++ = '\\';
 		*out++ = '\\';
@@ -79,8 +80,6 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 			m_path.UngetWriteBuf( 0 );
 			return false;
 		}
-		else
-			m_path.UngetWriteBuf( out - start );
 
 		segments.push_back(out);
 	}
@@ -88,7 +87,8 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 	{
 		// Regular path
 
-		wxChar* start = m_path.GetWriteBuf(path.Len() + 2);
+		start = m_path.GetWriteBuf(path.Len() + 2);
+		out = start;
 		*out++ = *in++;
 
 		if (*in++ != ':')
@@ -105,7 +105,6 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 			return false;
 		}
 		*out++ = path_separator;
-		m_path.UngetWriteBuf( out - start );
 		segments.push_back(out);
 	}
 	else
