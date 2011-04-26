@@ -61,7 +61,8 @@ inline unsigned int GetOverhead()
 		+ sizeof(void*)*3 // Three tree pointers
 		+ sizeof(tree::const_iterator)
 		+ sizeof(lru::const_iterator)
-		+ sizeof(wxString); // m_pchData
+		+ sizeof(wxString) // m_pchData
+		+ sizeof(wxChar); // Terminating zero
 }
 
 
@@ -77,11 +78,11 @@ void Coalesce(wxString& s)
 	}
 	else
 	{
-		size_ += s.size() + GetOverhead();
+		size_ += s.size() * sizeof(wxChar) + GetOverhead();
 
 		while (size_ > GetCapacity() && !lru_.empty())
 		{
-			size_ -= GetOverhead() + lru_.front()->first.size();
+			size_ -= GetOverhead() + lru_.front()->first.size() * sizeof(wxChar);
 			tree_.erase( lru_.front() );
 			lru_.pop_front();
 		}
