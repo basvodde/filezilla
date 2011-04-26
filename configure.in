@@ -45,7 +45,7 @@ if ! test "$localesonly" = "yes"; then
 
   if test "X$GCC" = Xyes; then
     CFLAGS="$CFLAGS -Wall -g -fexceptions"
-    CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions"
+    CXXFLAGS="$CXXFLAGS -Wall -g -fexceptions -std=c++0x"
   fi
 
   # Add build information to config.h
