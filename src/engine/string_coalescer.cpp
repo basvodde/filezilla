@@ -7,6 +7,8 @@
 #include <algorithm>
 
 namespace std {
+namespace tr1 {
+}
 using namespace tr1;
 }
 
@@ -34,19 +36,41 @@ unsigned int GetCapacity()
 	return cap;
 }
 
-struct backref;
+struct backref_base
+{
+};
+
+struct backref_holder
+{
+	backref_holder()
+		: b_()
+	{
+	}
+
+	~backref_holder()
+	{
+		delete b_;
+	}
+
+	backref_base* b_;
+};
 
 // Can't use wxHashMap as it doesn't like forward declarations. That 
 // contraption is actually implemented as a series of ugly macros and
 // not using beautiful templates.
 
 // Using tr1 unordered_map instead with wxStringHash, works sufficiently well.
-typedef std::unordered_map<wxString, backref, wxStringHash> tree;
+typedef std::unordered_map<wxString, backref_holder, wxStringHash> tree;
 typedef std::list<tree::iterator> lru;
 
-struct backref
+struct backref : backref_base
 {
-	lru::const_iterator b;
+	backref( const lru::iterator& it)
+		: it_(it)
+	{
+	}
+
+	lru::iterator it_;
 };
 
 
@@ -60,21 +84,23 @@ inline unsigned int GetOverhead()
 	return sizeof(void*)*2 // List prev/next pointers;
 		+ sizeof(void*)*3 // Three tree pointers
 		+ sizeof(tree::const_iterator)
-		+ sizeof(lru::const_iterator)
 		+ sizeof(wxString) // m_pchData
-		+ sizeof(wxChar); // Terminating zero
+		+ sizeof(wxChar) // Terminating zero
+		+ sizeof(backref_holder)
+		+ sizeof(backref);
 }
 
 
 void Coalesce(wxString& s)
 {
-	std::pair<tree::iterator, bool> r = tree_.insert(std::make_pair(s, backref()));
+	std::pair<tree::iterator, bool> r = tree_.insert(std::make_pair(s, backref_holder()));
 	tree::iterator& it = r.first;
 	if( !r.second )
 	{
 		s = it->first;
-		lru_.splice( lru_.end(), lru_, it->second.b );
-		it->second.b = --lru_.end();
+		backref* bref = reinterpret_cast<backref*>(it->second.b_);
+		lru_.splice( lru_.end(), lru_, bref->it_ );
+		bref->it_ = --lru_.end();
 	}
 	else
 	{
@@ -87,9 +113,9 @@ void Coalesce(wxString& s)
 			lru_.pop_front();
 		}
 
-		tree::iterator it = tree_.insert(std::make_pair(s, backref())).first;
+		tree::iterator it = tree_.insert(std::make_pair(s, backref_holder())).first;
 		lru_.push_back(it);
-		it->second.b = --lru_.end();
+		it->second.b_ = new backref(--lru_.end());
 	}
 }
 

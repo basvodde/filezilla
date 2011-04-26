@@ -598,7 +598,7 @@ bool CQueueView::QueueFiles(const bool queueOnly, const CLocalPath& localPath, c
 		CFileItem* fileItem;
 		wxString localFile = ReplaceInvalidCharacters(iter->name);
 		fileItem = new CFileItem(pServerItem, queueOnly, true,
-			iter->name, (iter->name != localFile) ? localFile : wxEmptyString,
+			iter->name, (iter->name != localFile) ? localFile : wxString(),
 			localPath, dataObject.GetServerPath(), iter->size);
 		fileItem->m_transferSettings.binary = !CAutoAsciiFiles::TransferRemoteAsAscii(iter->name, dataObject.GetServerPath().GetType());
 
@@ -2050,7 +2050,7 @@ void CQueueView::ImportQueue(TiXmlElement* pElement, bool updateSelections)
 
 					CFileItem* fileItem = new CFileItem(pServerItem, true, download,
 						download ? remoteFile : localFileName,
-						(remoteFile != localFileName) ? (download ? localFileName : remoteFile) : wxEmptyString,
+						(remoteFile != localFileName) ? (download ? localFileName : remoteFile) : wxString(),
 						previousLocalPath, previousRemotePath, size);
 					fileItem->m_transferSettings.binary = binary;
 					fileItem->SetPriorityRaw((enum QueuePriority)priority);

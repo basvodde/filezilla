@@ -372,7 +372,7 @@ void CManualTransfer::OnOK(wxCommandEvent& event)
 
 	m_pQueueView->QueueFile(!start, download,
 		download ? remote_file : name,
-		(remote_file != name) ? (download ? name : remote_file) : wxEmptyString,
+		(remote_file != name) ? (download ? name : remote_file) : wxString(),
 		localPath, path, *m_pServer, -1);
 
 	// Restore old data type

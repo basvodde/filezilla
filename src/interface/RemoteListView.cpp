@@ -1278,7 +1278,7 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 
 			wxString localFile = CQueueView::ReplaceInvalidCharacters(name);
 			m_pQueue->QueueFile(queue_only, true, name,
-				(name == localFile) ? wxEmptyString : localFile,
+				(name == localFile) ? wxString() : localFile,
 				local_path, m_pDirectoryListing->path, *pServer, entry.size);
 			m_pQueue->QueueFile_Finish(true);
 		}
@@ -1545,7 +1545,7 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 		{
 			wxString localFile = CQueueView::ReplaceInvalidCharacters(name);
 			m_pQueue->QueueFile(queueOnly, true,
-				name, (name == localFile) ? wxEmptyString : localFile,
+				name, (name == localFile) ? wxString() : localFile,
 				local_parent, m_pDirectoryListing->path, *pServer, entry.size);
 			added = true;
 		}
@@ -2697,7 +2697,7 @@ void CRemoteListView::OnMenuEdit(wxCommandEvent& event)
 		wxString localFile;
 		CLocalPath localPath(file, &localFile);
 
-		m_pQueue->QueueFile(false, true, entry.name, (localFile != entry.name) ? localFile : wxEmptyString,
+		m_pQueue->QueueFile(false, true, entry.name, (localFile != entry.name) ? localFile : wxString(),
 			localPath, path, server, entry.size, CEditHandler::remote);
 		m_pQueue->QueueFile_Finish(true);
 	}
@@ -3005,8 +3005,8 @@ void CRemoteListView::LinkIsNotDir(const CServerPath& path, const wxString& link
 	if (m_pLinkResolveState->remote_path == path && m_pLinkResolveState->link == link)
 	{
 		wxString localFile = CQueueView::ReplaceInvalidCharacters(link);
-		m_pQueue->QueueFile(false, true, 
-			link, (link != localFile) ? localFile : wxEmptyString,
+		m_pQueue->QueueFile(false, true,
+			link, (link != localFile) ? localFile : wxString(),
 			m_pLinkResolveState->local_path, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);
 		m_pQueue->QueueFile_Finish(true);
 	}
@@ -3025,7 +3025,7 @@ void CRemoteListView::OnMenuGeturl(wxCommandEvent& event)
 		return;
 
 	long item = -1;
-	
+
 	std::list<CDirentry> selected_item_list;
 	while ((item = GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED)) != -1)
 	{

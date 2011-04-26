@@ -973,7 +973,7 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 		CServerPath remote_path = m_results->m_fileData[*iter].path;
 		const wxString localName = CQueueView::ReplaceInvalidCharacters(entry.name);
 		m_pQueue->QueueFile(!start, true,
-			entry.name, (localName != entry.name) ? localName : wxEmptyString,
+			entry.name, (localName != entry.name) ? localName : wxString(),
 			target_path, remote_path, *pServer, entry.size);
 	}
 	m_pQueue->QueueFile_Finish(start);
