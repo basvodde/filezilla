@@ -20,7 +20,7 @@ public:
 	bool SetPath(const wxString& path, wxString* file = 0);
 
 	// Always terminated by a separator
-	wxString GetPath() const { return m_path; }
+	const wxString& GetPath() const { return m_path; }
 
 	bool empty() const;
 	void clear();

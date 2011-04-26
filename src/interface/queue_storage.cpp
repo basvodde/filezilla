@@ -129,7 +129,7 @@ public:
 	bool Bind(sqlite3_stmt* statement, int index, const char* const value);
 	bool BindNull(sqlite3_stmt* statement, int index);
 
-	wxString GetColumnText(sqlite3_stmt* statement, int index);
+	wxString GetColumnText(sqlite3_stmt* statement, int index, bool shrink = true);
 	wxLongLong_t GetColumnInt64(sqlite3_stmt* statement, int index, wxLongLong_t def = 0);
 	int GetColumnInt(sqlite3_stmt* statement, int index, int def = 0);
 
@@ -147,7 +147,24 @@ public:
 #ifndef __WXMSW__
 	wxMBConvUTF16 utf16_;
 #endif
+
+	// Caches to speed up saving and loading
+	void ClearCaches();
+	CLocalPath lastLocalPath_;
+	wxString lastLocalPathRaw_;
+	CServerPath lastRemotePath_;
+	wxString lastRemotePathRaw_;
 };
+
+
+void CQueueStorage::Impl::ClearCaches()
+{
+	lastLocalPath_.clear();
+	lastLocalPathRaw_.clear();
+	lastRemotePath_.Clear();
+	lastRemotePathRaw_.clear();
+}
+
 
 void CQueueStorage::Impl::CreateTables()
 {
@@ -460,6 +477,12 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 }
 
 
+static bool fastEqual( const wxString& lhs, const wxString& rhs )
+{
+	// wx doesn't compare pointers, we do
+	return lhs.c_str() == rhs.c_str() || lhs == rhs;
+}
+
 bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 {
 	if (file.m_edit != CEditHandler::none)
@@ -472,8 +495,19 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 		BindNull(insertFileQuery_, file_table_column_names::target_file);
 	else
 		Bind(insertFileQuery_, file_table_column_names::target_file, file.GetTargetFile());
-	Bind(insertFileQuery_, file_table_column_names::local_path, file.GetLocalPath().GetPath());
-	Bind(insertFileQuery_, file_table_column_names::remote_path, file.GetRemotePath().GetSafePath());
+
+	if (!fastEqual(file.GetLocalPath().GetPath(), lastLocalPathRaw_) )
+	{
+		lastLocalPathRaw_ = file.GetLocalPath().GetPath();
+		Bind(insertFileQuery_, file_table_column_names::local_path, lastLocalPathRaw_);
+	}
+
+	if (file.GetRemotePath() != lastRemotePath_ )
+	{
+		lastRemotePath_ = file.GetRemotePath();
+		Bind(insertFileQuery_, file_table_column_names::remote_path, lastRemotePath_.GetSafePath());
+	}
+
 	Bind(insertFileQuery_, file_table_column_names::download, file.Download() ? 1 : 0);
 	if (file.GetSize() != -1)
 		Bind(insertFileQuery_, file_table_column_names::size, file.GetSize().GetValue());
@@ -499,11 +533,12 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 	return res == SQLITE_DONE;
 }
 
-wxString CQueueStorage::Impl::GetColumnText(sqlite3_stmt* statement, int index)
+wxString CQueueStorage::Impl::GetColumnText(sqlite3_stmt* statement, int index, bool shrink)
 {
 	wxString ret;
 
 #ifdef __WXMSW__
+	(void)shrink;
 	const wxChar* text = reinterpret_cast<const wxChar*>(sqlite3_column_text16(statement, index));
 	if (text)
 		ret = text;
@@ -515,7 +550,8 @@ wxString CQueueStorage::Impl::GetColumnText(sqlite3_stmt* statement, int index)
 		wxChar* out = ret.GetWriteBuf( len );
 		int outlen = utf16_.ToWChar( out, len, text, len );
 		ret.UngetWriteBuf( outlen );
-		ret.Shrink();
+		if (shrink)
+			ret.Shrink();
 	}
 #endif
 
@@ -657,8 +693,8 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 {
 	wxString sourceFile = GetColumnText(selectFilesQuery_, file_table_column_names::source_file);
 	wxString targetFile = GetColumnText(selectFilesQuery_, file_table_column_names::target_file);
-	wxString safeLocalPath = GetColumnText(selectFilesQuery_, file_table_column_names::local_path);
-	wxString safeRemotePath = GetColumnText(selectFilesQuery_, file_table_column_names::remote_path);
+	wxString safeLocalPath = GetColumnText(selectFilesQuery_, file_table_column_names::local_path, false);
+	wxString safeRemotePath = GetColumnText(selectFilesQuery_, file_table_column_names::remote_path, false);
 	bool download = GetColumnInt(selectFilesQuery_, file_table_column_names::download) != 0;
 
 	wxLongLong size = GetColumnInt64(selectFilesQuery_, file_table_column_names::size);
@@ -668,23 +704,25 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 	bool binary = GetColumnInt(selectFilesQuery_, file_table_column_names::ascii_file) == 0;
 	int overwrite_action = GetColumnInt(selectFilesQuery_, file_table_column_names::default_exists_action, CFileExistsNotification::unknown);
 
-	CLocalPath localPath;
-	CServerPath remotePath;
-	if (sourceFile != _T("") && localPath.SetPath(safeLocalPath) &&
-		remotePath.SetSafePath(safeRemotePath) &&
+	if (lastLocalPathRaw_ != safeLocalPath)
+	{
+		lastLocalPathRaw_ = safeLocalPath;
+		lastLocalPath_.SetPath(safeLocalPath);
+	}
+
+	if (lastRemotePathRaw_ != safeRemotePath)
+	{
+		lastRemotePathRaw_ = safeRemotePath;
+		lastRemotePath_.SetSafePath(safeRemotePath);
+	}
+
+	if (!sourceFile.empty() && !lastLocalPath_.empty() &&
+		!lastRemotePath_.IsEmpty() &&
 		size >= -1 &&
 		priority > 0 && priority < PRIORITY_COUNT &&
 		errorCount >= 0)
 	{
-		// TODO: Coalesce strings
-		// CServerPath and wxString are reference counted.
-		// Save some memory here by re-using the old copy
-		//if (localPath != previousLocalPath)
-		//	previousLocalPath = localPath;
-		//if (previousRemotePath != remotePath)
-		//	previousRemotePath = remotePath;
-
-		CFileItem* fileItem = new CFileItem(0, true, download, sourceFile, targetFile, localPath, remotePath, size);
+		CFileItem* fileItem = new CFileItem(0, true, download, sourceFile, targetFile, lastLocalPath_, lastRemotePath_, size);
 		*pItem = fileItem;
 		fileItem->m_transferSettings.binary = binary;
 		fileItem->SetPriorityRaw((enum QueuePriority)priority);
@@ -702,7 +740,7 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 CQueueStorage::CQueueStorage()
 : d_(new Impl)
 {
-	int ret = sqlite3_open(GetDatabaseFilename().ToUTF8(), &d_->db_);
+	int ret = sqlite3_open(GetDatabaseFilename().ToUTF8(), &d_->db_ );
 	if (ret != SQLITE_OK)
 		d_->db_ = 0;
 
@@ -725,6 +763,8 @@ CQueueStorage::~CQueueStorage()
 
 bool CQueueStorage::SaveQueue(std::vector<CServerItem*> const& queue)
 {
+	d_->ClearCaches();
+
 	bool ret = false;
 	if (sqlite3_exec(d_->db_, "BEGIN TRANSACTION", 0, 0, 0) == SQLITE_OK)
 	{
@@ -733,6 +773,7 @@ bool CQueueStorage::SaveQueue(std::vector<CServerItem*> const& queue)
 
 		ret = sqlite3_exec(d_->db_, "END TRANSACTION", 0, 0, 0) == SQLITE_OK;
 	}
+	d_->ClearCaches();
 
 	return ret;
 }
