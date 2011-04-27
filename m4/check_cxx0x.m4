@@ -65,7 +65,7 @@ AC_DEFUN([CHECK_CXX0X], [
     ])
 
   AH_TEMPLATE(HAVE_TR1_UNORDERED_MAP, [Define HAVE_TR1_UNORDERED_MAP on systems where unordered_map is in tr1/ subdirectory.])
-  if test "$has_unordered_map" = "std"; then
+  if test "$has_unordered_map" = "tr1"; then
     AC_DEFINE(HAVE_TR1_UNORDERED_MAP)
   fi
 
