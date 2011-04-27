@@ -3,7 +3,12 @@
 
 #include <wx/wx.h>
 
+#if HAVE_TR1_UNORDERED_MAP
+#include <tr1/unordered_map>
+#else
 #include <unordered_map>
+#endif
+
 #include <algorithm>
 
 namespace std {
