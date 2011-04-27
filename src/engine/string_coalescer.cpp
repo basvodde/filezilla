@@ -24,9 +24,9 @@ unsigned int CalculateCapacity()
 	s.dwLength = sizeof(MEMORYSTATUSEX);
 	GlobalMemoryStatusEx(&s);
 
-	if (s.ullTotalPhys >= 0x400000000)
+	if (s.ullTotalPhys >= 0x400000000ULL)
 		return 1024*1024*1024;
-	else if (s.ullTotalPhys >= 0x200000000)
+	else if (s.ullTotalPhys >= 0x200000000ULL)
 		return 512*1024*1024;
 	else
 		return 256*1024*1024;
