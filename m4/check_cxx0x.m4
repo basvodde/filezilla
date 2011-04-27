@@ -52,7 +52,7 @@ AC_DEFUN([CHECK_CXX0X], [
 
       AC_PREPROC_IFELSE([
           AC_LANG_PROGRAM([[
-           #include <unordered_map>
+           #include <tr1/unordered_map>
         ]], [[
           return 0;
         ]])
