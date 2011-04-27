@@ -226,7 +226,7 @@ $libtoolize --automake -c -f
 echo "3.4 Running autoconf... "
 $autoconf
 
-echo "3.5 Runing automake... "
+echo "3.5 Running automake... "
 $automake -a -c
 
 printf "4. Checking generate files... "
