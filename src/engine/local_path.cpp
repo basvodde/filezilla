@@ -595,3 +595,8 @@ wxString CLocalPath::GetLastSegment() const
 
 	return _T("");
 }
+
+void CLocalPath::Coalesce()
+{
+	::Coalesce(m_path);
+}

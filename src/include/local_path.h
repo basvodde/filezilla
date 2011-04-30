@@ -62,6 +62,8 @@ public:
 
 	bool operator==(const CLocalPath& op) const;
 	bool operator!=(const CLocalPath& op) const;
+
+	void Coalesce();
 protected:
 
 	wxString m_path;

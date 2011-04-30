@@ -203,6 +203,11 @@ END_EVENT_TABLE()
 
 class CFolderProcessingThread : public wxThread
 {
+	struct t_internalDirPair
+	{
+		wxString localPath;
+		CServerPath remotePath;
+	};
 public:
 	CFolderProcessingThread(CQueueView* pOwner, CFolderScanItem* pFolderItem)
 		: wxThread(wxTHREAD_JOINABLE), m_condition(m_sync) {
@@ -214,7 +219,7 @@ public:
 		m_throttleWait = false;
 		m_processing_entries = false;
 
-		t_dirPair* pair = new t_dirPair;
+		t_internalDirPair* pair = new t_internalDirPair;
 		pair->localPath = pFolderItem->GetLocalPath().GetPath().c_str();
 		pair->remotePath.SetSafePath(pFolderItem->GetRemotePath().GetSafePath().c_str(), false);
 		m_dirsToCheck.push_back(pair);
@@ -224,7 +229,7 @@ public:
 	{
 		for (std::list<CFolderProcessingEntry*>::iterator iter = m_entryList.begin(); iter != m_entryList.end(); iter++)
 			delete *iter;
-		for (std::list<t_dirPair*>::iterator iter = m_dirsToCheck.begin(); iter != m_dirsToCheck.end(); iter++)
+		for (std::list<t_internalDirPair*>::iterator iter = m_dirsToCheck.begin(); iter != m_dirsToCheck.end(); iter++)
 			delete *iter;
 	}
 
@@ -249,14 +254,14 @@ public:
 	public:
 		t_dirPair() : CFolderProcessingEntry(CFolderProcessingEntry::dir) {}
 		wxString localPath;
-		CServerPath remotePath;
+		wxString remotePath;
 	};
 
 	void ProcessDirectory(const CLocalPath& localPath, CServerPath remotePath, const wxString& name)
 	{
 		wxMutexLocker locker(m_sync);
 
-		t_dirPair* pair = new t_dirPair;
+		t_internalDirPair* pair = new t_internalDirPair;
 
 		{
 			pair->localPath = (localPath.GetPath() + name).c_str();
@@ -381,7 +386,7 @@ protected:
 				continue;
 			}
 
-			const t_dirPair *pair = m_dirsToCheck.front();
+			const t_internalDirPair *pair = m_dirsToCheck.front();
 			m_dirsToCheck.pop_front();
 
 			m_sync.Unlock();
@@ -396,7 +401,7 @@ protected:
 	
 			{
 				pair2->localPath = pair->localPath.c_str();
-				pair2->remotePath.SetSafePath(pair->remotePath.GetSafePath().c_str(), false);
+				pair2->remotePath = pair->remotePath.GetSafePath().c_str();
 			}
 
 			AddEntry(pair2);
@@ -428,7 +433,7 @@ protected:
 		return 0;
 	}
 
-	std::list<t_dirPair*> m_dirsToCheck;
+	std::list<t_internalDirPair*> m_dirsToCheck;
 
 	// Access has to be guarded by m_sync
 	std::list<CFolderProcessingEntry*> m_entryList;
@@ -1879,7 +1884,7 @@ int CQueueView::QueueFiles(const std::list<CFolderProcessingEntry*> &entryList, 
 
 			const CFolderProcessingThread::t_dirPair* entry = (const CFolderProcessingThread::t_dirPair*)*iter;
 			pFolderScanItem->m_current_local_path = CLocalPath(entry->localPath);
-			pFolderScanItem->m_current_remote_path = entry->remotePath;
+			pFolderScanItem->m_current_remote_path.SetSafePath(entry->remotePath);
 			pFolderScanItem->m_dir_is_empty = true;
 			delete entry;
 		}
