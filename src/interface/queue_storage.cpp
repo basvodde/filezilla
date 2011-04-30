@@ -92,8 +92,8 @@ _column file_table_columns[] = {
 	{ _T("server"), integer, not_null },
 	{ _T("source_file"), text, not_null },
 	{ _T("target_file"), text, 0 },
-	{ _T("local_path"), text, not_null },
-	{ _T("remote_path"), text, not_null },
+	{ _T("local_path"), integer, not_null },
+	{ _T("remote_path"), integer, not_null },
 	{ _T("download"), integer, not_null },
 	{ _T("size"), integer, 0 },
 	{ _T("error_count"), integer, 0 },
@@ -102,6 +102,19 @@ _column file_table_columns[] = {
 	{ _T("default_exists_action"), integer, 0 }
 };
 
+namespace path_table_column_names
+{
+	enum type
+	{
+		id,
+		path
+	};
+}
+
+_column path_table_columns[] = {
+	{ _T("id"), integer, not_null | autoincrement },
+	{ _T("path"), text, not_null }
+};
 
 class CQueueStorage::Impl
 {
@@ -110,18 +123,34 @@ public:
 		: db_()
 		, insertServerQuery_()
 		, insertFileQuery_()
+		, insertLocalPathQuery_()
+		, insertRemotePathQuery_()
 		, selectServersQuery_()
 		, selectFilesQuery_()
+		, selectLocalPathQuery_()
+		, selectRemotePathQuery_()
 	{
 	}
 
+
 	void CreateTables();
+	wxString CreateColumnDefs(_column* columns, size_t count);
+
 	void PrepareStatements();
 
 	sqlite3_stmt* PrepareInsertStatement(const wxString& name, const _column*, unsigned int count);
 
 	bool SaveServer(const CServerItem& item);
 	bool SaveFile(wxLongLong server, const CFileItem& item);
+
+	wxLongLong_t SaveLocalPath(const CLocalPath& path);
+	wxLongLong_t SaveRemotePath(const CServerPath& path);
+
+	void ReadLocalPaths();
+	void ReadRemotePaths();
+
+	const CLocalPath& GetLocalPath(wxLongLong_t id) const;
+	const CServerPath& GetRemotePath(wxLongLong_t id) const;
 
 	bool Bind(sqlite3_stmt* statement, int index, int value);
 	bool Bind(sqlite3_stmt* statement, int index, wxLongLong_t value);
@@ -136,13 +165,19 @@ public:
 	wxLongLong_t ParseServerFromRow(CServer& server);
 	wxLongLong_t ParseFileFromRow(CFileItem** pItem);
 
+	bool MigrateSchema();
+
 	sqlite3* db_;
 
 	sqlite3_stmt* insertServerQuery_;
 	sqlite3_stmt* insertFileQuery_;
+	sqlite3_stmt* insertLocalPathQuery_;
+	sqlite3_stmt* insertRemotePathQuery_;
 
 	sqlite3_stmt* selectServersQuery_;
 	sqlite3_stmt* selectFilesQuery_;
+	sqlite3_stmt* selectLocalPathQuery_;
+	sqlite3_stmt* selectRemotePathQuery_;
 
 #ifndef __WXMSW__
 	wxMBConvUTF16 utf16_;
@@ -150,21 +185,191 @@ public:
 
 	// Caches to speed up saving and loading
 	void ClearCaches();
-	CLocalPath lastLocalPath_;
-	wxString lastLocalPathRaw_;
-	CServerPath lastRemotePath_;
-	wxString lastRemotePathRaw_;
+
+	std::map<wxString, wxLongLong_t> localPaths_;
+	std::map<CServerPath, wxLongLong_t> remotePaths_;
+	
+	std::map<wxLongLong_t, CLocalPath> reverseLocalPaths_;
+	std::map<wxLongLong_t, CServerPath> reverseRemotePaths_;
 };
+
+
+void CQueueStorage::Impl::ReadLocalPaths()
+{
+	if (!selectLocalPathQuery_)
+		return;
+
+	sqlite3_reset(selectLocalPathQuery_);
+
+	int res;
+	do
+	{
+		res = sqlite3_step(selectLocalPathQuery_);
+		if (res == SQLITE_ROW)
+		{
+			wxLongLong_t id = GetColumnInt64(selectLocalPathQuery_, path_table_column_names::id);
+			wxString localPathRaw = GetColumnText(selectLocalPathQuery_, path_table_column_names::path);
+			CLocalPath localPath;
+			if (id > 0 && !localPathRaw.empty() && localPath.SetPath(localPathRaw))
+				reverseLocalPaths_[id] = localPath;
+		}
+	}
+	while (res == SQLITE_BUSY || res == SQLITE_ROW);
+}
+
+
+void CQueueStorage::Impl::ReadRemotePaths()
+{
+	if (!selectRemotePathQuery_)
+		return;
+
+	sqlite3_reset(selectRemotePathQuery_);
+
+	int res;
+	do
+	{
+		res = sqlite3_step(selectRemotePathQuery_);
+		if (res == SQLITE_ROW)
+		{
+			wxLongLong_t id = GetColumnInt64(selectRemotePathQuery_, path_table_column_names::id);
+			wxString remotePathRaw = GetColumnText(selectRemotePathQuery_, path_table_column_names::path);
+			CServerPath remotePath;
+			if (id > 0 && !remotePathRaw.empty() && remotePath.SetSafePath(remotePathRaw))
+				reverseRemotePaths_[id] = remotePath;
+		}
+	}
+	while (res == SQLITE_BUSY || res == SQLITE_ROW);
+}
+
+
+const CLocalPath& CQueueStorage::Impl::GetLocalPath(wxLongLong_t id) const
+{
+	std::map<wxLongLong_t, CLocalPath>::const_iterator it = reverseLocalPaths_.find(id);
+	if (it != reverseLocalPaths_.end())
+		return it->second;
+
+	static const CLocalPath empty;
+	return empty;
+}
+
+
+const CServerPath& CQueueStorage::Impl::GetRemotePath(wxLongLong_t id) const
+{
+	std::map<wxLongLong_t, CServerPath>::const_iterator it = reverseRemotePaths_.find(id);
+	if (it != reverseRemotePaths_.end())
+		return it->second;
+
+	static const CServerPath empty;
+	return empty;
+}
+
+
+static int int_callback(void* p, int n, char** v, char**)
+{
+	int* i = reinterpret_cast<int*>(p);
+	if (!i || !n || !v || !*v)
+		return -1;
+
+	*i = atoi(*v);
+	return 0;
+}
+
+
+bool CQueueStorage::Impl::MigrateSchema()
+{
+	int version = 0;
+
+	if (sqlite3_exec(db_, "PRAGMA user_version", int_callback, &version, 0) != SQLITE_OK)
+		return false;
+
+	if (version < 1)
+		return sqlite3_exec(db_, "PRAGMA user_version = 1", 0, 0, 0) == SQLITE_OK;
+
+	return true;
+}
 
 
 void CQueueStorage::Impl::ClearCaches()
 {
-	lastLocalPath_.clear();
-	lastLocalPathRaw_.clear();
-	lastRemotePath_.Clear();
-	lastRemotePathRaw_.clear();
+	localPaths_.clear();
+	remotePaths_.clear();
+	reverseLocalPaths_.clear();
+	reverseRemotePaths_.clear();
 }
 
+
+wxLongLong_t CQueueStorage::Impl::SaveLocalPath(const CLocalPath& path)
+{
+	std::map<wxString, wxLongLong_t>::const_iterator it = localPaths_.find(path.GetPath());
+	if (it != localPaths_.end())
+		return it->second;
+
+	sqlite3_reset(insertLocalPathQuery_);
+	Bind(insertLocalPathQuery_, path_table_column_names::path, path.GetPath());
+
+	int res;
+	do {
+		res = sqlite3_step(insertLocalPathQuery_);
+	} while (res == SQLITE_BUSY);
+	
+	if (res == SQLITE_DONE)
+	{
+		wxLongLong_t id = sqlite3_last_insert_rowid(db_);
+		localPaths_[path.GetPath()] = id;
+		return id;
+	}
+
+	return -1;
+}
+
+
+wxLongLong_t CQueueStorage::Impl::SaveRemotePath(const CServerPath& path)
+{
+	std::map<CServerPath, wxLongLong_t>::const_iterator it = remotePaths_.find(path);
+	if (it != remotePaths_.end())
+		return it->second;
+
+	sqlite3_reset(insertRemotePathQuery_);
+	Bind(insertRemotePathQuery_, path_table_column_names::path, path.GetSafePath());
+
+	int res;
+	do {
+		res = sqlite3_step(insertRemotePathQuery_);
+	} while (res == SQLITE_BUSY);
+	
+	if (res == SQLITE_DONE)
+	{
+		wxLongLong_t id = sqlite3_last_insert_rowid(db_);
+		remotePaths_[path] = id;
+		return id;
+	}
+
+	return -1;
+}
+
+
+wxString CQueueStorage::Impl::CreateColumnDefs(_column* columns, size_t count)
+{
+	wxString query = _T("(");
+	for (unsigned int i = 0; i < count; ++i)
+	{
+		if (i)
+			query += _T(", ");
+		query += columns[i].name;
+		if (columns[i].type == integer)
+			query += _T(" INTEGER");
+		else
+			query += _T(" TEXT");
+
+		if (columns[i].flags & autoincrement)
+			query += _T(" PRIMARY KEY AUTOINCREMENT");
+		if (columns[i].flags & not_null)
+			query += _T(" NOT NULL");
+	}
+	query += _T(")");
+
+	return query;
+}
 
 void CQueueStorage::Impl::CreateTables()
 {
@@ -172,55 +377,40 @@ void CQueueStorage::Impl::CreateTables()
 		return;
 
 	{
-		wxString query( _T("CREATE TABLE IF NOT EXISTS servers (") );
-
-		for (unsigned int i = 0; i < (sizeof(server_table_columns) / sizeof(_column)); ++i)
-		{
-			if (i)
-				query += _T(", ");
-			query += server_table_columns[i].name;
-			if (server_table_columns[i].type == integer)
-				query += _T(" INTEGER");
-			else
-				query += _T(" TEXT");
-
-			if (server_table_columns[i].flags & autoincrement)
-				query += _T(" PRIMARY KEY AUTOINCREMENT");
-			if (server_table_columns[i].flags & not_null)
-				query += _T(" NOT NULL");
-		}
-		query += _T(")");
+		wxString query( _T("CREATE TABLE IF NOT EXISTS servers ") );
+		query += CreateColumnDefs(server_table_columns, sizeof(server_table_columns) / sizeof(_column));
 
 		if (sqlite3_exec(db_, query.ToUTF8(), 0, 0, 0) != SQLITE_OK)
 		{
 		}
 	}
 	{
-		wxString query( _T("CREATE TABLE IF NOT EXISTS files (") );
-
-		for (unsigned int i = 0; i < (sizeof(file_table_columns) / sizeof(_column)); ++i)
-		{
-			if (i)
-				query += _T(", ");
-			query += file_table_columns[i].name;
-			if (file_table_columns[i].type == integer)
-				query += _T(" INTEGER");
-			else
-				query += _T(" TEXT");
-
-			if (file_table_columns[i].flags & autoincrement)
-				query += _T(" PRIMARY KEY AUTOINCREMENT");
-			if (file_table_columns[i].flags & not_null)
-				query += _T(" NOT NULL");
-		}
-		query += _T(")");
+		wxString query( _T("CREATE TABLE IF NOT EXISTS files ") );
+		query += CreateColumnDefs(file_table_columns, sizeof(file_table_columns) / sizeof(_column));
 
 		if (sqlite3_exec(db_, query.ToUTF8(), 0, 0, 0) != SQLITE_OK)
 		{
 		}
 
-		
 		query = _T("CREATE INDEX IF NOT EXISTS server_index ON files (server)");
+		if (sqlite3_exec(db_, query.ToUTF8(), 0, 0, 0) != SQLITE_OK)
+		{
+		}
+	}
+
+	{
+		wxString query( _T("CREATE TABLE IF NOT EXISTS local_paths ") );
+		query += CreateColumnDefs(path_table_columns, sizeof(path_table_columns) / sizeof(_column));
+
+		if (sqlite3_exec(db_, query.ToUTF8(), 0, 0, 0) != SQLITE_OK)
+		{
+		}
+	}
+
+	{
+		wxString query( _T("CREATE TABLE IF NOT EXISTS remote_paths ") );
+		query += CreateColumnDefs(path_table_columns, sizeof(path_table_columns) / sizeof(_column));
+
 		if (sqlite3_exec(db_, query.ToUTF8(), 0, 0, 0) != SQLITE_OK)
 		{
 		}
@@ -260,6 +450,8 @@ void CQueueStorage::Impl::PrepareStatements()
 {
 	insertServerQuery_ = PrepareInsertStatement(_T("servers"), server_table_columns, sizeof(server_table_columns) / sizeof(_column));
 	insertFileQuery_ = PrepareInsertStatement(_T("files"), file_table_columns, sizeof(file_table_columns) / sizeof(_column));
+	insertLocalPathQuery_ = PrepareInsertStatement(_T("local_paths"), path_table_columns, sizeof(path_table_columns) / sizeof(_column));
+	insertRemotePathQuery_ = PrepareInsertStatement(_T("remote_paths"), path_table_columns, sizeof(path_table_columns) / sizeof(_column));
 
 	if (db_)
 	{
@@ -291,6 +483,20 @@ void CQueueStorage::Impl::PrepareStatements()
 
 		if (sqlite3_prepare_v2(db_, query.ToUTF8(), -1, &selectFilesQuery_, 0) != SQLITE_OK)
 			selectFilesQuery_ = 0;
+	}
+
+	if (db_)
+	{
+		wxString query = _T("SELECT id, path FROM local_paths");
+		if (sqlite3_prepare_v2(db_, query.ToUTF8(), -1, &selectLocalPathQuery_, 0) != SQLITE_OK)
+			selectLocalPathQuery_ = 0;
+	}
+
+	if (db_)
+	{
+		wxString query = _T("SELECT id, path FROM remote_paths");
+		if (sqlite3_prepare_v2(db_, query.ToUTF8(), -1, &selectRemotePathQuery_, 0) != SQLITE_OK)
+			selectRemotePathQuery_ = 0;
 	}
 }
 
@@ -476,7 +682,6 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 	return res == SQLITE_DONE;
 }
 
-
 static bool fastEqual( const wxString& lhs, const wxString& rhs )
 {
 	// wx doesn't compare pointers, we do
@@ -496,17 +701,13 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 	else
 		Bind(insertFileQuery_, file_table_column_names::target_file, file.GetTargetFile());
 
-	if (!fastEqual(file.GetLocalPath().GetPath(), lastLocalPathRaw_) )
-	{
-		lastLocalPathRaw_ = file.GetLocalPath().GetPath();
-		Bind(insertFileQuery_, file_table_column_names::local_path, lastLocalPathRaw_);
-	}
+	wxLongLong_t localPathId = SaveLocalPath(file.GetLocalPath());
+	wxLongLong_t remotePathId = SaveRemotePath(file.GetRemotePath());
+	if (localPathId == -1 || remotePathId == -1)
+		return false;
 
-	if (file.GetRemotePath() != lastRemotePath_ )
-	{
-		lastRemotePath_ = file.GetRemotePath();
-		Bind(insertFileQuery_, file_table_column_names::remote_path, lastRemotePath_.GetSafePath());
-	}
+	Bind(insertFileQuery_, file_table_column_names::local_path, localPathId);
+	Bind(insertFileQuery_, file_table_column_names::remote_path, remotePathId);
 
 	Bind(insertFileQuery_, file_table_column_names::download, file.Download() ? 1 : 0);
 	if (file.GetSize() != -1)
@@ -693,8 +894,12 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 {
 	wxString sourceFile = GetColumnText(selectFilesQuery_, file_table_column_names::source_file);
 	wxString targetFile = GetColumnText(selectFilesQuery_, file_table_column_names::target_file);
-	wxString safeLocalPath = GetColumnText(selectFilesQuery_, file_table_column_names::local_path, false);
-	wxString safeRemotePath = GetColumnText(selectFilesQuery_, file_table_column_names::remote_path, false);
+
+	wxLongLong_t localPathId = GetColumnInt64(selectFilesQuery_, file_table_column_names::local_path, false);
+	wxLongLong_t remotePathId = GetColumnInt64(selectFilesQuery_, file_table_column_names::remote_path, false);
+	const CLocalPath& localPath(GetLocalPath(localPathId));
+	const CServerPath& remotePath(GetRemotePath(remotePathId));
+
 	bool download = GetColumnInt(selectFilesQuery_, file_table_column_names::download) != 0;
 
 	wxLongLong size = GetColumnInt64(selectFilesQuery_, file_table_column_names::size);
@@ -704,25 +909,13 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 	bool binary = GetColumnInt(selectFilesQuery_, file_table_column_names::ascii_file) == 0;
 	int overwrite_action = GetColumnInt(selectFilesQuery_, file_table_column_names::default_exists_action, CFileExistsNotification::unknown);
 
-	if (lastLocalPathRaw_ != safeLocalPath)
-	{
-		lastLocalPathRaw_ = safeLocalPath;
-		lastLocalPath_.SetPath(safeLocalPath);
-	}
-
-	if (lastRemotePathRaw_ != safeRemotePath)
-	{
-		lastRemotePathRaw_ = safeRemotePath;
-		lastRemotePath_.SetSafePath(safeRemotePath);
-	}
-
-	if (!sourceFile.empty() && !lastLocalPath_.empty() &&
-		!lastRemotePath_.IsEmpty() &&
+	if (!sourceFile.empty() && !localPath.empty() &&
+		!remotePath.IsEmpty() &&
 		size >= -1 &&
 		priority > 0 && priority < PRIORITY_COUNT &&
 		errorCount >= 0)
 	{
-		CFileItem* fileItem = new CFileItem(0, true, download, sourceFile, targetFile, lastLocalPath_, lastRemotePath_, size);
+		CFileItem* fileItem = new CFileItem(0, true, download, sourceFile, targetFile, localPath, remotePath, size);
 		*pItem = fileItem;
 		fileItem->m_transferSettings.binary = binary;
 		fileItem->SetPriorityRaw((enum QueuePriority)priority);
@@ -746,6 +939,7 @@ CQueueStorage::CQueueStorage()
 
 	if (sqlite3_exec(d_->db_, "PRAGMA encoding=\"UTF-16le\"", 0, 0, 0) == SQLITE_OK)
 	{
+		d_->MigrateSchema();
 		d_->CreateTables();
 		d_->PrepareStatements();
 	}
@@ -755,8 +949,12 @@ CQueueStorage::~CQueueStorage()
 {
 	sqlite3_finalize(d_->insertServerQuery_);
 	sqlite3_finalize(d_->insertFileQuery_);
+	sqlite3_finalize(d_->insertLocalPathQuery_);
+	sqlite3_finalize(d_->insertRemotePathQuery_);
 	sqlite3_finalize(d_->selectServersQuery_);
 	sqlite3_finalize(d_->selectFilesQuery_);
+	sqlite3_finalize(d_->selectLocalPathQuery_);
+	sqlite3_finalize(d_->selectRemotePathQuery_);
 	sqlite3_close(d_->db_);
 	delete d_;
 }
@@ -785,7 +983,11 @@ wxLongLong_t CQueueStorage::GetServer(CServer& server, bool fromBeginning)
 	if (d_->selectServersQuery_)
 	{
 		if (fromBeginning)
+		{
+			d_->ReadLocalPaths();
+			d_->ReadRemotePaths();
 			sqlite3_reset(d_->selectServersQuery_);
+		}
 
 		while (true)
 		{
@@ -869,6 +1071,14 @@ bool CQueueStorage::Clear()
 
 	if (sqlite3_exec(d_->db_, "DELETE FROM servers", 0, 0, 0) != SQLITE_OK)
 		return false;
+
+	if (sqlite3_exec(d_->db_, "DELETE FROM local_paths", 0, 0, 0) != SQLITE_OK)
+		return false;
+
+	if (sqlite3_exec(d_->db_, "DELETE FROM remote_paths", 0, 0, 0) != SQLITE_OK)
+		return false;
+
+	d_->ClearCaches();
 
 	return true;
 }

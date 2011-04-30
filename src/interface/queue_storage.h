@@ -21,7 +21,7 @@ public:
 	// Call after finishing loading
 	bool EndTransaction();
 
-	bool Clear();
+	bool Clear(); // Also clears caches
 
 	bool SaveQueue(std::vector<CServerItem*> const& queue);
 
