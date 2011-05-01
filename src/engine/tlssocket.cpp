@@ -97,7 +97,7 @@ bool CTlsSocket::Init()
 		return false;
 	}
 
-	res = gnutls_priority_set_direct(m_session, "SECURE256", 0);
+	res = gnutls_priority_set_direct(m_session, "SECURE256:+CTYPE-X509:-CTYPE-OPENPGP", 0);
 	if (res)
 	{
 		LogError(res);
@@ -106,16 +106,6 @@ bool CTlsSocket::Init()
 	}
 
 	gnutls_dh_set_prime_bits(m_session, 512);
-
-	// Set which type of certificates we accept
-	const int cert_type_priority[] = { GNUTLS_CRT_X509, 0 };
-	gnutls_certificate_type_set_priority(m_session, cert_type_priority);
-	if (res)
-	{
-		LogError(res);
-		Uninit();
-		return false;
-	}
 
 	gnutls_credentials_set(m_session, GNUTLS_CRD_CERTIFICATE, m_certCredentials);
 
