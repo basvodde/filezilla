@@ -213,7 +213,7 @@ bool CLocalPath::SetPath(const wxString& path, wxString* file /*=0*/)
 
 	m_path.UngetWriteBuf( out - start );
 
-	Coalesce(m_path);
+	::Coalesce(m_path);
 
 	return true;
 }
