@@ -23,6 +23,8 @@ public:
 
 	bool Clear(); // Also clears caches
 
+	bool Vacuum();
+
 	bool SaveQueue(std::vector<CServerItem*> const& queue);
 
 	// > 0 = server id

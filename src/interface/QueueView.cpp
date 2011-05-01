@@ -1991,6 +1991,9 @@ void CQueueView::LoadQueue()
 
 		if (!m_queue_storage.EndTransaction())
 			error = true;
+
+		if (!m_queue_storage.Vacuum())
+			error = true;
 	}
 	
 	m_insertionStart = -1;

@@ -5,6 +5,19 @@
 
 #include <sqlite3.h>
 #include <wx/wx.h>
+
+#if HAVE_TR1_UNORDERED_MAP
+#include <tr1/unordered_map>
+#else
+#include <unordered_map>
+#endif
+
+namespace std {
+namespace tr1 {
+}
+using namespace tr1;
+}
+
 #define INVALID_DATA -1000
 
 enum _column_type
@@ -116,6 +129,16 @@ _column path_table_columns[] = {
 	{ _T("path"), text, not_null }
 };
 
+struct fast_equal
+{
+	bool operator()(wxString const& lhs, wxString const& rhs) const
+	{
+		// wxString is CoW, yet it doesn't even do this fast pointer
+		// comparison in it's less and/or equal operator(s).
+		return lhs.c_str() == rhs.c_str() || lhs == rhs;
+	}
+};
+
 class CQueueStorage::Impl
 {
 public:
@@ -186,8 +209,8 @@ public:
 	// Caches to speed up saving and loading
 	void ClearCaches();
 
-	std::map<wxString, wxLongLong_t> localPaths_;
-	std::map<CServerPath, wxLongLong_t> remotePaths_;
+	std::unordered_map<wxString, wxLongLong_t, wxStringHash, fast_equal> localPaths_;
+	std::unordered_map<wxString, wxLongLong_t, wxStringHash> remotePaths_; // No need for fast_equal as GetSafePath returns unshared string anyhow
 	
 	std::map<wxLongLong_t, CLocalPath> reverseLocalPaths_;
 	std::map<wxLongLong_t, CServerPath> reverseRemotePaths_;
@@ -300,7 +323,7 @@ void CQueueStorage::Impl::ClearCaches()
 
 wxLongLong_t CQueueStorage::Impl::SaveLocalPath(const CLocalPath& path)
 {
-	std::map<wxString, wxLongLong_t>::const_iterator it = localPaths_.find(path.GetPath());
+	std::unordered_map<wxString, wxLongLong_t, wxStringHash, fast_equal>::const_iterator it = localPaths_.find(path.GetPath());
 	if (it != localPaths_.end())
 		return it->second;
 
@@ -325,7 +348,8 @@ wxLongLong_t CQueueStorage::Impl::SaveLocalPath(const CLocalPath& path)
 
 wxLongLong_t CQueueStorage::Impl::SaveRemotePath(const CServerPath& path)
 {
-	std::map<CServerPath, wxLongLong_t>::const_iterator it = remotePaths_.find(path);
+	wxString safePath = path.GetSafePath();
+	std::unordered_map<wxString, wxLongLong_t, wxStringHash>::const_iterator it = remotePaths_.find(safePath);
 	if (it != remotePaths_.end())
 		return it->second;
 
@@ -340,7 +364,7 @@ wxLongLong_t CQueueStorage::Impl::SaveRemotePath(const CServerPath& path)
 	if (res == SQLITE_DONE)
 	{
 		wxLongLong_t id = sqlite3_last_insert_rowid(db_);
-		remotePaths_[path] = id;
+		remotePaths_[safePath] = id;
 		return id;
 	}
 
@@ -682,11 +706,6 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 	return res == SQLITE_DONE;
 }
 
-static bool fastEqual( const wxString& lhs, const wxString& rhs )
-{
-	// wx doesn't compare pointers, we do
-	return lhs.c_str() == rhs.c_str() || lhs == rhs;
-}
 
 bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 {
@@ -1098,4 +1117,9 @@ bool CQueueStorage::BeginTransaction()
 bool CQueueStorage::EndTransaction()
 {
 	return sqlite3_exec(d_->db_, "END TRANSACTION", 0, 0, 0) == SQLITE_OK;
+}
+
+bool CQueueStorage::Vacuum()
+{
+	return sqlite3_exec(d_->db_, "VACUUM", 0, 0, 0) == SQLITE_OK;
 }
