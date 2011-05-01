@@ -10,7 +10,15 @@ Legend:
     *nix: Unix (e.g BSD) and Unix-like systems (e.g. Linux)
     OS X: Apple Mac OS X
 
+3.5.0-beta1 (2011-05-xx)
+
++ The transfer queue is now stored in an SQLite database. This greatly improves performance and vastly reduces memory consumption while loading/saving the queue
++ Additional improvements to general queue performance and memory consumption
+- Fixed crash during shutdown of FileZilla
+- Clearing the queue when it was not yet fully populated no longer causes a crash
+
 3.4.0 (2011-03-27)
+
 - Updated translations
 
 3.4.0-rc1 (2011-03-20)
