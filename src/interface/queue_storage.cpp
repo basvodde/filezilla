@@ -103,10 +103,10 @@ namespace file_table_column_names
 _column file_table_columns[] = {
 	{ _T("id"), integer, not_null | autoincrement },
 	{ _T("server"), integer, not_null },
-	{ _T("source_file"), text, not_null },
+	{ _T("source_file"), text, 0 },
 	{ _T("target_file"), text, 0 },
-	{ _T("local_path"), integer, not_null },
-	{ _T("remote_path"), integer, not_null },
+	{ _T("local_path"), integer, 0 },
+	{ _T("remote_path"), integer, 0 },
 	{ _T("download"), integer, not_null },
 	{ _T("size"), integer, 0 },
 	{ _T("error_count"), integer, 0 },
@@ -165,6 +165,7 @@ public:
 
 	bool SaveServer(const CServerItem& item);
 	bool SaveFile(wxLongLong server, const CFileItem& item);
+	bool SaveDirectory(wxLongLong server, const CFolderItem& item);
 
 	wxLongLong_t SaveLocalPath(const CLocalPath& path);
 	wxLongLong_t SaveRemotePath(const CServerPath& path);
@@ -701,6 +702,8 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 			CQueueItem* item = *it;
 			if (item->GetType() == QueueItemType_File)
 				SaveFile(serverId, *reinterpret_cast<CFileItem*>(item));
+			else if (item->GetType() == QueueItemType_Folder)
+				SaveDirectory(serverId, *reinterpret_cast<CFolderItem*>(item));
 		}
 	}
 	return res == SQLITE_DONE;
@@ -752,6 +755,45 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 
 	return res == SQLITE_DONE;
 }
+
+
+bool CQueueStorage::Impl::SaveDirectory(wxLongLong server, const CFolderItem& directory)
+{
+	sqlite3_reset(insertFileQuery_);
+
+	if (download)
+		BindNull(insertFileQuery_, file_table_column_names::source_file);
+	else
+		Bind(insertFileQuery_, file_table_column_names::source_file, directory.GetSourceFile());
+	BindNull(insertFileQuery_, file_table_column_names::target_file);
+
+	wxLongLong_t localPathId = directory.Download() ? SaveLocalPath(directory.GetLocalPath()) : -1;
+	wxLongLong_t remotePathId = directory.Download() ? -1 : SaveRemotePath(directory.GetRemotePath());
+	if (localPathId == -1 && remotePathId == -1)
+		return false;
+
+	Bind(insertFileQuery_, file_table_column_names::local_path, localPathId);
+	Bind(insertFileQuery_, file_table_column_names::remote_path, remotePathId);
+
+	Bind(insertFileQuery_, file_table_column_names::download, directory.Download() ? 1 : 0);
+	BindNull(insertFileQuery_, file_table_column_names::size);
+	if (directory.m_errorCount)
+		Bind(insertFileQuery_, file_table_column_names::error_count, directory.m_errorCount);
+	else
+		BindNull(insertFileQuery_, file_table_column_names::error_count);
+	Bind(insertFileQuery_, file_table_column_names::priority, directory.GetPriority());
+	BindNull(insertFileQuery_, file_table_column_names::ascii_file);
+
+	BindNull(insertFileQuery_, file_table_column_names::default_exists_action);
+
+	int res;
+	do {
+		res = sqlite3_step(insertFileQuery_);
+	} while (res == SQLITE_BUSY);
+
+	return res == SQLITE_DONE;
+}
+
 
 wxString CQueueStorage::Impl::GetColumnText(sqlite3_stmt* statement, int index, bool shrink)
 {
@@ -916,24 +958,44 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 
 	wxLongLong_t localPathId = GetColumnInt64(selectFilesQuery_, file_table_column_names::local_path, false);
 	wxLongLong_t remotePathId = GetColumnInt64(selectFilesQuery_, file_table_column_names::remote_path, false);
+
 	const CLocalPath& localPath(GetLocalPath(localPathId));
 	const CServerPath& remotePath(GetRemotePath(remotePathId));
 
 	bool download = GetColumnInt(selectFilesQuery_, file_table_column_names::download) != 0;
 
-	wxLongLong size = GetColumnInt64(selectFilesQuery_, file_table_column_names::size);
-	int errorCount = GetColumnInt(selectFilesQuery_, file_table_column_names::error_count);
-	int priority = GetColumnInt(selectFilesQuery_, file_table_column_names::priority, priority_normal);
-
-	bool binary = GetColumnInt(selectFilesQuery_, file_table_column_names::ascii_file) == 0;
-	int overwrite_action = GetColumnInt(selectFilesQuery_, file_table_column_names::default_exists_action, CFileExistsNotification::unknown);
-
-	if (!sourceFile.empty() && !localPath.empty() &&
-		!remotePath.IsEmpty() &&
-		size >= -1 &&
-		priority > 0 && priority < PRIORITY_COUNT &&
-		errorCount >= 0)
+	if (localPathId == -1 || remotePathId == -1)
 	{
+		// QueueItemType_Folder
+		if ((download && localPath.empty()) ||
+			(!download && remotePath.IsEmpty()))
+		{
+			return INVALID_DATA;
+		}
+
+		if (download)
+			*pItem = new CFolderItem(0, true, localPath);
+		else
+			*pItem = new CFolderItem(0, true, remotePath, sourceFile);
+	}
+	else
+	{
+		wxLongLong size = GetColumnInt64(selectFilesQuery_, file_table_column_names::size);
+		int errorCount = GetColumnInt(selectFilesQuery_, file_table_column_names::error_count);
+		int priority = GetColumnInt(selectFilesQuery_, file_table_column_names::priority, priority_normal);
+
+		bool binary = GetColumnInt(selectFilesQuery_, file_table_column_names::ascii_file) == 0;
+		int overwrite_action = GetColumnInt(selectFilesQuery_, file_table_column_names::default_exists_action, CFileExistsNotification::unknown);
+
+		if (sourceFile.empty() || localPath.empty() ||
+			remotePath.IsEmpty() ||
+			size < -1 ||
+			priority <= 0 || priority >= PRIORITY_COUNT ||
+			errorCount < 0)
+		{
+			return INVALID_DATA;
+		}
+
 		CFileItem* fileItem = new CFileItem(0, true, download, sourceFile, targetFile, localPath, remotePath, size);
 		*pItem = fileItem;
 		fileItem->m_transferSettings.binary = binary;
@@ -942,11 +1004,9 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 
 		if (overwrite_action > 0 && overwrite_action < CFileExistsNotification::ACTION_COUNT)
 			fileItem->m_defaultFileExistsAction = (CFileExistsNotification::OverwriteAction)overwrite_action;
-
-		return GetColumnInt64(selectFilesQuery_, file_table_column_names::id); 
 	}
 
-	return INVALID_DATA;
+	return GetColumnInt64(selectFilesQuery_, file_table_column_names::id); 
 }
 
 CQueueStorage::CQueueStorage()

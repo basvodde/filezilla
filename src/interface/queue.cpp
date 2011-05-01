@@ -411,7 +411,7 @@ void CFolderItem::SaveItem(TiXmlElement* pElement) const
 	TiXmlElement *file = new TiXmlElement("Folder");
 
 	if (Download())
-		AddTextElement(file, "LocalFile", GetLocalFile());
+		AddTextElement(file, "LocalFile", GetLocalPath().GetPath() + GetLocalFile());
 	else
 	{
 		AddTextElement(file, "RemoteFile", GetRemoteFile());
