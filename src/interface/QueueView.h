@@ -215,6 +215,8 @@ protected:
 	 */
 	std::list<CFolderScanItem*> m_queuedFolders[2];
 
+	void RemoveQueuedFolderItem(CFolderScanItem* pFolder);
+
 	CFolderProcessingThread *m_pFolderProcessingThread;
 	
 	/*

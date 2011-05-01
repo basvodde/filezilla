@@ -2296,6 +2296,17 @@ void CQueueView::RemoveAll()
 			m_itemCount += 1 + (*iter)->GetChildrenCount(true);
 		}
 	}
+
+	// Clear list of queued directories that aren't busy
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		std::list<CFolderScanItem*>::iterator begin = m_queuedFolders[i].begin();
+		std::list<CFolderScanItem*>::iterator end = m_queuedFolders[i].end();
+		if (begin != end && (*begin)->m_active)
+			++begin;
+		m_queuedFolders[i].erase(begin, end);
+	}
+
 	SaveSetItemCount(m_itemCount);
 	m_actionAfterState = ActionAfterState_Disabled;
 
@@ -2306,6 +2317,21 @@ void CQueueView::RemoveAll()
 
 	CheckQueueState();
 	RefreshListOnly();
+}
+
+void CQueueView::RemoveQueuedFolderItem(CFolderScanItem* pFolder)
+{
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		for (std::list<CFolderScanItem*>::iterator iter = m_queuedFolders[i].begin(); iter != m_queuedFolders[i].end(); iter++)
+		{
+			if (*iter != pFolder)
+				continue;
+
+			m_queuedFolders[i].erase(iter);
+			return;
+		}
+	}
 }
 
 void CQueueView::OnRemoveSelected(wxCommandEvent& event)
@@ -2345,6 +2371,8 @@ void CQueueView::OnRemoveSelected(wxCommandEvent& event)
 				pFolder->m_remove = true;
 				continue;
 			}
+			else
+				RemoveQueuedFolderItem(pFolder);
 		}
 		else if (pItem->GetType() == QueueItemType_Server)
 		{
