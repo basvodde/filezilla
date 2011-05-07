@@ -1944,11 +1944,45 @@ void CQueueView::SaveQueue()
 	//TODO: Error reporting
 }
 
+void CQueueView::LoadQueueFromXML()
+{
+	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("queue.xml"));
+	CXmlFile xml(file);
+	TiXmlElement* pDocument = xml.Load();
+	if (!pDocument)
+	{
+		wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
+		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+
+		return;
+	}
+
+	TiXmlElement* pQueue = pDocument->FirstChildElement("Queue");
+	if (!pQueue)
+		return;
+
+	ImportQueue(pQueue, false);
+
+	pDocument->RemoveChild(pQueue);
+
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
+		return;
+
+	wxString error;
+	if (!xml.Save(&error))
+	{
+		wxString msg = wxString::Format(_("Could not write \"%s\", the queue could not be saved.\n%s"), file.GetFullPath().c_str(), error.c_str());
+		wxMessageBox(msg, _("Error writing xml file"), wxICON_ERROR);
+	}
+}
+
 void CQueueView::LoadQueue()
 {
 	// We have to synchronize access to queue.xml so that multiple processed don't write
 	// to the same file or one is reading while the other one writes.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
+
+	LoadQueueFromXML();
 
 	bool error = false;
 

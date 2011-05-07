@@ -123,6 +123,7 @@ public:
 	void RemoveAll();
 
 	void LoadQueue();
+	void LoadQueueFromXML();
 	void ImportQueue(TiXmlElement* pElement, bool updateSelections);
 
 	virtual void InsertItem(CServerItem* pServerItem, CQueueItem* pItem);
