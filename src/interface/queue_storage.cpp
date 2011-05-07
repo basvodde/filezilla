@@ -18,8 +18,6 @@ namespace tr1 {
 using namespace tr1;
 }
 
-#define INVALID_DATA -1000
-
 enum _column_type
 {
 	text,
