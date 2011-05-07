@@ -74,6 +74,8 @@ bool CLoginManager::DisplayDialog(CServer &server, wxString name, wxString chall
 		}
 		else
 			XRCCTRL(pwdDlg, "ID_HEADER_USER", wxStaticText)->Hide();
+
+		XRCCTRL(pwdDlg, "ID_NEW_USER", wxTextCtrl)->SetFocus();
 	}
 	else
 	{
