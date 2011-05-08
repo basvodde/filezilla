@@ -1935,13 +1935,15 @@ void CQueueView::SaveQueue()
 	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
 		return;
 
-	// We have to synchronize access to queue.xml so that multiple processed don't write
-	// to the same file or one is reading while the other one writes.
+	// While not really needed anymore using sqlite3, we still take the mutex
+	// just as extra precaution. Better 'save' than sorry.
 	CInterProcessMutex mutex(MUTEX_QUEUE);
 
-	m_queue_storage.SaveQueue(m_serverList);
-
-	//TODO: Error reporting
+	if (!m_queue_storage.SaveQueue(m_serverList))
+	{
+		wxString msg = wxString::Format(_("An error occurred saving the transfer queue to \"%s\".\nSome queue items might not have been saved."), m_queue_storage.GetDatabaseFilename().c_str());
+		wxMessageBox(msg, _("Error saving queue"), wxICON_ERROR);
+	}
 }
 
 void CQueueView::LoadQueueFromXML()
@@ -2037,7 +2039,7 @@ void CQueueView::LoadQueue()
 	if (error)
 	{
 		wxString file = CQueueStorage::GetDatabaseFilename();
-		wxString msg = wxString::Format(_("An error occured loading the transfer queue from \"%s\".\nSome queue items might not have been restored."), file.c_str());
+		wxString msg = wxString::Format(_("An error occurred loading the transfer queue from \"%s\".\nSome queue items might not have been restored."), file.c_str());
 		wxMessageBox(msg, _("Error loading queue"), wxICON_ERROR);
 	}
 }

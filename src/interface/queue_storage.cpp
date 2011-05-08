@@ -18,6 +18,8 @@ namespace tr1 {
 using namespace tr1;
 }
 
+#define INVALID_DATA -1
+
 enum _column_type
 {
 	text,
@@ -689,7 +691,8 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 		res = sqlite3_step(insertServerQuery_);
 	} while (res == SQLITE_BUSY);
 	
-	if (res == SQLITE_DONE)
+	bool ret = res == SQLITE_DONE;
+	if (ret)
 	{
 		sqlite3_int64 serverId = sqlite3_last_insert_rowid(db_);
 		Bind(insertFileQuery_, file_table_column_names::server, serverId);
@@ -699,12 +702,12 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 		{
 			CQueueItem* item = *it;
 			if (item->GetType() == QueueItemType_File)
-				SaveFile(serverId, *reinterpret_cast<CFileItem*>(item));
+				ret &= SaveFile(serverId, *reinterpret_cast<CFileItem*>(item));
 			else if (item->GetType() == QueueItemType_Folder)
-				SaveDirectory(serverId, *reinterpret_cast<CFolderItem*>(item));
+				ret &= SaveDirectory(serverId, *reinterpret_cast<CFolderItem*>(item));
 		}
 	}
-	return res == SQLITE_DONE;
+	return ret;
 }
 
 
@@ -1040,15 +1043,19 @@ bool CQueueStorage::SaveQueue(std::vector<CServerItem*> const& queue)
 {
 	d_->ClearCaches();
 
-	bool ret = false;
+	bool ret = true;
 	if (sqlite3_exec(d_->db_, "BEGIN TRANSACTION", 0, 0, 0) == SQLITE_OK)
 	{
 		for (std::vector<CServerItem*>::const_iterator it = queue.begin(); it != queue.end(); ++it)	
-			d_->SaveServer(**it);
+			ret &= d_->SaveServer(**it);
 
-		ret = sqlite3_exec(d_->db_, "END TRANSACTION", 0, 0, 0) == SQLITE_OK;
+		// Even on previous failure, we want to at least try to commit the data we have so far
+		ret &= sqlite3_exec(d_->db_, "END TRANSACTION", 0, 0, 0) == SQLITE_OK;
+
+		d_->ClearCaches();
 	}
-	d_->ClearCaches();
+	else
+		ret = false;
 
 	return ret;
 }
