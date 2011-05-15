@@ -3,6 +3,7 @@
 #include "commandqueue.h"
 #include "chmoddialog.h"
 #include "filter.h"
+#include "Options.h"
 #include "queue.h"
 #include "local_filesys.h"
 
@@ -156,6 +157,9 @@ bool CRecursiveOperation::BelowRecursionRoot(const CServerPath& path, CNewDir &d
 	return false;
 }
 
+// Defined in RemoteListView.cpp
+extern wxString StripVMSRevision(const wxString& name);
+
 void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDirectoryListing)
 {
 	if (!pDirectoryListing)
@@ -281,6 +285,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			case recursive_download_flatten:
 				{
 					wxString localFile = CQueueView::ReplaceInvalidCharacters(entry.name);
+					if (pDirectoryListing->path.GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+						localFile = StripVMSRevision(localFile);
 					m_pQueue->QueueFile(m_operationMode == recursive_addtoqueue, true,
 						entry.name, (entry.name == localFile) ? wxString() : localFile,
 						dir.localDir, pDirectoryListing->path, *pServer, entry.size);
@@ -291,6 +297,8 @@ void CRecursiveOperation::ProcessDirectoryListing(const CDirectoryListing* pDire
 			case recursive_addtoqueue_flatten:
 				{
 					wxString localFile = CQueueView::ReplaceInvalidCharacters(entry.name);
+					if (pDirectoryListing->path.GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+						localFile = StripVMSRevision(localFile);
 					m_pQueue->QueueFile(true, true,
 						entry.name, (entry.name == localFile) ? wxString() : localFile,
 						dir.localDir, pDirectoryListing->path, *pServer, entry.size);

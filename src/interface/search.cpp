@@ -971,7 +971,10 @@ void CSearchDialog::OnDownload(wxCommandEvent& event)
 		}
 
 		CServerPath remote_path = m_results->m_fileData[*iter].path;
-		const wxString localName = CQueueView::ReplaceInvalidCharacters(entry.name);
+		wxString localName = CQueueView::ReplaceInvalidCharacters(entry.name);
+		if (!entry.is_dir() && remote_path.GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+			localName = StripVMSRevision(localName);
+
 		m_pQueue->QueueFile(!start, true,
 			entry.name, (localName != entry.name) ? localName : wxString(),
 			target_path, remote_path, *pServer, entry.size);

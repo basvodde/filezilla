@@ -589,6 +589,9 @@ void CQueueView::QueueFile_Finish(const bool start)
 		RefreshListOnly(false);
 }
 
+// Defined in RemoteListView.cpp
+extern wxString StripVMSRevision(const wxString& name);
+
 bool CQueueView::QueueFiles(const bool queueOnly, const CLocalPath& localPath, const CRemoteDataObject& dataObject)
 {
 	CServerItem* pServerItem = CreateServerItem(dataObject.GetServer());
@@ -602,6 +605,9 @@ bool CQueueView::QueueFiles(const bool queueOnly, const CLocalPath& localPath, c
 
 		CFileItem* fileItem;
 		wxString localFile = ReplaceInvalidCharacters(iter->name);
+		if (dataObject.GetServerPath().GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+			localFile = StripVMSRevision(localFile);
+
 		fileItem = new CFileItem(pServerItem, queueOnly, true,
 			iter->name, (iter->name != localFile) ? localFile : wxString(),
 			localPath, dataObject.GetServerPath(), iter->size);

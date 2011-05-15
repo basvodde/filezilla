@@ -1155,6 +1155,32 @@ public:
 };
 typedef CReverseSort<CRemoteListViewSortOwnerGroup> CRemoteListViewSortOwnerGroup_Reverse;
 
+// Filenames on VMS systems have a revision suffix, e.g.
+// foo.bar;1
+// foo.bar;2
+// foo.bar;3
+wxString StripVMSRevision(const wxString& name)
+{
+	int pos = name.Find(';', true);
+	if (pos < 1)
+		return name;
+
+	const int len = name.Len();
+	if (pos == len - 1)
+		return name;
+
+	int p = pos;
+	while (++p < len)
+	{
+		const wxChar& c = name[p];
+		if (c < '0' || c > '9')
+			return name;
+	}
+
+	return name.Left(pos);
+}
+
+
 void CRemoteListView::OnItemActivated(wxListEvent &event)
 {
 	if (!m_pState->IsRemoteIdle())
@@ -1277,6 +1303,8 @@ void CRemoteListView::OnItemActivated(wxListEvent &event)
 			}
 
 			wxString localFile = CQueueView::ReplaceInvalidCharacters(name);
+			if (m_pDirectoryListing->path.GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+				localFile = StripVMSRevision(localFile);
 			m_pQueue->QueueFile(queue_only, true, name,
 				(name == localFile) ? wxString() : localFile,
 				local_path, m_pDirectoryListing->path, *pServer, entry.size);
@@ -1544,6 +1572,8 @@ void CRemoteListView::TransferSelectedFiles(const CLocalPath& local_parent, bool
 		else
 		{
 			wxString localFile = CQueueView::ReplaceInvalidCharacters(name);
+			if (m_pDirectoryListing->path.GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+				localFile = StripVMSRevision(localFile);
 			m_pQueue->QueueFile(queueOnly, true,
 				name, (name == localFile) ? wxString() : localFile,
 				local_parent, m_pDirectoryListing->path, *pServer, entry.size);
@@ -2858,31 +2888,6 @@ wxListItemAttr* CRemoteListView::OnGetItemAttr(long item) const
 	return 0;
 }
 
-// Filenames on VMS systems have a revision suffix, e.g.
-// foo.bar;1
-// foo.bar;2
-// foo.bar;3
-wxString StripVMSRevision(const wxString& name)
-{
-	int pos = name.Find(';', true);
-	if (pos < 1)
-		return name;
-
-	const int len = name.Len();
-	if (pos == len - 1)
-		return name;
-
-	int p = pos;
-	while (++p < len)
-	{
-		const wxChar& c = name[p];
-		if (c < '0' || c > '9')
-			return name;
-	}
-
-	return name.Left(pos);
-}
-
 wxString CRemoteListView::GetItemText(int item, unsigned int column)
 {
 	int index = GetItemIndex(item);
@@ -3005,6 +3010,8 @@ void CRemoteListView::LinkIsNotDir(const CServerPath& path, const wxString& link
 	if (m_pLinkResolveState->remote_path == path && m_pLinkResolveState->link == link)
 	{
 		wxString localFile = CQueueView::ReplaceInvalidCharacters(link);
+		if (m_pDirectoryListing->path.GetType() == VMS && COptions::Get()->GetOptionVal(OPTION_STRIP_VMS_REVISION))
+			localFile = StripVMSRevision(localFile);
 		m_pQueue->QueueFile(false, true,
 			link, (link != localFile) ? localFile : wxString(),
 			m_pLinkResolveState->local_path, m_pLinkResolveState->remote_path, m_pLinkResolveState->server, -1);

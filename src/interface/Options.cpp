@@ -175,6 +175,7 @@ static const t_Option options[OPTIONS_NUM] =
 	{ "Edit status dialog size", string, _T(""), normal },
 	{ "Display current speed", number, _T("0"), normal },
 	{ "Toolbar hidden", number, _T("0"), normal },
+	{ "Strip VMS revisions", number, _T("0"), normal },
 
 	// Default/internal options
 	{ "Config Location", string, _T(""), default_only },
