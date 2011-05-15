@@ -164,8 +164,8 @@ void BenchmarkStringCoalescer()
 		sum += it->first.size();
 	}
 	std::sort(stringLengths.begin(), stringLengths.end());
-	int median = stringLengths[stringLengths.size() / 2];
-	float avg = (float)sum / tree_.size();
+	int median = stringLengths.empty() ? -1 : (stringLengths[stringLengths.size() / 2]);
+	float avg = tree_.empty() ? -1. : ((float)sum / tree_.size());
 
 	wxMessageBox(wxString::Format(_T("Looking up all strings a hundred times took %dms.\n\nEntries: %u\nAssumed memory consumption: %u\nAverage string length: %0.3f\nMedian string length: %d"),
 		(stop - start).GetMilliseconds().GetLo(),
