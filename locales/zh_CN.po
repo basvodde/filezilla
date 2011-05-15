@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: FileZilla 3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-08 15:13+0200\n"
-"PO-Revision-Date: 2011-05-04 09:25+0800\n"
+"POT-Creation-Date: 2011-05-15 23:22+0200\n"
+"PO-Revision-Date: 2011-05-09 16:16+0800\n"
 "Last-Translator: Yinghua Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -40,9 +40,9 @@ msgid "%d directory"
 msgid_plural "%d directories"
 msgstr[0] "%d 个目录"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1666
+#: ../../locales/../src/interface/RemoteListView.cpp:1696
 #: ../../locales/../src/interface/search.cpp:776
-#: ../../locales/../src/interface/search.cpp:1026
+#: ../../locales/../src/interface/search.cpp:1029
 #, c-format
 msgid "%d directory with its contents"
 msgid_plural "%d directories with their contents"
@@ -50,9 +50,9 @@ msgstr[0] "%d 个目录及其内容"
 
 #: ../../locales/../src/interface/filelist_statusbar.cpp:62
 #: ../../locales/../src/interface/filelist_statusbar.cpp:85
-#: ../../locales/../src/interface/RemoteListView.cpp:1665
+#: ../../locales/../src/interface/RemoteListView.cpp:1695
 #: ../../locales/../src/interface/search.cpp:775
-#: ../../locales/../src/interface/search.cpp:1025
+#: ../../locales/../src/interface/search.cpp:1028
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
@@ -70,7 +70,7 @@ msgid "%d file. Total size: At least %s"
 msgid_plural "%d files. Total size: At least %s"
 msgstr[0] "%d 个文件。大小总共: 至少 %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:2928
+#: ../../locales/../src/interface/QueueView.cpp:2934
 #, c-format
 msgid "%d files added to queue"
 msgstr "%d 个文件加入队列"
@@ -1174,11 +1174,11 @@ msgid ""
 msgstr "该名称的文件正在编辑。要重新打开“%s”？"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2054
-#: ../../locales/../src/interface/RemoteListView.cpp:2646
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "A file with that name is already being transferred."
 msgstr "该名称的文件已经传输。"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2651
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid ""
 "A file with that name is still being edited. Please close it and try again."
 msgstr "该名称的文件仍在编辑，请将其关闭后再试一次。"
@@ -1357,7 +1357,7 @@ msgstr "高级选项:"
 msgid "Algorithm:"
 msgstr "算法:"
 
-#: ../../locales/../src/interface/QueueView.cpp:3130
+#: ../../locales/../src/interface/QueueView.cpp:3136
 msgid "All files have been successfully transferred"
 msgstr "所有文件都已经成功传输"
 
@@ -1365,7 +1365,7 @@ msgstr "所有文件都已经成功传输"
 msgid "All ports in the given range have to be between 1024 and 65535."
 msgstr "所有指定的端口范围必须在 1024 和 65535 之间。"
 
-#: ../../locales/../src/interface/QueueView.cpp:3126
+#: ../../locales/../src/interface/QueueView.cpp:3132
 #, c-format
 msgid "All transfers have finished. %d file could not be transferred."
 msgid_plural "All transfers have finished. %d files could not be transferred."
@@ -1404,22 +1404,22 @@ msgid ""
 "recent version."
 msgstr "或者请访问 http://filezilla-project.org 下载最新版本。"
 
-#: ../../locales/../src/interface/QueueView.cpp:2042
-#, fuzzy, c-format
+#: ../../locales/../src/interface/QueueView.cpp:2048
+#, c-format
 msgid ""
 "An error occurred loading the transfer queue from \"%s\".\n"
 "Some queue items might not have been restored."
 msgstr ""
-"在加载来自“%s”的传输队列时发生了一个错误。\n"
+"在从“%s”加载传输队列时发生了一个错误。\n"
 "队列中的一些项可能没有恢复。"
 
-#: ../../locales/../src/interface/QueueView.cpp:1944
-#, fuzzy, c-format
+#: ../../locales/../src/interface/QueueView.cpp:1950
+#, c-format
 msgid ""
 "An error occurred saving the transfer queue to \"%s\".\n"
 "Some queue items might not have been saved."
 msgstr ""
-"在加载来自“%s”的传输队列时发生了一个错误。\n"
+"在将传输队列保存到“%s”时发生了一个错误。\n"
 "队列中的一些项可能没有恢复。"
 
 #: ../../locales/../src/interface/sitemanager_dialog.cpp:1950
@@ -1704,7 +1704,7 @@ msgid ""
 "directories are enabled"
 msgstr "无法比较目录，本地与远程目录使用了不同的过滤器"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2750
+#: ../../locales/../src/interface/RemoteListView.cpp:2780
 msgid "Cannot compare directories, not connected to a server."
 msgstr "没有连接到任何服务器，无法比较目录。"
 
@@ -1714,8 +1714,8 @@ msgstr "无法创建新过滤器"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2036
 #: ../../locales/../src/interface/LocalListView.cpp:2167
-#: ../../locales/../src/interface/RemoteListView.cpp:2580
-#: ../../locales/../src/interface/RemoteListView.cpp:2626
+#: ../../locales/../src/interface/RemoteListView.cpp:2610
+#: ../../locales/../src/interface/RemoteListView.cpp:2656
 msgid "Cannot edit file"
 msgstr "无法编辑文件"
 
@@ -1755,7 +1755,7 @@ msgstr "无法从资源文件导入工具栏"
 msgid "Cannot rename entry"
 msgstr "无法重命名记录"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1864
+#: ../../locales/../src/interface/RemoteListView.cpp:1894
 msgid "Cannot rename file"
 msgstr "无法重命名文件"
 
@@ -1779,7 +1779,7 @@ msgid "Cannot show dialog"
 msgstr "无法显示对话框"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2054
-#: ../../locales/../src/interface/RemoteListView.cpp:2646
+#: ../../locales/../src/interface/RemoteListView.cpp:2676
 msgid "Cannot view/edit selected file"
 msgstr "无法查看/编辑所选的文件"
 
@@ -2068,15 +2068,15 @@ msgstr "配置端口范围"
 msgid "Configuring FileZilla and your network"
 msgstr "配置 FileZilla 和您的网络"
 
-#: ../../locales/../src/interface/search.cpp:1030
+#: ../../locales/../src/interface/search.cpp:1033
 msgid "Confirm deletion"
 msgstr "确认删除"
 
 #: ../../locales/../src/engine/local_filesys.cpp:136
 #: ../../locales/../src/interface/LocalListView.cpp:2007
 #: ../../locales/../src/interface/LocalListView.cpp:2127
-#: ../../locales/../src/interface/RemoteListView.cpp:1670
-#: ../../locales/../src/interface/RemoteListView.cpp:2597
+#: ../../locales/../src/interface/RemoteListView.cpp:1700
+#: ../../locales/../src/interface/RemoteListView.cpp:2627
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1125
 msgid "Confirmation needed"
 msgstr "需要确认"
@@ -2097,7 +2097,7 @@ msgstr "连接至指定的“站点管理器”站点"
 msgid "Connected"
 msgstr "已连接"
 
-#: ../../locales/../src/interface/QueueView.cpp:1448
+#: ../../locales/../src/interface/QueueView.cpp:1454
 msgid "Connecting"
 msgstr "正在连接"
 
@@ -2128,7 +2128,7 @@ msgstr "正在连接到服务器"
 msgid "Connection"
 msgstr "连接"
 
-#: ../../locales/../src/interface/QueueView.cpp:1064
+#: ../../locales/../src/interface/QueueView.cpp:1070
 msgid "Connection attempt failed"
 msgstr "连接尝试失败"
 
@@ -2258,7 +2258,7 @@ msgstr "无法将命令转换成服务器的编码"
 msgid "Could not convert private key"
 msgstr "无法转换私钥"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3061
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1454
 msgid "Could not copy URLs"
 msgstr "无法复制 URL"
@@ -2267,7 +2267,7 @@ msgstr "无法复制 URL"
 msgid "Could not copy data"
 msgstr "无法复制数据"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2519
+#: ../../locales/../src/interface/RemoteListView.cpp:2549
 #: ../../locales/../src/interface/RemoteTreeView.cpp:899
 msgid ""
 "Could not determine the target of the Drag&Drop operation.\n"
@@ -2317,7 +2317,7 @@ msgstr "无法得到完整远程路径。"
 msgid "Could not get reply from fzputtygen."
 msgstr "无法得到 fzputtygen 的回应。"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2580
+#: ../../locales/../src/interface/RemoteListView.cpp:2610
 msgid "Could not get temporary directory to download file into."
 msgstr "找不到放置下载文件所需的临时目录。"
 
@@ -2381,7 +2381,7 @@ msgstr ""
 "同步浏览已经被禁用。"
 
 #: ../../locales/../src/interface/aboutdialog.cpp:219
-#: ../../locales/../src/interface/RemoteListView.cpp:3054
+#: ../../locales/../src/interface/RemoteListView.cpp:3061
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1454
 msgid "Could not open clipboard"
 msgstr "无法打开剪贴板"
@@ -2432,8 +2432,8 @@ msgstr "无法生成 IO 线程"
 msgid "Could not start proxy handshake: %s"
 msgstr "无法开始代理握手: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1115
-#: ../../locales/../src/interface/QueueView.cpp:1120
+#: ../../locales/../src/interface/QueueView.cpp:1121
+#: ../../locales/../src/interface/QueueView.cpp:1126
 msgid "Could not start transfer"
 msgstr "无法启动传输"
 
@@ -2455,7 +2455,7 @@ msgstr "无法写入“%s”，不能添加该书签: %s"
 msgid "Could not write \"%s\", the global bookmarks could no be saved: %s"
 msgstr "无法写入“%s”，不能添加该全局书签: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1976
+#: ../../locales/../src/interface/QueueView.cpp:1982
 #, c-format
 msgid ""
 "Could not write \"%s\", the queue could not be saved.\n"
@@ -2481,7 +2481,7 @@ msgstr "无法写入“%s”: %s"
 msgid "Could not write keyfile: %s"
 msgstr "无法写入密钥文件: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1109
+#: ../../locales/../src/interface/QueueView.cpp:1115
 msgid "Could not write to local file"
 msgstr "无法写入本地文件"
 
@@ -2511,12 +2511,12 @@ msgstr "在当前目录创建一个新的子目录"
 
 #: ../../locales/../src/interface/LocalListView.cpp:1183
 #: ../../locales/../src/interface/LocalTreeView.cpp:1189
-#: ../../locales/../src/interface/RemoteListView.cpp:1574
+#: ../../locales/../src/interface/RemoteListView.cpp:1604
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1276
 msgid "Create directory"
 msgstr "创建目录"
 
-#: ../../locales/../src/interface/QueueView.cpp:1521
+#: ../../locales/../src/interface/QueueView.cpp:1527
 msgid "Creating directory"
 msgstr "正在创建目录"
 
@@ -2605,7 +2605,7 @@ msgid "DOS-like with virtual paths"
 msgstr "带虚拟路径的 DOS 式"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2041
-#: ../../locales/../src/interface/RemoteListView.cpp:2631
+#: ../../locales/../src/interface/RemoteListView.cpp:2661
 msgid "Dangerous filetype"
 msgstr "危险的文件格式"
 
@@ -2715,11 +2715,11 @@ msgstr "删除所选的目录"
 msgid "Delete selected files and directories"
 msgstr "删除选定的文件和目录"
 
-#: ../../locales/../src/interface/search.cpp:1014
+#: ../../locales/../src/interface/search.cpp:1017
 msgid "Deleting directories"
 msgstr "正在删除目录"
 
-#: ../../locales/../src/interface/search.cpp:1014
+#: ../../locales/../src/interface/search.cpp:1017
 msgid "Deleting multiple unrelated directories is not yet supported"
 msgstr "目前不支持删除多个不相关的目录。"
 
@@ -2771,7 +2771,7 @@ msgstr "保存日志文件的目录不存在或文件名无效。"
 msgid "Directory listing aborted by user"
 msgstr "目录列表被用户终止"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2319
+#: ../../locales/../src/interface/RemoteListView.cpp:2349
 msgid "Directory listing failed"
 msgstr "目录列表失败"
 
@@ -2808,8 +2808,8 @@ msgstr "从服务器断开"
 #: ../../locales/../src/engine/ftpcontrolsocket.cpp:227
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:936
 #: ../../locales/../src/engine/httpcontrolsocket.cpp:938
-#: ../../locales/../src/interface/QueueView.cpp:1062
-#: ../../locales/../src/interface/QueueView.cpp:1106
+#: ../../locales/../src/interface/QueueView.cpp:1068
+#: ../../locales/../src/interface/QueueView.cpp:1112
 msgid "Disconnected from server"
 msgstr "已从服务器断开"
 
@@ -2819,7 +2819,7 @@ msgstr "已从服务器断开"
 msgid "Disconnected from server: %s"
 msgstr "已从服务器断开: %s"
 
-#: ../../locales/../src/interface/QueueView.cpp:1423
+#: ../../locales/../src/interface/QueueView.cpp:1429
 #: ../../locales/../src/interface/statuslinectrl.cpp:269
 msgid "Disconnecting from previous server"
 msgstr "正在从上一个服务器断开连接"
@@ -3006,7 +3006,7 @@ msgstr "编辑失败"
 msgid "Email:"
 msgstr "电子邮件:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2288
+#: ../../locales/../src/interface/QueueView.cpp:2294
 msgid "Empty command"
 msgstr "空命令"
 
@@ -3014,7 +3014,7 @@ msgstr "空命令"
 msgid "Empty command."
 msgstr "空命令。"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2321
+#: ../../locales/../src/interface/RemoteListView.cpp:2351
 msgid "Empty directory listing"
 msgstr "空目录列表"
 
@@ -3073,7 +3073,7 @@ msgstr "输入自定义命令(&C)..."
 msgid "Enter 0 for unlimited speed."
 msgstr "输入 0 表示无速度限制。"
 
-#: ../../locales/../src/interface/QueueView.cpp:2277
+#: ../../locales/../src/interface/QueueView.cpp:2283
 msgid "Enter command"
 msgstr "输入命令"
 
@@ -3153,7 +3153,7 @@ msgstr "导出设置错误"
 msgid "Error importing"
 msgstr "导入出错"
 
-#: ../../locales/../src/interface/QueueView.cpp:2043
+#: ../../locales/../src/interface/QueueView.cpp:2049
 msgid "Error loading queue"
 msgstr "加载队列出错"
 
@@ -3166,10 +3166,10 @@ msgstr "加载队列出错"
 #: ../../locales/../src/interface/filter.cpp:1046
 #: ../../locales/../src/interface/import.cpp:120
 #: ../../locales/../src/interface/import.cpp:311
-#: ../../locales/../src/interface/Options.cpp:213
-#: ../../locales/../src/interface/QueueView.cpp:1957
-#: ../../locales/../src/interface/search.cpp:1091
-#: ../../locales/../src/interface/search.cpp:1112
+#: ../../locales/../src/interface/Options.cpp:214
+#: ../../locales/../src/interface/QueueView.cpp:1963
+#: ../../locales/../src/interface/search.cpp:1094
+#: ../../locales/../src/interface/search.cpp:1115
 #: ../../locales/../src/interface/sitemanager.cpp:250
 #: ../../locales/../src/interface/sitemanager.cpp:448
 #: ../../locales/../src/interface/sitemanager.cpp:544
@@ -3182,10 +3182,9 @@ msgstr "加载队列出错"
 msgid "Error loading xml file"
 msgstr "导入 XML 文件出错"
 
-#: ../../locales/../src/interface/QueueView.cpp:1945
-#, fuzzy
+#: ../../locales/../src/interface/QueueView.cpp:1951
 msgid "Error saving queue"
-msgstr "加载队列出错"
+msgstr "保存队列出错"
 
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:97
 #: ../../locales/../src/interface/settings/optionspage_connection_sftp.cpp:119
@@ -3194,7 +3193,7 @@ msgstr "启动程序出错"
 
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:331
 #: ../../locales/../src/interface/bookmarks_dialog.cpp:859
-#: ../../locales/../src/interface/QueueView.cpp:1977
+#: ../../locales/../src/interface/QueueView.cpp:1983
 #: ../../locales/../src/interface/sitemanager.cpp:658
 #: ../../locales/../src/interface/sitemanager.cpp:785
 #: ../../locales/../src/interface/sitemanager.cpp:847
@@ -3522,7 +3521,7 @@ msgstr "文件中不包含任何可导入的数据。"
 msgid "File editing"
 msgstr "正在编辑文件"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1878
+#: ../../locales/../src/interface/RemoteListView.cpp:1908
 msgid "File exists"
 msgstr "文件已存在"
 
@@ -3644,7 +3643,7 @@ msgstr "文件名过滤器(&F)..."
 msgid "Filename cannot be constructed for directory %s and filename %s"
 msgstr "无法为目录 %s 和文件名 %s 构造文件名"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1864
+#: ../../locales/../src/interface/RemoteListView.cpp:1894
 msgid "Filename invalid"
 msgstr "文件名无效"
 
@@ -3757,7 +3756,7 @@ msgstr "请运行网络配置向导获取关于这些选项的更多信息。"
 msgid "For reliability you should specify a range of at least 10 ports."
 msgstr "您至少需要指定 10 个端口才能保证可靠性。"
 
-#: ../../locales/../src/interface/Options.cpp:212
+#: ../../locales/../src/interface/Options.cpp:213
 msgid ""
 "For this session the default settings will be used. Any changes to the "
 "settings will not be saved."
@@ -4113,7 +4112,7 @@ msgid ""
 "certificate"
 msgstr "不完整的认证链，顶级证书不是自签发证书授权证书"
 
-#: ../../locales/../src/interface/QueueView.cpp:1058
+#: ../../locales/../src/interface/QueueView.cpp:1064
 msgid "Incorrect password"
 msgstr "密码错误"
 
@@ -4136,8 +4135,8 @@ msgid "Interface"
 msgstr "界面"
 
 #: ../../locales/../src/engine/ControlSocket.cpp:219
-#: ../../locales/../src/interface/QueueView.cpp:1015
-#: ../../locales/../src/interface/QueueView.cpp:1591
+#: ../../locales/../src/interface/QueueView.cpp:1021
+#: ../../locales/../src/interface/QueueView.cpp:1597
 msgid "Interrupted by user"
 msgstr "用户终止"
 
@@ -4586,7 +4585,7 @@ msgid "New bookmark"
 msgstr "新建书签"
 
 #: ../../locales/../src/interface/LocalTreeView.cpp:1192
-#: ../../locales/../src/interface/RemoteListView.cpp:1588
+#: ../../locales/../src/interface/RemoteListView.cpp:1618
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1290
 msgid "New directory"
 msgstr "创建目录"
@@ -4622,7 +4621,7 @@ msgstr "否"
 msgid "No category to export selected"
 msgstr "没有选定要导出的分类目录"
 
-#: ../../locales/../src/interface/QueueView.cpp:2288
+#: ../../locales/../src/interface/QueueView.cpp:2294
 msgid "No command given, aborting."
 msgstr "没有给出命令，中止。"
 
@@ -4648,7 +4647,7 @@ msgstr "没有给出主机，请输入一个主机。"
 msgid "No images available"
 msgstr "没有图像可用"
 
-#: ../../locales/../src/interface/QueueView.cpp:3159
+#: ../../locales/../src/interface/QueueView.cpp:3165
 msgid "No more files in the queue!"
 msgstr "队列里已没有文件！"
 
@@ -4714,7 +4713,7 @@ msgstr "并非所有项目都可被重新列队以查看/编辑。"
 msgid "Not connected"
 msgstr "未连接"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2317
+#: ../../locales/../src/interface/RemoteListView.cpp:2347
 msgid "Not connected to any server"
 msgstr "没有连接到任何服务器"
 
@@ -4800,7 +4799,7 @@ msgstr "打开为:"
 #: ../../locales/../src/interface/LocalListView.cpp:2074
 #: ../../locales/../src/interface/LocalListView.cpp:2161
 #: ../../locales/../src/interface/LocalListView.cpp:2174
-#: ../../locales/../src/interface/RemoteListView.cpp:2619
+#: ../../locales/../src/interface/RemoteListView.cpp:2649
 msgid "Opening failed"
 msgstr "打开失败"
 
@@ -5055,7 +5054,7 @@ msgstr "请输入 1 到 10 之间的数字来设置并发传输任务数。"
 msgid "Please enter a password for this server:"
 msgstr "请为这个服务器输入一个密码:"
 
-#: ../../locales/../src/interface/QueueView.cpp:2277
+#: ../../locales/../src/interface/QueueView.cpp:2283
 msgid ""
 "Please enter a path and executable to run.\n"
 "E.g. c:\\somePath\\file.exe under MS Windows or /somePath/file under Unix.\n"
@@ -5106,7 +5105,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:1183
 #: ../../locales/../src/interface/LocalTreeView.cpp:1189
-#: ../../locales/../src/interface/RemoteListView.cpp:1574
+#: ../../locales/../src/interface/RemoteListView.cpp:1604
 #: ../../locales/../src/interface/RemoteTreeView.cpp:1276
 msgid "Please enter the name of the directory which should be created:"
 msgstr "请输入将要创建的目录的名字:"
@@ -5367,7 +5366,7 @@ msgstr "公钥算法:"
 msgid "Public permissions"
 msgstr "公共权限"
 
-#: ../../locales/../src/interface/QueueView.cpp:3214
+#: ../../locales/../src/interface/QueueView.cpp:3220
 msgid "Queue has been fully processed"
 msgstr "队列已全部处理"
 
@@ -5440,22 +5439,22 @@ msgstr "只读"
 msgid "Really cancel current operation?"
 msgstr "真的要取消当前操作吗？"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1662
-#: ../../locales/../src/interface/search.cpp:1022
+#: ../../locales/../src/interface/RemoteListView.cpp:1692
+#: ../../locales/../src/interface/search.cpp:1025
 #, c-format
 msgid "Really delete %d directory with its contents?"
 msgid_plural "Really delete %d directories with their contents?"
 msgstr[0] "确实要删除 %d 个目录及其内容？"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1660
-#: ../../locales/../src/interface/search.cpp:1020
+#: ../../locales/../src/interface/RemoteListView.cpp:1690
+#: ../../locales/../src/interface/search.cpp:1023
 #, c-format
 msgid "Really delete %d file?"
 msgid_plural "Really delete %d files?"
 msgstr[0] "确实要删除 %d 个文件？"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1667
-#: ../../locales/../src/interface/search.cpp:1027
+#: ../../locales/../src/interface/RemoteListView.cpp:1697
+#: ../../locales/../src/interface/search.cpp:1030
 #, c-format
 msgid "Really delete %s and %s?"
 msgstr "确实要删除 %s 和 %s？"
@@ -5469,7 +5468,7 @@ msgstr "真的要删除所有选定的文件和/或目录吗？"
 msgid "Reason"
 msgstr "原因"
 
-#: ../../locales/../src/interface/QueueView.cpp:3222
+#: ../../locales/../src/interface/QueueView.cpp:3228
 msgid "Reboot now"
 msgstr "马上重启"
 
@@ -5693,11 +5692,11 @@ msgstr "SFTP"
 msgid "Save settings?"
 msgstr "保存设置吗？"
 
-#: ../../locales/../src/interface/QueueView.cpp:1825
+#: ../../locales/../src/interface/QueueView.cpp:1831
 msgid "Scanning for files to add to queue"
 msgstr "正在检查加入到队列中的文件"
 
-#: ../../locales/../src/interface/QueueView.cpp:1827
+#: ../../locales/../src/interface/QueueView.cpp:1833
 msgid "Scanning for files to upload"
 msgstr "正在检查要上传的文件"
 
@@ -5877,11 +5876,11 @@ msgstr "已在编辑所选的文件。"
 msgid "Selected file is already loaded"
 msgstr "所选的文件已经加载。"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2651
+#: ../../locales/../src/interface/RemoteListView.cpp:2681
 msgid "Selected file is already opened"
 msgstr "所选的文件已打开"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2679
+#: ../../locales/../src/interface/RemoteListView.cpp:2709
 msgid "Selected file is still being edited"
 msgstr "所选文件已在编辑"
 
@@ -6045,7 +6044,7 @@ msgstr "要显示两边的目录树并进行比较吗？"
 msgid "Shows this help dialog"
 msgstr "显示这个帮助对话框"
 
-#: ../../locales/../src/interface/QueueView.cpp:3224
+#: ../../locales/../src/interface/QueueView.cpp:3230
 msgid "Shutdown now"
 msgstr "马上关闭系统"
 
@@ -6325,7 +6324,7 @@ msgstr "目标文件已经存在"
 msgid "Target file:"
 msgstr "目标文件:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:1878
+#: ../../locales/../src/interface/RemoteListView.cpp:1908
 msgid "Target filename already exists, really continue?"
 msgstr "目标文件名已经存在，是否继续？"
 
@@ -6414,7 +6413,7 @@ msgstr ""
 
 #: ../../locales/../src/interface/LocalListView.cpp:2035
 #: ../../locales/../src/interface/LocalListView.cpp:2166
-#: ../../locales/../src/interface/RemoteListView.cpp:2625
+#: ../../locales/../src/interface/RemoteListView.cpp:2655
 #, c-format
 msgid ""
 "The file '%s' cannot be opened:\n"
@@ -6437,7 +6436,7 @@ msgstr "文件“%s”无法加载。"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2029
 #: ../../locales/../src/interface/LocalListView.cpp:2161
-#: ../../locales/../src/interface/RemoteListView.cpp:2619
+#: ../../locales/../src/interface/RemoteListView.cpp:2649
 #, c-format
 msgid ""
 "The file '%s' could not be opened:\n"
@@ -6572,7 +6571,7 @@ msgid ""
 "you installed this version."
 msgstr "最新版已下载，请您依照安装当前版本的方法进行安装。"
 
-#: ../../locales/../src/interface/QueueView.cpp:1956
+#: ../../locales/../src/interface/QueueView.cpp:1962
 msgid "The queue will not be saved."
 msgstr "队列将不会被保存。"
 
@@ -6598,13 +6597,13 @@ msgstr "所选的文件可导入以下分类:"
 msgid "The selected file is already being edited:"
 msgstr "所选的文件正在被编辑:"
 
-#: ../../locales/../src/interface/RemoteListView.cpp:2679
+#: ../../locales/../src/interface/RemoteListView.cpp:2709
 msgid ""
 "The selected file is still opened in some other program, please close it."
 msgstr "所选文件仍被其它程序打开，请关闭它。"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2041
-#: ../../locales/../src/interface/RemoteListView.cpp:2631
+#: ../../locales/../src/interface/RemoteListView.cpp:2661
 msgid ""
 "The selected file would be executed directly.\n"
 "This can be dangerous and damage your system.\n"
@@ -6653,11 +6652,11 @@ msgid ""
 "settings to have effect."
 msgstr "已导入设置，您需要重新启动 FileZilla 使所有设置生效。"
 
-#: ../../locales/../src/interface/QueueView.cpp:3212
+#: ../../locales/../src/interface/QueueView.cpp:3218
 msgid "The system will soon reboot unless you click Cancel."
 msgstr "除非您按下取消，否则系统将会马上重启。"
 
-#: ../../locales/../src/interface/QueueView.cpp:3210
+#: ../../locales/../src/interface/QueueView.cpp:3216
 msgid "The system will soon shut down unless you click Cancel."
 msgstr "除非您按下取消，否则系统将会马上关闭。"
 
@@ -6715,8 +6714,8 @@ msgstr "时间格式"
 msgid "Time&out in seconds:"
 msgstr "超时秒数(&O):"
 
-#: resources.h:734 ../../locales/../src/interface/QueueView.cpp:1060
-#: ../../locales/../src/interface/QueueView.cpp:1104
+#: resources.h:734 ../../locales/../src/interface/QueueView.cpp:1066
+#: ../../locales/../src/interface/QueueView.cpp:1110
 msgid "Timeout"
 msgstr "超时"
 
@@ -6839,7 +6838,7 @@ msgstr "传输连接被打断: %s"
 msgid "Transferred data got tainted."
 msgstr "已传输的数据被损坏。"
 
-#: ../../locales/../src/interface/QueueView.cpp:1485
+#: ../../locales/../src/interface/QueueView.cpp:1491
 #: ../../locales/../src/interface/statuslinectrl.cpp:278
 msgid "Transferring"
 msgstr "正在传输"
@@ -6848,8 +6847,8 @@ msgstr "正在传输"
 msgid "Transfers"
 msgstr "传输"
 
-#: ../../locales/../src/interface/QueueView.cpp:3127
-#: ../../locales/../src/interface/QueueView.cpp:3130
+#: ../../locales/../src/interface/QueueView.cpp:3133
+#: ../../locales/../src/interface/QueueView.cpp:3136
 msgid "Transfers finished"
 msgstr "传输完成"
 
@@ -7177,15 +7176,15 @@ msgstr "可见栏目"
 msgid "W&rite"
 msgstr "写入(&R)"
 
-#: ../../locales/../src/interface/QueueView.cpp:1784
+#: ../../locales/../src/interface/QueueView.cpp:1790
 msgid "Waiting"
 msgstr "等待"
 
-#: ../../locales/../src/interface/QueueView.cpp:1392
+#: ../../locales/../src/interface/QueueView.cpp:1398
 msgid "Waiting for browsing connection"
 msgstr "等待浏览连接"
 
-#: ../../locales/../src/interface/QueueView.cpp:1435
+#: ../../locales/../src/interface/QueueView.cpp:1441
 msgid "Waiting for password"
 msgstr "等待密码"
 
@@ -7327,7 +7326,7 @@ msgid "You have selected at least one symbolic link."
 msgstr "您选择了至少一个符号链接。"
 
 #: ../../locales/../src/interface/LocalListView.cpp:2008
-#: ../../locales/../src/interface/RemoteListView.cpp:2598
+#: ../../locales/../src/interface/RemoteListView.cpp:2628
 msgid ""
 "You have selected more than 10 files for editing, do you really want to "
 "continue?"
