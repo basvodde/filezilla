@@ -36,13 +36,13 @@ CXmlFile::~CXmlFile()
 	delete m_pDocument;
 }
 
-TiXmlElement* CXmlFile::Load(const wxString& name)
+TiXmlElement* CXmlFile::Load(const wxString& name, bool create)
 {
 	wxFileName fileName(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), name + _T(".xml"));
-	return Load(fileName);
+	return Load(fileName, create);
 }
 
-TiXmlElement* CXmlFile::Load(const wxFileName& fileName)
+TiXmlElement* CXmlFile::Load(const wxFileName& fileName, bool create)
 {
 	if (fileName.IsOk())
 		SetFileName(fileName);
@@ -53,15 +53,18 @@ TiXmlElement* CXmlFile::Load(const wxFileName& fileName)
 	m_pDocument = 0;
 
 	wxString error;
-	TiXmlElement* pElement = GetXmlFile(m_fileName, true, &error);
+	TiXmlElement* pElement = GetXmlFile(m_fileName, create, &error);
 	if (!pElement)
 	{
-		m_error.Printf(_("The file '%s' could not be loaded."), m_fileName.GetFullPath().c_str());
 		if (!error.empty())
-			m_error += _T("\n") + error;
-		else
-			m_error += wxString(_T("\n")) + _("Make sure the file can be accessed and is a well-formed XML document.");
-		m_modificationTime = wxDateTime();
+		{
+			m_error.Printf(_("The file '%s' could not be loaded."), m_fileName.GetFullPath().c_str());
+			if (!error.empty())
+				m_error += _T("\n") + error;
+			else
+				m_error += wxString(_T("\n")) + _("Make sure the file can be accessed and is a well-formed XML document.");
+			m_modificationTime = wxDateTime();
+		}
 		return 0;
 	}
 

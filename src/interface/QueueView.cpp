@@ -1956,11 +1956,14 @@ void CQueueView::LoadQueueFromXML()
 {
 	wxFileName file(COptions::Get()->GetOption(OPTION_DEFAULT_SETTINGSDIR), _T("queue.xml"));
 	CXmlFile xml(file);
-	TiXmlElement* pDocument = xml.Load();
+	TiXmlElement* pDocument = xml.Load(wxFileName(), false);
 	if (!pDocument)
 	{
-		wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
-		wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		if (!xml.GetError().empty())
+		{
+			wxString msg = xml.GetError() + _T("\n\n") + _("The queue will not be saved.");
+			wxMessageBox(msg, _("Error loading xml file"), wxICON_ERROR);
+		}
 
 		return;
 	}

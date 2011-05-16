@@ -29,8 +29,8 @@ public:
 	bool HasFileName() const { return m_fileName.IsOk(); }
 	
 	// Sets error description on failure
-	TiXmlElement* Load(const wxString& name);
-	TiXmlElement* Load(const wxFileName& fileName = wxFileName());
+	TiXmlElement* Load(const wxString& name, bool create = true);
+	TiXmlElement* Load(const wxFileName& fileName = wxFileName(), bool create = true);
 
 	wxString GetError() const { return m_error; }
 	int GetRawDataLength();
