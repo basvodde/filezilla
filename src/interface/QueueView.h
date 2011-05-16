@@ -140,6 +140,10 @@ public:
 
 protected:
 
+#ifdef __WXMSW__
+	WXLRESULT MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam);
+#endif
+
 	void AdvanceQueue(bool refresh = true);
 	bool TryStartNextTransfer();
 

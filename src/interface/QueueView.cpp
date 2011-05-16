@@ -3392,7 +3392,7 @@ int CQueueView::GetLineHeight()
 	m_line_height = rect.GetHeight();
 
 #ifdef __WXMSW__
-	m_header_height = rect.y;
+	m_header_height = rect.y + GetScrollPos(wxVERTICAL) * m_line_height;
 #endif
 
 	return m_line_height;
@@ -3401,7 +3401,7 @@ int CQueueView::GetLineHeight()
 void CQueueView::OnSize(wxSizeEvent& event)
 {
 	if (!m_resize_timer.IsRunning())
-		m_resize_timer.Start(250);
+		m_resize_timer.Start(250, true);
 
 	event.Skip();
 }
@@ -3507,3 +3507,31 @@ void CQueueView::ReleaseExclusiveEngineLock(CFileZillaEngine* pEngine)
 		break;
 	}
 }
+
+#ifdef __WXMSW__
+
+#ifndef WM_DWMCOMPOSITIONCHANGED
+#define WM_DWMCOMPOSITIONCHANGED        0x031E
+#endif // WM_DWMCOMPOSITIONCHANGED
+
+WXLRESULT CQueueView::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
+{
+	if (nMsg == WM_DWMCOMPOSITIONCHANGED || nMsg == WM_THEMECHANGED)
+	{
+		m_line_height = -1;
+		if (!m_resize_timer.IsRunning())
+			m_resize_timer.Start(250, true);
+	}
+	else if (nMsg == WM_LBUTTONDOWN)
+	{
+		// If clicking a partially selected item, Windows starts an internal timer with the double-click interval (as seen in the 
+		// disassembly). After the timer expires, the given item is selected. But there's a huge bug in Windows: We don't get
+		// notified about this change in scroll position in any way (verified using Spy++), so on left button down, start our
+		// own timer with a slightly higher interval.
+		if (!m_resize_timer.IsRunning())
+			m_resize_timer.Start(GetDoubleClickTime() + 5, true);
+	}
+	return CQueueViewBase::MSWWindowProc(nMsg, wParam, lParam);
+}
+
+#endif
