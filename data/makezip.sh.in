@@ -25,10 +25,34 @@ targetdir="win32zip/FileZilla-$PACKAGE_VERSION"
 mkdir -p "$targetdir" || exit 1
 
 echo Copying executables
-cp "$top_builddir/src/interface/filezilla.exe" "$targetdir/filezilla.exe" || exit 1
-cp "$top_builddir/src/putty/fzsftp.exe" "$targetdir/fzsftp.exe" || exit 1
-cp "$top_builddir/src/putty/fzputtygen.exe" "$targetdir/fzputtygen.exe" || exit 1
-cp "$top_builddir/src/fzshellext/.libs/libfzshellext-0.dll" "$targetdir/fzshellext.dll" || exit 1
+
+# 2-3 parameters:
+# $1: relative path to top build dir, no leading nor trailing slashes
+# $2: executable name
+# $3: optional target name
+copy_libtool()
+{
+  local target
+
+  if [ "$3" == "" ]; then
+    target="$2"
+  else
+    target="$3"
+  fi
+
+  if [ -x "$top_builddir/$1/.libs/$2" ]; then
+    cp "$top_builddir/$1/.libs/$2" "$targetdir/$target" || exit 1
+  else
+    cp "$top_builddir/$1/$2" "$targetdir/$target" || exit 1
+  fi
+}
+
+
+copy_libtool "src/interface" "filezilla.exe"
+copy_libtool "src/putty" "fzsftp.exe"
+copy_libtool "src/putty" "fzputtygen.exe"
+copy_libtool "src/fzshellext" "libfzshellext-0.dll" "fzshellext.dll"
+
 cp "$top_srcdir/src/fzshellext/fzshellext_64.dll" "$targetdir/fzshellext_64.dll" || exit 1
 cp "$top_srcdir/data/mingwm10.dll" "$targetdir" || exit 1
 
