@@ -4,13 +4,13 @@ AC_DEFUN([CHECK_CXX0X], [
   
   AC_LANG_PUSH(C++)
 
-  cxx_has_std_cxx0x=""
+  cxx_has_cxx0x=""
   if test "X$GCC" = "Xyes"; then
 
-    AC_MSG_CHECKING([whether compiler supports -std=C++0x])
+    AC_MSG_CHECKING([whether compiler supports -std=gnu++0x])
 
     old_cxxflags="$CXXFLAGS"
-    CXXFLAGS="$CXXFLAGS -std=c++0x"
+    CXXFLAGS="$CXXFLAGS -std=gnu++0x"
  
     AC_COMPILE_IFELSE([
       AC_LANG_PROGRAM([[
@@ -19,11 +19,31 @@ AC_DEFUN([CHECK_CXX0X], [
       ]])
     ], [
       AC_MSG_RESULT([yes])
-      cxx_has_std_cxx0x=yes
+      cxx_has_cxx0x="-std=gnu++0x"
     ], [
       AC_MSG_RESULT([no])
       CXXFLAGS="$old_cxxflags"
+
+      AC_MSG_CHECKING([whether compiler supports -std=C++0x])
+
+      old_cxxflags="$CXXFLAGS"
+      CXXFLAGS="$CXXFLAGS -std=c++0x"
+   
+      AC_COMPILE_IFELSE([
+        AC_LANG_PROGRAM([[
+        ]], [[
+          return 0;
+        ]])
+      ], [
+        AC_MSG_RESULT([yes])
+        cxx_has_cxx0x="-std=c++0x"
+      ], [
+        AC_MSG_RESULT([no])
+        CXXFLAGS="$old_cxxflags"
+      ])
+
     ])
+
   fi
 
   AC_MSG_CHECKING([for whether we can include <unordered_map>])
@@ -31,8 +51,8 @@ AC_DEFUN([CHECK_CXX0X], [
   # This sucks: -std=C++0x is only for C++, yet it is needed by the preprocessor already.
   # Unfortunately cannot globably add it to CPPFLAGS due to the C compiler not liking it.
   old_cppflags="$CPPFLAGS"
-  if test "$cxx_has_std_cxx0x" = "yes"; then
-    CPPFLAGS="$CPPFLAGS -std=c++0x"
+  if test "$cxx_has_cxx0x" != ""; then
+    CPPFLAGS="$CPPFLAGS $cxx_has_cxx0x"
   fi
 
   has_unordered_map=""
