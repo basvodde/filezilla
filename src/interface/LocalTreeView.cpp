@@ -299,13 +299,6 @@ void CLocalTreeView::SetDir(wxString localDir)
 
 	if (subDirs == _T(""))
 	{
-		wxTreeItemIdValue value;
-		wxTreeItemId child = GetFirstChild(parent, value);
-
-		//Not needed, item stays unexpanded
-		//if (child && GetItemText(child) == _T(""))
-		//	DisplayDir(parent, localDir);
-
 		SafeSelectItem(parent);
 		return;
 	}

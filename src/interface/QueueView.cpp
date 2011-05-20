@@ -3168,6 +3168,7 @@ void CQueueView::ActionAfter(bool warned /*=false*/)
 			wxMessageDialog* dialog = new wxMessageDialog(m_pMainFrame, _("No more files in the queue!"), _T("Queue completion"), wxOK | wxICON_INFORMATION);
 			m_pMainFrame->RequestUserAttention(wxUSER_ATTENTION_ERROR);
 			dialog->ShowModal();
+			dialog->Destroy();
 			break;
 		}
 		case ActionAfterState_PlaySound:
@@ -3221,7 +3222,6 @@ void CQueueView::ActionAfterWarnUser(bool shutdown)
 		message = _("The system will soon reboot unless you click Cancel.");
 
 	m_actionAfterWarnDialog = new wxProgressDialog(_("Queue has been fully processed"), message, 150, m_pMainFrame, wxPD_CAN_ABORT | wxPD_AUTO_HIDE | wxPD_CAN_SKIP | wxPD_APP_MODAL);
-	wxSize dialogSize = m_actionAfterWarnDialog->GetSize();
 
 	// Magic id from wxWidgets' src/generic/propdlgg.cpp
 	wxWindow* pSkip = m_actionAfterWarnDialog->FindWindow(32000);

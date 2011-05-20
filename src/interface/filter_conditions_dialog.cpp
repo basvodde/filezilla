@@ -492,7 +492,6 @@ void CFilterConditionsDialog::UpdateConditionsClientSize()
 		wxSize size = controls.pValue->GetSize();
 		size.SetWidth(size.GetWidth() + deltaX);
 		controls.pValue->SetSize(size);
-		wxSize set_size = controls.pValue->GetSize();
 
 		wxPoint pos = controls.pRemove->GetPosition();
 		pos.x += deltaX;

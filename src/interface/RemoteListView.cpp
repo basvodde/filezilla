@@ -2490,8 +2490,6 @@ void CRemoteListView::OnBeginDrag(wxListEvent& event)
 		return;
 	}
 
-	const wxDataFormat fmt = object.GetReceivedFormat();
-
 #if FZ3_USESHELLEXT
 	if (ext)
 	{

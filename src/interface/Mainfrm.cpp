@@ -1608,7 +1608,7 @@ void CMainFrame::ShowLocalTree()
 			continue;
 
 		controls->pLocalTreeViewPanel->SetHeader(controls->pLocalListViewPanel->DetachHeader());
-		wxSize size = controls->pLocalSplitter->GetClientSize();
+		
 		if (layout == 3 && swap)
 			controls->pLocalSplitter->SplitVertically(controls->pLocalListViewPanel, controls->pLocalTreeViewPanel);
 		else if (layout)
@@ -1664,7 +1664,7 @@ void CMainFrame::ShowRemoteTree()
 			continue;
 
 		controls->pRemoteTreeViewPanel->SetHeader(controls->pRemoteListViewPanel->DetachHeader());
-		wxSize size = controls->pRemoteSplitter->GetClientSize();
+
 		if (layout == 3 && !swap)
 			controls->pRemoteSplitter->SplitVertically(controls->pRemoteListViewPanel, controls->pRemoteTreeViewPanel);
 		else if (layout)
@@ -1710,13 +1710,9 @@ void CMainFrame::OnToggleQueueView(wxCommandEvent& event)
 	else
 	{
 		if (m_pBottomSplitter->IsSplit())
-		{
-			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pBottomSplitter->Unsplit(m_pQueueLogSplitter);
-		}
 		else
 		{
-			wxRect rect = m_pBottomSplitter->GetClientSize();
 			m_pQueueLogSplitter->Initialize(m_pQueuePane);
 			m_pBottomSplitter->SplitHorizontally(m_pContextControl, m_pQueueLogSplitter);
 		}

@@ -875,8 +875,6 @@ void CRemoteTreeView::OnBeginDrag(wxTreeEvent& event)
 		return;
 	}
 
-	const wxDataFormat fmt = object.GetReceivedFormat();
-
 #if FZ3_USESHELLEXT
 	if (ext)
 	{

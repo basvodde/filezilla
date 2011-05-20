@@ -49,7 +49,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
     HANDLE hin;
     DWORD savemode, i;
 
-    static const char absentmsg_batch[] =
+    /*static const char absentmsg_batch[] =
 	"The server's host key is not cached in the registry. You\n"
 	"have no guarantee that the server is the computer you\n"
 	"think it is.\n"
@@ -68,7 +68,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"adding the key to the cache, enter \"n\".\n"
 	"If you do not trust this host, press Return to abandon the\n"
 	"connection.\n"
-	"Store key in cache? (y/n) ";
+	"Store key in cache? (y/n) ";*/
 
     static const char wrongmsg_batch[] =
 	"WARNING - POTENTIAL SECURITY BREACH!\n"
@@ -80,7 +80,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"The new %s key fingerprint is:\n"
 	"%s\n"
 	"Connection abandoned.\n";
-    static const char wrongmsg[] =
+    /*static const char wrongmsg[] =
 	"WARNING - POTENTIAL SECURITY BREACH!\n"
 	"The server's host key does not match the one PuTTY has\n"
 	"cached in the registry. This means that either the\n"
@@ -96,7 +96,7 @@ int verify_ssh_host_key(void *frontend, char *host, int port, char *keytype,
 	"If you want to abandon the connection completely, press\n"
 	"Return to cancel. Pressing Return is the ONLY guaranteed\n"
 	"safe choice.\n"
-	"Update cached key? (y/n, Return cancels connection) ";
+	"Update cached key? (y/n, Return cancels connection) ";*/
 
     static const char abandoned[] = "Connection abandoned.";
 
@@ -287,12 +287,12 @@ void logevent(void *frontend, const char *string)
     log_eventlog(console_logctx, string);
 }
 
-static void console_data_untrusted(HANDLE hout, const char *data, int len)
+/*static void console_data_untrusted(HANDLE hout, const char *data, int len)
 {
     DWORD dummy;
-    /* FIXME: control-character filtering */
+    *//* FIXME: control-character filtering *//*
     WriteFile(hout, data, len, &dummy, NULL);
-}
+}*/
 
 int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 {
