@@ -1117,9 +1117,13 @@ FunctionEnd
   
   Delete "$INSTDIR\resources\${SET}\theme.xml"
   Delete "$INSTDIR\resources\${SET}\16x16\*.png"
+  Delete "$INSTDIR\resources\${SET}\20x20\*.png"
+  Delete "$INSTDIR\resources\${SET}\24x24\*.png"
   Delete "$INSTDIR\resources\${SET}\32x32\*.png"
   Delete "$INSTDIR\resources\${SET}\48x48\*.png"
   RMDir "$INSTDIR\resources\${SET}\16x16"
+  RMDir "$INSTDIR\resources\${SET}\20x20"
+  RMDir "$INSTDIR\resources\${SET}\24x24"
   RMDir "$INSTDIR\resources\${SET}\32x32"
   RMDir "$INSTDIR\resources\${SET}\48x48"
   RMDir "$INSTDIR\resources\${SET}"
