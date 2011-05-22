@@ -1,4 +1,4 @@
-#include <filezilla.h>
+#include <libfilezilla.h>
 #include <iostream>
 #include <string>
 #include <cppunit/extensions/TestFactoryRegistry.h>
