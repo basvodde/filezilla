@@ -41,7 +41,7 @@
 
   !include "MUI2.nsh"
   !include "WordFunc.nsh"
-  !include Library.nsh
+  !include "Library.nsh"
   !include "WinVer.nsh"
   !include "FileFunc.nsh"
   !include "Memento.nsh"
@@ -71,6 +71,7 @@
   Var IS_ADMIN
   Var USERNAME
   Var PERFORM_UPDATE
+  Var GetInstalledSize.total
 
 ;--------------------------------
 ;Interface Settings
@@ -822,8 +823,12 @@ Section "FileZilla Client" SecMain
   WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayVersion" "${VERSION}"
   WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "URLInfoAbout" "http://filezilla-project.org/"
   WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "HelpLink" "http://filezilla-project.org"
+  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "Publisher" "FileZilla Project"
   WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoModify" "1"
   WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoRepair" "1"
+
+  Call GetInstalledSize
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "EstimatedSize" "$GetInstalledSize.total" ; Create/Write the reg key with the dword value
 
   SetOutPath "$INSTDIR\docs"
   File "${top_srcdir}\docs\fzdefaults.xml.example"
@@ -936,6 +941,22 @@ Function CustomFinishRun
 
   UAC_unicode::Exec '' '"$INSTDIR/filezilla.exe"' '' ''
 
+FunctionEnd
+
+Function GetInstalledSize
+  Push $0
+  Push $1
+  StrCpy $GetInstalledSize.total 0
+  ${ForEach} $1 0 256 + 1
+    ${if} ${SectionIsSelected} $1
+      SectionGetSize $1 $0
+      IntOp $GetInstalledSize.total $GetInstalledSize.total + $0
+    ${Endif}
+  ${Next}
+  Pop $1
+  Pop $0
+  IntFmt $GetInstalledSize.total "0x%08X" $GetInstalledSize.total
+  Push $GetInstalledSize.total
 FunctionEnd
 
 ;--------------------------------
