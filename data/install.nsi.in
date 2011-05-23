@@ -9,6 +9,11 @@
   !define top_srcdir @top_srcdir@
   !define srcdir @srcdir@
   !define VERSION @PACKAGE_VERSION@
+  !define VERSION_MAJOR @PACKAGE_VERSION_MAJOR@
+  !define VERSION_MINOR @PACKAGE_VERSION_MINOR@
+  !define VERSION_FULL  @PACKAGE_VERSION_MAJOR@.@PACKAGE_VERSION_MINOR@.@PACKAGE_VERSION_MICRO@.@PACKAGE_VERSION_NANO@
+  !define PUBLISHER    "FileZilla Project"
+  !define WEBSITE_URL  "http://filezilla-project.org/"
   !addplugindir @srcdir@
 
 ;--------------------------------
@@ -46,6 +51,19 @@
   !include "FileFunc.nsh"
   !include "Memento.nsh"
   !include "@srcdir@\process_running.nsh"
+
+;--------------------------------
+;Installer's VersionInfo
+
+  VIProductVersion                   "${VERSION_FULL}"
+  VIAddVersionKey "CompanyName"      "${PUBLISHER}"
+  VIAddVersionKey "ProductName"      "FileZilla" 
+  VIAddVersionKey "ProductVersion"   "${VERSION}"
+  VIAddVersionKey "FileDescription"  "FileZilla FTP Client"
+  VIAddVersionKey "FileVersion"      "${VERSION}"
+  VIAddVersionKey "LegalCopyright"   "${PUBLISHER}"
+  VIAddVersionKey "OriginalFilename" "FileZilla_${VERSION}_win32-setup.exe"
+
 
 ;--------------------------------
 ;Required functions
@@ -818,14 +836,17 @@ Section "FileZilla Client" SecMain
 
   WriteRegExpandStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "UninstallString" "$INSTDIR\uninstall.exe"
   WriteRegExpandStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "InstallLocation" "$INSTDIR"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayName" "FileZilla Client ${VERSION}"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayIcon" "$INSTDIR\FileZilla.exe"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "DisplayVersion" "${VERSION}"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "URLInfoAbout" "http://filezilla-project.org/"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "HelpLink" "http://filezilla-project.org"
-  WriteRegStr SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "Publisher" "FileZilla Project"
-  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoModify" "1"
-  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "NoRepair" "1"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "DisplayName"    "FileZilla Client ${VERSION}"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "DisplayIcon"    "$INSTDIR\FileZilla.exe"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "DisplayVersion" "${VERSION}"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "URLInfoAbout"   "${WEBSITE_URL}"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "URLUpdateInfo"  "${WEBSITE_URL}"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "HelpLink"       "${WEBSITE_URL}"
+  WriteRegStr   SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "Publisher"      "${PUBLISHER}"
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "VersionMajor"   "${VERSION_MAJOR}"
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "VersionMinor"   "${VERSION_MINOR}"
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "NoModify"       "1"
+  WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client"   "NoRepair"       "1"
 
   Call GetInstalledSize
   WriteRegDWORD SHCTX "Software\Microsoft\Windows\CurrentVersion\Uninstall\FileZilla Client" "EstimatedSize" "$GetInstalledSize.total" ; Create/Write the reg key with the dword value
