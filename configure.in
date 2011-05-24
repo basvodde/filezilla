@@ -464,7 +464,7 @@ if test "$buildmain" = "yes"; then
   # SQLite3
   # -------
 
-  PKG_CHECK_MODULES(LIBSQLITE3, sqdlite3 >= 3.7,, [ 
+  PKG_CHECK_MODULES(LIBSQLITE3, sqlite3 >= 3.7,, [ 
 		
     AC_CHECK_HEADER(sqlite3.h,, 
     [
