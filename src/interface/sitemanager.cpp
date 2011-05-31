@@ -261,7 +261,7 @@ wxMenu* CSiteManager::GetSitesMenu()
 	TiXmlElement* pElement = pDocument->FirstChildElement("Servers");
 	if (!pElement)
 	{
-		if (!predefinedSites)
+		if (predefinedSites)
 			return predefinedSites;
 
 		wxMenu *pMenu = new wxMenu;
