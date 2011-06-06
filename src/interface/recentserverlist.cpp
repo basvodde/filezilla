@@ -2,6 +2,7 @@
 #include "recentserverlist.h"
 #include "ipcmutex.h"
 #include "filezillaapp.h"
+#include "Options.h"
 #include "xmlfunctions.h"
 
 CXmlFile CRecentServerList::m_XmlFile;
@@ -83,6 +84,9 @@ void CRecentServerList::SetMostRecentServer(const CServer& server)
 		if (m_mostRecentServers.size() > 10)
 			m_mostRecentServers.pop_back();
 	}
+
+	if (COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) == 2)
+		return;
 
 	TiXmlElement* pDocument = m_XmlFile.GetElement();
 	if (!pDocument)
