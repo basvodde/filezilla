@@ -1,6 +1,7 @@
 #include <filezilla.h>
 #include "filter_conditions_dialog.h"
 #include "customheightlistctrl.h"
+#include "textctrlex.h"
 
 static wxArrayString stringConditionTypes;
 static wxArrayString sizeConditionTypes;
@@ -426,7 +427,7 @@ void CFilterConditionsDialog::MakeControls(const CFilterCondition& condition, in
 
 		if (!controls.pValue)
 		{
-			controls.pValue = new wxTextCtrl();
+			controls.pValue = new wxTextCtrlEx();
 			controls.pValue->Create(m_pListCtrl, wxID_ANY, _T(""), pos, size);
 		}
 		else

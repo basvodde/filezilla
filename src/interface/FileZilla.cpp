@@ -34,7 +34,7 @@
 #include <wx/xrc/xh_stbox.h>
 #include <wx/xrc/xh_stlin.h>
 #include <wx/xrc/xh_sttxt.h>
-#include <wx/xrc/xh_text.h>
+#include "xh_text_ex.h"
 #include <wx/xrc/xh_tree.h>
 #include <wx/xrc/xh_hyperlink.h>
 #include "xh_toolb_ex.h"
@@ -518,7 +518,7 @@ bool CFileZillaApp::LoadResourceFiles()
 	pResource->AddHandler(new wxSpinCtrlXmlHandler);
 	pResource->AddHandler(new wxRadioButtonXmlHandler);
 	pResource->AddHandler(new wxNotebookXmlHandler);
-	pResource->AddHandler(new wxTextCtrlXmlHandler);
+	pResource->AddHandler(new wxTextCtrlXmlHandlerEx);
 	pResource->AddHandler(new wxListBoxXmlHandler);
 	pResource->AddHandler(new wxToolBarXmlHandlerEx);
 	pResource->AddHandler(new wxStaticLineXmlHandler);

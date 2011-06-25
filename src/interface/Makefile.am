@@ -99,6 +99,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		statuslinectrl.cpp \
 		StatusView.cpp \
 		systemimagelist.cpp \
+		textctrlex.cpp \
 		themeprovider.cpp \
 		timeformatting.cpp \
 		toolbar.cpp \
@@ -113,6 +114,7 @@ filezilla_SOURCES = aboutdialog.cpp \
 		window_state_manager.cpp \
 		wrapengine.cpp \
 		xh_menu_ex.cpp \
+		xh_text_ex.cpp \
 		xh_toolb_ex.cpp \
 		xmlfunctions.cpp
  
@@ -210,6 +212,7 @@ noinst_HEADERS = aboutdialog.h \
 		 statusbar.h \
 		 StatusView.h \
 		 systemimagelist.h \
+		 textctrlex.h \
 		 themeprovider.h \
 		 timeformatting.h \
 		 toolbar.h \
@@ -224,6 +227,7 @@ noinst_HEADERS = aboutdialog.h \
 		 window_state_manager.h \
 		 wrapengine.h \
 		 xh_menu_ex.h \
+		 xh_text_ex.h \
 		 xh_toolb_ex.h \
 		 xmlfunctions.h
 

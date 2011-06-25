@@ -5,6 +5,9 @@
 #ifdef __WXMSW__
 #include "wx/msw/uxtheme.h"
 #endif //__WXMSW__
+#ifdef __WXMAC__
+#include "textctrlex.h"
+#endif
 
 #include <wx/combobox.h>
 
@@ -71,6 +74,16 @@ protected:
 	{
 		if (event.GetKeyCode() == WXK_TAB)
 			return;
+			
+#ifdef __WXMAC__
+		if (event.GetKeyCode() == 'v' && event.GetModifiers() == wxMOD_CMD)
+		{
+			Paste();
+			wxTextCtrl* text = ((wxTextCtrl*)m_text);
+			text->SetStyle(0, text->GetLastPosition(), GetDefaultTextCtrlStyle(text));
+			return;
+		}
+#endif
 
 		event.Skip();
 	}
