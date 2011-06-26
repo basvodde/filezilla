@@ -524,7 +524,9 @@ extern Backend serial_backend;
 /*
  * Exports from winjump.c.
  */
+#if 0
 #define JUMPLIST_SUPPORTED             /* suppress #defines in putty.h */
+#endif
 void add_session_to_jumplist(const char * const sessionname);
 void remove_session_from_jumplist(const char * const sessionname);
 void clear_jumplist(void);

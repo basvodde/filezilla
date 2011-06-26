@@ -783,7 +783,9 @@ void cleanup_all(void)
      * Ask Windows to delete any jump list information associated
      * with this installation of PuTTY.
      */
+#ifdef JUMPLIST_SUPPORTED
     clear_jumplist();
+#endif
 
     /* ------------------------------------------------------------
      * Destroy all registry information associated with PuTTY.
