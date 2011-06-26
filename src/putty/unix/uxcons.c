@@ -332,19 +332,33 @@ void logevent(void *frontend, const char *string)
 //FZ postmsg(&cf);
 }
 
-/*FZ 
-static void console_data_untrusted(const char *data, int len)
+/*
+ * Special function to print text to the console for password
+ * prompts and the like. Uses /dev/tty or stderr, in that order of
+ * preference; also sanitises escape sequences out of the text, on
+ * the basis that it might have been sent by a hostile SSH server
+ * doing malicious keyboard-interactive.
+ */
+/*FZ
+static void console_prompt_text(FILE **confp, const char *data, int len)
 {
     int i;
+
+    if (!*confp) {
+	if ((*confp = fopen("/dev/tty", "w")) == NULL)
+	    *confp = stderr;
+    }
+
     for (i = 0; i < len; i++)
 	if ((data[i] & 0x60) || (data[i] == '\n'))
-	    fputc(data[i], stdout);
-    fflush(stdout);
+	    fputc(data[i], *confp);
+    fflush(*confp);
 }*/
 
 int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 {
     size_t curr_prompt;
+    FILE *confp = NULL;
 
     /*
      * Zero all the results, in case we abort half-way through.
@@ -355,7 +369,7 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 	    memset(p->prompts[i]->result, 0, p->prompts[i]->result_len);
     }
 
-    if (console_batch_mode)
+    if (p->n_prompts && console_batch_mode)
 	return 0;
 
     /*
@@ -399,12 +413,14 @@ int console_get_userpass_input(prompts_t *p, unsigned char *in, int inlen)
 	    pr->result[i--] = '\0';
 
 //	if (!pr->echo)
-//	    fputs("\n", stdout);
+//	    console_prompt_text(&confp, "\n", 1);
 
     }
 
-    return 1; /* success */
+    if (confp && confp != stderr)
+	fclose(confp);
 
+    return 1; /* success */
 }
 
 void frontend_keypress(void *handle)
@@ -423,8 +439,6 @@ int is_interactive(void)
 /*
  * X11-forwarding-related things suitable for console.
  */
-
-const char platform_x11_best_transport[] = "unix";
 
 char *platform_get_x_display(void) {
     return dupstr(getenv("DISPLAY"));

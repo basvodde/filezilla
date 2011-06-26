@@ -6,8 +6,8 @@
 
 #include "putty.h"
 #include "psftp.h"
-#include "int64.h"
 #include "ssh.h"
+#include "int64.h"
 
 char *get_ttymode(void *frontend, const char *mode) { return NULL; }
 
@@ -123,10 +123,19 @@ char *psftp_getcwd(void)
     return ret;
 }
 
-#define TIME_POSIX_TO_WIN(t, ft) (*(LONGLONG*)&(ft) = \
-	((LONGLONG) (t) + (LONGLONG) 11644473600LL) * (LONGLONG) 10000000)
-#define TIME_WIN_TO_POSIX(ft, t) ((t) = (unsigned long) \
-	((*(LONGLONG*)&(ft)) / (LONGLONG) 10000000 - (LONGLONG) 11644473600LL))
+#define TIME_POSIX_TO_WIN(t, ft) do { \
+    ULARGE_INTEGER uli; \
+    uli.QuadPart = ((ULONGLONG)(t) + 11644473600ull) * 10000000ull; \
+    (ft).dwLowDateTime  = uli.LowPart; \
+    (ft).dwHighDateTime = uli.HighPart; \
+} while(0)
+#define TIME_WIN_TO_POSIX(ft, t) do { \
+    ULARGE_INTEGER uli; \
+    uli.LowPart  = (ft).dwLowDateTime; \
+    uli.HighPart = (ft).dwHighDateTime; \
+    uli.QuadPart = uli.QuadPart / 10000000ull - 11644473600ull; \
+    (t) = (unsigned long) uli.QuadPart; \
+} while(0)
 
 struct RFile {
     HANDLE h;
