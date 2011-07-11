@@ -1,4 +1,4 @@
-#include <wx/wx.h>
+`#include <wx/wx.h>
 #include "desktop_notification.h"
 #include "wxdbusconnection.h"
 #include "wxdbusmessage.h"
@@ -123,13 +123,13 @@ void CDesktopNotificationImpl::EmitNotifications()
 	call->AddString("FileZilla");
 	call->AddUnsignedInt(0);
 	call->AddString("filezilla");
-	call->AddString(notification.summary.mb_str());
-	call->AddString(notification.body.mb_str());
+	call->AddString(notification.summary.mb_str(wxConvUTF8));
+	call->AddString(notification.body.mb_str(wxConvUTF8));
 	call->AddArrayOfString(0, 0);
 
 	if (notification.category != _T(""))
 	{
-		const wxWX2MBbuf category = notification.category.mb_str();
+		const wxWX2MBbuf category = notification.category.mb_str(wxConvUTF8);
 		const char *hints[2];
 		hints[0] = "category";
 		hints[1] = (const char*)category;
