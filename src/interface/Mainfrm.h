@@ -117,6 +117,7 @@ protected:
 	void OnSiteManager(wxCommandEvent& event);
 	void OnProcessQueue(wxCommandEvent& event);
 	void OnMenuEditSettings(wxCommandEvent& event);
+	void OnToggleToolBar(wxCommandEvent& event);
 	void OnToggleLogView(wxCommandEvent& event);
 	void OnToggleLocalTreeView(wxCommandEvent& event);
 	void OnToggleRemoteTreeView(wxCommandEvent& event);

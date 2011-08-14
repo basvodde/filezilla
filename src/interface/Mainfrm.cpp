@@ -92,6 +92,7 @@ BEGIN_EVENT_TABLE(CMainFrame, wxFrame)
 	EVT_TOOL(XRCID("ID_TOOLBAR_LOCALTREEVIEW"), CMainFrame::OnToggleLocalTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_REMOTETREEVIEW"), CMainFrame::OnToggleRemoteTreeView)
 	EVT_TOOL(XRCID("ID_TOOLBAR_QUEUEVIEW"), CMainFrame::OnToggleQueueView)
+	EVT_MENU(XRCID("ID_VIEW_TOOLBAR"), CMainFrame::OnToggleToolBar)
 	EVT_MENU(XRCID("ID_VIEW_MESSAGELOG"), CMainFrame::OnToggleLogView)
 	EVT_MENU(XRCID("ID_VIEW_LOCALTREE"), CMainFrame::OnToggleLocalTreeView)
 	EVT_MENU(XRCID("ID_VIEW_REMOTETREE"), CMainFrame::OnToggleRemoteTreeView)
@@ -649,8 +650,10 @@ void CMainFrame::OnMenuHandler(wxCommandEvent &event)
 		pDlg->Show();
 		pDlg->Delete();
 
-		m_pMenuBar->UpdateMenubarState();
-		m_pToolBar->UpdateToolbarState();
+		if (m_pMenuBar)
+			m_pMenuBar->UpdateMenubarState();
+		if (m_pToolBar)
+			m_pToolBar->UpdateToolbarState();
 	}
 	else if (event.GetId() == XRCID("ID_MENU_SERVER_VIEWHIDDEN"))
 	{
@@ -1034,7 +1037,13 @@ bool CMainFrame::CreateToolBar()
 #endif
 		SetToolBar(0);
 		delete m_pToolBar;
+		m_pToolBar = 0;
 	}
+
+#ifndef __WXMAC__
+	if (COptions::Get()->GetOptionVal(OPTION_TOOLBAR_HIDDEN) != 0)
+		return true;
+#endif
 
 	m_pToolBar = CToolBar::Load(this);
 	if (!m_pToolBar)
@@ -1953,6 +1962,9 @@ void CMainFrame::UpdateLayout(int layout /*=-1*/, int swap /*=-1*/, int messagel
 
 void CMainFrame::OnSitemanagerDropdown(wxCommandEvent& event)
 {
+	if (!m_pToolBar)
+		return;
+
 	wxMenu *pMenu = CSiteManager::GetSitesMenu();
 	if (!pMenu)
 		return;
@@ -2333,6 +2345,9 @@ void CMainFrame::OnToolbarComparison(wxCommandEvent& event)
 
 void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
 {
+	if (!m_pToolBar)
+		return;
+
 	wxMenu* pMenu = wxXmlResource::Get()->LoadMenu(_T("ID_MENU_TOOLBAR_COMPARISON_DROPDOWN"));
 	if (!pMenu)
 		return;
@@ -2357,7 +2372,7 @@ void CMainFrame::OnToolbarComparisonDropdown(wxCommandEvent& event)
 
 void CMainFrame::ShowDropdownMenu(wxMenu* pMenu, wxToolBar* pToolBar, wxCommandEvent& event)
 {
-	#ifdef EVT_TOOL_DROPDOWN
+#ifdef EVT_TOOL_DROPDOWN
 	if (event.GetEventType() == wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED)
 	{
 		pToolBar->SetDropdownMenu(event.GetId(), pMenu);
@@ -2716,4 +2731,16 @@ bool CMainFrame::ConnectToServer(const CServer &server, const CServerPath &path 
 	}
 
 	return pState->Connect(server, path);
+}
+
+void CMainFrame::OnToggleToolBar(wxCommandEvent& event)
+{
+	COptions::Get()->SetOption(OPTION_TOOLBAR_HIDDEN, event.IsChecked() ? 0 : 1);
+#ifdef __WXMAC__
+	if (m_pToolBar)
+		m_pToolBar->SetShown( !event.IsChecked() );
+#else
+	CreateToolBar();
+	HandleResize();
+#endif
 }

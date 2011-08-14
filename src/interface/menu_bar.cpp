@@ -84,6 +84,7 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 
 	menubar->Check(XRCID("ID_COMPARE_HIDEIDENTICAL"), COptions::Get()->GetOptionVal(OPTION_COMPARE_HIDEIDENTICAL) != 0);
 	menubar->Check(XRCID("ID_VIEW_QUICKCONNECT"), COptions::Get()->GetOptionVal(OPTION_SHOW_QUICKCONNECT) != 0);
+	menubar->Check(XRCID("ID_VIEW_TOOLBAR"), COptions::Get()->GetOptionVal(OPTION_TOOLBAR_HIDDEN) == 0);
 	menubar->Check(XRCID("ID_VIEW_MESSAGELOG"), COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG) != 0);
 	menubar->Check(XRCID("ID_VIEW_QUEUE"), COptions::Get()->GetOptionVal(OPTION_SHOW_QUEUE) != 0);
 	menubar->Check(XRCID("ID_VIEW_LOCALTREE"), COptions::Get()->GetOptionVal(OPTION_SHOW_TREE_LOCAL) != 0);
@@ -122,6 +123,7 @@ CMenuBar* CMenuBar::Load(CMainFrame* pMainFrame)
 	menubar->RegisterOption(OPTION_ASCIIBINARY);
 	menubar->RegisterOption(OPTION_PRESERVE_TIMESTAMPS);
 
+	menubar->RegisterOption(OPTION_TOOLBAR_HIDDEN);
 	menubar->RegisterOption(OPTION_SHOW_MESSAGELOG);
 	menubar->RegisterOption(OPTION_SHOW_QUEUE);
 	menubar->RegisterOption(OPTION_SHOW_TREE_LOCAL);
@@ -395,6 +397,9 @@ void CMenuBar::OnOptionChanged(int option)
 		break;
 	case OPTION_SHOW_QUICKCONNECT:
 		Check(XRCID("ID_VIEW_QUICKCONNECT"), COptions::Get()->GetOptionVal(OPTION_SHOW_QUICKCONNECT) != 0);
+		break;
+	case OPTION_TOOLBAR_HIDDEN:
+		Check(XRCID("ID_VIEW_TOOLBAR"), COptions::Get()->GetOptionVal(OPTION_TOOLBAR_HIDDEN) == 0);
 		break;
 	case OPTION_SHOW_MESSAGELOG:
 		Check(XRCID("ID_VIEW_MESSAGELOG"), COptions::Get()->GetOptionVal(OPTION_SHOW_MESSAGELOG) != 0);
