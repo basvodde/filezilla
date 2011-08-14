@@ -412,9 +412,9 @@ bool CControlSocket::ParsePwdReply(wxString reply, bool unquoted /*=false*/, con
 	if (reply == _T("") || !m_CurrentPath.SetPath(reply))
 	{
 		if (reply != _T(""))
-			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Failed to parse returned path."));
+			LogMessage(::Error, _("Failed to parse returned path."));
 		else
-			LogMessage(__TFILE__, __LINE__, this, Debug_Warning, _T("Server returned empty path."));
+			LogMessage(::Error, _("Server returned empty path."));
 
 		if (!defaultPath.IsEmpty())
 		{
