@@ -2738,7 +2738,7 @@ void CMainFrame::OnToggleToolBar(wxCommandEvent& event)
 	COptions::Get()->SetOption(OPTION_TOOLBAR_HIDDEN, event.IsChecked() ? 0 : 1);
 #ifdef __WXMAC__
 	if (m_pToolBar)
-		m_pToolBar->SetShown( !event.IsChecked() );
+		m_pToolBar->Show( event.IsChecked() );
 #else
 	CreateToolBar();
 	HandleResize();
