@@ -255,6 +255,9 @@ protected:
 #ifndef ECONNRESET
 #define ECONNRESET WSAECONNRESET
 #endif
+
+// For the future:
+// Handle ERROR_NETNAME_DELETED=64
 #endif //__WXMSW__
 
 #endif //__SOCKET_H__
