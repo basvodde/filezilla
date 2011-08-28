@@ -1334,13 +1334,30 @@ void CDirectoryListingParserTest::InitEntries()
 		DEFAULT
 	});
 
+	// MVS entry with a large number of used blocks:
+	// http://forum.filezilla-project.org/viewtopic.php?t=21667
+	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
+	m_entries.push_back((t_entry){
+			"GISBWI 3390   2011/08/25  2 ++++  FB     904 18080  PS  80-MVS.FILE",
+			{
+				_T("80-MVS.FILE"),
+				100,
+				_T(""),
+				_T(""),
+				CDirentry::flag_timestamp_date,
+				_T(""),
+				wxDateTime(25, wxDateTime::Aug, 2011)
+		},
+		DEFAULT
+	});
+
 	// MVS entry with PO-E Dsorg indicating direrctory. See
 	// http://forum.filezilla-project.org/viewtopic.php?t=19374 for reference.
 	// Volume Unit    Referred Ext Used Recfm Lrecl BlkSz Dsorg Dsname
 	m_entries.push_back((t_entry){
-			"WYOSPT 3420   2003/05/21  1 3 U 6447    6447  PO-E 80-MVS.DIR",
+			"WYOSPT 3420   2003/05/21  1 3 U 6447    6447  PO-E 81-MVS.DIR",
 			{
-				_T("80-MVS.DIR"),
+				_T("81-MVS.DIR"),
 				-1,
 				_T(""),
 				_T(""),
