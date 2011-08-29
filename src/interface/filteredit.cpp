@@ -144,7 +144,7 @@ void CFilterEditDialog::OnNew(wxCommandEvent& event)
 
 	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
 	{
-		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);
+		wxMessageBox(_("The entered filter name already exists, please choose a different name."), _("Filter name already exists"), wxICON_ERROR, this);
 		return;
 	}
 
@@ -212,7 +212,7 @@ void CFilterEditDialog::OnRename(wxCommandEvent& event)
 
 	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
 	{
-		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);
+		wxMessageBox(_("The entered filter name already exists, please choose a different name."), _("Filter name already exists"), wxICON_ERROR, this);
 		return;
 	}
 
@@ -251,7 +251,7 @@ void CFilterEditDialog::OnCopy(wxCommandEvent& event)
 
 	if (m_pFilterListCtrl->FindString(newName) != wxNOT_FOUND)
 	{
-		wxMessageBox(_("The entered filter name already exists."), _("Duplicate filter name"), wxICON_ERROR, this);
+		wxMessageBox(_("The entered filter name already exists, please choose a different name."), _("Filter name already exists"), wxICON_ERROR, this);
 		return;
 	}
 
