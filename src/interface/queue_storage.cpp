@@ -991,7 +991,7 @@ wxLongLong_t CQueueStorage::Impl::ParseFileFromRow(CFileItem** pItem)
 		if (sourceFile.empty() || localPath.empty() ||
 			remotePath.IsEmpty() ||
 			size < -1 ||
-			priority <= 0 || priority >= PRIORITY_COUNT ||
+			priority < 0 || priority >= PRIORITY_COUNT ||
 			errorCount < 0)
 		{
 			return INVALID_DATA;
