@@ -278,7 +278,7 @@ bool COptions::SetOption(unsigned int nID, int value)
 
 	m_optionsCache[nID].numValue = value;
 
-	if (m_pXmlFile && options[nID].flags == normal)
+	if (m_pXmlFile && (options[nID].flags == normal || options[nID].flags == default_priority) )
 	{
 		SetXmlValue(nID, wxString::Format(_T("%d"), value));
 
