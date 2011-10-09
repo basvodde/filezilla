@@ -102,7 +102,7 @@ public:
 			return wxDragNone;
 		}
 
-		if (m_pRemoteDataObject->GetServer() != *m_pRemoteListView->m_pState->GetServer())
+		if (!m_pRemoteDataObject->GetServer().EqualsNoPass(*m_pRemoteListView->m_pState->GetServer()))
 		{
 			wxMessageBox(_("Drag&drop between different servers has not been implemented yet."));
 			return wxDragNone;
