@@ -534,7 +534,8 @@ bool CQueueStorage::Impl::Bind(sqlite3_stmt* statement, int index, int value)
 
 bool CQueueStorage::Impl::Bind(sqlite3_stmt* statement, int index, wxLongLong_t value)
 {
-	return sqlite3_bind_int64(statement, index, value) == SQLITE_OK;
+	int res = sqlite3_bind_int64(statement, index, value);
+	return res == SQLITE_OK;
 }
 
 
@@ -716,8 +717,6 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 	if (file.m_edit != CEditHandler::none)
 		return true;
 
-	sqlite3_reset(insertFileQuery_);
-
 	Bind(insertFileQuery_, file_table_column_names::source_file, file.GetSourceFile());
 	if (file.GetTargetFile().empty())
 		BindNull(insertFileQuery_, file_table_column_names::target_file);
@@ -754,14 +753,14 @@ bool CQueueStorage::Impl::SaveFile(wxLongLong server, const CFileItem& file)
 		res = sqlite3_step(insertFileQuery_);
 	} while (res == SQLITE_BUSY);
 
+	sqlite3_reset(insertFileQuery_);
+
 	return res == SQLITE_DONE;
 }
 
 
 bool CQueueStorage::Impl::SaveDirectory(wxLongLong server, const CFolderItem& directory)
 {
-	sqlite3_reset(insertFileQuery_);
-
 	if (download)
 		BindNull(insertFileQuery_, file_table_column_names::source_file);
 	else
@@ -791,6 +790,8 @@ bool CQueueStorage::Impl::SaveDirectory(wxLongLong server, const CFolderItem& di
 	do {
 		res = sqlite3_step(insertFileQuery_);
 	} while (res == SQLITE_BUSY);
+
+	sqlite3_reset(insertFileQuery_);
 
 	return res == SQLITE_DONE;
 }
