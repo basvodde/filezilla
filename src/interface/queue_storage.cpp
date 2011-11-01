@@ -223,8 +223,6 @@ void CQueueStorage::Impl::ReadLocalPaths()
 	if (!selectLocalPathQuery_)
 		return;
 
-	sqlite3_reset(selectLocalPathQuery_);
-
 	int res;
 	do
 	{
@@ -239,6 +237,8 @@ void CQueueStorage::Impl::ReadLocalPaths()
 		}
 	}
 	while (res == SQLITE_BUSY || res == SQLITE_ROW);
+
+	sqlite3_reset(selectLocalPathQuery_);
 }
 
 
@@ -246,8 +246,6 @@ void CQueueStorage::Impl::ReadRemotePaths()
 {
 	if (!selectRemotePathQuery_)
 		return;
-
-	sqlite3_reset(selectRemotePathQuery_);
 
 	int res;
 	do
@@ -263,6 +261,8 @@ void CQueueStorage::Impl::ReadRemotePaths()
 		}
 	}
 	while (res == SQLITE_BUSY || res == SQLITE_ROW);
+
+	sqlite3_reset(selectRemotePathQuery_);
 }
 
 
@@ -328,7 +328,6 @@ wxLongLong_t CQueueStorage::Impl::SaveLocalPath(const CLocalPath& path)
 	if (it != localPaths_.end())
 		return it->second;
 
-	sqlite3_reset(insertLocalPathQuery_);
 	Bind(insertLocalPathQuery_, path_table_column_names::path, path.GetPath());
 
 	int res;
@@ -336,6 +335,8 @@ wxLongLong_t CQueueStorage::Impl::SaveLocalPath(const CLocalPath& path)
 		res = sqlite3_step(insertLocalPathQuery_);
 	} while (res == SQLITE_BUSY);
 	
+	sqlite3_reset(insertLocalPathQuery_);
+
 	if (res == SQLITE_DONE)
 	{
 		wxLongLong_t id = sqlite3_last_insert_rowid(db_);
@@ -354,7 +355,6 @@ wxLongLong_t CQueueStorage::Impl::SaveRemotePath(const CServerPath& path)
 	if (it != remotePaths_.end())
 		return it->second;
 
-	sqlite3_reset(insertRemotePathQuery_);
 	Bind(insertRemotePathQuery_, path_table_column_names::path, path.GetSafePath());
 
 	int res;
@@ -362,6 +362,8 @@ wxLongLong_t CQueueStorage::Impl::SaveRemotePath(const CServerPath& path)
 		res = sqlite3_step(insertRemotePathQuery_);
 	} while (res == SQLITE_BUSY);
 	
+	sqlite3_reset(insertRemotePathQuery_);
+
 	if (res == SQLITE_DONE)
 	{
 		wxLongLong_t id = sqlite3_last_insert_rowid(db_);
@@ -586,7 +588,6 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 	bool kiosk_mode = COptions::Get()->GetOptionVal(OPTION_DEFAULT_KIOSKMODE) != 0;
 	
 	const CServer& server = item.GetServer();
-	sqlite3_reset(insertServerQuery_);
 	
 	Bind(insertServerQuery_, server_table_column_names::host, server.GetHost());
 	Bind(insertServerQuery_, server_table_column_names::port, static_cast<int>(server.GetPort()));
@@ -692,6 +693,8 @@ bool CQueueStorage::Impl::SaveServer(const CServerItem& item)
 		res = sqlite3_step(insertServerQuery_);
 	} while (res == SQLITE_BUSY);
 	
+	sqlite3_reset(insertServerQuery_);
+
 	bool ret = res == SQLITE_DONE;
 	if (ret)
 	{
@@ -1092,6 +1095,13 @@ wxLongLong_t CQueueStorage::GetServer(CServer& server, bool fromBeginning)
 			else if (res == SQLITE_DONE)
 			{
 				ret = 0;
+				sqlite3_reset(d_->selectServersQuery_);
+				break;
+			}
+			else
+			{
+				ret = -1;
+				sqlite3_reset(d_->selectServersQuery_);
 				break;
 			}
 		}
@@ -1135,6 +1145,13 @@ wxLongLong_t CQueueStorage::GetFile(CFileItem** pItem, wxLongLong_t server)
 			else if (res == SQLITE_DONE)
 			{
 				ret = 0;
+				sqlite3_reset(d_->selectFilesQuery_);
+				break;
+			}
+			else
+			{
+				ret = -1;
+				sqlite3_reset(d_->selectFilesQuery_);
 				break;
 			}
 		}
