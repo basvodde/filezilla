@@ -125,12 +125,12 @@ if test "$buildmain" = "yes"; then
   CPPFLAGS="$CPPFLAGS $WX_CPPFLAGS"
   AC_MSG_CHECKING([positional printf argument support in wxWidgets])
   AC_PREPROC_IFELSE(
-	AC_LANG_PROGRAM([[
+	[AC_LANG_PROGRAM([[
 		  #include <wx/wx.h>
 		  #if !wxUSE_PRINTF_POS_PARAMS
 			#error wx compiled without wxUSE_PRINTF_POS_PARAMS
 		  #endif
-		]]),
+		]])],
 	  AC_MSG_RESULT([yes]),
 	  [
 		AC_MSG_RESULT([no])
