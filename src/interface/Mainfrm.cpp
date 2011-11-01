@@ -2433,8 +2433,11 @@ void CMainFrame::ProcessCommandLine()
 	wxString site;
 	if (pCommandLine->HasSwitch(CCommandLine::sitemanager))
 	{
-		Show();
-		OpenSiteManager();
+		if (!COptions::Get()->GetOptionVal(OPTION_INTERFACE_SITEMANAGER_ON_STARTUP) != 0)
+		{
+			Show();
+			OpenSiteManager();
+		}
 	}
 	else if ((site = pCommandLine->GetOption(CCommandLine::site)) != _T(""))
 	{
@@ -2653,6 +2656,12 @@ void CMainFrame::PostInitialize()
 	else
 		m_pUpdateWizard = 0;
 #endif //FZ_MANUALUPDATECHECK && FZ_AUTOUPDATECHECK
+
+	if (COptions::Get()->GetOptionVal(OPTION_INTERFACE_SITEMANAGER_ON_STARTUP) != 0)
+	{
+		Show();
+		OpenSiteManager();
+	}
 }
 
 void CMainFrame::OnMenuNewTab(wxCommandEvent& event)
