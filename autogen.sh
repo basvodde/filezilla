@@ -1,7 +1,7 @@
 #! /bin/sh
 
 while test $# != 0; do
-  case $1 in 
+  case $1 in
   -[cC])
     no_check=1
     ;;
@@ -26,7 +26,7 @@ printf '\033[1mHINT:\033[0m If this script fails, please download a recent sourc
 failedAclocal()
 {
   printf '\n\033[1;31m*** Failed to execute aclocal\033[0m\n'
-  echo '' 
+  echo ''
   echo '    If you get errors about undefined symbols, make sure'
   echo '    that the corresponding .m4 file is in your aclocal search'
   echo '    directory.'
@@ -106,7 +106,7 @@ version_check()
 
   if [ ! -z "$MINOR" ]; then VERSION=$VERSION.$MINOR; else MINOR=0; fi
   if [ ! -z "$MICRO" ]; then VERSION=$VERSION.$MICRO; else MICRO=0; fi
-  
+
   if [ x$SILENT != x2 ]; then
     if [ ! -z "$VERSION" ]; then
       printf "Checking for $PACKAGE >= $VERSION ... "
@@ -149,7 +149,7 @@ version_check()
     echo "found $pkg_version, ok."
     return 0
   fi
-  
+
   # start checking the version
   if [ "$pkg_major" -lt "$MAJOR" ]; then
     WRONG=1
@@ -220,7 +220,7 @@ $aclocal -I m4 || failedAclocal
 echo "3.2 Running autoheader... "
 $autoheader
 
-echo "3.3 Runnig libtoolize... "
+echo "3.3 Running libtoolize... "
 $libtoolize --automake -c -f
 
 echo "3.4 Running autoconf... "
