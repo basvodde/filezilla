@@ -1,7 +1,7 @@
 #ifndef __TOOLBAR_H__
 #define __TOOLBAR_H__
 
-#include "option_change_event_handler.h"
+#include <option_change_event_handler.h>
 #include "state.h"
 
 class CMainFrame;

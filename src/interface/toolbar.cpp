@@ -2,6 +2,7 @@
 #include "filter.h"
 #include "listingcomparison.h"
 #include "Mainfrm.h"
+#include "Options.h"
 #include "QueueView.h"
 #include "themeprovider.h"
 #include "toolbar.h"

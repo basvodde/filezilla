@@ -1,7 +1,7 @@
 #ifndef __MENU_BAR_H__
 #define __MENU_BAR_H__
 
-#include "option_change_event_handler.h"
+#include <option_change_event_handler.h>
 #include "state.h"
 
 class CMainFrame;

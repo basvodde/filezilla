@@ -1,8 +1,10 @@
 #ifndef __OPTION_CHANGE_EVENT_HANDLER_H__
 #define __OPTION_CHANGE_EVENT_HANDLER_H__
 
-#include "Options.h"
 #include <set>
+#include <vector>
+
+class COptions;
 
 class COptionChangeEventHandler
 {
@@ -24,8 +26,7 @@ private:
 	static void DoNotify(int option);
 	static void UnregisterAll();
 	
-	static std::set<COptionChangeEventHandler*> m_handlers[OPTIONS_NUM];
-	static std::vector<int> m_queuedNotifications;
+	static std::vector<std::set<COptionChangeEventHandler*> > m_handlers;
 };
 
 #endif //__OPTION_CHANGE_EVENT_HANDLER_H__

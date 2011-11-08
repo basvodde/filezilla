@@ -12,6 +12,7 @@ noinst_HEADERS = commands.h \
 		 misc.h \
 		 notification.h \
 		 optionsbase.h \
+		 option_change_event_handler.h \
 		 refcount.h \
 		 server.h \
 		 serverpath.h \

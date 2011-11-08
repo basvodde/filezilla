@@ -4,7 +4,7 @@
 #include "filezillaapp.h"
 #include <wx/tokenzr.h>
 #include "ipcmutex.h"
-#include "option_change_event_handler.h"
+#include <option_change_event_handler.h>
 #include "sizeformatting.h"
 
 #include <string>

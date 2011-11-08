@@ -1,7 +1,7 @@
 #ifndef __THEMEPROVIDER_H__
 #define __THEMEPROVIDER_H__
 
-#include "option_change_event_handler.h"
+#include <option_change_event_handler.h>
 
 enum iconSize
 {

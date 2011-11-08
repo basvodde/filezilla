@@ -1,7 +1,7 @@
 #ifndef __STATUSBAR_H__
 #define __STATUSBAR_H__
 
-#include "option_change_event_handler.h"
+#include <option_change_event_handler.h>
 #include "sizeformatting.h"
 #include "state.h"
 

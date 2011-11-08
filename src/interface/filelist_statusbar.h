@@ -1,7 +1,7 @@
 #ifndef __FILELIST_STATUSBAR_H__
 #define __FILELIST_STATUSBAR_H__
 
-#include "option_change_event_handler.h"
+#include <option_change_event_handler.h>
 
 class CFilelistStatusBar : public wxStatusBar, protected COptionChangeEventHandler
 {

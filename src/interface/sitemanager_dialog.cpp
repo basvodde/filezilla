@@ -4,6 +4,7 @@
 #include "conditionaldialog.h"
 #include "filezillaapp.h"
 #include "ipcmutex.h"
+#include "Options.h"
 #include "themeprovider.h"
 #include "window_state_manager.h"
 #include "wrapengine.h"
