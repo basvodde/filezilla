@@ -4,6 +4,8 @@
 #include <wx/ffile.h>
 #include <wx/log.h>
 
+#include <local_filesys.h>
+
 CXmlFile::CXmlFile(const wxString& fileName)
 {
 	m_pPrinter = 0;
@@ -495,8 +497,16 @@ bool SaveXmlFile(const wxFileName& file, TiXmlNode* node, wxString* error /*=0*/
 	TiXmlDocument* pDocument = node->GetDocument();
 
 	bool exists = false;
-	if (wxFileExists(fullPath))
+	
+	bool isLink = false;
+	int flags = 0;
+	if (CLocalFileSystem::GetFileInfo( fullPath, isLink, 0, 0, &flags ) == CLocalFileSystem::file)
 	{
+#ifdef __WXMSW__
+		if (flags & FILE_ATTRIBUTE_HIDDEN)
+			SetFileAttributes(fullPath, flags & ~FILE_ATTRIBUTE_HIDDEN);
+#endif
+
 		exists = true;
 		bool res;
 		if (!move)
