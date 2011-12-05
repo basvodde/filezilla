@@ -172,6 +172,8 @@ protected:
 	// While set, ignore iconize events.
 	bool m_taskbar_is_uniconizing;
 #endif
+
+	int m_comparisonToggleAcceleratorId;
 };
 
 #endif
