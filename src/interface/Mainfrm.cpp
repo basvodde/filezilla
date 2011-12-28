@@ -2765,6 +2765,8 @@ void CMainFrame::OnToggleToolBar(wxCommandEvent& event)
 		m_pToolBar->Show( event.IsChecked() );
 #else
 	CreateToolBar();
+	if (m_pToolBar)
+		m_pToolBar->UpdateToolbarState();
 	HandleResize();
 #endif
 }
