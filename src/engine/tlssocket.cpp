@@ -113,7 +113,9 @@ bool CTlsSocket::Init()
 	gnutls_transport_set_push_function(m_session, PushFunction);
 	gnutls_transport_set_pull_function(m_session, PullFunction);
 	gnutls_transport_set_ptr(m_session, (gnutls_transport_ptr_t)this);
+#if GNUTLS_VERSION_NUMBER < 0x020c00
 	gnutls_transport_set_lowat(m_session, 0);
+#endif
 
 	m_shutdown_requested = false;
 
