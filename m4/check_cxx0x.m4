@@ -1,7 +1,7 @@
 dnl Checks C++0x support, in particular we look for unordered_map
 
 AC_DEFUN([CHECK_CXX0X], [
-  
+
   AC_LANG_PUSH(C++)
 
   cxx_has_cxx0x=""
@@ -11,7 +11,7 @@ AC_DEFUN([CHECK_CXX0X], [
 
     old_cxxflags="$CXXFLAGS"
     CXXFLAGS="$CXXFLAGS -std=gnu++0x"
- 
+
     AC_COMPILE_IFELSE([
       AC_LANG_PROGRAM([[
       ]], [[
@@ -28,7 +28,7 @@ AC_DEFUN([CHECK_CXX0X], [
 
       old_cxxflags="$CXXFLAGS"
       CXXFLAGS="$CXXFLAGS -std=c++0x"
-   
+
       AC_COMPILE_IFELSE([
         AC_LANG_PROGRAM([[
         ]], [[
@@ -94,5 +94,3 @@ AC_DEFUN([CHECK_CXX0X], [
   AC_LANG_POP(C++)
 
 ])
-
-
