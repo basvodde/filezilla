@@ -105,7 +105,7 @@ bool CTlsSocket::Init()
 		return false;
 	}
 
-	gnutls_dh_set_prime_bits(m_session, 2048);
+	gnutls_dh_set_prime_bits(m_session, 512);
 
 	gnutls_credentials_set(m_session, GNUTLS_CRD_CERTIFICATE, m_certCredentials);
 
