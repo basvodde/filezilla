@@ -94,7 +94,7 @@ if test "$buildmain" = "yes"; then
 
   AM_OPTIONS_WXCONFIG
 
-  MIN_WX_VERSION="2.8.9"
+  MIN_WX_VERSION="2.8.12"
   AM_PATH_WXCONFIG($MIN_WX_VERSION, wxWin=1, , [aui,xrc,adv,core,xml,net,base], [--unicode=yes --universal=no])
   if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
