@@ -231,8 +231,13 @@ bool CServer::ParseUrl(wxString host, unsigned int port, wxString user, wxString
 	m_account = _T("");
 	if (m_logonType != ASK && m_logonType != INTERACTIVE)
 	{
-		if (m_user == _T("") || m_user == _T("anonymous"))
+		if (m_user == _T(""))
 			m_logonType = ANONYMOUS;
+		else if (m_user == _T("anonymous"))
+			if (m_pass.IsEmpty() || m_pass == _T("anonymous@example.com"))
+				m_logonType = ANONYMOUS;
+			else
+				m_logonType = NORMAL;
 		else
 			m_logonType = NORMAL;
 	}

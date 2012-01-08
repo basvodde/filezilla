@@ -114,7 +114,10 @@ void CQuickconnectBar::OnQuickconnect(wxCommandEvent& event)
 		m_pPort->SetValue(_T(""));
 
 	m_pUser->SetValue(server.GetUser());
-	m_pPass->SetValue(server.GetPass());
+	if (server.GetLogonType() != ANONYMOUS)
+		m_pPass->SetValue(server.GetPass());
+	else
+		m_pPass->SetValue(_T(""));
 
 	if (protocol == HTTP || protocol == HTTPS)
 	{
