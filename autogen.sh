@@ -1,4 +1,3 @@
-#! /bin/sh
 
 while test $# != 0; do
   case $1 in
@@ -206,7 +205,12 @@ checkTools()
   printf "$N.2 "; version_check aclocal; aclocal=$PACKAGE
   printf "$N.3 "; version_check autoheader; autoheader=$PACKAGE
   printf "$N.4 "; version_check autoconf 2 60; autoconf=$PACKAGE
-  printf "$N.5 "; version_check libtoolize 1 4; libtoolize=$PACKAGE
+
+  this_platform=`uname`
+  name_libtoolize=libtoolize
+  if [ "$this_platform" = "Darwin" ]; then name_libtoolize=glibtoolize; fi
+
+  printf "$N.5 "; version_check $name_libtoolize 1 4; libtoolize=$PACKAGE
 }
 
 checkTools 2
