@@ -41,6 +41,10 @@ if test "$shellextonly" = "yes"; then
   locales="no"
 fi
 
+# Added for compiling on Mac. Ought to be done different
+CFLAGS="$CFLAGS -arch i386"
+CXXFLAGS="$CXXFLAGS -arch i386"
+
 if ! test "$localesonly" = "yes"; then
 
   if test "X$GCC" = Xyes; then
