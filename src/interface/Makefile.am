@@ -253,7 +253,7 @@ filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
 
 filezilla_CPPFLAGS += $(LIBSQLITE3_CFLAGS)
-filezilla_LDFLAGS += $(LIBSQLITE3_LIBS)
+filezilla_LDFLAGS += $(LIBSQLLITE3_SEARCH_PATH) $(LIBSQLITE3_LIBS)
 
 if MINGW
 filezilla_LDFLAGS += -lole32 -luuid -lnetapi32 -lmpr
