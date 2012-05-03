@@ -172,6 +172,13 @@ if test "$buildmain" = "yes"; then
   AC_CHECK_FUNCS([in6addr_loopback in6addr_any])
 fi
 
+AC_LANG([C++])
+AC_CHECK_HEADER([CppUTest/TestHarness.h], [], [AC_MSG_ERROR([CppUTest/TestHarness.h is not found. Please put it in /usr/include])])
+AC_CHECK_HEADER([CppUTestExt/MockSupport.h], [], [AC_MSG_ERROR([CppUTestExt/MockSupport.h is not found. Please put it in /usr/include])])
+AC_SEARCH_LIBS([CHECK_EQUAL_C_INT_LOCATION], [CppUTesti386], [], [AC_MSG_ERROR([CppUTest is not found. Please put libCppUTesti386.a in /usr/local/lib])])
+AC_SEARCH_LIBS([mock_c], [CppUTestExti386], [], [AC_MSG_ERROR([CppUTestExt is not found. Please put libCppUTestExti386.a in /usr/local/lib])])
+AC_LANG([C])
+
 if test "$buildmain" = "yes" -o "$shellextonly" = "yes"; then
 
   # Check for windres on MinGW builds
@@ -586,5 +593,6 @@ src/interface/resources/opencrystal/Makefile
 src/putty/Makefile src/putty/unix/Makefile src/putty/windows/Makefile
 tests/Makefile src/interface/resources/version.rc
 src/interface/resources/MacInfo.plist
-src/fzshellext/Makefile src/fzshellext/version.rc)
+src/fzshellext/Makefile src/fzshellext/version.rc
+cpputests/Makefile)
 AC_OUTPUT
