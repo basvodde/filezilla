@@ -9,5 +9,7 @@ TEST_GROUP(DirectoryCache)
 
 TEST(DirectoryCache, fail)
 {
+	CDirectoryCache * cache = new CDirectoryCache();
 	FAIL("Failed");
 }
+
