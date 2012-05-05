@@ -5,11 +5,32 @@
 
 TEST_GROUP(DirectoryCache)
 {
+	CServer server;
+	CServerPath serverPath;
+	CDirectoryListing listing;
+	std::list<CDirentry> direntries;
+	CDirectoryCache cache;
+
+	void teardown()
+	{
+		cache.InvalidateServer(server);
+	}
 };
 
-TEST(DirectoryCache, fail)
+CDirentry createDirEntry(const wchar_t* filename)
 {
-	CDirectoryCache * cache = new CDirectoryCache();
-	FAIL("Failed");
+	CDirentry entry;
+	entry.name = filename;
+	return entry;
+}
+
+TEST(DirectoryCache, WhenStoringAFileInTheCacheWeCanLookItUp)
+{
+	bool is_outdated;
+	direntries.push_back(createDirEntry(L"filename"));
+	listing.Assign(direntries);
+
+	cache.Store(listing, server);
+	CHECK(cache.Lookup(listing, server, serverPath, true, is_outdated));
 }
 
