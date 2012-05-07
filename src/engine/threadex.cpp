@@ -60,6 +60,7 @@ wxThreadEx::~wxThreadEx()
 {
 	if (!m_detached)
 		Wait();
+	delete m_pThread;
 }
 
 wxThreadError wxThreadEx::Create(unsigned int stackSize /*=0*/)
