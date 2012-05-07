@@ -34,3 +34,14 @@ TEST(DirectoryCache, WhenStoringAFileInTheCacheWeCanLookItUp)
 	CHECK(cache.Lookup(listing, server, serverPath, true, is_outdated));
 }
 
+TEST(DirectoryCache, WhenStoringAFileInTheCacheOnOneServerWeCantLookItUpFromAnotherServer)
+{
+	bool is_outdated;
+	direntries.push_back(createDirEntry(L"filename"));
+	listing.Assign(direntries);
+
+	cache.Store(listing, server);
+	CServer anotherServer(FTP, UNIX, L"AnotherServer", 99);
+	CHECK(cache.Lookup(listing, anotherServer, serverPath, true, is_outdated) == false);
+}
+
