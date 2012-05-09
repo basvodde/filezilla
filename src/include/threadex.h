@@ -55,6 +55,7 @@ public:
 
 	virtual wxThread::ExitCode Entry() = 0;
 
+	virtual void setThreadImp(wxThreadExImpl* impl);
 private:
 	wxMutex m_mutex;
 	wxCondition m_condition;
@@ -66,5 +67,19 @@ private:
 	wxThreadExImpl *m_pThread;
 	wxThread::ExitCode m_exitCode;
 };
+
+class wxThreadExImpl : public wxThread
+{
+public:
+	wxThreadExImpl(wxThreadEx* pOwner);
+	virtual ExitCode Entry();
+
+	// Hides the base class!
+    virtual wxThreadError Create(unsigned int stackSize = 0);
+
+protected:
+	wxThreadEx *m_pOwner;
+};
+
 
 #endif //__THREADEX_H__

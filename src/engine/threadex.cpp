@@ -22,31 +22,30 @@ SOFTWARE.
 
 #include "threadex.h"
 
-class wxThreadExImpl : public wxThread
+wxThreadExImpl::wxThreadExImpl(wxThreadEx* pOwner)
 {
-public:
-	wxThreadExImpl(wxThreadEx* pOwner)
-	{
-		m_pOwner = pOwner;
-	}
+	m_pOwner = pOwner;
+}
 
-	virtual ExitCode Entry()
-	{
-		ExitCode exitCode = m_pOwner->Entry();
-		m_pOwner->m_mutex.Lock();
-		wxASSERT(!m_pOwner->m_finished);
+wxThread::ExitCode wxThreadExImpl::Entry()
+{
+	ExitCode exitCode = m_pOwner->Entry();
+	m_pOwner->m_mutex.Lock();
+	wxASSERT(!m_pOwner->m_finished);
 
-		m_pOwner->m_exitCode = exitCode;
-		m_pOwner->m_finished = true;
-		m_pOwner->m_condition.Signal();
-		m_pOwner->m_mutex.Unlock();
+	m_pOwner->m_exitCode = exitCode;
+	m_pOwner->m_finished = true;
+	m_pOwner->m_condition.Signal();
+	m_pOwner->m_mutex.Unlock();
 
-		return 0;
-	}
+	return 0;
+}
 
-protected:
-	wxThreadEx *m_pOwner;
-};
+wxThreadError wxThreadExImpl::Create(unsigned int stackSize)
+{
+	return wxThread::Create(stackSize);
+}
+
 
 wxThreadEx::wxThreadEx(wxThreadKind kind /*=wxTHREAD_DETACHED*/)
 	: m_condition(m_mutex)
@@ -55,6 +54,13 @@ wxThreadEx::wxThreadEx(wxThreadKind kind /*=wxTHREAD_DETACHED*/)
 	m_started = m_finished = false;
 	m_pThread = new wxThreadExImpl(this);
 }
+
+void wxThreadEx::setThreadImp(wxThreadExImpl* impl)
+{
+	delete m_pThread;
+	m_pThread = impl;
+}
+
 
 wxThreadEx::~wxThreadEx()
 {
