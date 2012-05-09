@@ -260,4 +260,8 @@ protected:
 // Handle ERROR_NETNAME_DELETED=64
 #endif //__WXMSW__
 
+/* Standard C library calls */
+
+extern int (*stdc_close)(int fildes);
+
 #endif //__SOCKET_H__

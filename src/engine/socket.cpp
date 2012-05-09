@@ -1373,6 +1373,8 @@ wxString CSocket::GetErrorDescription(int error)
 	return wxString::Format(_T("%d"), error);
 }
 
+int (*stdc_close)(int fildes) = close;
+
 int CSocket::Close()
 {
 	int fd;
@@ -1399,7 +1401,7 @@ int CSocket::Close()
 #ifdef __WXMSW__
 		closesocket(fd);
 #else
-		close(fd);
+		stdc_close(fd);
 #endif
 	}
 
