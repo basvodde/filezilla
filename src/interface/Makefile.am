@@ -1,17 +1,15 @@
+
 SUBDIRS = resources .
 INCLUDES = -I$(srcdir)/../include
-#########################################################################
-# APPLICATION SECTION
-#########################################################################
-# this is the program that gets installed.  it's name is used for all
-# of the other Makefile.am variables
 
-AUTOMAKE_OPTIONS = subdir-objects
+#########################################################################
+# LIBRARY SECTION
+#########################################################################
 
-bin_PROGRAMS = filezilla
+noinst_LIBRARIES = libinterface.a
 
 # the application source, library search path, and link libraries
-filezilla_SOURCES = aboutdialog.cpp \
+libinterface_a_SOURCES = aboutdialog.cpp \
 		asyncrequestqueue.cpp \
 		aui_notebook_ex.cpp \
 		auto_ascii_files.cpp \
@@ -118,8 +116,26 @@ filezilla_SOURCES = aboutdialog.cpp \
 		xmlfunctions.cpp
  
 if USE_BINRELOC
-filezilla_SOURCES += prefix.cpp
+libinterface_a_SOURCES += prefix.cpp
 endif
+
+libinterface_a_CPPFLAGS = $(WX_CPPFLAGS)
+libinterface_a_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
+libinterface_a_CFLAGS = $(WX_CFLAGS_ONLY)
+
+libinterface_a_CPPFLAGS += $(LIBSQLITE3_CFLAGS)
+
+libinterface_a_CPPFLAGS += $(LIBGTK_CFLAGS)
+
+#########################################################################
+# APPLICATION SECTION
+#########################################################################
+# this is the program that gets installed.  it's name is used for all
+# of the other Makefile.am variables
+
+AUTOMAKE_OPTIONS = subdir-objects
+
+bin_PROGRAMS = filezilla
 
 noinst_HEADERS = aboutdialog.h \
 		 asyncrequestqueue.h \
@@ -233,13 +249,15 @@ if USE_RESOURCEFILE
 RESOURCEFILE = resources/filezilla.o
 endif
 
-filezilla_DEPENDENCIES = ../engine/libengine.a
+filezilla_DEPENDENCIES = libinterface.a ../engine/libengine.a
+
+filezilla_SOURCES = filezilla_source.cpp
 
 filezilla_CPPFLAGS = $(WX_CPPFLAGS)
 filezilla_CXXFLAGS = $(WX_CXXFLAGS_ONLY)
 filezilla_CFLAGS = $(WX_CFLAGS_ONLY)
 
-filezilla_LDFLAGS = ../engine/libengine.a
+filezilla_LDFLAGS = libinterface.a ../engine/libengine.a 
 filezilla_LDFLAGS += $(TINYXML_LIBS)
 filezilla_LDFLAGS += $(LIBGNUTLS_LIBS)
 
@@ -252,7 +270,6 @@ filezilla_LDFLAGS += $(WX_LIBS)
 filezilla_LDFLAGS += $(RESOURCEFILE)
 filezilla_LDFLAGS += $(IDN_LIB)
 
-filezilla_CPPFLAGS += $(LIBSQLITE3_CFLAGS)
 filezilla_LDFLAGS += $(LIBSQLLITE3_SEARCH_PATH) $(LIBSQLITE3_LIBS)
 
 if MINGW
@@ -260,7 +277,6 @@ filezilla_LDFLAGS += -lole32 -luuid -lnetapi32 -lmpr
 endif
 
 # GTK+ libs, empty if not using wxGTK
-filezilla_CPPFLAGS += $(LIBGTK_CFLAGS)
 filezilla_LDFLAGS += $(LIBGTK_LIBS)
 
 if MINGW
