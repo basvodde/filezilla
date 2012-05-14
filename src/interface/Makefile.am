@@ -251,7 +251,7 @@ endif
 
 filezilla_DEPENDENCIES = libinterface.a ../engine/libengine.a
 
-filezilla_SOURCES = filezilla_source.cpp
+filezilla_SOURCES = filezilla_main.cpp
 
 filezilla_CPPFLAGS = $(WX_CPPFLAGS)
 filezilla_CXXFLAGS = $(WX_CXXFLAGS_ONLY)

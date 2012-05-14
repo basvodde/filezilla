@@ -64,10 +64,9 @@
 #define new DEBUG_NEW
 #endif
 
-#ifndef __WXGTK__
-IMPLEMENT_APP(CFileZillaApp);
-#else
 IMPLEMENT_APP_NO_MAIN(CFileZillaApp);
+#ifndef __WXGTK__
+IMPLEMENT_WX_THEME_SUPPORT
 #endif //__WXGTK__
 
 CFileZillaApp::CFileZillaApp()

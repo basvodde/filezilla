@@ -9,5 +9,6 @@ TEST_GROUP(AboutDialog)
 
 TEST(AboutDialog, fail)
 {
+	CAboutDialog dialog;
 	FAIL("FAIL");
 }
