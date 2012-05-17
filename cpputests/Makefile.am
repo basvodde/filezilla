@@ -3,7 +3,7 @@ bin_PROGRAMS = filezilla_engine_tests filezilla_interface_tests
 
 TESTS = $(bin_PROGRAMS)
 
-WX_STUBS = stubs/wx/stubWxMsgdlg.cpp stubs/wx/stubWxGeometry.cpp stubs/wx/StubWxCommandEvent.cpp
+WX_STUBS = stubs/wx/stubWxMsgdlg.cpp stubs/wx/stubWxGeometry.cpp stubs/wx/stubWxCommandEvent.cpp stubs/wx/stubWxWindow.cpp stubs/wx/stubWxFrame.cpp stubs/wx/stubWxColour.cpp stubs/wx/stubWxFont.cpp stubs/wx/stubWxGDIObject.cpp stubs/wx/stubWxRegion.cpp stubs/wx/stubWxPalette.cpp stubs/wx/stubWxAccel.cpp stubs/wx/stubWxBrush.cpp stubs/wx/stubWxCursor.cpp stubs/wx/stubWxBitmap.cpp stubs/wx/stubWxImage.cpp 
 MAIN = main/main.cpp
 
 filezilla_engine_tests_CPPFLAGS = $(WX_CPPFLAGS) -I$(srcdir)/../src/engine
