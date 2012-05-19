@@ -5,6 +5,8 @@
 #include "wx/bitmap.h"
 #include "wx/image.h"
 
+wxBitmap wxNullBitmap;
+
 wxBitmap::wxBitmap()
 {
 	FAIL("wxBitmap::wxBitmap");

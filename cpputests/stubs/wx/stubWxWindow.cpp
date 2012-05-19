@@ -4,6 +4,12 @@
 
 #include "wx/window.h"
 
+wxWindow* wxGetTopLevelParent(wxWindow *win)
+{
+	FAIL("wxGetTopLevelParent");
+	return NULL;
+}
+
 void wxWindowListNode::DeleteData()
 {
 	FAIL("wxWindowListNode::DeleteData");
@@ -367,9 +373,14 @@ void wxWindowBase::DoSetVirtualSize( int x, int y )
 	FAIL("wxWindowBase::DoSetVirtualSize");
 }
 
+wxWindow *wxWindowBase::FindFocus()
+{
+	FAIL("wxWindowBase::FindFocus");
+	return NULL;
+}
+
 const wxEventTable wxWindow::sm_eventTable = wxEventTable();
 wxEventHashTable wxWindow::sm_eventHashTable (wxWindow::sm_eventTable);
-
 
 void wxWindow::DoGetSize(int *width, int *height) const
 {

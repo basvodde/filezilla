@@ -75,5 +75,41 @@ bool wxImage::SaveFile( wxOutputStream& stream, const wxString& mimetype ) const
 	return true;
 }
 
+void wxImage::AddHandler( wxImageHandler *handler )
+{
+	FAIL("wxImage::AddHandler");
+}
+
+bool wxImageHandler::LoadFile( wxImage *image, wxInputStream& stream, bool verbose, int index)
+{
+	FAIL("wxImageHandler::LoadFile");
+	return true;
+}
+
+bool wxImageHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbose)
+{
+	FAIL("wxImageHandler::SaveFile");
+	return true;
+}
+
+bool wxImageHandler::DoCanRead( wxInputStream& stream )
+{
+	FAIL("wxImageHandler::DoCanRead");
+	return true;
+}
+
+int wxImageHandler::GetImageCount( wxInputStream& stream )
+{
+	FAIL("wxImageHandler::GetImageCount");
+	return 0;
+}
+
+wxClassInfo *wxImageHandler::GetClassInfo() const
+{
+	FAIL("wxImageHandler::GetClassInfo");
+	return NULL;
+}
+
+
 
 
