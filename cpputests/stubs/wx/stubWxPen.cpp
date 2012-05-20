@@ -5,6 +5,11 @@
 
 #include "wx/pen.h"
 
+wxPen::wxPen()
+{
+	FAIL("wxPen::wxPen");
+}
+
 wxPen::~wxPen()
 {
 	FAIL("wxPen::~wxPen");

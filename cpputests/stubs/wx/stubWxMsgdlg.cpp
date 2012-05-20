@@ -11,3 +11,14 @@ int wxMessageBox(const wxString& message, const wxString& caption, long style,
 	return 0;
 }
 
+wxClassInfo *wxMessageDialog::GetClassInfo() const
+{
+	FAIL("wxMessageDialog::GetClassInfo");
+	return NULL;
+}
+int wxMessageDialog::ShowModal()
+{
+	FAIL("wxMessageDialog::ShowModal");
+	return 0;
+}
+

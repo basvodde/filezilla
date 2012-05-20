@@ -20,6 +20,11 @@ bool wxTimerBase::Start(int milliseconds, bool oneShot)
 	return true;
 }
 
+void wxTimer::Init()
+{
+	FAIL("wxTimer::Init");
+}
+
 wxTimer::~wxTimer()
 {
 	FAIL("wxTimer::~wxTimer");

@@ -15,6 +15,8 @@ void wxWindowListNode::DeleteData()
 	FAIL("wxWindowListNode::DeleteData");
 }
 
+int wxWindowBase::ms_lastControlId = 0;
+
 const wxEventTable wxWindowBase::sm_eventTable = wxEventTable();
 wxEventHashTable wxWindowBase::sm_eventHashTable (wxWindowBase::sm_eventTable);
 
@@ -385,6 +387,11 @@ wxEventHashTable wxWindow::sm_eventHashTable (wxWindow::sm_eventTable);
 void wxWindow::DoGetSize(int *width, int *height) const
 {
 	FAIL("wxWindow::DoGetSize");
+}
+
+wxWindow::wxWindow()
+{
+	FAIL("wxWindow::wxWindow");
 }
 
 bool wxWindow::Enable( bool enable)

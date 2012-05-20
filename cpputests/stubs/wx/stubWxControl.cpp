@@ -42,6 +42,11 @@ wxClassInfo *wxControl::GetClassInfo() const
 	return NULL;
 }
 
+wxControl::wxControl()
+{
+	FAIL("wxControl::wxControl");
+}
+
 wxControl::~wxControl()
 {
 	FAIL("wxControl::~wxControl");

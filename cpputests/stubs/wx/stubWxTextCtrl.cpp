@@ -5,6 +5,8 @@
 
 #include "wx/textctrl.h"
 
+DEFINE_EVENT_TYPE(wxEVT_COMMAND_TEXT_UPDATED);
+
 void wxTextAttr::Init()
 {
 	FAIL("wxTextAttr::Init");

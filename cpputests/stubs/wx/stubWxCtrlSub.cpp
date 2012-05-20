@@ -14,3 +14,14 @@ wxItemContainerImmutable::~wxItemContainerImmutable()
 {
 	FAIL("wxItemContainerImmutable::~wxItemContainerImmutable");
 }
+
+wxClassInfo *wxControlWithItems::GetClassInfo() const
+{
+	FAIL("wxControlWithItems::GetClassInfo");
+	return NULL;
+}
+
+wxControlWithItems::~wxControlWithItems()
+{
+	FAIL("wxControlWithItems::~wxControlWithItems");
+}
