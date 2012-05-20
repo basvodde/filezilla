@@ -74,4 +74,9 @@ wxClassInfo *wxCloseEvent::GetClassInfo() const
 	return NULL;
 }
 
+bool wxMouseEvent::ButtonDown(int but) const
+{
+	FAIL("wxMouseEvent::ButtonDown");
+	return true;
+}
 

@@ -120,6 +120,12 @@ void wxFrameBase::UpdateWindowUI(long flags)
 	FAIL("wxFrameBase::UpdateWindowUI");
 }
 
+wxFrameBase::wxFrameBase()
+{
+	FAIL("wxFrameBase::wxFrameBase");
+}
+
+
 const wxEventTable wxFrame::sm_eventTable = wxEventTable();
 wxEventHashTable wxFrame::sm_eventHashTable (wxFrame::sm_eventTable);
 
@@ -210,3 +216,18 @@ wxClassInfo *wxFrame::GetClassInfo() const
 	FAIL("wxFrame::GetClassInfo");
 	return NULL;
 }
+
+void wxFrame::Init()
+{
+	FAIL("wxFrame::Init");
+}
+
+bool wxFrame::Create(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+		const wxSize& size, long style, const wxString& name)
+{
+	FAIL("wxFrame::Create");
+	return true;
+}
+
+wxClassInfo wxFrame::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+

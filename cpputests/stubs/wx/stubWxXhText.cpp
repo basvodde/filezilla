@@ -4,6 +4,11 @@
 
 #include "wx/xrc/xh_text.h"
 
+wxTextCtrlXmlHandler::wxTextCtrlXmlHandler()
+{
+	FAIL("wxTextCtrlXmlHandler::wxTextCtrlXmlHandler");
+}
+
 wxClassInfo *wxTextCtrlXmlHandler::GetClassInfo() const
 {
 	FAIL("wxTextCtrlXmlHandler::GetClassInfo");

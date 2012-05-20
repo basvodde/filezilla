@@ -61,6 +61,11 @@ wxClassInfo *wxDC::GetClassInfo() const
 	return NULL;
 }
 
+wxDC::wxDC()
+{
+	FAIL("wxDC::wxDC");
+}
+
 void wxDC::DoGetSize(int *width, int *height) const
 {
 	FAIL("wxDC::DoGetSize");

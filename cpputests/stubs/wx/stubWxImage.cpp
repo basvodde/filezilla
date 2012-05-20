@@ -110,6 +110,53 @@ wxClassInfo *wxImageHandler::GetClassInfo() const
 	return NULL;
 }
 
+wxImage wxImage::ConvertToGreyscale( double lr, double lg, double lb) const
+{
+	FAIL("wxImageHandler::ConvertToGreyscale");
+	return wxImage();
+}
+
+bool wxImage::HasMask() const
+{
+	FAIL("wxImageHandler::HasMask");
+	return true;
+}
+
+wxImage wxImage::Scale( int width, int height, int quality) const
+{
+	FAIL("wxImageHandler::Scale");
+	return wxImage();
+}
+
+bool wxImage::IsOk() const
+{
+	FAIL("wxImageHandler::IsOk");
+	return true;
+}
+
+wxImage::wxImage( const wxString& name, long type, int index)
+{
+	FAIL("wxImageHandler::GetClassInfo");
+}
+
+void wxImage::InitAlpha()
+{
+	FAIL("wxImageHandler::InitAlpha");
+}
+
+unsigned char wxImage::GetAlpha(int x, int y) const
+{
+	FAIL("wxImageHandler::GetAlpha");
+	return 'a';
+}
+
+wxImage wxImage::GetSubImage( const wxRect& rect) const
+{
+	FAIL("wxImageHandler::GetSubImage");
+	return wxImage();
+}
+
+
 
 
 

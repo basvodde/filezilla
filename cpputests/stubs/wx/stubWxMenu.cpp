@@ -77,6 +77,51 @@ wxMenuItem* wxMenuBase::FindItem(int itemid, wxMenu **menu) const
 	return NULL;
 }
 
+void wxMenuBase::Check(int itemid, bool check)
+{
+	FAIL("wxMenuBase::Check");
+}
+
+wxMenuItem* wxMenuBase::FindItemByPosition(size_t position) const
+{
+	FAIL("wxMenuBase::FindItemByPosition");
+	return NULL;
+}
+
+void wxMenuBase::Init(long style)
+{
+	FAIL("wxMenuBase::Init");
+}
+
+wxMenuItem *wxMenuBase::FindChildItem(int itemid, size_t *pos) const
+{
+	FAIL("wxMenuBase::FindChildItem");
+	return NULL;
+}
+
+wxMenuItem* wxMenuBase::Insert(size_t pos, wxMenuItem *item)
+{
+	FAIL("wxMenuBase::Insert");
+	return NULL;
+}
+
+void wxMenuBase::Enable(int itemid, bool enable)
+{
+	FAIL("wxMenuBase::Enable");
+}
+
+wxMenuItem *wxMenuBase::Remove(wxMenuItem *item)
+{
+	FAIL("wxMenuBase::Remove");
+	return NULL;
+}
+
+bool wxMenuBase::Delete(wxMenuItem *item)
+{
+	FAIL("wxMenuBase::Delete");
+	return true;
+}
+
 wxMenu::~wxMenu()
 {
 	FAIL("wxMenu::~wxMenu");

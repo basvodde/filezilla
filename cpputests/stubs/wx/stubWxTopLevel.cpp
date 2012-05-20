@@ -20,6 +20,11 @@ wxEventHashTable& wxTopLevelWindowBase::GetEventHashTable() const
 	return sm_eventHashTable;
 }
 
+wxTopLevelWindowBase::wxTopLevelWindowBase()
+{
+	FAIL("wxTopLevelWindowBase::wxTopLevelWindowBase");
+}
+
 wxTopLevelWindowBase::~wxTopLevelWindowBase()
 {
 	FAIL("wxTopLevelWindowBase::~wxTopLevelWindowBase");
@@ -288,6 +293,11 @@ bool wxTopLevelWindowMac::Show( bool show)
 {
 	FAIL("wxTopLevelWindowMac::Show");
 	return true;
+}
+
+void wxTopLevelWindowMac::Init()
+{
+	FAIL("wxTopLevelWindowMac::Init");
 }
 
 wxClassInfo *wxTopLevelWindow::GetClassInfo() const

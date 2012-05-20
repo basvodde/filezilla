@@ -4,6 +4,11 @@
 
 #include "wx/graphics.h"
 
+wxGraphicsObject::wxGraphicsObject()
+{
+	FAIL("wxGraphicsObject::wxGraphicsObject");
+}
+
 wxGraphicsObject::~wxGraphicsObject()
 {
 	FAIL("wxGraphicsObject::~wxGraphicsObject");

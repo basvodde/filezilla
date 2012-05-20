@@ -20,3 +20,26 @@ wxClassInfo *wxIcon::GetClassInfo() const
 	return NULL;
 }
 
+int wxIcon::GetHeight() const
+{
+	FAIL("wxIcon::GetHeight");
+	return 0;
+}
+
+bool wxIcon::IsOk() const
+{
+	FAIL("wxIcon::IsOk");
+	return true;
+}
+
+int wxIcon::GetWidth() const
+{
+	FAIL("wxIcon::GetWidth");
+	return 0;
+}
+
+bool wxIcon::LoadFile(const wxString& name, wxBitmapType flags, int desiredWidth, int desiredHeight)
+{
+	FAIL("wxIcon::LoadFile");
+	return true;
+}

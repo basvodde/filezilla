@@ -189,6 +189,84 @@ void wxAuiDefaultTabArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_re
 	FAIL("wxAuiDefaultTabArt::DrawButton");
 }
 
+void wxAuiDefaultTabArt::SetNormalFont(const wxFont& font)
+{
+	FAIL("wxAuiDefaultTabArt::SetNormalFont");
+}
+
+int wxAuiDefaultTabArt::GetIndentSize()
+{
+	FAIL("wxAuiDefaultTabArt::GetIndentSize");
+	return 0;
+}
+
+void wxAuiDefaultTabArt::SetMeasuringFont(const wxFont& font)
+{
+	FAIL("wxAuiDefaultTabArt::SetMeasuringFont");
+}
+
+void wxAuiDefaultTabArt::SetFlags(unsigned int flags)
+{
+	FAIL("wxAuiDefaultTabArt::SetFlags");
+}
+
+int wxAuiDefaultTabArt::ShowDropDown(wxWindow* wnd, const wxAuiNotebookPageArray& items, int active_idx)
+{
+	FAIL("wxAuiDefaultTabArt::ShowDropDown");
+	return 0;
+}
+
+void wxAuiDefaultTabArt::DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& pane,
+		const wxRect& in_rect, int close_button_state, wxRect* out_tab_rect, wxRect* out_button_rect, int* x_extent)
+{
+	FAIL("wxAuiDefaultTabArt::DrawTab");
+}
+
+wxAuiDefaultTabArt::wxAuiDefaultTabArt()
+{
+	FAIL("wxAuiDefaultTabArt::wxAuiDefaultTabArt");
+}
+
+wxAuiDefaultTabArt::~wxAuiDefaultTabArt()
+{
+	FAIL("wxAuiDefaultTabArt::~wxAuiDefaultTabArt");
+}
+
+int wxAuiDefaultTabArt::GetBestTabCtrlSize(wxWindow* wnd, const wxAuiNotebookPageArray& pages, const wxSize& required_bmp_size)
+{
+	FAIL("wxAuiDefaultTabArt::GetBestTabCtrlSize");
+	return 0;
+}
+
+void wxAuiDefaultTabArt::SetSelectedFont(const wxFont& selected_font)
+{
+	FAIL("wxAuiDefaultTabArt::SetSelectedFont");
+}
+
+void wxAuiDefaultTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+{
+	FAIL("wxAuiDefaultTabArt::DrawBackground");
+}
+
+void wxAuiDefaultTabArt::SetSizingInfo(const wxSize& tab_ctrl_size, size_t tab_count)
+{
+	FAIL("wxAuiDefaultTabArt::SetSizingInfo");
+}
+
+wxSize wxAuiDefaultTabArt::GetTabSize(wxDC& dc, wxWindow* wnd, const wxString& caption, const wxBitmap& bitmap,
+		bool active, int close_button_state, int* x_extent)
+{
+	FAIL("wxAuiDefaultTabArt::GetTabSize");
+	return wxSize();
+}
+
+wxAuiTabArt* wxAuiDefaultTabArt::Clone()
+{
+	FAIL("wxAuiDefaultTabArt::Clone");
+	return NULL;
+}
+
+
 wxAuiNotebookPageArray::~wxAuiNotebookPageArray()
 {
 	FAIL("wxAuiNotebookPageArray::~wxAuiNotebookPageArray");

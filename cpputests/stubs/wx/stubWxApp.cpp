@@ -6,6 +6,11 @@
 #include "wx/window.h"
 #include "wx/vidmode.h"
 
+wxAppBase::wxAppBase()
+{
+	FAIL("wxAppBase::wxAppBase");
+}
+
 int wxAppBase::OnExit()
 {
 	FAIL("wxAppBase::OnExit");
@@ -230,4 +235,9 @@ bool wxApp::OnInitGui()
 void wxApp::MacOpenFile(const wxString &fileName)
 {
 	FAIL("wxWindowBase::MacOpenFile");
+}
+
+wxApp::wxApp()
+{
+	FAIL("wxApp::wxApp");
 }

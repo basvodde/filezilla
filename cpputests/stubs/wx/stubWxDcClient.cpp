@@ -4,6 +4,11 @@
 
 #include "wx/dcclient.h"
 
+wxWindowDC::wxWindowDC()
+{
+	FAIL("wxWindowDC::wxWindowDC");
+}
+
 void wxWindowDC::DoGetSize( int *width, int *height ) const
 {
 	FAIL("wxWindowDC::DoGetSize");
@@ -30,6 +35,16 @@ wxClassInfo *wxPaintDC::GetClassInfo() const
 {
 	FAIL("wxPaintDC::GetClassInfo");
 	return NULL;
+}
+
+wxPaintDC::wxPaintDC()
+{
+	FAIL("wxPaintDC::wxPaintDC");
+}
+
+wxPaintDC::wxPaintDC(wxWindow *win)
+{
+	FAIL("wxPaintDC::wxPaintDC");
 }
 
 wxPaintDC::~wxPaintDC()
