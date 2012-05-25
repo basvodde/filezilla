@@ -156,6 +156,11 @@ wxImage wxImage::GetSubImage( const wxRect& rect) const
 	return wxImage();
 }
 
+unsigned char* wxImage::GetAlpha() const
+{
+	FAIL("wxImageHandler::GetAlpha");
+	return NULL;
+}
 
 
 

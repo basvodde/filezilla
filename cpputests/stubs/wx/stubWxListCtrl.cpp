@@ -5,6 +5,10 @@
 
 #include "wx/listctrl.h"
 
+const wxChar wxListCtrlNameStr[] = L"";
+
+wxClassInfo wxListCtrl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
 void wxwxColumnListNode::DeleteData()
 {
 	FAIL("wxwxColumnListNode::DeleteData");
@@ -342,5 +346,15 @@ bool wxListCtrl::SetItemPtrData(long item, wxUIntPtr data)
 	return true;
 }
 
+long wxListCtrl::SetItem(long index, int col, const wxString& label, int imageId)
+{
+	FAIL("wxListCtrl::SetItem");
+	return 0;
+}
 
+long wxListCtrl::InsertColumn(long col, const wxString& heading, int format, int width)
+{
+	FAIL("wxListCtrl::InsertColumn");
+	return 0;
+}
 

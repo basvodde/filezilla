@@ -24,3 +24,8 @@ wxMemoryDC::~wxMemoryDC()
 {
 	FAIL("wxMemoryDC::~wxMemoryDC");
 }
+
+void wxMemoryDC::Init()
+{
+	FAIL("wxMemoryDC::Init");
+}

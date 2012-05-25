@@ -4,6 +4,8 @@
 
 #include "wx/statbmp.h"
 
+const wxChar wxStaticBitmapNameStr[] = L"";
+
 wxStaticBitmapBase::~wxStaticBitmapBase()
 {
 	FAIL("wxStaticBitmapBase::~wxStaticBitmapBase");
@@ -45,5 +47,12 @@ wxSize wxStaticBitmap::DoGetBestSize() const
 void wxStaticBitmap::SetBitmap(const wxBitmap& bitmap)
 {
 	FAIL("wxStaticBitmap::SetBitmap");
+}
+
+bool wxStaticBitmap::Create(wxWindow *parent, wxWindowID id,  const wxBitmap& label, const wxPoint& pos,
+		const wxSize& size, long style, const wxString& name)
+{
+	FAIL("wxStaticBitmap::Create");
+	return true;
 }
 

@@ -21,6 +21,20 @@ wxMenuItemBase::wxMenuItemBase(wxMenu *parentMenu, int itemid, const wxString& t
 	FAIL("wxMenuItemBase::wxMenuItemBase");
 }
 
+wxString wxMenuItemBase::GetLabelFromText(const wxString& text)
+{
+	FAIL("wxMenuItemBase::GetLabelFromText");
+	return L"";
+}
+
+wxMenuItem *wxMenuItemBase::New(wxMenu *parentMenu, int itemid, const wxString& text, const wxString& help,
+		wxItemKind kind, wxMenu *subMenu)
+{
+	FAIL("wxMenuItemBase::New");
+	return NULL;
+}
+
+
 wxAcceleratorEntry *wxMenuItemBase::GetAccel() const
 {
 	FAIL("wxMenuItemBase::GetAccel");

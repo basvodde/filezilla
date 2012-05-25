@@ -4,9 +4,19 @@
 
 #include "wx/scrolwin.h"
 
+wxScrollHelper::wxScrollHelper(wxWindow *winToScroll)
+{
+	FAIL("wxScrollHelper::wxScrollHelper");
+}
+
 wxScrollHelper::~wxScrollHelper()
 {
 	FAIL("wxScrollHelper::~wxScrollHelper");
+}
+
+void wxScrollHelper::SetScrollRate( int xstep, int ystep )
+{
+	FAIL("wxScrollHelper::SetScrollRate");
 }
 
 wxSize wxScrollHelper::ScrollGetWindowSizeForVirtualSize(const wxSize& size) const
@@ -126,3 +136,11 @@ wxEventHashTable& wxScrolledWindow::GetEventHashTable() const
 	FAIL("wxScrolledWindow::GetEventHashTable");
 	return sm_eventHashTable;
 }
+
+bool wxScrolledWindow::Create(wxWindow *parent, wxWindowID winid, const wxPoint& pos,
+		const wxSize& size, long style, const wxString& name)
+{
+	FAIL("wxScrolledWindow::Create");
+	return true;
+}
+

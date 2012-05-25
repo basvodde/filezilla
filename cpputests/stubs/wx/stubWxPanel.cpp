@@ -61,3 +61,14 @@ wxClassInfo *wxPanel::GetClassInfo() const
 	return NULL;
 }
 
+bool wxPanel::Create(wxWindow *parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
+		long style, const wxString& name)
+{
+	FAIL("wxPanel::Create");
+	return true;
+}
+
+void wxPanel::Init()
+{
+	FAIL("wxPanel::Init");
+}

@@ -9,6 +9,12 @@ wxBrush::wxBrush()
 	FAIL("wxBrush::wxBrush");
 }
 
+wxBrush::wxBrush(const wxColour& col, int style)
+{
+	FAIL("wxBrush::wxBrush");
+}
+
+
 wxBrush::~wxBrush()
 {
 	FAIL("wxBrush::~wxBrush");

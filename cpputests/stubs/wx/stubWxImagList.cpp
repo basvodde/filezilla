@@ -34,3 +34,15 @@ wxClassInfo *wxImageList::GetClassInfo() const
 	FAIL("wxImageList::GetClassInfo");
 	return NULL;
 }
+
+int wxImageList::Add( const wxBitmap& bitmap )
+{
+	FAIL("wxImageList::Add");
+	return 0;
+}
+
+wxImageList::wxImageList( int width, int height, bool mask, int initialCount)
+{
+	FAIL("wxImageList::wxImageList");
+}
+

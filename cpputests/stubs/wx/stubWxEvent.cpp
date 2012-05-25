@@ -4,6 +4,9 @@
 
 #include "wx/event.h"
 
+wxUpdateUIMode wxUpdateUIEvent::sm_updateMode = wxUPDATE_UI_PROCESS_ALL;
+wxIdleMode wxIdleEvent::sm_idleMode = wxIDLE_PROCESS_ALL;
+
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_BUTTON_CLICKED);
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_CHECKLISTBOX_TOGGLED);
 DEFINE_EVENT_TYPE(wxEVT_SCROLLWIN_LINEUP);
@@ -50,6 +53,7 @@ DEFINE_EVENT_TYPE(wxEVT_LEFT_DCLICK);
 DEFINE_EVENT_TYPE(wxEVT_MOTION);
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_MENU_SELECTED);
 
+
 wxClassInfo *wxSizeEvent::GetClassInfo() const
 {
 	FAIL("wxSizeEvent::GetClassInfo");
@@ -78,5 +82,28 @@ bool wxMouseEvent::ButtonDown(int but) const
 {
 	FAIL("wxMouseEvent::ButtonDown");
 	return true;
+}
+
+wxKeyEvent::wxKeyEvent(wxEventType keyType)
+{
+	FAIL("wxKeyEvent::wxKeyEvent");
+}
+
+wxKeyEvent::wxKeyEvent(const wxKeyEvent& evt)
+{
+	FAIL("wxKeyEvent::wxKeyEvent");
+}
+
+
+wxClassInfo *wxKeyEvent::GetClassInfo() const
+{
+	FAIL("wxKeyEvent::GetClassInfo");
+	return NULL;
+}
+
+wxString wxCommandEvent::GetString() const
+{
+	FAIL("wxCommandEvent::GetString");
+	return L"";
 }
 

@@ -51,3 +51,19 @@ wxPaintDC::~wxPaintDC()
 {
 	FAIL("wxPaintDC::~wxPaintDC");
 }
+
+wxClientDC::wxClientDC(wxWindow *win)
+{
+	FAIL("wxClientDC::wxClientDC");
+}
+
+wxClientDC::~wxClientDC(void)
+{
+	FAIL("wxClientDC::~wxClientDC");
+}
+
+wxClassInfo *wxClientDC::GetClassInfo() const
+{
+	FAIL("wxClientDC::GetClassInfo");
+	return NULL;
+}

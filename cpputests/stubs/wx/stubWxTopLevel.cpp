@@ -5,6 +5,10 @@
 
 #include "wx/toplevel.h"
 
+wxClassInfo wxTopLevelWindow::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
+const wxChar wxFrameNameStr[100] = L"";
+
 const wxEventTable wxTopLevelWindowBase::sm_eventTable = wxEventTable();
 wxEventHashTable wxTopLevelWindowBase::sm_eventHashTable (wxTopLevelWindowBase::sm_eventTable);
 
@@ -69,6 +73,11 @@ void wxTopLevelWindowBase::DoClientToScreen(int *x, int *y) const
 void wxTopLevelWindowBase::GetRectForTopLevelChildren(int *x, int *y, int *w, int *h)
 {
 	FAIL("wxTopLevelWindowBase::GetRectForTopLevelChildren");
+}
+
+void wxTopLevelWindowBase::DoLayout()
+{
+	FAIL("wxTopLevelWindowBase::DoLayout");
 }
 
 bool wxTopLevelWindowBase::Destroy()

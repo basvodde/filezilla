@@ -5,6 +5,8 @@
 
 #include "wx/choice.h"
 
+const wxChar wxChoiceNameStr[100] = L"";
+
 wxChoiceBase::~wxChoiceBase()
 {
 	FAIL("wxChoiceBase::~wxChoiceBase");
@@ -19,6 +21,9 @@ wxChoice::~wxChoice()
 {
 	FAIL("wxChoice::~wxChoice");
 }
+
+
+wxClassInfo wxChoice::ms_classInfo(NULL, NULL, NULL, 0, NULL);
 
 wxClassInfo *wxChoice::GetClassInfo() const
 {
@@ -116,4 +121,10 @@ wxClientData* wxChoice::DoGetItemClientObject(unsigned int n) const
 	return NULL;
 }
 
+bool wxChoice::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, const wxArrayString& choices,
+		long style, const wxValidator& validator, const wxString& name)
+{
+	FAIL("wxChoice::Create");
+	return true;
+}
 

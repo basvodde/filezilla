@@ -5,6 +5,11 @@
 #include "wx/treebase.h"
 #include "wx/treectrl.h"
 
+
+wxClassInfo wxTreeCtrl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
+const wxChar wxTreeCtrlNameStr[100] = L"";
+
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_TREE_ITEM_ACTIVATED);
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_TREE_ITEM_MENU);
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_TREE_ITEM_EXPANDING);
@@ -424,3 +429,16 @@ wxClassInfo *wxTreeCtrl::GetClassInfo() const
 	FAIL("wxTreeCtrl::GetClassInfo");
 	return NULL;
 }
+
+bool wxGenericTreeCtrl::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
+		long style, const wxValidator &validator, const wxString& name)
+{
+	FAIL("wxGenericTreeCtrl::Create");
+	return true;
+}
+
+void wxGenericTreeCtrl::Init()
+{
+	FAIL("wxGenericTreeCtrl::Init");
+}
+

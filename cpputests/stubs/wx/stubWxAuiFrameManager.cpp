@@ -57,6 +57,20 @@ wxAuiFloatingFrame* wxAuiManager::CreateFloatingFrame(wxWindow* parent, const wx
 	return NULL;
 }
 
+wxAuiPaneInfoArray gPanes;
+
+wxAuiPaneInfoArray& wxAuiManager::GetAllPanes()
+{
+	FAIL("wxAuiManager::GetAllPanes");
+	return gPanes;
+}
+
+void wxAuiManager::Update()
+{
+	FAIL("wxAuiManager::Update");
+}
+
+
 
 wxAuiDockInfoArray::~wxAuiDockInfoArray()
 {
@@ -72,8 +86,3 @@ wxAuiPaneInfoArray::~wxAuiPaneInfoArray()
 {
 	FAIL("wxAuiPaneInfoArray::~wxAuiPaneInfoArray");
 }
-
-//wxAuiNotebookPageArray::~wxAuiNotebookPageArray()
-//{
-//
-//}

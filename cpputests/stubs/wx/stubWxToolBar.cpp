@@ -24,6 +24,11 @@ wxEventHashTable& wxToolBarBase::GetEventHashTable() const
 	return sm_eventHashTable;
 }
 
+wxToolBarBase::wxToolBarBase()
+{
+	FAIL("wxToolBarBase::wxToolBarBase");
+}
+
 void wxToolBarBase::EnableTool(int toolid, bool enable)
 {
 	FAIL("wxToolBarBase::EnableTool");
@@ -345,3 +350,17 @@ void wxToolBar::MacSuperChangedPosition()
 {
 	FAIL("wxToolBar::MacSuperChangedPosition");
 }
+
+bool wxToolBar::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+{
+	FAIL("wxToolBar::Create");
+	return true;
+}
+
+void wxToolBar::Init()
+{
+	FAIL("wxToolBar::Init");
+}
+
+wxClassInfo wxToolBar::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+

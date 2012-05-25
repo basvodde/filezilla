@@ -27,6 +27,13 @@ void wxFontBase::DoSetNativeFontInfo(const wxNativeFontInfo& info)
 	FAIL("wxFontBase::DoSetNativeFontInfo");
 }
 
+wxString wxFontBase::GetNativeFontInfoDesc() const
+{
+	FAIL("wxFontBase::GetNativeFontInfoDesc");
+	return L"";
+}
+
+
 bool wxFontBase::SetFaceName( const wxString& faceName )
 {
 	FAIL("wxFontBase::SetFaceName");

@@ -4,6 +4,10 @@
 
 #include "wx/dialog.h"
 
+const wxChar wxDialogNameStr[] = L"";;
+
+wxClassInfo wxDialog::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
 const wxEventTable wxDialogBase::sm_eventTable = wxEventTable();
 wxEventHashTable wxDialogBase::sm_eventHashTable (wxDialogBase::sm_eventTable);
 
@@ -51,6 +55,29 @@ bool wxDialogBase::IsEscapeKey(const wxKeyEvent& event)
 	return true;
 }
 
+void wxDialogBase::Init()
+{
+	FAIL("wxDialogBase::Init");
+}
+
+void wxDialogBase::EndDialog(int rc)
+{
+	FAIL("wxDialogBase::EndDialog");
+}
+
+void wxDialogBase::SetEscapeId(int escapeId)
+{
+	FAIL("wxDialogBase::SetEscapeId");
+}
+
+bool wxDialog::Create(wxWindow *parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+		const wxSize& size, long style, const wxString& name)
+{
+	FAIL("wxDialog::Create");
+	return true;
+}
+
+
 wxDialog::~wxDialog()
 {
 	FAIL("wxDialog::~wxDialog");
@@ -89,5 +116,10 @@ bool wxDialog::IsEscapeKey(const wxKeyEvent& event)
 {
 	FAIL("wxDialog::IsEscapeKey");
 	return true;
+}
+
+void wxDialog::Init()
+{
+	FAIL("wxDialog::Init");
 }
 

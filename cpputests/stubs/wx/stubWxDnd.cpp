@@ -4,6 +4,7 @@
 
 #include "wx/dnd.h"
 
+
 wxDragResult wxDropTarget::OnDragOver(wxCoord x, wxCoord y, wxDragResult def)
 {
 	FAIL("wxDropTarget::OnDragOver");
@@ -28,3 +29,23 @@ bool wxDropTarget::GetData()
 	return true;
 }
 
+wxDropTarget::wxDropTarget(wxDataObject *dataObject)
+{
+	FAIL("wxDropTarget::wxDropTarget");
+}
+
+wxDragResult wxDropSource::DoDragDrop(int flags)
+{
+	FAIL("wxDropSource::DoDragDrop");
+	return wxDragResult();
+}
+
+wxDropSource::wxDropSource( wxWindow *win, const wxCursor &cursorCopy, const wxCursor &cursorMove, const wxCursor &cursorStop)
+{
+	FAIL("wxDropSource::DoDragDrop");
+}
+
+wxDropSource::~wxDropSource()
+{
+	FAIL("wxDropSource::DoDragDrop");
+}

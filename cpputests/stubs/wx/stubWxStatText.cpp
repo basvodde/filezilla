@@ -4,6 +4,11 @@
 
 #include "wx/stattext.h"
 
+
+wxClassInfo wxStaticText::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
+const wxChar wxStaticTextNameStr[100] = L"";
+
 wxClassInfo *wxStaticText::GetClassInfo() const
 {
 	FAIL("wxStaticText::GetClassInfo");

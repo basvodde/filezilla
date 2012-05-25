@@ -13,6 +13,13 @@ DEFINE_EVENT_TYPE(wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED);
 const wxEventTable wxAuiNotebook::sm_eventTable = wxEventTable();
 wxEventHashTable wxAuiNotebook::sm_eventHashTable (wxAuiNotebook::sm_eventTable);
 
+wxColor wxAuiStepColour(const wxColor& c, int ialpha)
+{
+	FAIL("wxAuiStepColour");
+	return wxColor();
+}
+
+
 const wxEventTable* wxAuiNotebook::GetEventTable() const
 {
 	FAIL("wxAuiNotebook::GetEventTable");
@@ -28,6 +35,12 @@ wxEventHashTable& wxAuiNotebook::GetEventHashTable() const
 wxClassInfo *wxAuiNotebook::GetClassInfo() const
 {
 	FAIL("wxAuiNotebook::GetClassInfo");
+	return NULL;
+}
+
+wxWindow* wxAuiNotebook::GetPage(size_t page_idx) const
+{
+	FAIL("wxAuiNotebook::GetPage");
 	return NULL;
 }
 
@@ -177,6 +190,20 @@ wxAuiTabContainer::~wxAuiTabContainer()
 {
 	FAIL("wxAuiTabContainer::~wxAuiTabContainer");
 }
+
+size_t wxAuiTabContainer::GetPageCount() const
+{
+	FAIL("wxAuiTabContainer::GetPageCount");
+	return 0;
+}
+
+wxAuiNotebookPage gNotebookPage;
+wxAuiNotebookPage& wxAuiTabContainer::GetPage(size_t idx)
+{
+	FAIL("wxAuiTabContainer::GetPage");
+	return gNotebookPage;
+}
+
 
 void wxAuiTabContainer::Render(wxDC* dc, wxWindow* wnd)
 {

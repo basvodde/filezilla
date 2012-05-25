@@ -4,6 +4,8 @@
 
 #include "wx/combobox.h"
 
+const wxChar wxComboBoxNameStr[100] = L"";
+
 const wxEventTable wxComboBox::sm_eventTable = wxEventTable();
 wxEventHashTable wxComboBox::sm_eventHashTable (wxComboBox::sm_eventTable);
 
@@ -304,5 +306,17 @@ bool wxComboBox::Show(bool show)
 {
 	FAIL("wxComboBox::Show");
 	return true;
+}
+
+bool wxComboBox::Create(wxWindow *parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
+		const wxArrayString& choices, long style, const wxValidator& validator, const wxString& name)
+{
+	FAIL("wxComboBox::Create");
+	return true;
+}
+
+void wxComboBox::Init()
+{
+	FAIL("wxComboBox::Init");
 }
 

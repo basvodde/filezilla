@@ -22,3 +22,9 @@ int wxMessageDialog::ShowModal()
 	return 0;
 }
 
+wxMessageDialog::wxMessageDialog(wxWindow *parent, const wxString& message, const wxString& caption,
+		long style, const wxPoint& pos)
+{
+	FAIL("wxMessageDialog::wxMessageDialog");
+}
+

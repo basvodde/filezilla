@@ -4,6 +4,13 @@
 
 #include "wx/dc.h"
 
+
+wxCoord wxDCBase::DeviceToLogicalX(wxCoord x) const
+{
+	FAIL("wxDCBase::DeviceToLogicalX");
+	return wxCoord();
+}
+
 void wxDCBase::DrawLabel(const wxString& text, const wxBitmap& image, const wxRect& rect,
 		int alignment, int indexAccel, wxRect *rectBounding)
 {

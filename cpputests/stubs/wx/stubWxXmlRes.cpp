@@ -175,4 +175,16 @@ wxPanel *wxXmlResource::LoadPanel(wxWindow *parent, const wxString& name)
 	return NULL;
 }
 
+bool wxXmlResource::LoadDialog(wxDialog *dlg, wxWindow *parent, const wxString& name)
+{
+	FAIL("wxXmlResource::LoadDialog");
+	return true;
+}
+
+bool wxXmlResource::LoadPanel(wxPanel *panel, wxWindow *parent, const wxString& name)
+{
+	FAIL("wxXmlResource::LoadPanel");
+	return true;
+}
+
 

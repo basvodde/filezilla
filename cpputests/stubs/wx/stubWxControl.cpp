@@ -4,6 +4,8 @@
 
 #include "wx/control.h"
 
+wxClassInfo wxControl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
 wxControlBase::~wxControlBase()
 {
 	FAIL("wxControlBase::~wxControlBase");

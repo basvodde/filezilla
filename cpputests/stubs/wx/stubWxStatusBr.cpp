@@ -4,6 +4,8 @@
 
 #include "wx/statusbr.h"
 
+const wxChar wxStatusBarNameStr[100] = L"";
+
 wxStatusBarBase::~wxStatusBarBase()
 {
 	FAIL("wxStatusBarBase::~wxStatusBarBase");

@@ -4,6 +4,11 @@
 
 #include "wx/accel.h"
 
+wxAcceleratorTable::wxAcceleratorTable(int n, const wxAcceleratorEntry entries[])
+{
+	FAIL("wxAcceleratorTable::wxAcceleratorTable");
+}
+
 wxAcceleratorTable::wxAcceleratorTable()
 {
 	FAIL("wxAcceleratorTable::wxAcceleratorTable");

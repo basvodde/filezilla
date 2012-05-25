@@ -5,7 +5,13 @@
 
 #include "wx/textctrl.h"
 
+
+const wxChar wxTextCtrlNameStr[] = L"";
+
+wxClassInfo wxTextCtrl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_TEXT_UPDATED);
+DEFINE_EVENT_TYPE(wxEVT_COMMAND_TEXT_ENTER);
 
 void wxTextAttr::Init()
 {
@@ -393,6 +399,18 @@ wxSize wxTextCtrl::DoGetBestSize() const
 void wxTextCtrl::CreatePeer(const wxString& str, const wxPoint& pos, const wxSize& size, long style )
 {
 	FAIL("wxTextCtrl::CreatePeer");
+}
+
+bool wxTextCtrl::Create(wxWindow *parent, wxWindowID id,  const wxString& value, const wxPoint& pos,
+		const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+{
+	FAIL("wxTextCtrl::Create");
+	return true;
+}
+
+void wxTextCtrl::Init()
+{
+	FAIL("wxTextCtrl::Init");
 }
 
 

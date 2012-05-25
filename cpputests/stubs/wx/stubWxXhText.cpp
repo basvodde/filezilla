@@ -4,6 +4,8 @@
 
 #include "wx/xrc/xh_text.h"
 
+wxClassInfo wxTextCtrlXmlHandler::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+
 wxTextCtrlXmlHandler::wxTextCtrlXmlHandler()
 {
 	FAIL("wxTextCtrlXmlHandler::wxTextCtrlXmlHandler");

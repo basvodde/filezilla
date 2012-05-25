@@ -7,6 +7,11 @@
 
 wxBitmap wxNullBitmap;
 
+wxBitmap::wxBitmap(int width, int height, int depth)
+{
+	FAIL("wxBitmap::wxBitmap");
+}
+
 wxBitmap::wxBitmap()
 {
 	FAIL("wxBitmap::wxBitmap");
@@ -136,6 +141,22 @@ bool wxBitmap::IsOk() const
 {
 	FAIL("wxBitmap::IsOk");
 	return true;
+}
+
+void *wxBitmap::GetRawData(wxPixelDataBase& data, int bpp)
+{
+	FAIL("wxBitmap::GetRawData");
+	return NULL;
+}
+
+void wxBitmap::UngetRawData(wxPixelDataBase& data)
+{
+	FAIL("wxBitmap::UngetRawData");
+}
+
+wxBitmap::wxBitmap(const wxImage& image, int depth)
+{
+	FAIL("wxBitmap::wxBitmap");
 }
 
 wxClassInfo *wxBitmapBase::GetClassInfo() const

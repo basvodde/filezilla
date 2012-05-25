@@ -20,6 +20,11 @@ wxClassInfo *wxWizardPage::GetClassInfo() const
 	return NULL;
 }
 
+void wxWizardPage::Init()
+{
+	FAIL("wxWizardPage::Init");
+}
+
 wxWizardPage *wxWizardPageSimple::GetPrev() const
 {
 	FAIL("wxWizardPageSimple::GetPrev");
@@ -102,4 +107,23 @@ wxClassInfo *wxWizard::GetClassInfo() const
 	FAIL("wxWizard::GetClassInfo");
 	return NULL;
 }
+
+void wxWizard::Init()
+{
+	FAIL("wxWizard::Init");
+}
+
+bool wxWizard::ShowPage(wxWizardPage *page, bool goingForward)
+{
+	FAIL("wxWizard::ShowPage");
+	return true;
+}
+
+bool wxWizard::Create(wxWindow *parent, int id, const wxString& title, const wxBitmap& bitmap,
+		const wxPoint& pos, long style)
+{
+	FAIL("wxWizard::Create");
+	return true;
+}
+
 

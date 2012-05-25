@@ -4,6 +4,8 @@
 
 #include "wx/window.h"
 
+wxWindowList wxTopLevelWindows;
+
 wxWindow* wxGetTopLevelParent(wxWindow *win)
 {
 	FAIL("wxGetTopLevelParent");
@@ -379,6 +381,62 @@ wxWindow *wxWindowBase::FindFocus()
 {
 	FAIL("wxWindowBase::FindFocus");
 	return NULL;
+}
+
+wxWindow *wxWindowBase::FindWindowById( long winid, const wxWindow *parent)
+{
+	FAIL("wxWindowBase::FindWindowById");
+	return NULL;
+}
+
+wxColour wxWindowBase::GetBackgroundColour() const
+{
+	FAIL("wxWindowBase::GetBackgroundColour");
+	return wxColour();
+}
+
+wxColour wxWindowBase::GetForegroundColour() const
+{
+	FAIL("wxWindowBase::GetForegroundColour");
+	return wxColour();
+}
+
+void wxWindowBase::SetToolTip( const wxString &tip )
+{
+	FAIL("wxWindowBase::SetToolTip");
+}
+
+void wxWindowBase::SetContainingSizer(wxSizer* sizer)
+{
+	FAIL("wxWindowBase::SetContainingSizer");
+}
+
+void wxWindowBase::SetSizer(wxSizer *sizer, bool deleteOld)
+{
+	FAIL("wxWindowBase::SetSizer");
+}
+
+wxFont wxWindowBase::GetFont() const
+{
+	FAIL("wxWindowBase::GetFont");
+	return wxFont();
+}
+
+void wxWindowBase::InvalidateBestSize()
+{
+	FAIL("wxWindowBase::InvalidateBestSize");
+}
+
+wxWindow *wxWindowBase::FindWindow(long winid) const
+{
+	FAIL("wxWindowBase::FindWindow");
+	return NULL;
+}
+
+bool wxWindowBase::Close( bool force )
+{
+	FAIL("wxWindowBase::Close");
+	return true;
 }
 
 const wxEventTable wxWindow::sm_eventTable = wxEventTable();

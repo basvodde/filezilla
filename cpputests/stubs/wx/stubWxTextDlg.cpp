@@ -7,6 +7,12 @@
 const wxEventTable wxTextEntryDialog::sm_eventTable = wxEventTable();
 wxEventHashTable wxTextEntryDialog::sm_eventHashTable (wxTextEntryDialog::sm_eventTable);
 
+wxTextEntryDialog::wxTextEntryDialog(wxWindow *parent, const wxString& message, const wxString& caption,
+		const wxString& value, long style, const wxPoint& pos)
+{
+	FAIL("wxTextEntryDialog::wxTextEntryDialog");
+}
+
 const wxEventTable* wxTextEntryDialog::GetEventTable() const
 {
 	FAIL("wxTextEntryDialog::GetEventTable");

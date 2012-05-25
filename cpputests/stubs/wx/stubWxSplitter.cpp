@@ -4,6 +4,7 @@
 
 #include "wx/splitter.h"
 
+wxClassInfo wxSplitterWindow::ms_classInfo(NULL, NULL, NULL, 0, NULL);
 const wxEventTable wxSplitterWindow::sm_eventTable = wxEventTable();
 wxEventHashTable wxSplitterWindow::sm_eventHashTable (wxSplitterWindow::sm_eventTable);
 
@@ -129,6 +130,61 @@ void wxSplitterWindow::SizeWindows()
 void wxSplitterWindow::DrawSash(wxDC& dc)
 {
 	FAIL("wxSplitterWindow::DrawSash");
+}
+
+void wxSplitterWindow::SetSashPosition(int position, bool redraw)
+{
+	FAIL("wxSplitterWindow::SetSashPosition");
+}
+
+bool wxSplitterWindow::ReplaceWindow(wxWindow *winOld, wxWindow *winNew)
+{
+	FAIL("wxSplitterWindow::ReplaceWindow");
+	return true;
+}
+
+void wxSplitterWindow::Initialize(wxWindow *window)
+{
+	FAIL("wxSplitterWindow::Initialize");
+}
+
+void wxSplitterWindow::SetSashPositionAndNotify(int sashPos)
+{
+	FAIL("wxSplitterWindow::SetSashPositionAndNotify");
+}
+
+bool wxSplitterWindow::Unsplit(wxWindow *toRemove)
+{
+	FAIL("wxSplitterWindow::Unsplit");
+	return true;
+}
+
+int wxSplitterWindow::GetSashSize() const
+{
+	FAIL("wxSplitterWindow::GetSashSize");
+	return 0;
+}
+
+void wxSplitterWindow::Init()
+{
+	FAIL("wxSplitterWindow::Init");
+}
+
+int wxSplitterWindow::AdjustSashPosition(int sashPos) const
+{
+	FAIL("wxSplitterWindow::AdjustSashPosition");
+	return 0;
+}
+
+bool wxSplitterWindow::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+{
+	FAIL("wxSplitterWindow::Create");
+	return true;
+}
+
+void wxSplitterWindow::SetMinimumPaneSize(int min)
+{
+	FAIL("wxSplitterWindow::SetMinimumPaneSize");
 }
 
 

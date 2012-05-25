@@ -9,6 +9,11 @@ wxIcon::wxIcon()
 	FAIL("wxIcon::wxIcon");
 }
 
+wxIcon::wxIcon(const wxString& name, int flags, int desiredWidth, int desiredHeight)
+{
+	FAIL("wxIcon::wxIcon");
+}
+
 wxIcon::~wxIcon()
 {
 	FAIL("wxIcon::~wxIcon");
