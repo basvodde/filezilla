@@ -148,7 +148,6 @@ wxMenu *wxXmlResource::LoadMenu(const wxString& name)
 
 int wxXmlResource::GetXRCID(const wxChar *str_id, int value_if_not_found)
 {
-	FAIL("wxXmlResource::GetXRCID");
 	return 0;
 }
 
