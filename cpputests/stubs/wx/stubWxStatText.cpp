@@ -4,16 +4,9 @@
 
 #include "wx/stattext.h"
 
-
-wxClassInfo wxStaticText::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxStaticText, wxStaticTextBase);
 
 const wxChar wxStaticTextNameStr[100] = L"";
-
-wxClassInfo *wxStaticText::GetClassInfo() const
-{
-	FAIL("wxStaticText::GetClassInfo");
-	return NULL;
-}
 
 wxSize wxStaticText::DoGetBestSize() const
 {

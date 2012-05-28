@@ -84,5 +84,4 @@ wxAuiDockUIPartArray::~wxAuiDockUIPartArray()
 
 wxAuiPaneInfoArray::~wxAuiPaneInfoArray()
 {
-	FAIL("wxAuiPaneInfoArray::~wxAuiPaneInfoArray");
 }

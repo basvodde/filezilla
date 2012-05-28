@@ -28,17 +28,11 @@ bool wxMenuXmlHandler::CanHandle(wxXmlNode *node)
 	return true;
 }
 
-wxClassInfo wxMenuBarXmlHandler::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxMenuBarXmlHandler, wxXmlResourceHandler);
 
 wxMenuBarXmlHandler::wxMenuBarXmlHandler()
 {
 	FAIL("wxMenuBarXmlHandler::wxMenuBarXmlHandler");
-}
-
-wxClassInfo *wxMenuBarXmlHandler::GetClassInfo() const
-{
-	FAIL("wxMenuBarXmlHandler::GetClassInfo");
-	return NULL;
 }
 
 wxObject *wxMenuBarXmlHandler::DoCreateResource()

@@ -22,14 +22,7 @@ wxChoice::~wxChoice()
 	FAIL("wxChoice::~wxChoice");
 }
 
-
-wxClassInfo wxChoice::ms_classInfo(NULL, NULL, NULL, 0, NULL);
-
-wxClassInfo *wxChoice::GetClassInfo() const
-{
-	FAIL("wxChoice::GetClassInfo");
-	return NULL;
-}
+IMPLEMENT_DYNAMIC_CLASS(wxChoice, wxChoiceBase);
 
 void wxChoice:: Delete(unsigned int n)
 {

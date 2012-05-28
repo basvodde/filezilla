@@ -4,6 +4,9 @@
 
 #include "wx/window.h"
 
+IMPLEMENT_ABSTRACT_CLASS(wxWindowBase, wxEvtHandler);
+IMPLEMENT_DYNAMIC_CLASS(wxWindow, wxWindowBase);
+
 wxWindowList wxTopLevelWindows;
 
 wxWindow* wxGetTopLevelParent(wxWindow *win)
@@ -201,12 +204,6 @@ bool wxWindowBase::IsTopLevel() const
 {
 	FAIL("wxWindowBase::IsTopLevel");
 	return true;
-}
-
-wxClassInfo *wxWindowBase::GetClassInfo() const
-{
-	FAIL("wxWindowBase::GetClassInfo");
-	return NULL;
 }
 
 void wxWindowBase::SetInitialSize(const wxSize& size)
@@ -632,12 +629,6 @@ wxPoint wxWindow::GetClientAreaOrigin() const
 {
 	FAIL("wxWindow::GetClientAreaOrigin");
 	return wxPoint();
-}
-
-wxClassInfo *wxWindow::GetClassInfo() const
-{
-	FAIL("wxWindow::GetClassInfo");
-	return NULL;
 }
 
 void wxWindow::DoClientToScreen( int *x, int *y ) const

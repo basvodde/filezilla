@@ -8,12 +8,10 @@ const wxValidator wxDefaultValidator;
 
 wxValidator::wxValidator()
 {
-	FAIL("wxValidator::wxValidator");
 }
 
 wxValidator::~wxValidator()
 {
-	FAIL("wxValidator::~wxValidator");
 }
 
 wxClassInfo *wxValidator::GetClassInfo() const

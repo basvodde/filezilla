@@ -4,15 +4,11 @@
 
 #include "wx/xrc/xmlres.h"
 
+IMPLEMENT_ABSTRACT_CLASS(wxXmlResourceHandler, wxObject);
+
 wxXmlResourceHandler::wxXmlResourceHandler()
 {
 	FAIL("wxXmlResourceHandler::wxXmlResourceHandler");
-}
-
-wxClassInfo *wxXmlResourceHandler::GetClassInfo() const
-{
-	FAIL("wxXmlResourceHandler::GetClassInfo");
-	return NULL;
 }
 
 wxColour wxXmlResourceHandler::GetColour(const wxString& param, const wxColour& defaultv)

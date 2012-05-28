@@ -7,7 +7,6 @@
 
 wxFontBase::~wxFontBase()
 {
-	FAIL("wxFontBase::~wxFontBase");
 }
 
 wxSize wxFontBase::GetPixelSize() const
@@ -53,7 +52,6 @@ bool wxFontBase::IsUsingSizeInPixels() const
 
 wxFont::~wxFont()
 {
-	FAIL("wxFont::~wxFont");
 }
 
 int wxFont::GetPointSize() const

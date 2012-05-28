@@ -4,6 +4,8 @@
 
 #include "wx/toolbar.h"
 
+IMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxToolBarBase);
+
 void wxwxToolBarToolsListNode::DeleteData()
 {
 	FAIL("wxwxToolBarToolsListNode::DeleteData");
@@ -233,12 +235,6 @@ wxEventHashTable& wxToolBar::GetEventHashTable() const
 	return sm_eventHashTable;
 }
 
-wxClassInfo *wxToolBar::GetClassInfo() const
-{
-	FAIL("wxToolBar::GetClassInfo");
-	return NULL;
-}
-
 void wxToolBar::DoGetSize(int *width, int *height) const
 {
 	FAIL("wxToolBar::DoGetSize");
@@ -361,6 +357,3 @@ void wxToolBar::Init()
 {
 	FAIL("wxToolBar::Init");
 }
-
-wxClassInfo wxToolBar::ms_classInfo(NULL, NULL, NULL, 0, NULL);
-

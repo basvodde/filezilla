@@ -5,7 +5,7 @@
 
 #include "wx/toplevel.h"
 
-wxClassInfo wxTopLevelWindow::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxTopLevelWindow, wxTopLevelWindowBase);
 
 const wxChar wxFrameNameStr[100] = L"";
 
@@ -308,11 +308,4 @@ void wxTopLevelWindowMac::Init()
 {
 	FAIL("wxTopLevelWindowMac::Init");
 }
-
-wxClassInfo *wxTopLevelWindow::GetClassInfo() const
-{
-	FAIL("wxTopLevelWindow::GetClassInfo");
-	return NULL;
-}
-
 

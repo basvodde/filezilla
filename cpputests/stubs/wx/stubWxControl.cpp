@@ -4,7 +4,7 @@
 
 #include "wx/control.h"
 
-wxClassInfo wxControl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_ABSTRACT_CLASS(wxControl, wxControlBase);
 
 wxControlBase::~wxControlBase()
 {
@@ -36,12 +36,6 @@ bool wxControl::ProcessCommand(wxCommandEvent& event)
 {
 	FAIL("wxControl::ProcessCommand");
 	return true;
-}
-
-wxClassInfo *wxControl::GetClassInfo() const
-{
-	FAIL("wxControl::GetClassInfo");
-	return NULL;
 }
 
 wxControl::wxControl()

@@ -4,7 +4,8 @@
 
 #include "wx/splitter.h"
 
-wxClassInfo wxSplitterWindow::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxSplitterWindow, wxWindow);
+
 const wxEventTable wxSplitterWindow::sm_eventTable = wxEventTable();
 wxEventHashTable wxSplitterWindow::sm_eventHashTable (wxSplitterWindow::sm_eventTable);
 
@@ -92,12 +93,6 @@ void wxSplitterWindow::OnUnsplit(wxWindow *removed)
 void wxSplitterWindow::OnDoubleClickSash(int x, int y)
 {
 	FAIL("wxSplitterWindow::OnDoubleClickSash");
-}
-
-wxClassInfo *wxSplitterWindow::GetClassInfo() const
-{
-	FAIL("wxSplitterWindow::GetClassInfo");
-	return NULL;
 }
 
 void wxSplitterWindow::OnInternalIdle()

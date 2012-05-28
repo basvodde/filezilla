@@ -14,12 +14,10 @@ wxBitmap::wxBitmap(int width, int height, int depth)
 
 wxBitmap::wxBitmap()
 {
-	FAIL("wxBitmap::wxBitmap");
 }
 
 wxBitmap::~wxBitmap()
 {
-	FAIL("wxBitmap::~wxBitmap");
 }
 
 bool wxBitmap::LoadFile(const wxString& name, wxBitmapType type)

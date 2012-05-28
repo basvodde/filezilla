@@ -6,7 +6,7 @@
 #include "wx/treectrl.h"
 
 
-wxClassInfo wxTreeCtrl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxTreeCtrl, wxTreeCtrlBase);
 
 const wxChar wxTreeCtrlNameStr[100] = L"";
 
@@ -420,13 +420,6 @@ bool wxGenericTreeCtrl::GetBoundingRect(const wxTreeItemId& item, wxRect& rect, 
 wxClassInfo *wxGenericTreeCtrl::GetClassInfo() const
 {
 	FAIL("wxGenericTreeCtrl::GetClassInfo");
-	return NULL;
-}
-
-
-wxClassInfo *wxTreeCtrl::GetClassInfo() const
-{
-	FAIL("wxTreeCtrl::GetClassInfo");
 	return NULL;
 }
 

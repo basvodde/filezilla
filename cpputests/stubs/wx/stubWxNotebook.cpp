@@ -4,15 +4,20 @@
 
 #include "wx/notebook.h"
 
+IMPLEMENT_DYNAMIC_CLASS(wxNotebook, wxNotebookBase);
+
 const wxChar wxNotebookNameStr[] = L"";
+
+wxNotebook::wxNotebook()
+{
+	FAIL("wxNotebook::wxNotebook");
+}
 
 wxSize wxNotebookBase::CalcSizeFromPage(const wxSize& sizePage) const
 {
 	FAIL("wxNotebookBase::CalcSizeFromPage");
 	return wxSize();
 }
-
-wxClassInfo wxNotebook::ms_classInfo(NULL, NULL, NULL, 0, NULL);
 
 const wxEventTable wxNotebook::sm_eventTable = wxEventTable();
 wxEventHashTable wxNotebook::sm_eventHashTable (wxNotebook::sm_eventTable);
@@ -27,12 +32,6 @@ wxEventHashTable& wxNotebook::GetEventHashTable() const
 {
 	FAIL("wxNotebook::GetEventHashTable");
 	return sm_eventHashTable;
-}
-
-wxClassInfo *wxNotebook::GetClassInfo() const
-{
-	FAIL("wxNotebook::GetClassInfo");
-	return NULL;
 }
 
 wxNotebook::~wxNotebook()

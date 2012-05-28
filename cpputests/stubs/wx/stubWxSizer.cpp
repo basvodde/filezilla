@@ -5,7 +5,9 @@
 
 #include "wx/sizer.h"
 
-wxClassInfo wxStaticBoxSizer::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_CLASS(wxSizer, wxObject);
+IMPLEMENT_CLASS(wxBoxSizer, wxSizer);
+IMPLEMENT_CLASS(wxStaticBoxSizer, wxBoxSizer);
 
 void wxwxSizerItemListNode::DeleteData()
 {
@@ -71,13 +73,6 @@ bool wxSizerItem::IsShown() const
 {
 	FAIL("wxSizerItem::SetWindow");
 	return true;
-}
-
-
-wxClassInfo *wxSizer::GetClassInfo() const
-{
-	FAIL("wxSizer::GetClassInfo");
-	return NULL;
 }
 
 wxSizer::~wxSizer()
@@ -282,12 +277,6 @@ wxSize wxFlexGridSizer::CalcMin()
 wxBoxSizer::wxBoxSizer( int orient )
 {
 	FAIL("wxFlexGridSizer::wxBoxSizer");
-}
-
-wxClassInfo *wxBoxSizer::GetClassInfo() const
-{
-	FAIL("wxBoxSizer::GetClassInfo");
-	return NULL;
 }
 
 void wxBoxSizer::RecalcSizes()

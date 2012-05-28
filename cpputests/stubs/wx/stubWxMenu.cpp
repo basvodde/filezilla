@@ -4,6 +4,9 @@
 
 #include "wx/menu.h"
 
+IMPLEMENT_DYNAMIC_CLASS(wxMenu, wxMenuBase);
+IMPLEMENT_DYNAMIC_CLASS(wxMenuBar, wxMenuBarBase);
+
 void wxwxMenuListNode::DeleteData()
 {
 	FAIL("wxwxToolBarToolsListNode::DeleteData");
@@ -170,12 +173,6 @@ wxMenuItem* wxMenu::DoRemove(wxMenuItem *item)
 	return NULL;
 }
 
-wxClassInfo *wxMenu::GetClassInfo() const
-{
-	FAIL("wxMenu::GetClassInfo");
-	return NULL;
-}
-
 wxMenuBarBase::wxMenuBarBase()
 {
 	FAIL("wxMenuBarBase::wxMenuBarBase");
@@ -246,8 +243,6 @@ void wxMenuBarBase::Check(int itemid, bool check)
 {
 	FAIL("wxMenuBarBase::Check");
 }
-
-wxClassInfo wxMenuBar::ms_classInfo(NULL, NULL, NULL, 0, NULL);
 
 bool wxMenuBar::Insert(size_t pos, wxMenu *menu, const wxString& title)
 {
@@ -336,12 +331,6 @@ wxString wxMenuBar::GetLabelTop( size_t pos ) const
 void wxMenuBar::EnableTop( size_t pos, bool flag )
 {
 	FAIL("wxMenuBar::EnableTop");
-}
-
-wxClassInfo *wxMenuBar::GetClassInfo() const
-{
-	FAIL("wxMenuBar::GetClassInfo");
-	return NULL;
 }
 
 

@@ -5,6 +5,8 @@
 
 #include "wx/bookctrl.h"
 
+IMPLEMENT_ABSTRACT_CLASS(wxBookCtrlBase, wxControl);
+
 const wxEventTable wxBookCtrlBase::sm_eventTable = wxEventTable();
 wxEventHashTable wxBookCtrlBase::sm_eventHashTable (wxBookCtrlBase::sm_eventTable);
 
@@ -68,12 +70,6 @@ void wxBookCtrlBase::SetImageList(wxImageList *imageList)
 void wxBookCtrlBase::SetPageSize(const wxSize& size)
 {
 	FAIL("wxBookCtrlBase::SetPageSize");
-}
-
-wxClassInfo *wxBookCtrlBase::GetClassInfo() const
-{
-	FAIL("wxBookCtrlBase::GetClassInfo");
-	return NULL;
 }
 
 

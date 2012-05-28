@@ -5,6 +5,9 @@
 
 #include "wx/ctrlsub.h"
 
+IMPLEMENT_ABSTRACT_CLASS(wxControlWithItems, wxControl);
+
+
 wxItemContainer::~wxItemContainer()
 {
 	FAIL("wxItemContainer::~wxItemContainer");
@@ -39,12 +42,6 @@ bool wxItemContainerImmutable::SetStringSelection(const wxString& s)
 	 return L"";
  }
 
-
-wxClassInfo *wxControlWithItems::GetClassInfo() const
-{
-	FAIL("wxControlWithItems::GetClassInfo");
-	return NULL;
-}
 
 wxControlWithItems::~wxControlWithItems()
 {

@@ -18,12 +18,10 @@ wxString wxColourBase::GetAsString(long flags) const
 
 wxColour::~wxColour()
 {
-	FAIL("wxColour::wxColour")
 }
 
 void wxColour::Init()
 {
-	FAIL("wxColour::Init")
 }
 
 bool wxColour::IsOk() const

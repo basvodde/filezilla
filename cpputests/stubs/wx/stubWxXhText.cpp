@@ -4,17 +4,11 @@
 
 #include "wx/xrc/xh_text.h"
 
-wxClassInfo wxTextCtrlXmlHandler::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxTextCtrlXmlHandler, wxXmlResourceHandler);
 
 wxTextCtrlXmlHandler::wxTextCtrlXmlHandler()
 {
 	FAIL("wxTextCtrlXmlHandler::wxTextCtrlXmlHandler");
-}
-
-wxClassInfo *wxTextCtrlXmlHandler::GetClassInfo() const
-{
-	FAIL("wxTextCtrlXmlHandler::GetClassInfo");
-	return NULL;
 }
 
 wxObject *wxTextCtrlXmlHandler::DoCreateResource()

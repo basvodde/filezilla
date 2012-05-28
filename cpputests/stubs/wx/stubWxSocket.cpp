@@ -4,6 +4,13 @@
 
 #include "wx/socket.h"
 
+GSocketError GSocket::GetError()
+{
+	FAIL("GSocket::GetError");
+	return GSOCK_NOERROR;
+}
+
+
 wxSocketBase::wxSocketBase()
 {
 	FAIL("wxSocketBase::wxSocketBase");

@@ -7,7 +7,7 @@
 
 const wxChar wxListCtrlNameStr[] = L"";
 
-wxClassInfo wxListCtrl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxListCtrl, wxControl);
 
 void wxwxColumnListNode::DeleteData()
 {
@@ -27,12 +27,6 @@ wxEventHashTable& wxListCtrl::GetEventHashTable() const
 {
 	FAIL("wxListCtrl::GetEventHashTable");
 	return sm_eventHashTable;
-}
-
-wxClassInfo *wxListCtrl::GetClassInfo() const
-{
-	FAIL("wxListCtrl::GetClassInfo");
-	return NULL;
 }
 
 void wxListCtrl::SetDropTarget( wxDropTarget *dropTarget )

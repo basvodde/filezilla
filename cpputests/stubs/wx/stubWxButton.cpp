@@ -5,15 +5,9 @@
 #include "wx/button.h"
 
 
-wxClassInfo wxButton::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxButton, wxButtonBase);
 
 const wxChar wxButtonNameStr[100] = L"";
-
-wxClassInfo *wxButton::GetClassInfo() const
-{
-	FAIL("wxButton::GetClassInfo");
-	return NULL;
-}
 
 wxInt32 wxButton::MacControlHit( WXEVENTHANDLERREF handler , WXEVENTREF event )
 {

@@ -6,12 +6,10 @@
 
 wxCursor::wxCursor()
 {
-	FAIL("wxCursor::wxCursor");
 }
 
 wxCursor::~wxCursor()
 {
-	FAIL("wxCursor::~wxCursor");
 }
 
 bool wxCursor::IsOk() const

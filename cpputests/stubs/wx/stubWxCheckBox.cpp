@@ -5,7 +5,7 @@
 
 #include "wx/checkbox.h"
 
-wxClassInfo wxCheckBox::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxCheckBox, wxCheckBoxBase);
 
 const wxChar wxCheckBoxNameStr[100] = L"";
 
@@ -20,7 +20,6 @@ bool wxCheckBox::Create(wxWindow *parent, wxWindowID id, const wxString& label, 
 	FAIL("wxCheckBox::Create");
 	return true;
 }
-
 
 bool wxCheckBox::GetValue() const
 {
@@ -37,12 +36,6 @@ wxInt32 wxCheckBox::MacControlHit( WXEVENTHANDLERREF handler , WXEVENTREF event 
 void wxCheckBox::Command(wxCommandEvent& event)
 {
 	FAIL("wxCheckBox::Command");
-}
-
-wxClassInfo *wxCheckBox::GetClassInfo() const
-{
-	FAIL("wxCheckBox::GetClassInfo");
-	return NULL;
 }
 
 void wxCheckBox::DoSet3StateValue(wxCheckBoxState val)

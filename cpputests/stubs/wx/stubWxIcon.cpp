@@ -6,7 +6,6 @@
 
 wxIcon::wxIcon()
 {
-	FAIL("wxIcon::wxIcon");
 }
 
 wxIcon::wxIcon(const wxString& name, int flags, int desiredWidth, int desiredHeight)
@@ -16,7 +15,6 @@ wxIcon::wxIcon(const wxString& name, int flags, int desiredWidth, int desiredHei
 
 wxIcon::~wxIcon()
 {
-	FAIL("wxIcon::~wxIcon");
 }
 
 wxClassInfo *wxIcon::GetClassInfo() const

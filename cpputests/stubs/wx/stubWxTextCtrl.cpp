@@ -8,14 +8,14 @@
 
 const wxChar wxTextCtrlNameStr[] = L"";
 
-wxClassInfo wxTextCtrl::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxTextCtrl, wxTextCtrlBase);
+IMPLEMENT_ABSTRACT_CLASS(wxTextCtrlBase, wxControl);
 
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_TEXT_UPDATED);
 DEFINE_EVENT_TYPE(wxEVT_COMMAND_TEXT_ENTER);
 
 void wxTextAttr::Init()
 {
-	FAIL("wxTextAttr::Init");
 }
 
 wxString wxTextCtrlBase::GetRange(long from, long to) const
@@ -113,12 +113,6 @@ void wxTextCtrlBase::DoUpdateWindowUI(wxUpdateUIEvent& event)
 	FAIL("wxTextCtrlBase::DoUpdateWindowUI");
 }
 
-wxClassInfo *wxTextCtrlBase::GetClassInfo() const
-{
-	FAIL("wxTextCtrlBase::GetClassInfo");
-	return NULL;
-}
-
 const wxEventTable wxTextCtrl::sm_eventTable = wxEventTable();
 wxEventHashTable wxTextCtrl::sm_eventHashTable (wxTextCtrl::sm_eventTable);
 
@@ -199,12 +193,6 @@ void wxTextCtrl::SetInsertionPoint(long pos)
 void wxTextCtrl::Remove(long from, long to)
 {
 	FAIL("wxTextCtrl::Remove");
-}
-
-wxClassInfo *wxTextCtrl::GetClassInfo() const
-{
-	FAIL("wxTextCtrl::GetClassInfo");
-	return NULL;
 }
 
 wxString wxTextCtrl::GetValue() const

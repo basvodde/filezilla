@@ -211,12 +211,6 @@ void wxFrame::PositionToolBar()
 	FAIL("wxFrame::PositionToolBar");
 }
 
-wxClassInfo *wxFrame::GetClassInfo() const
-{
-	FAIL("wxFrame::GetClassInfo");
-	return NULL;
-}
-
 void wxFrame::Init()
 {
 	FAIL("wxFrame::Init");
@@ -229,5 +223,5 @@ bool wxFrame::Create(wxWindow *parent, wxWindowID id, const wxString& title, con
 	return true;
 }
 
-wxClassInfo wxFrame::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxFrame, wxFrameBase);
 

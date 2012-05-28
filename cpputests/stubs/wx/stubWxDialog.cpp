@@ -6,7 +6,7 @@
 
 const wxChar wxDialogNameStr[] = L"";;
 
-wxClassInfo wxDialog::ms_classInfo(NULL, NULL, NULL, 0, NULL);
+IMPLEMENT_DYNAMIC_CLASS(wxDialog, wxDialogBase);
 
 const wxEventTable wxDialogBase::sm_eventTable = wxEventTable();
 wxEventHashTable wxDialogBase::sm_eventHashTable (wxDialogBase::sm_eventTable);
@@ -81,12 +81,6 @@ bool wxDialog::Create(wxWindow *parent, wxWindowID id, const wxString& title, co
 wxDialog::~wxDialog()
 {
 	FAIL("wxDialog::~wxDialog");
-}
-
-wxClassInfo *wxDialog::GetClassInfo() const
-{
-	FAIL("wxDialog::GetClassInfo");
-	return NULL;
 }
 
 void wxDialog::EndModal(int retCode)
