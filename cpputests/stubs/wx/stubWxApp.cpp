@@ -8,7 +8,6 @@
 
 wxAppBase::wxAppBase()
 {
-	FAIL("wxAppBase::wxAppBase");
 }
 
 int wxAppBase::OnExit()
@@ -99,7 +98,6 @@ void wxAppBase::Exit()
 
 wxAppBase::~wxAppBase()
 {
-	FAIL("wxAppBase::~wxAppBase");
 }
 
 wxWindow *wxAppBase::GetTopWindow() const
@@ -239,5 +237,4 @@ void wxApp::MacOpenFile(const wxString &fileName)
 
 wxApp::wxApp()
 {
-	FAIL("wxApp::wxApp");
 }

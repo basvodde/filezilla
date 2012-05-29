@@ -26,12 +26,10 @@ wxEventHashTable& wxTopLevelWindowBase::GetEventHashTable() const
 
 wxTopLevelWindowBase::wxTopLevelWindowBase()
 {
-	FAIL("wxTopLevelWindowBase::wxTopLevelWindowBase");
 }
 
 wxTopLevelWindowBase::~wxTopLevelWindowBase()
 {
-	FAIL("wxTopLevelWindowBase::~wxTopLevelWindowBase");
 }
 
 void wxTopLevelWindowBase::SetMinSize(const wxSize& minSize)
@@ -295,7 +293,6 @@ void wxTopLevelWindowMac::Lower()
 
 wxTopLevelWindowMac::~wxTopLevelWindowMac()
 {
-	FAIL("wxTopLevelWindowMac::~wxTopLevelWindowMac");
 }
 
 bool wxTopLevelWindowMac::Show( bool show)
@@ -306,6 +303,5 @@ bool wxTopLevelWindowMac::Show( bool show)
 
 void wxTopLevelWindowMac::Init()
 {
-	FAIL("wxTopLevelWindowMac::Init");
 }
 

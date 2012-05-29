@@ -57,7 +57,6 @@ bool wxDialogBase::IsEscapeKey(const wxKeyEvent& event)
 
 void wxDialogBase::Init()
 {
-	FAIL("wxDialogBase::Init");
 }
 
 void wxDialogBase::EndDialog(int rc)
@@ -80,7 +79,6 @@ bool wxDialog::Create(wxWindow *parent, wxWindowID id, const wxString& title, co
 
 wxDialog::~wxDialog()
 {
-	FAIL("wxDialog::~wxDialog");
 }
 
 void wxDialog::EndModal(int retCode)
@@ -114,6 +112,5 @@ bool wxDialog::IsEscapeKey(const wxKeyEvent& event)
 
 void wxDialog::Init()
 {
-	FAIL("wxDialog::Init");
 }
 

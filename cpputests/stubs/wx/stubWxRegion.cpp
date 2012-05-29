@@ -6,12 +6,10 @@
 
 wxRegion::wxRegion()
 {
-	FAIL("wxRegion::wxRegion");
 }
 
 wxRegion::~wxRegion()
 {
-	FAIL("wxRegion::~wxRegion");
 }
 
 wxClassInfo *wxRegion::GetClassInfo() const

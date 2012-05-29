@@ -6,12 +6,10 @@
 
 wxPalette::wxPalette()
 {
-	FAIL("wxPalette::wxPalette");
 }
 
 wxPalette::~wxPalette()
 {
-	FAIL("wxPalette::~wxPalette");
 }
 
 wxClassInfo *wxPalette::GetClassInfo() const

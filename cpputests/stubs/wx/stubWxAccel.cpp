@@ -11,12 +11,10 @@ wxAcceleratorTable::wxAcceleratorTable(int n, const wxAcceleratorEntry entries[]
 
 wxAcceleratorTable::wxAcceleratorTable()
 {
-	FAIL("wxAcceleratorTable::wxAcceleratorTable");
 }
 
 wxAcceleratorTable::~wxAcceleratorTable()
 {
-	FAIL("wxAcceleratorTable::~wxAcceleratorTable");
 }
 
 wxClassInfo *wxAcceleratorTable::GetClassInfo() const

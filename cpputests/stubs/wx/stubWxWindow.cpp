@@ -93,7 +93,6 @@ void wxWindowBase::SetSizeConstraint(int x, int y, int w, int h)
 
 wxWindowBase::wxWindowBase()
 {
-	FAIL("wxWindowBase::wxWindowBase");
 }
 
 void wxWindowBase::AddChild( wxWindowBase *child )
@@ -113,7 +112,6 @@ void wxWindowBase::DoCentre(int dir)
 
 wxWindowBase::~wxWindowBase()
 {
-	FAIL("wxWindowBase::~wxWindowBase");
 }
 
 bool wxWindowBase::Reparent( wxWindowBase *newParent )
@@ -446,7 +444,6 @@ void wxWindow::DoGetSize(int *width, int *height) const
 
 wxWindow::wxWindow()
 {
-	FAIL("wxWindow::wxWindow");
 }
 
 bool wxWindow::Enable( bool enable)
@@ -818,7 +815,6 @@ void wxWindow::OnInternalIdle()
 
 wxWindow::~wxWindow()
 {
-	FAIL("wxWindow::~wxWindow");
 }
 
 void wxWindow::MacHandleControlClick( WXWidget control , wxInt16 controlpart , bool mouseStillDown)

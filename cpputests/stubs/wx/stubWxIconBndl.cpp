@@ -8,7 +8,6 @@
 
 wxIconArray::~wxIconArray()
 {
-	FAIL("wxIconArray::~wxIconArray()");
 }
 
 static wxIcon gIcon;
@@ -31,7 +30,7 @@ void wxIconBundle::AddIcon( const wxString& file, long type )
 
 void wxIconBundle::DeleteIcons()
 {
-	FAIL("wxIconBundle::DeleteIcons()");
+	mock().actualCall("wxIconBundle::DeleteIcons");
 }
 
 void wxIconBundle::AddIcon( const wxIcon& icon )

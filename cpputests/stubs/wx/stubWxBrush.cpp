@@ -6,7 +6,6 @@
 
 wxBrush::wxBrush()
 {
-	FAIL("wxBrush::wxBrush");
 }
 
 wxBrush::wxBrush(const wxColour& col, int style)
@@ -17,7 +16,6 @@ wxBrush::wxBrush(const wxColour& col, int style)
 
 wxBrush::~wxBrush()
 {
-	FAIL("wxBrush::~wxBrush");
 }
 
 wxClassInfo *wxBrush::GetClassInfo() const

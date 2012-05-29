@@ -8,6 +8,5 @@
 
 wxControlContainer::wxControlContainer(wxWindow *winParent)
 {
-	FAIL("wxControlContainer::wxControlContainer");
 }
 
